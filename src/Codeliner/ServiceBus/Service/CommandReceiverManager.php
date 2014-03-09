@@ -12,7 +12,9 @@
 namespace Codeliner\ServiceBus\Service;
 
 use Codeliner\ServiceBus\Command\CommandReceiverInterface;
+use Codeliner\ServiceBus\Command\DefaultCommandReceiverFactory;
 use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\Exception;
 
 /**
@@ -23,10 +25,15 @@ use Zend\ServiceManager\Exception;
  */
 class CommandReceiverManager extends AbstractPluginManager
 {
-    protected $abstractFactories = array(
-        'Codeliner\ServiceBus\Command\DefaultCommandReceiverFactory'
-    );
+    /**
+     * @param ConfigInterface $aConfig
+     */
+    public function __construct(ConfigInterface $aConfig = null)
+    {
+        parent::__construct($aConfig);
 
+        $this->abstractFactories[] = new DefaultCommandReceiverFactory();
+    }
     /**
      * Validate the plugin
      *

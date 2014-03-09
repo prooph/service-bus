@@ -44,4 +44,3 @@ class HandleCommandStrategyTest extends TestCase
         $this->assertEquals('test payload', $handleCommandHandler->lastCommand()->data());
     }
 }
- 

@@ -42,7 +42,7 @@ class CommandReceiver implements CommandReceiverInterface
     /**
      * @var array
      */
-    protected $invokeStrategies = array('callback_strategy');
+    protected $invokeStrategies = array('callback_strategy', 'handle_command_strategy');
 
     /**
      * @var ServiceLocatorInterface

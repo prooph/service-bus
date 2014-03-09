@@ -33,5 +33,17 @@ class InvokeStrategyManagerTest extends TestCase
 
         $this->assertInstanceOf('Codeliner\ServiceBus\InvokeStrategy\CallbackStrategy', $callbackStrategy);
     }
+
+    /**
+     * @test
+     */
+    public function it_returns_a_handle_command_strategy()
+    {
+        $invokeStrategyManager = new InvokeStrategyManager();
+
+        $handleCommandStrategy = $invokeStrategyManager->get('handle_command_strategy');
+
+        $this->assertInstanceOf('Codeliner\ServiceBus\InvokeStrategy\HandleCommandStrategy', $handleCommandStrategy);
+    }
 }
  

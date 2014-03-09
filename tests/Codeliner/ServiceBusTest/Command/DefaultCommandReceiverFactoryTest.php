@@ -33,11 +33,6 @@ use Rhumsaa\Uuid\Uuid;
 class DefaultCommandReceiverFactoryTest extends TestCase
 {
     /**
-     * @var DefaultCommandReceiverFactory
-     */
-    private $defaultCommandReceiverFactory;
-
-    /**
      * @var ServiceBusManager
      */
     private $serviceBusManager;
