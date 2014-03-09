@@ -109,5 +109,27 @@ class DefaultCommandReceiverFactory implements AbstractFactoryInterface
                 )
             );
         }
+
+        $commandReceiver = new CommandReceiver($configuration[Definition::COMMAND_MAP], $mainServiceLocator);
+
+        $configuration = $mainServiceLocator->get('configuration');
+
+        if (isset($configuration[Definition::CONFIG_ROOT][Definition::COMMAND_HANDLER_INVOKE_STRATEGIES])) {
+            $commandReceiver->setInvokeStrategies(
+                $configuration[Definition::CONFIG_ROOT][Definition::COMMAND_HANDLER_INVOKE_STRATEGIES]
+            );
+        }
+
+        if ($mainServiceLocator->has(Definition::INVOKE_STRATEGY_MANAGER)) {
+            $commandReceiver->setInvokeStrategyManager(
+                $mainServiceLocator->get(Definition::INVOKE_STRATEGY_MANAGER)
+            );
+        }
+
+        if ($mainServiceLocator->has(Definition::COMMAND_FACTORY)) {
+            $commandReceiver->setCommandFactory($mainServiceLocator->get(Definition::COMMAND_FACTORY));
+        }
+
+        return $commandReceiver;
     }
 }

@@ -23,6 +23,9 @@ use Zend\ServiceManager\Exception;
  */
 class CommandReceiverManager extends AbstractPluginManager
 {
+    protected $abstractFactories = array(
+        'Codeliner\ServiceBus\Command\DefaultCommandReceiverFactory'
+    );
 
     /**
      * Validate the plugin

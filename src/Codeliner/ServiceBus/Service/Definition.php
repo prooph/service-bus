@@ -25,5 +25,9 @@ class Definition
 
     const COMMAND_MAP      = "command_map";
 
+    const COMMAND_FACTORY  = "command_factory";
+
     const COMMAND_HANDLER_INVOKE_STRATEGIES = 'command_handler_invoke_strategies';
+
+    const INVOKE_STRATEGY_MANAGER = 'invoke_strategy_manager';
 }
