@@ -83,6 +83,8 @@ class DefaultCommandReceiverFactoryTest extends TestCase
         //Register DoSomethingInvokeStrategy as Service
         $invokeStrategyManager->setService('do_something_invoke_strategy', new DoSomethingInvokeStrategy());
 
+        $this->serviceBusManager->setAllowOverride(true);
+
         //Register InvokeStrategyManager as Service
         $this->serviceBusManager->setService(Definition::INVOKE_STRATEGY_MANAGER, $invokeStrategyManager);
 

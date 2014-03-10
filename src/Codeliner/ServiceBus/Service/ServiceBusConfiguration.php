@@ -58,8 +58,8 @@ class ServiceBusConfiguration implements ConfigInterface
         $serviceManager->setService('configuration', $this->configuration);
 
         if (count($this->commandHandlers)) {
-            foreach ($this->commandHandlers as $commandHandler) {
-                $serviceManager->setService(get_class($commandHandler), $commandHandler);
+            foreach ($this->commandHandlers as $alias => $commandHandler) {
+                $serviceManager->setService($alias, $commandHandler);
             }
         }
 
@@ -110,15 +110,24 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setCommandMap($commandBus, array $commandMap)
     {
-        $this->configuration[Definition::CONFIG_ROOT][Definition::COMMAND_BUS][$commandBus] = $commandMap;
+        $this->configuration[Definition::CONFIG_ROOT]
+            [Definition::COMMAND_BUS]
+            [$commandBus]
+            [Definition::COMMAND_MAP] = $commandMap;
     }
 
     /**
-     * @param $commandHandler
+     * @param mixed      $aliasOrCommandHandler
+     * @param null|mixed $commandHandler
      */
-    public function addCommandHandler($commandHandler)
+    public function addCommandHandler($aliasOrCommandHandler, $commandHandler = null)
     {
-        $this->commandHandlers[] = $commandHandler;
+        if (is_null($commandHandler)) {
+            $commandHandler = $aliasOrCommandHandler;
+            $aliasOrCommandHandler = get_class($commandHandler);
+        }
+
+        $this->commandHandlers[$aliasOrCommandHandler] = $commandHandler;
     }
 
     /**

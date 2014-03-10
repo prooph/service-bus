@@ -20,6 +20,8 @@ use Zend\ServiceManager\Exception;
 /**
  * Class CommandReceiverManager
  *
+ * @method CommandReceiverInterface get($name) Get CommandReceiver by name or alias
+ *
  * @package Codeliner\ServiceBus\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
