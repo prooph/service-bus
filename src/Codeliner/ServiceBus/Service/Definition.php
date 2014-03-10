@@ -19,17 +19,19 @@ namespace Codeliner\ServiceBus\Service;
  */
 class Definition
 {
+    //Config keys
     const CONFIG_ROOT                       = "codeliner.service_bus";
 
     const COMMAND_BUS                       = "command_bus";
 
     const COMMAND_MAP                       = "command_map";
 
-    const COMMAND_FACTORY                   = "command_factory";
-
-    const COMMAND_RECEIVER_MANAGER          = "command_receiver_manager";
-
     const COMMAND_HANDLER_INVOKE_STRATEGIES = 'command_handler_invoke_strategies';
 
-    const INVOKE_STRATEGY_MANAGER           = 'invoke_strategy_manager';
+    //ServiceBusManager aliases
+    const COMMAND_FACTORY                   = "commandfactory";
+
+    const COMMAND_RECEIVER_MANAGER          = "commandreceivermanager";
+
+    const INVOKE_STRATEGY_MANAGER           = 'invokestrategymanager';
 }
