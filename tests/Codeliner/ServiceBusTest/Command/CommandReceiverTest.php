@@ -46,7 +46,15 @@ class CommandReceiverTest extends TestCase
         $self = $this;
 
         $commandHandlerLocator->setService('test-case-callback', function (DoSomething $aCommand) use ($self) {
-            $self->commandHeader  = $aCommand->header();
+
+            $commandHeader = new MessageHeader(
+                $aCommand->uuid(),
+                $aCommand->createdOn(),
+                $aCommand->version(),
+                'test-case'
+            );
+
+            $self->commandHeader  = $commandHeader;
             $self->commandPayload = $aCommand->payload();
         });
 

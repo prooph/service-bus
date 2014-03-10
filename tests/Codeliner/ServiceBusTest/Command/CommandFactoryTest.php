@@ -35,12 +35,18 @@ class CommandFactoryTest extends TestCase
 
         $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
 
-        $message = new StandardMessage('Codeliner\ServiceBusTest\Mock\DoSomething', $header, array('data' => 'test data'));
+        $message = new StandardMessage(
+            'Codeliner\ServiceBusTest\Mock\DoSomething',
+            $header,
+            array('data' => 'test data')
+        );
 
         $command = $commandFactory->fromMessage($message);
 
+        $commandHeader = new MessageHeader($command->uuid(), $command->createdOn(), $command->version(), 'test-case');
+
         $this->assertTrue($command instanceof DoSomething);
-        $this->assertTrue($command->header()->sameHeaderAs($header));
+        $this->assertTrue($commandHeader->sameHeaderAs($header));
         $this->assertEquals('test data', $command->data());
     }
 }

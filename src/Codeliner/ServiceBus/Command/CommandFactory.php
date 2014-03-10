@@ -39,6 +39,11 @@ class CommandFactory implements CommandFactoryInterface
             );
         }
 
-        return new $commandClass($aMessage->header(), $aMessage->payload());
+        return new $commandClass(
+            $aMessage->payload(),
+            $aMessage->header()->version(),
+            $aMessage->header()->uuid(),
+            $aMessage->header()->createdOn()
+        );
     }
 }

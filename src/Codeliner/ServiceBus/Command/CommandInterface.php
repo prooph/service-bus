@@ -11,7 +11,7 @@
 
 namespace Codeliner\ServiceBus\Command;
 
-use Codeliner\ServiceBus\Message\MessageHeaderInterface;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * Interface CommandInterface
@@ -22,9 +22,19 @@ use Codeliner\ServiceBus\Message\MessageHeaderInterface;
 interface CommandInterface
 {
     /**
-     * @return MessageHeaderInterface
+     * @return Uuid
      */
-    public function header();
+    public function uuid();
+
+    /**
+     * @return int
+     */
+    public function version();
+
+    /**
+     * @return \DateTime
+     */
+    public function createdOn();
 
     /**
      * @return array

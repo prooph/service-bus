@@ -30,9 +30,7 @@ class DoSomething extends AbstractCommand
      */
     public static function fromData($data)
     {
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
-
-        return new static($header, array('data' => $data));
+        return new static(array('data' => $data));
     }
 
     /**

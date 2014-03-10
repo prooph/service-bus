@@ -14,13 +14,30 @@ namespace Codeliner\ServiceBus\Command;
 use Codeliner\ServiceBus\Exception\RuntimeException;
 use Codeliner\ServiceBus\Message\MessageHeaderInterface;
 use Codeliner\ServiceBus\Message\PayloadInterface;
+use Rhumsaa\Uuid\Uuid;
 
+/**
+ * Class AbstractCommand
+ *
+ * @package Codeliner\ServiceBus\Command
+ * @author Alexander Miertsch <kontakt@codeliner.ws>
+ */
 class AbstractCommand implements CommandInterface
 {
     /**
-     * @var MessageHeaderInterface
+     * @var Uuid
      */
-    protected $header;
+    protected $uuid;
+
+    /**
+     * @var int
+     */
+    protected $version;
+
+    /**
+     * @var \DateTime
+     */
+    protected $createdOn;
 
     /**
      * @var array
@@ -28,18 +45,18 @@ class AbstractCommand implements CommandInterface
     protected $payload = array();
 
     /**
-     * @param MessageHeaderInterface $aMessageHeader
-     * @param null|array|PayloadInterface $aPayload
+     * @param null $aPayload
+     * @param int $aVersion
+     * @param Uuid $aUuid
+     * @param \DateTime $aCreatedOn
      * @throws \Codeliner\ServiceBus\Exception\RuntimeException
      */
-    public function __construct(MessageHeaderInterface $aMessageHeader, $aPayload = null)
+    public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, \DateTime $aCreatedOn = null)
     {
-        $this->header = $aMessageHeader;
-
         if (!is_null($aPayload)) {
             if (is_array($aPayload)) {
                 $this->payload = $aPayload;
-            } else if ($aPayload instanceof PayloadInterface) {
+            } elseif ($aPayload instanceof PayloadInterface) {
                 $this->payload = $aPayload->getArrayCopy();
             } else {
                 throw new RuntimeException(
@@ -51,14 +68,20 @@ class AbstractCommand implements CommandInterface
                 );
             }
         }
-    }
 
-    /**
-     * @return MessageHeaderInterface
-     */
-    public function header()
-    {
-        return $this->header;
+        $this->version = $aVersion;
+
+        if (is_null($aUuid)) {
+            $aUuid = Uuid::uuid4();
+        }
+
+        $this->uuid = $aUuid;
+
+        if (is_null($aCreatedOn)) {
+            $aCreatedOn = new \DateTime();
+        }
+
+        $this->createdOn = $aCreatedOn;
     }
 
     /**
@@ -67,6 +90,30 @@ class AbstractCommand implements CommandInterface
     public function payload()
     {
         return $this->payload;
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function uuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @return int
+     */
+    public function version()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function createdOn()
+    {
+        return $this->createdOn;
     }
 }
  
