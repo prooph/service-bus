@@ -21,9 +21,11 @@ use Zend\ServiceManager\ServiceManager;
  */
 class ServiceBusManager extends ServiceManager
 {
+    /**
+     * @var array
+     */
     protected $invokableClasses = array(
         Definition::COMMAND_RECEIVER_MANAGER => 'Codeliner\ServiceBus\Service\CommandReceiverManager',
         Definition::INVOKE_STRATEGY_MANAGER  => 'Codeliner\ServiceBus\Service\InvokeStrategyManager'
     );
 }
- 
