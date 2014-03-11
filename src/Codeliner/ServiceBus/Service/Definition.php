@@ -29,6 +29,8 @@ class Definition
 
     const COMMAND_FACTORY                   = "command_factory";
 
+    const IN_MEMORY_MESSAGE_DISPATCHER      = "in_memory_message_dispatcher";
+    
     const COMMAND_RECEIVER_MANAGER          = "command_receiver_manager";
 
     const INVOKE_STRATEGY_MANAGER           = "invoke_strategy_manager";
