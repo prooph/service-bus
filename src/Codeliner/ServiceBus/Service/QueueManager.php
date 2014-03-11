@@ -6,29 +6,36 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 11.03.14 - 18:52
+ * Date: 11.03.14 - 19:14
  */
 
 namespace Codeliner\ServiceBus\Service;
 
 use Codeliner\ServiceBus\Exception\RuntimeException;
-use Codeliner\ServiceBus\Message\MessageDispatcherInterface;
+use Codeliner\ServiceBus\Message\DefaultQueueFactory;
+use Codeliner\ServiceBus\Message\QueueInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\Exception;
+use Zend\ServiceManager\ConfigInterface;
 
 /**
- * Class MessageDispatcherManager
+ * Class QueueManager
  *
- * @method MessageDispatcherInterface get($name) Get MessageDispatcher by name or alias
+ * @method QueueInterface get($name) Get Queue by name or alias
  *
  * @package Codeliner\ServiceBus\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class MessageDispatcherManager extends AbstractPluginManager
+class QueueManager extends AbstractPluginManager
 {
-    protected $invokableClasses = array(
-        'inmemorymessagedispatcher'      => 'Codeliner\ServiceBus\Message\InMemoryMessageDispatcher',
-    );
+    /**
+     * @param ConfigInterface $aConfig
+     */
+    public function __construct(ConfigInterface $aConfig = null)
+    {
+        parent::__construct($aConfig);
+
+        $this->abstractFactories[] = new DefaultQueueFactory();
+    }
 
     /**
      * Validate the plugin
@@ -39,12 +46,13 @@ class MessageDispatcherManager extends AbstractPluginManager
      */
     public function validatePlugin($plugin)
     {
-        if (! $plugin instanceof MessageDispatcherInterface) {
+        if (! $plugin instanceof QueueInterface) {
             throw new RuntimeException(sprintf(
-                'MessageDispatcher must be instance of Codeliner\ServiceBus\Message\MessageDispatcherInterface,'
+                'Queue must be instance of Codeliner\ServiceBus\Message\QueueInterface,'
                 . 'instance of type %s given',
                 ((is_object($plugin)? get_class($plugin)  : gettype($plugin)))
             ));
         }
     }
 }
+ 
