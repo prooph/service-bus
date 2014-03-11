@@ -12,6 +12,8 @@
 namespace Codeliner\ServiceBus\Command;
 
 use Codeliner\ServiceBus\Message\MessageDispatcherInterface;
+use Codeliner\ServiceBus\Message\MessageFactory;
+use Codeliner\ServiceBus\Message\MessageFactoryInterface;
 use Codeliner\ServiceBus\Message\MessageHeader;
 use Codeliner\ServiceBus\Message\QueueInterface;
 use Codeliner\ServiceBus\Message\StandardMessage;
@@ -40,6 +42,11 @@ class CommandBus implements CommandBusInterface
     private $name;
 
     /**
+     * @var MessageFactoryInterface
+     */
+    private $messageFactory;
+
+    /**
      * @param string                     $aName
      * @param MessageDispatcherInterface $aMessageDispatcher
      * @param QueueInterface             $aQueue
@@ -60,15 +67,30 @@ class CommandBus implements CommandBusInterface
      */
     public function send(CommandInterface $aCommand)
     {
-        $messageHeader = new MessageHeader(
-            $aCommand->uuid(),
-            $aCommand->createdOn(),
-            $aCommand->version(),
-            $this->name
-        );
-
-        $message = new StandardMessage(get_class($aCommand), $messageHeader, $aCommand->payload());
+        $message = $this->getMessageFactory()->fromCommand($aCommand, $this->name);
 
         $this->messageDispatcher->dispatch($this->queue, $message);
     }
+
+    /**
+     * @param MessageFactoryInterface $aMessageFactory
+     */
+    public function setMessageFactory(MessageFactoryInterface $aMessageFactory)
+    {
+        $this->messageFactory = $aMessageFactory;
+    }
+
+    /**
+     * @return MessageFactoryInterface
+     */
+    public function getMessageFactory()
+    {
+        if (is_null($this->messageFactory)) {
+            $this->messageFactory = new MessageFactory();
+        }
+
+        return $this->messageFactory;
+    }
+
+
 }

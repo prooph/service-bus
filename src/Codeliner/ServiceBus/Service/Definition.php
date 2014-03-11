@@ -43,6 +43,8 @@ class Definition
 
     const IN_MEMORY_MESSAGE_DISPATCHER      = "in_memory_message_dispatcher";
 
+    const MESSAGE_FACTORY                   = "message_factory";
+
     const COMMAND_BUS_MANAGER               = "command_bus_manager";
     
     const COMMAND_RECEIVER_MANAGER          = "command_receiver_manager";

@@ -127,7 +127,13 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
         $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_MANAGER)
             ->get($configuration[Definition::MESSAGE_DISPATCHER]);
 
-        return new CommandBus($requestedName, $messageDispatcher, $queue);
+        $commandBus = new CommandBus($requestedName, $messageDispatcher, $queue);
+
+        if ($mainServiceLocator->has(Definition::MESSAGE_FACTORY)) {
+            $commandBus->setMessageFactory($mainServiceLocator->get(Definition::MESSAGE_FACTORY));
+        }
+
+        return $commandBus;
     }
 }
  
