@@ -6,26 +6,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 08.03.14 - 19:39
+ * Date: 11.03.14 - 19:39
  */
 
 namespace Codeliner\ServiceBus\Service;
 
-use Codeliner\ServiceBus\Command\CommandReceiverInterface;
-use Codeliner\ServiceBus\Command\DefaultCommandReceiverFactory;
+use Codeliner\ServiceBus\Command\CommandBusInterface;
+use Codeliner\ServiceBus\Command\DefaultCommandBusFactory;
+use Codeliner\ServiceBus\Exception\RuntimeException;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\Exception;
 
 /**
- * Class CommandReceiverManager
- *
- * @method CommandReceiverInterface get($name) Get CommandReceiver by name or alias
+ * Class CommandBusManager
  *
  * @package Codeliner\ServiceBus\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandReceiverManager extends AbstractPluginManager
+class CommandBusManager extends AbstractPluginManager
 {
     /**
      * @param ConfigInterface $aConfig
@@ -34,21 +33,24 @@ class CommandReceiverManager extends AbstractPluginManager
     {
         parent::__construct($aConfig);
 
-        $this->abstractFactories[] = new DefaultCommandReceiverFactory();
+        $this->abstractFactories[] = new DefaultCommandBusFactory();
     }
 
     /**
      * Validate the plugin
      *
+     * Checks that the filter loaded is either a valid callback or an instance
+     * of FilterInterface.
+     *
      * @param  mixed $plugin
      * @return void
-     * @throws \RuntimeException if invalid
+     * @throws RuntimeException if invalid
      */
     public function validatePlugin($plugin)
     {
-        if (! $plugin instanceof CommandReceiverInterface) {
-            throw new \RuntimeException(sprintf(
-                'CommandReceiver must be instance of Codeliner\ServiceBus\Command\CommandReceiverInterface,'
+        if (! $plugin instanceof CommandBusInterface) {
+            throw new RuntimeException(sprintf(
+                'CommandBus must be instance of Codeliner\ServiceBus\Command\CommandBusInterface,'
                 . 'instance of type %s given',
                 ((is_object($plugin)? get_class($plugin)  : gettype($plugin)))
             ));

@@ -27,8 +27,11 @@ class ServiceBusManager extends ServiceManager
      * @var array
      */
     protected $invokableClasses = array(
-        'commandreceivermanager' => 'Codeliner\ServiceBus\Service\CommandReceiverManager',
-        'invokestrategymanager'  => 'Codeliner\ServiceBus\Service\InvokeStrategyManager'
+        'commandbusmanager'         => 'Codeliner\ServiceBus\Service\CommandBusManager',
+        'commandreceivermanager'    => 'Codeliner\ServiceBus\Service\CommandReceiverManager',
+        'invokestrategymanager'     => 'Codeliner\ServiceBus\Service\InvokeStrategyManager',
+        'messagedispatchermanager'  => 'Codeliner\ServiceBus\Service\MessageDispatcherManager',
+        'queuemanager'              => 'Codeliner\ServiceBus\Service\QueueManager',
     );
 
     /**
