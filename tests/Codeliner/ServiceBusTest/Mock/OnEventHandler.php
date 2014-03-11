@@ -6,35 +6,40 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 11.03.14 - 21:17
+ * Date: 11.03.14 - 21:52
  */
 
 namespace Codeliner\ServiceBusTest\Mock;
 
-use Codeliner\ServiceBus\Event\AbstractEvent;
+use Codeliner\ServiceBus\Event\EventInterface;
 
 /**
- * Class SomethingDone
+ * Class OnEventHandler
  *
  * @package Codeliner\ServiceBusTest\Mock
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class SomethingDone extends AbstractEvent
+class OnEventHandler 
 {
     /**
-     * @param string $dataString
+     * @var SomethingDone
+     */
+    private $lastEvent;
+
+    /**
+     * @param SomethingDone $event
+     */
+    public function onSomethingDone(SomethingDone $event)
+    {
+        $this->lastEvent = $event;
+    }
+
+    /**
      * @return SomethingDone
      */
-    public static function fromData($dataString)
+    public function lastEvent()
     {
-        return new self(array('data' => $dataString));
-    }
-    /**
-     * @return string
-     */
-    public function data()
-    {
-        return $this->payload['data'];
+        return $this->lastEvent;
     }
 }
  

@@ -29,7 +29,8 @@ class InvokeStrategyManager extends AbstractPluginManager
      */
     protected $invokableClasses = array(
         'callbackstrategy'      => 'Codeliner\ServiceBus\InvokeStrategy\CallbackStrategy',
-        'handlecommandstrategy' => 'Codeliner\ServiceBus\InvokeStrategy\HandleCommandStrategy'
+        'handlecommandstrategy' => 'Codeliner\ServiceBus\InvokeStrategy\HandleCommandStrategy',
+        'oneventstrategy'       => 'Codeliner\ServiceBus\InvokeStrategy\OnEventStrategy',
     );
 
     /**

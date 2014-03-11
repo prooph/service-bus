@@ -23,22 +23,22 @@ use Codeliner\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
 class DoSomethingInvokeStrategy implements InvokeStrategyInterface
 {
     /**
-     * @param mixed $aHandler
-     * @param CommandInterface $aCommand
+     * @param mixed            $aHandler
+     * @param CommandInterface $aCommandOrEvent
      * @return bool
      */
-    public function canInvoke($aHandler, CommandInterface $aCommand)
+    public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        return $aHandler instanceof DoSomethingHandler && $aCommand instanceof DoSomething;
+        return $aHandler instanceof DoSomethingHandler && $aCommandOrEvent instanceof DoSomething;
     }
 
     /**
-     * @param mixed $aHandler
-     * @param CommandInterface $aCommand
+     * @param mixed            $aHandler
+     * @param CommandInterface $aCommandOrEvent
      */
-    public function invoke($aHandler, CommandInterface $aCommand)
+    public function invoke($aHandler, $aCommandOrEvent)
     {
-        $aHandler->doSomething($aCommand);
+        $aHandler->doSomething($aCommandOrEvent);
     }
 }
  

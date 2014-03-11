@@ -23,26 +23,30 @@ class HandleCommandStrategy implements InvokeStrategyInterface
 {
 
     /**
-     * @param mixed $aHandler
-     * @param CommandInterface $aCommand
+     * @param mixed            $aHandler
+     * @param CommandInterface $aCommandOrEvent
      * @return bool
      */
-    public function canInvoke($aHandler, CommandInterface $aCommand)
+    public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        $handleMethod = 'handle' . $this->determineCommandName($aCommand);
+        if (! $aCommandOrEvent instanceof CommandInterface) {
+            return false;
+        }
+
+        $handleMethod = 'handle' . $this->determineCommandName($aCommandOrEvent);
 
         return method_exists($aHandler, $handleMethod);
     }
 
     /**
      * @param mixed $aHandler
-     * @param CommandInterface $aCommand
+     * @param CommandInterface $aCommandOrEvent
      */
-    public function invoke($aHandler, CommandInterface $aCommand)
+    public function invoke($aHandler, $aCommandOrEvent)
     {
-        $handleMethod = 'handle' . $this->determineCommandName($aCommand);
+        $handleMethod = 'handle' . $this->determineCommandName($aCommandOrEvent);
 
-        $aHandler->{$handleMethod}($aCommand);
+        $aHandler->{$handleMethod}($aCommandOrEvent);
     }
 
     /**

@@ -6,38 +6,40 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 08.03.14 - 22:44
+ * Date: 11.03.14 - 22:27
  */
 
-namespace Codeliner\ServiceBus\InvokeStrategy;
+namespace Codeliner\ServiceBusTest\Mock;
 
 use Codeliner\ServiceBus\Command\CommandInterface;
+use Codeliner\ServiceBus\Event\EventInterface;
+use Codeliner\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
 
 /**
- * Class CallbackStrategy
+ * Class SomethingDoneInvokeStrategy
  *
- * @package Codeliner\ServiceBus\InvokeStrategy
+ * @package Codeliner\ServiceBusTest\Mock
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CallbackStrategy implements InvokeStrategyInterface
+class SomethingDoneInvokeStrategy implements InvokeStrategyInterface
 {
-
     /**
-     * @param mixed                           $aHandler
+     * @param mixed $aHandler
      * @param CommandInterface|EventInterface $aCommandOrEvent
      * @return bool
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        return is_callable($aHandler);
+        return $aHandler instanceof SomethingDoneHandler && $aCommandOrEvent instanceof SomethingDone;
     }
 
     /**
-     * @param mixed                           $aHandler
+     * @param mixed $aHandler
      * @param CommandInterface|EventInterface $aCommandOrEvent
      */
     public function invoke($aHandler, $aCommandOrEvent)
     {
-        call_user_func($aHandler, $aCommandOrEvent);
+        $aHandler->somethingDone($aCommandOrEvent);
     }
 }
+ 

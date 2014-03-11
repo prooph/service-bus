@@ -11,6 +11,7 @@
 
 namespace Codeliner\ServiceBus\InvokeStrategy;
 use Codeliner\ServiceBus\Command\CommandInterface;
+use Codeliner\ServiceBus\Event\EventInterface;
 
 /**
  * Interface CommandHandlerInvokeStrategyInterface
@@ -21,16 +22,16 @@ use Codeliner\ServiceBus\Command\CommandInterface;
 interface InvokeStrategyInterface
 {
     /**
-     * @param mixed            $aHandler
-     * @param CommandInterface $aCommand
+     * @param mixed                           $aHandler
+     * @param CommandInterface|EventInterface $aCommandOrEvent
      * @return bool
      */
-    public function canInvoke($aHandler, CommandInterface $aCommand);
+    public function canInvoke($aHandler, $aCommandOrEvent);
 
     /**
-     * @param mixed            $aHandler
-     * @param CommandInterface $aCommand
+     * @param mixed                           $aHandler
+     * @param CommandInterface|EventInterface $aCommandOrEvent
      */
-    public function invoke($aHandler, CommandInterface $aCommand);
+    public function invoke($aHandler, $aCommandOrEvent);
 }
  
