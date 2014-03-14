@@ -36,7 +36,7 @@ class StandardMessageTest extends TestCase
 
     protected function setUp()
     {
-        $this->header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
+        $this->header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $this->message = new StandardMessage('TestMessage', $this->header, array('data' => 'a test'));
     }

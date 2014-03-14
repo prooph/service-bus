@@ -54,7 +54,8 @@ class EventReceiverTest extends TestCase
                 $anEvent->uuid(),
                 $anEvent->createdOn(),
                 $anEvent->version(),
-                'test-case'
+                'test-case',
+                MessageHeader::TYPE_EVENT
             );
 
             $self->eventHeader  = $eventHeader;
@@ -76,7 +77,7 @@ class EventReceiverTest extends TestCase
      */
     public function it_handles_a_message_and_calls_the_related_event_on_configured_handler()
     {
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
 
         $message = new StandardMessage(
             'Codeliner\ServiceBusTest\Mock\SomethingDone',

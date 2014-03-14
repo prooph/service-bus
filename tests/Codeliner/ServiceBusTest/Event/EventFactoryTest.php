@@ -33,7 +33,7 @@ class EventFactoryTest extends TestCase
     {
         $eventFactory = new EventFactory();
 
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
 
         $message = new StandardMessage(
             'Codeliner\ServiceBusTest\Mock\SomethingDone',
@@ -43,7 +43,13 @@ class EventFactoryTest extends TestCase
 
         $event = $eventFactory->fromMessage($message);
 
-        $eventHeader = new MessageHeader($event->uuid(), $event->createdOn(), $event->version(), 'test-case');
+        $eventHeader = new MessageHeader(
+            $event->uuid(),
+            $event->createdOn(),
+            $event->version(),
+            'test-case',
+            MessageHeader::TYPE_EVENT
+        );
 
         $this->assertTrue($event instanceof SomethingDone);
         $this->assertTrue($eventHeader->sameHeaderAs($header));

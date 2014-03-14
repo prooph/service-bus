@@ -33,7 +33,7 @@ class CommandFactoryTest extends TestCase
     {
         $commandFactory = new CommandFactory();
 
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $message = new StandardMessage(
             'Codeliner\ServiceBusTest\Mock\DoSomething',
@@ -43,7 +43,13 @@ class CommandFactoryTest extends TestCase
 
         $command = $commandFactory->fromMessage($message);
 
-        $commandHeader = new MessageHeader($command->uuid(), $command->createdOn(), $command->version(), 'test-case');
+        $commandHeader = new MessageHeader(
+            $command->uuid(),
+            $command->createdOn(),
+            $command->version(),
+            'test-case',
+            MessageHeader::TYPE_COMMAND
+        );
 
         $this->assertTrue($command instanceof DoSomething);
         $this->assertTrue($commandHeader->sameHeaderAs($header));

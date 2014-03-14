@@ -40,7 +40,8 @@ class MessageFactoryTest extends TestCase
             $doSomething->uuid(),
             $doSomething->createdOn(),
             $doSomething->version(),
-            'test-case-bus'
+            'test-case-bus',
+            MessageHeader::TYPE_COMMAND
         );
 
         $this->assertTrue($message->header()->sameHeaderAs($testHeader));
@@ -63,7 +64,8 @@ class MessageFactoryTest extends TestCase
             $somethingDone->uuid(),
             $somethingDone->createdOn(),
             $somethingDone->version(),
-            'test-case-bus'
+            'test-case-bus',
+            MessageHeader::TYPE_EVENT
         );
 
         $this->assertTrue($message->header()->sameHeaderAs($testHeader));

@@ -42,6 +42,11 @@ interface MessageHeaderInterface
     public function sender();
 
     /**
+     * @return string
+     */
+    public function type();
+
+    /**
      * @param MessageHeaderInterface $other
      * @return bool
      */

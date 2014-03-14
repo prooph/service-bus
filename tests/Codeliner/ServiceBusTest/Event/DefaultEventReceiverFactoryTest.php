@@ -137,7 +137,7 @@ class DefaultEventReceiverFactoryTest extends TestCase
 
         $message = new StandardMessage(
             'Codeliner\ServiceBusTest\Mock\SomethingDone',
-            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus'),
+            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_EVENT),
             array('data' => 'test payload')
         );
 

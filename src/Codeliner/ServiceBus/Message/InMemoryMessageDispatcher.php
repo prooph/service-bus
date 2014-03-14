@@ -42,41 +42,40 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
      */
     public function dispatch(QueueInterface $aQueue, MessageInterface $aMessage)
     {
-        if (! isset($this->commandReceiverManagerQueueMap[$aQueue->name()])
-            && ! isset($this->eventReceiverManagerQueueMap[$aQueue->name()])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Neither a CommandReceiverManager nor a EventReceiverManager registered for queue -%s-',
-                    $aQueue->name()
-                )
-            );
-        }
+        if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
+            if (!isset($this->commandReceiverManagerQueueMap[$aQueue->name()])) {
+                throw new RuntimeException(
+                    sprintf(
+                        'No CommandReceiverManager registered for queue -%s-',
+                        $aQueue->name()
+                    )
+                );
+            }
 
-        $cmdEx = null;
-        $eventEx = null;
-
-        try {
             $commandReceiver = $this->commandReceiverManagerQueueMap[$aQueue->name()]
                 ->get($aMessage->header()->sender());
 
             $commandReceiver->handle($aMessage);
-        } catch (\Exception $cmdEx) {
-            //ignore exception for the moment
+
+            return;
         }
 
-        try {
+        if ($aMessage->header()->type() === MessageHeader::TYPE_EVENT) {
+            if (!isset($this->eventReceiverManagerQueueMap[$aQueue->name()])) {
+                throw new RuntimeException(
+                    sprintf(
+                        'No EventReceiverManager registered for queue -%s-',
+                        $aQueue->name()
+                    )
+                );
+            }
+
             $eventReceiver = $this->eventReceiverManagerQueueMap[$aQueue->name()]
                 ->get($aMessage->header()->sender());
 
             $eventReceiver->handle($aMessage);
-        } catch (\Exception $eventEx) {
-            //ignore exception for the moment
-        }
 
-        if ($cmdEx && $eventEx) {
-            $eventEx = new \Exception($eventEx->getMessage(), $eventEx->getCode(), $cmdEx);
-
-            throw new \Exception('Could not handle message. See previous exceptions for more details!', null, $eventEx);
+            return;
         }
     }
 

@@ -33,7 +33,8 @@ class MessageFactory implements MessageFactoryInterface
             $aCommand->uuid(),
             $aCommand->createdOn(),
             $aCommand->version(),
-            $aSenderName
+            $aSenderName,
+            MessageHeader::TYPE_COMMAND
         );
 
         return new StandardMessage(get_class($aCommand), $messageHeader, $aCommand->payload());
@@ -50,7 +51,8 @@ class MessageFactory implements MessageFactoryInterface
             $anEvent->uuid(),
             $anEvent->createdOn(),
             $anEvent->version(),
-            $aSenderName
+            $aSenderName,
+            MessageHeader::TYPE_EVENT
         );
 
         return new StandardMessage(get_class($anEvent), $messageHeader, $anEvent->payload());

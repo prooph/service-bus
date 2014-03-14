@@ -137,7 +137,7 @@ class DefaultCommandReceiverFactoryTest extends TestCase
 
         $message = new StandardMessage(
             'Codeliner\ServiceBusTest\Mock\DoSomething',
-            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus'),
+            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
             array('data' => 'test payload')
         );
 

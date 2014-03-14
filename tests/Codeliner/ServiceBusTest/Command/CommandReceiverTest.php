@@ -51,7 +51,8 @@ class CommandReceiverTest extends TestCase
                 $aCommand->uuid(),
                 $aCommand->createdOn(),
                 $aCommand->version(),
-                'test-case'
+                'test-case',
+                MessageHeader::TYPE_COMMAND
             );
 
             $self->commandHeader  = $commandHeader;
@@ -71,7 +72,7 @@ class CommandReceiverTest extends TestCase
      */
     public function it_handles_a_message_and_calls_the_related_command_on_configured_handler()
     {
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case');
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $message = new StandardMessage(
             'Codeliner\ServiceBusTest\Mock\DoSomething',

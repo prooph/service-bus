@@ -22,6 +22,8 @@ use Rhumsaa\Uuid\Uuid;
  */
 class MessageHeader implements MessageHeaderInterface
 {
+    const TYPE_COMMAND = 'command';
+    const TYPE_EVENT   = 'event';
     /**
      * @var Uuid
      */
@@ -43,12 +45,20 @@ class MessageHeader implements MessageHeaderInterface
     private $sender;
 
     /**
+     * Type of the Message, can either be command or event
+     *
+     * @var string
+     */
+    private $type;
+
+    /**
      * @param Uuid      $aUuid
      * @param \DateTime $aCreatedOn
      * @param int       $aVersion
      * @param string    $aSender
+     * @param string    $aType
      */
-    public function __construct(Uuid $aUuid, \DateTime $aCreatedOn, $aVersion, $aSender)
+    public function __construct(Uuid $aUuid, \DateTime $aCreatedOn, $aVersion, $aSender, $aType)
     {
         \Assert\that($aVersion)
             ->notEmpty('MessageHeader.version must not be empty')
@@ -58,10 +68,14 @@ class MessageHeader implements MessageHeaderInterface
             ->notEmpty('MessageHeader.sender must not be empty')
             ->string('MessageHeader.sender must be a string');
 
+        \Assert\that($aType)
+            ->inArray(array(self::TYPE_COMMAND, self::TYPE_EVENT), 'MessageHeader.type must be command or event');
+
         $this->uuid      = $aUuid;
         $this->createdOn = $aCreatedOn;
         $this->version   = $aVersion;
         $this->sender    = $aSender;
+        $this->type      = $aType;
     }
 
     /**
@@ -97,6 +111,14 @@ class MessageHeader implements MessageHeaderInterface
     }
 
     /**
+     * @return string
+     */
+    public function type()
+    {
+        return $this->type;
+    }
+
+    /**
      * @param MessageHeaderInterface $other
      * @return bool
      */
@@ -107,6 +129,7 @@ class MessageHeader implements MessageHeaderInterface
             ->append($this->createdOn()->getTimestamp(), $other->createdOn()->getTimestamp())
             ->append($this->version(), $other->version())
             ->append($this->sender(), $other->sender())
+            ->append($this->type(), $other->type())
             ->strict()
             ->equals();
     }
