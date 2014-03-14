@@ -13,7 +13,10 @@ namespace Codeliner\ServiceBus\Message;
 
 use Codeliner\ServiceBus\Exception\RuntimeException;
 use Codeliner\ServiceBus\Service\CommandReceiverManager;
+use Codeliner\ServiceBus\Service\Definition;
 use Codeliner\ServiceBus\Service\EventReceiverManager;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class InMemoryMessageDispatcher
@@ -34,6 +37,11 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
     protected $eventReceiverManagerQueueMap   = array();
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * @param QueueInterface $aQueue
      * @param MessageInterface $aMessage
      * @throws \Codeliner\ServiceBus\Exception\RuntimeException If no ReceiverManager is registered for Queue
@@ -42,6 +50,16 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
      */
     public function dispatch(QueueInterface $aQueue, MessageInterface $aMessage)
     {
+        $results = $this->events()->trigger(
+            __FUNCTION__. '.pre',
+            $this,
+            array('queue' => $aQueue, 'message' => $aMessage)
+        );
+
+        if ($results->stopped()) {
+            return;
+        }
+
         if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
             if (!isset($this->commandReceiverManagerQueueMap[$aQueue->name()])) {
                 throw new RuntimeException(
@@ -56,6 +74,12 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
                 ->get($aMessage->header()->sender());
 
             $commandReceiver->handle($aMessage);
+
+            $this->events()->trigger(
+                __FUNCTION__. '.post',
+                $this,
+                array('queue' => $aQueue, 'message' => $aMessage, 'receiver' => $commandReceiver)
+            );
 
             return;
         }
@@ -74,6 +98,12 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
                 ->get($aMessage->header()->sender());
 
             $eventReceiver->handle($aMessage);
+
+            $this->events()->trigger(
+                __FUNCTION__. '.post',
+                $this,
+                array('queue' => $aQueue, 'message' => $aMessage, 'receiver' => $eventReceiver)
+            );
 
             return;
         }
@@ -99,5 +129,21 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
         EventReceiverManager $anEventReceiverManager
     ) {
         $this->eventReceiverManagerQueueMap[$aQueue->name()] = $anEventReceiverManager;
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function events()
+    {
+        if (is_null($this->events)) {
+            $this->events = new EventManager(array(
+                Definition::SERVICE_BUS_COMPONENT,
+                'message_dispatcher',
+                __CLASS__
+            ));
+        }
+
+        return $this->events;
     }
 }

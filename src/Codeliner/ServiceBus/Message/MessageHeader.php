@@ -27,29 +27,29 @@ class MessageHeader implements MessageHeaderInterface
     /**
      * @var Uuid
      */
-    private $uuid;
+    protected $uuid;
 
     /**
      * @var \DateTime
      */
-    private $createdOn;
+    protected $createdOn;
 
     /**
      * @var int
      */
-    private $version;
+    protected $version;
 
     /**
      * @var string
      */
-    private $sender;
+    protected $sender;
 
     /**
      * Type of the Message, can either be command or event
      *
      * @var string
      */
-    private $type;
+    protected $type;
 
     /**
      * @param Uuid      $aUuid

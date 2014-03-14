@@ -11,6 +11,8 @@
 
 namespace Codeliner\ServiceBus\Service;
 
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -23,6 +25,16 @@ use Zend\ServiceManager\ServiceManager;
  */
 class ServiceBusManager extends ServiceManager
 {
+    /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
+     * @var bool
+     */
+    protected $initialized = false;
+
     /**
      * @var array
      */
@@ -48,5 +60,54 @@ class ServiceBusManager extends ServiceManager
                 $instance->setServiceLocator($self);
             }
         });
+    }
+
+    /**
+     * @return ServiceBusManager
+     */
+    public function initialize()
+    {
+        $this->events()->trigger(__FUNCTION__, $this);
+        return $this;
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function events()
+    {
+        if (is_null($this->events)) {
+            $this->events = new EventManager(array(
+                'ServiceBus',
+                'ServiceBusManager',
+                __CLASS__
+            ));
+        }
+
+        return $this->events;
+    }
+
+    /**
+     * @param EventManagerInterface $events
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $events->setIdentifiers(array(
+            'ServiceBus',
+            'ServiceBusManager',
+            __CLASS__
+        ));
+
+        $this->events = $events;
+    }
+
+    /**
+     * Reset ServiceBusManager
+     */
+    public function clear()
+    {
+        $this->events      = null;
+        $this->initialized = false;
+        $this->instances   = array();
     }
 }

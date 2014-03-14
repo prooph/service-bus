@@ -22,17 +22,17 @@ class StandardMessage implements MessageInterface
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var MessageHeaderInterface
      */
-    private $header;
+    protected $header;
 
     /**
      * @var array
      */
-    private $payload;
+    protected $payload;
 
     /**
      * @param string                 $aName

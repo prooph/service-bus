@@ -17,6 +17,9 @@ use Codeliner\ServiceBus\Message\MessageFactoryInterface;
 use Codeliner\ServiceBus\Message\MessageHeader;
 use Codeliner\ServiceBus\Message\QueueInterface;
 use Codeliner\ServiceBus\Message\StandardMessage;
+use Codeliner\ServiceBus\Service\Definition;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class CommandBus
@@ -29,22 +32,27 @@ class CommandBus implements CommandBusInterface
     /**
      * @var MessageDispatcherInterface
      */
-    private $messageDispatcher;
+    protected $messageDispatcher;
 
     /**
      * @var QueueInterface
      */
-    private $queue;
+    protected $queue;
 
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var MessageFactoryInterface
      */
-    private $messageFactory;
+    protected $messageFactory;
+
+    /**
+     * @var EventManagerInterface
+     */
+    protected $events;
 
     /**
      * @param string                     $aName
@@ -67,9 +75,17 @@ class CommandBus implements CommandBusInterface
      */
     public function send(CommandInterface $aCommand)
     {
+        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('command' => $aCommand));
+
+        if ($results->stopped()) {
+            return;
+        }
+
         $message = $this->getMessageFactory()->fromCommand($aCommand, $this->name);
 
         $this->messageDispatcher->dispatch($this->queue, $message);
+
+        $this->events()->trigger(__FUNCTION__ . '.post', $this, array('command' => $aCommand, 'message' => $message));
     }
 
     /**
@@ -90,5 +106,21 @@ class CommandBus implements CommandBusInterface
         }
 
         return $this->messageFactory;
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function events()
+    {
+        if (is_null($this->events)) {
+            $this->events = new EventManager(array(
+                Definition::SERVICE_BUS_COMPONENT,
+                'command_bus',
+                __CLASS__
+            ));
+        }
+
+        return $this->events;
     }
 }

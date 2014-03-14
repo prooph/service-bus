@@ -14,12 +14,14 @@ namespace Codeliner\ServiceBusTest\Command;
 use Codeliner\ServiceBus\Command\CommandBus;
 use Codeliner\ServiceBus\Command\CommandReceiver;
 use Codeliner\ServiceBus\Message\InMemoryMessageDispatcher;
+use Codeliner\ServiceBus\Message\MessageFactory;
 use Codeliner\ServiceBus\Message\Queue;
 use Codeliner\ServiceBus\Service\CommandReceiverManager;
 use Codeliner\ServiceBus\Service\ServiceBusManager;
 use Codeliner\ServiceBusTest\Mock\DoSomething;
 use Codeliner\ServiceBusTest\Mock\HandleCommandHandler;
 use Codeliner\ServiceBusTest\TestCase;
+use Zend\EventManager\EventInterface;
 
 /**
  * Class CommandBusTest
@@ -78,6 +80,40 @@ class CommandBusTest extends TestCase
         $this->commandBus->send($doSomething);
 
         $this->assertEquals('test payload', $this->doSomethingHandler->lastCommand()->data());
+    }
+
+    /**
+     * @test
+     */
+    public function it_triggers_pre_and_post_send_events()
+    {
+        $preIsTriggered = false;
+        $postIsTriggered = false;
+
+        $doSomething = DoSomething::fromData('test payload');
+
+        $this->commandBus->events()->attach('send.pre', function(EventInterface $e) use (&$preIsTriggered, $doSomething) {
+            $this->assertSame($doSomething, $e->getParam('command'));
+            $preIsTriggered = true;
+        });
+
+        $messageFactory = new MessageFactory();
+
+        $message = $messageFactory->fromCommand($doSomething, 'test-case-bus');
+
+        $this->commandBus->events()->attach(
+            'send.post',
+            function (EventInterface $e) use (&$postIsTriggered, $doSomething, $message) {
+                $this->assertSame($doSomething, $e->getParam('command'));
+                $this->assertTrue($message->header()->sameHeaderAs($e->getParam('message')->header()));
+                $postIsTriggered = true;
+            }
+        );
+
+        $this->commandBus->send($doSomething);
+
+        $this->assertTrue($preIsTriggered);
+        $this->assertTrue($postIsTriggered);
     }
 }
  

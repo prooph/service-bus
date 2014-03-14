@@ -11,6 +11,7 @@
 
 namespace Codeliner\ServiceBusTest\Event;
 
+use Codeliner\ServiceBus\Event\EventFactory;
 use Codeliner\ServiceBus\Event\EventReceiver;
 use Codeliner\ServiceBus\Message\MessageHeader;
 use Codeliner\ServiceBus\Message\StandardMessage;
@@ -18,6 +19,7 @@ use Codeliner\ServiceBus\Service\ServiceBusManager;
 use Codeliner\ServiceBusTest\Mock\SomethingDone;
 use Codeliner\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use Zend\EventManager\EventInterface;
 
 /**
  * Class EventReceiverTest
@@ -90,6 +92,100 @@ class EventReceiverTest extends TestCase
         $this->assertTrue($header->sameHeaderAs($this->eventHeader));
         $this->assertEquals(array('data' => 'test'), $this->eventPayload);
         $this->assertEquals(2, $this->called);
+    }
+
+    /**
+     * @test
+     */
+    public function it_triggers_all_events()
+    {
+        $preHandleTriggered         = false;
+        $preInvokeHandlerTriggered  = false;
+        $postInvokeHandlerTriggered = false;
+        $postHandleTriggered        = false;
+
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
+
+        $message = new StandardMessage(
+            'Codeliner\ServiceBusTest\Mock\SomethingDone',
+            $header,
+            array('data' => 'test')
+        );
+
+        $eventFactory = new EventFactory();
+
+        $event = $eventFactory->fromMessage($message);
+
+        $this->eventReceiver->events()->attach(
+            'handle.pre',
+            function (EventInterface $e) use (&$preHandleTriggered, $message) {
+                $this->assertSame($message, $e->getParam('message'));
+                $preHandleTriggered = true;
+            }
+        );
+
+        $this->eventReceiver->events()->attach(
+            'invoke_handler.pre',
+            function (EventInterface $e) use (&$preInvokeHandlerTriggered, $event) {
+                $this->assertSame($event->uuid(), $e->getParam('event')->uuid());
+                $this->assertTrue(is_callable($e->getParam('handler')));
+                $preInvokeHandlerTriggered = true;
+            }
+        );
+
+        $this->eventReceiver->events()->attach(
+            'invoke_handler.post',
+            function (EventInterface $e) use (&$postInvokeHandlerTriggered, $event) {
+                $this->assertSame($event->uuid(), $e->getParam('event')->uuid());
+                $this->assertTrue(is_callable($e->getParam('handler')));
+                $postInvokeHandlerTriggered = true;
+            }
+        );
+
+        $this->eventReceiver->events()->attach(
+            'handle.post',
+            function (EventInterface $e) use (&$postHandleTriggered, $event, $message) {
+                $this->assertSame($event->uuid(), $e->getParam('event')->uuid());
+                $this->assertSame($message, $e->getParam('message'));
+                $postHandleTriggered = true;
+            }
+        );
+
+        $this->eventReceiver->handle($message);
+
+        $this->assertTrue($preHandleTriggered);
+        $this->assertTrue($preInvokeHandlerTriggered);
+        $this->assertTrue($postInvokeHandlerTriggered);
+        $this->assertTrue($postHandleTriggered);
+    }
+
+    /**
+     * @test
+     */
+    public function it_skips_invoking_handler_if_listeners_stops_propagation()
+    {
+        $this->called = 0;
+
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
+
+        $message = new StandardMessage(
+            'Codeliner\ServiceBusTest\Mock\SomethingDone',
+            $header,
+            array('data' => 'test')
+        );
+
+        $this->eventReceiver->events()->attach(
+            'invoke_handler.pre',
+            function (EventInterface $e) {
+                if ($this->called == 1) {
+                    $e->stopPropagation(true);
+                }
+            }
+        );
+
+        $this->eventReceiver->handle($message);
+
+        $this->assertEquals(1, $this->called);
     }
 }
  

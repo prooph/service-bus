@@ -22,7 +22,7 @@ class Queue implements QueueInterface
     /**
      * @var string
      */
-    private $name;
+    protected $name;
     /**
      * @param string $aName
      */

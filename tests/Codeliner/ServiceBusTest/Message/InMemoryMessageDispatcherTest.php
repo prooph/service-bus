@@ -21,6 +21,7 @@ use Codeliner\ServiceBus\Service\ServiceBusManager;
 use Codeliner\ServiceBusTest\Mock\HandleCommandHandler;
 use Codeliner\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use Zend\EventManager\EventInterface;
 
 /**
  * Class InMemoryMessageDispatcherTest
@@ -81,5 +82,46 @@ class InMemoryMessageDispatcherTest extends TestCase
         $this->messageDispatcher->dispatch($localQueue, $message);
 
         $this->assertEquals('test payload', $this->commandHandler->lastCommand()->data());
+    }
+
+    /**
+     * @test
+     */
+    public function it_triggers_all_events()
+    {
+        $preDispatchTriggered  = false;
+        $postDispatchTriggered = false;
+
+        $message = new StandardMessage(
+            'Codeliner\ServiceBusTest\Mock\DoSomething',
+            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
+            array('data' => 'test payload')
+        );
+
+        $localQueue = new Queue('local');
+
+        $this->messageDispatcher->events()->attach(
+            'dispatch.pre',
+            function (EventInterface $e) use (&$preDispatchTriggered, $localQueue, $message) {
+                $this->assertSame($localQueue, $e->getParam('queue'));
+                $this->assertSame($message, $e->getParam('message'));
+                $preDispatchTriggered = true;
+            }
+        );
+
+        $this->messageDispatcher->events()->attach(
+            'dispatch.post',
+            function (EventInterface $e) use (&$postDispatchTriggered, $localQueue, $message) {
+                $this->assertSame($localQueue, $e->getParam('queue'));
+                $this->assertSame($message, $e->getParam('message'));
+                $this->assertInstanceOf('Codeliner\ServiceBus\Command\CommandReceiver', $e->getParam('receiver'));
+                $postDispatchTriggered = true;
+            }
+        );
+
+        $this->messageDispatcher->dispatch($localQueue, $message);
+
+        $this->assertTrue($preDispatchTriggered);
+        $this->assertTrue($postDispatchTriggered);
     }
 }

@@ -13,7 +13,10 @@ namespace Codeliner\ServiceBus\Command;
 
 use Codeliner\ServiceBus\Exception\RuntimeException;
 use Codeliner\ServiceBus\Message\MessageInterface;
+use Codeliner\ServiceBus\Service\Definition;
 use Codeliner\ServiceBus\Service\InvokeStrategyManager;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -50,6 +53,11 @@ class CommandReceiver implements CommandReceiverInterface
     protected $invokeStrategyManager;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * @param array                   $aCommandMap
      * @param ServiceLocatorInterface $aCommandHandlerLocator
      */
@@ -66,6 +74,13 @@ class CommandReceiver implements CommandReceiverInterface
      */
     public function handle(MessageInterface $aMessage)
     {
+        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('message' => $aMessage));
+
+        if ($results->stopped()) {
+            return;
+        }
+
+
         if (!isset($this->commandMap[$aMessage->name()])) {
             return;
         }
@@ -73,6 +88,15 @@ class CommandReceiver implements CommandReceiverInterface
         $command = $this->getCommandFactory()->fromMessage($aMessage);
 
         $handler = $this->commandHandlerLocator->get($this->commandMap[$aMessage->name()]);
+
+
+        $params = compact('command', 'handler');
+
+        $results = $this->events()->trigger('invoke_handler.pre', $this, $params);
+
+        if ($results->stopped()) {
+            return;
+        }
 
         $invokeStrategy = null;
 
@@ -95,6 +119,12 @@ class CommandReceiver implements CommandReceiverInterface
         }
 
         $invokeStrategy->invoke($handler, $command);
+
+        $this->events()->trigger('invoke_handler.post', $this, $params);
+
+        $params['message'] = $aMessage;
+
+        $this->events()->trigger(__FUNCTION__. '.post', $this, $params);
     }
 
     /**
@@ -151,5 +181,18 @@ class CommandReceiver implements CommandReceiverInterface
         }
 
         return $this->invokeStrategyManager;
+    }
+
+    public function events()
+    {
+        if (is_null($this->events)) {
+            $this->events = new EventManager(array(
+                Definition::SERVICE_BUS_COMPONENT,
+                'command_receiver',
+                __CLASS__
+            ));
+        }
+
+        return $this->events;
     }
 }

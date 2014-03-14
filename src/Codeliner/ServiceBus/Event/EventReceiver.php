@@ -13,7 +13,10 @@ namespace Codeliner\ServiceBus\Event;
 
 use Codeliner\ServiceBus\Exception\RuntimeException;
 use Codeliner\ServiceBus\Message\MessageInterface;
+use Codeliner\ServiceBus\Service\Definition;
 use Codeliner\ServiceBus\Service\InvokeStrategyManager;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -50,6 +53,11 @@ class EventReceiver implements EventReceiverInterface
     protected $invokeStrategyManager;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * @param array                   $anEventMap
      * @param ServiceLocatorInterface $anEventHandlerLocator
      */
@@ -66,6 +74,12 @@ class EventReceiver implements EventReceiverInterface
      */
     public function handle(MessageInterface $aMessage)
     {
+        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('message' => $aMessage));
+
+        if ($results->stopped()) {
+            return;
+        }
+
         if (!isset($this->eventMap[$aMessage->name()])) {
             return;
         }
@@ -79,6 +93,14 @@ class EventReceiver implements EventReceiverInterface
         foreach ($eventHandlerAliases as $eventHandlerAlias) {
 
             $handler = $this->eventHandlerLocator->get($eventHandlerAlias);
+
+            $params = compact('event', 'handler');
+
+            $results = $this->events()->trigger('invoke_handler.pre', $this, $params);
+
+            if ($results->stopped()) {
+                continue;
+            }
 
             $invokeStrategy = null;
 
@@ -101,7 +123,11 @@ class EventReceiver implements EventReceiverInterface
             }
 
             $invokeStrategy->invoke($handler, $event);
+
+            $this->events()->trigger('invoke_handler.post', $this, $params);
         }
+
+        $this->events()->trigger(__FUNCTION__ . '.post', $this, array('message' => $aMessage, 'event' => $event));
     }
 
     /**
@@ -158,6 +184,22 @@ class EventReceiver implements EventReceiverInterface
         }
 
         return $this->invokeStrategyManager;
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function events()
+    {
+        if (is_null($this->events)) {
+            $this->events = new EventManager(array(
+                Definition::SERVICE_BUS_COMPONENT,
+                'event_receiver',
+                __CLASS__
+            ));
+        }
+
+        return $this->events;
     }
 }
  

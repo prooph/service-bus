@@ -58,4 +58,6 @@ class Definition
     const MESSAGE_DISPATCHER_MANAGER        = "message_dispatcher_manager";
 
     const QUEUE_MANAGER                     = "queue_manager";
+
+    const SERVICE_BUS_COMPONENT             = 'service_bus_component';
 }

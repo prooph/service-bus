@@ -21,7 +21,7 @@ class ServiceBusConfiguration implements ConfigInterface
     /**
      * @var array
      */
-    private $configuration = array(
+    protected $configuration = array(
         Definition::CONFIG_ROOT => array(
             Definition::COMMAND_BUS => array(),
         )
@@ -30,22 +30,22 @@ class ServiceBusConfiguration implements ConfigInterface
     /**
      * @var array
      */
-    private $commandHandlers = array();
+    protected $commandHandlers = array();
 
     /**
      * @var CommandFactoryInterface
      */
-    private $commandFactory;
+    protected $commandFactory;
 
     /**
      * @var ServiceLocatorInterface
      */
-    private $invokeStrategyManager;
+    protected $invokeStrategyManager;
 
     /**
      * @var ServiceLocatorInterface
      */
-    private $commandReceiverManager;
+    protected $commandReceiverManager;
 
     /**
      * Configure service manager
