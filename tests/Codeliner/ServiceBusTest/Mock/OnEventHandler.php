@@ -26,11 +26,14 @@ class OnEventHandler
      */
     private $lastEvent;
 
+    private $eventCount = 0;
+
     /**
      * @param SomethingDone $event
      */
     public function onSomethingDone(SomethingDone $event)
     {
+        $this->eventCount++;
         $this->lastEvent = $event;
     }
 
@@ -40,6 +43,11 @@ class OnEventHandler
     public function lastEvent()
     {
         return $this->lastEvent;
+    }
+
+    public function eventCount()
+    {
+        return $this->eventCount;
     }
 }
  

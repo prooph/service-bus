@@ -32,6 +32,7 @@ class ServiceBusManager extends ServiceManager
         'invokestrategymanager'     => 'Codeliner\ServiceBus\Service\InvokeStrategyManager',
         'messagedispatchermanager'  => 'Codeliner\ServiceBus\Service\MessageDispatcherManager',
         'queuemanager'              => 'Codeliner\ServiceBus\Service\QueueManager',
+        'eventreceivermanager'      => 'Codeliner\ServiceBus\Service\EventReceiverManager',
     );
 
     /**

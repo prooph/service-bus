@@ -6,25 +6,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 11.03.14 - 22:15
+ * Date: 12.03.14 - 16:05
  */
 
 namespace Codeliner\ServiceBus\Service;
 
-use Codeliner\ServiceBus\Event\DefaultEventReceiverFactory;
-use Codeliner\ServiceBus\Event\EventReceiverInterface;
+use Codeliner\ServiceBus\Event\DefaultEventBusFactory;
+use Codeliner\ServiceBus\Event\EventBusInterface;
+use Codeliner\ServiceBus\Exception\RuntimeException;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
+use Zend\ServiceManager\Exception;
 
 /**
- * Class EventReceiverManager
- *
- * @method EventReceiverInterface get($name) Get EventReceiver by name or alias
+ * Class EventBusManager
  *
  * @package Codeliner\ServiceBus\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class EventReceiverManager extends AbstractPluginManager
+class EventBusManager extends AbstractPluginManager
 {
     /**
      * @param ConfigInterface $aConfig
@@ -33,21 +33,24 @@ class EventReceiverManager extends AbstractPluginManager
     {
         parent::__construct($aConfig);
 
-        $this->abstractFactories[] = new DefaultEventReceiverFactory();
+        $this->abstractFactories[] = new DefaultEventBusFactory();
     }
 
     /**
      * Validate the plugin
      *
+     * Checks that the filter loaded is either a valid callback or an instance
+     * of FilterInterface.
+     *
      * @param  mixed $plugin
+     * @throws \Codeliner\ServiceBus\Exception\RuntimeException
      * @return void
-     * @throws \RuntimeException if invalid
      */
     public function validatePlugin($plugin)
     {
-        if (! $plugin instanceof EventReceiverInterface) {
-            throw new \RuntimeException(sprintf(
-                'EventReceiver must be instance of Codeliner\ServiceBus\Event\EventReceiverInterface,'
+        if (! $plugin instanceof EventBusInterface) {
+            throw new RuntimeException(sprintf(
+                'EventBus must be instance of Codeliner\ServiceBus\Command\EventBusInterface,'
                 . 'instance of type %s given',
                 ((is_object($plugin)? get_class($plugin)  : gettype($plugin)))
             ));

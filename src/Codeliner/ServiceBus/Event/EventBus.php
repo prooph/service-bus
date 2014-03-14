@@ -6,25 +6,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 08.03.14 - 11:40
+ * Date: 11.03.14 - 22:59
  */
 
-namespace Codeliner\ServiceBus\Command;
+namespace Codeliner\ServiceBus\Event;
 
 use Codeliner\ServiceBus\Message\MessageDispatcherInterface;
 use Codeliner\ServiceBus\Message\MessageFactory;
 use Codeliner\ServiceBus\Message\MessageFactoryInterface;
-use Codeliner\ServiceBus\Message\MessageHeader;
 use Codeliner\ServiceBus\Message\QueueInterface;
-use Codeliner\ServiceBus\Message\StandardMessage;
 
 /**
- * Class CommandBus
+ * Class EventBus
  *
- * @package Codeliner\ServiceBus\Command
+ * @package Codeliner\ServiceBus\Event
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandBus implements CommandBusInterface
+class EventBus implements EventBusInterface
 {
     /**
      * @var MessageDispatcherInterface
@@ -32,9 +30,9 @@ class CommandBus implements CommandBusInterface
     private $messageDispatcher;
 
     /**
-     * @var QueueInterface
+     * @var QueueInterface[]
      */
-    private $queue;
+    private $queueCollection;
 
     /**
      * @var string
@@ -49,27 +47,30 @@ class CommandBus implements CommandBusInterface
     /**
      * @param string                     $aName
      * @param MessageDispatcherInterface $aMessageDispatcher
-     * @param QueueInterface             $aQueue
+     * @param QueueInterface[]           $aQueueCollection
      */
-    public function __construct($aName, MessageDispatcherInterface $aMessageDispatcher, QueueInterface $aQueue)
+    public function __construct($aName, MessageDispatcherInterface $aMessageDispatcher, array $aQueueCollection)
     {
-        \Assert\that($aName)->notEmpty('CommandBus.name must not be empty')->string('CommandBus.name must be a string');
+        \Assert\that($aName)->notEmpty('EventBus.name must not be empty')->string('EventBus.name must be a string');
+        \Assert\that($aQueueCollection)->all()->isInstanceOf('Codeliner\ServiceBus\Message\QueueInterface');
 
         $this->name              = $aName;
         $this->messageDispatcher = $aMessageDispatcher;
-        $this->queue             = $aQueue;
+        $this->queueCollection   = $aQueueCollection;
     }
 
     /**
-     * @param CommandInterface $aCommand
+     * @param EventInterface $anEvent
      *
      * @return void
      */
-    public function send(CommandInterface $aCommand)
+    public function publish(EventInterface $anEvent)
     {
-        $message = $this->getMessageFactory()->fromCommand($aCommand, $this->name);
+        $message = $this->getMessageFactory()->fromEvent($anEvent, $this->name);
 
-        $this->messageDispatcher->dispatch($this->queue, $message);
+        foreach ($this->queueCollection as $queue) {
+            $this->messageDispatcher->dispatch($queue, $message);
+        }
     }
 
     /**
