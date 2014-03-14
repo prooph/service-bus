@@ -57,6 +57,8 @@ class ServiceBusConfiguration implements ConfigInterface
     {
         $serviceManager->setService('configuration', $this->configuration);
 
+        $serviceManager->setAllowOverride(true);
+
         if (count($this->commandHandlers)) {
             foreach ($this->commandHandlers as $alias => $commandHandler) {
                 $serviceManager->setService($alias, $commandHandler);
@@ -74,6 +76,20 @@ class ServiceBusConfiguration implements ConfigInterface
         if (!is_null($this->commandReceiverManager)) {
             $serviceManager->setService(Definition::COMMAND_RECEIVER_MANAGER, $this->commandReceiverManager);
         }
+
+        if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS])) {
+            $serviceManager->setDefaultCommandBus(
+                $this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS]
+            );
+        }
+
+        if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_EVENT_BUS])) {
+            $serviceManager->setDefaultEventBus(
+                $this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_EVENT_BUS]
+            );
+        }
+
+        $serviceManager->setAllowOverride(false);
     }
 
     /**

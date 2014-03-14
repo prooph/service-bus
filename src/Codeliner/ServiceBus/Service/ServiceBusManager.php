@@ -11,6 +11,9 @@
 
 namespace Codeliner\ServiceBus\Service;
 
+use Codeliner\ServiceBus\Command\CommandBusInterface;
+use Codeliner\ServiceBus\Event\EventBusInterface;
+use Codeliner\ServiceBus\Exception\RuntimeException;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ConfigInterface;
@@ -36,6 +39,16 @@ class ServiceBusManager extends ServiceManager
     protected $initialized = false;
 
     /**
+     * @var string
+     */
+    protected $defaultCommandBus;
+
+    /**
+     * @var string
+     */
+    protected $defaultEventBus;
+
+    /**
      * @var array
      */
     protected $invokableClasses = array(
@@ -45,6 +58,7 @@ class ServiceBusManager extends ServiceManager
         'messagedispatchermanager'  => 'Codeliner\ServiceBus\Service\MessageDispatcherManager',
         'queuemanager'              => 'Codeliner\ServiceBus\Service\QueueManager',
         'eventreceivermanager'      => 'Codeliner\ServiceBus\Service\EventReceiverManager',
+        'eventbusmanager'           => 'Codeliner\ServiceBus\Service\EventBusManager',
     );
 
     /**
@@ -69,6 +83,76 @@ class ServiceBusManager extends ServiceManager
     {
         $this->events()->trigger(__FUNCTION__, $this);
         return $this;
+    }
+
+    /**
+     * @param string $aName
+     */
+    public function setDefaultCommandBus($aName)
+    {
+        \Assert\that($aName)->notEmpty()->string();
+
+        $this->defaultCommandBus = $aName;
+    }
+
+    /**
+     * @param null|string $aName
+     * @throws \Codeliner\ServiceBus\Exception\RuntimeException
+     * @return CommandBusInterface
+     */
+    public function getCommandBus($aName = null)
+    {
+        \Assert\that($aName)->nullOr()->notEmpty()->string();
+
+        if (is_null($aName)) {
+            if (is_null($this->defaultCommandBus)) {
+                throw new RuntimeException(
+                    sprintf(
+                        'No default command bus set. Please provide a command bus name or set a default bus in %s',
+                        get_class($this)
+                    )
+                );
+            }
+
+            return $this->get('commandbusmanager')->get($this->defaultCommandBus);
+        }
+
+        return $this->get('commandbusmanager')->get($aName);
+    }
+
+    /**
+     * @param string $aName
+     */
+    public function setDefaultEventdBus($aName)
+    {
+        \Assert\that($aName)->notEmpty()->string();
+
+        $this->defaultEventBus = $aName;
+    }
+
+    /**
+     * @param null|string $aName
+     * @throws \Codeliner\ServiceBus\Exception\RuntimeException
+     * @return EventBusInterface
+     */
+    public function getEventBus($aName = null)
+    {
+        \Assert\that($aName)->nullOr()->notEmpty()->string();
+
+        if (is_null($aName)) {
+            if (is_null($this->defaultEventBus)) {
+                throw new RuntimeException(
+                    sprintf(
+                        'No default event bus set. Please provide an event bus name or set a default bus in %s',
+                        get_class($this)
+                    )
+                );
+            }
+
+            return $this->get('eventbusmanager')->get($this->defaultEventBus);
+        }
+
+        return $this->get('eventbusmanager')->get($aName);
     }
 
     /**

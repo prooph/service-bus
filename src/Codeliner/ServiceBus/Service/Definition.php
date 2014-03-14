@@ -23,6 +23,8 @@ class Definition
 
     const COMMAND_BUS                       = "command_bus";
 
+    const DEFAULT_COMMAND_BUS               = "default_command_bus";
+
     const COMMAND_MAP                       = "command_map";
 
     const COMMAND_HANDLER_INVOKE_STRATEGIES = 'command_handler_invoke_strategies';
@@ -30,6 +32,8 @@ class Definition
     const COMMAND_FACTORY                   = "command_factory";
 
     const EVENT_BUS                         = "event_bus";
+
+    const DEFAULT_EVENT_BUS                 = "default_event_bus";
 
     const EVENT_MAP                         = "event_map";
 
