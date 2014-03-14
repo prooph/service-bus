@@ -72,29 +72,36 @@ class EventReceiver implements EventReceiverInterface
 
         $event = $this->getEventFactory()->fromMessage($aMessage);
 
-        $handler = $this->eventHandlerLocator->get($this->eventMap[$aMessage->name()]);
+        $eventHandlerAliases = (is_string($this->eventMap[$aMessage->name()]))?
+            array($this->eventMap[$aMessage->name()])
+            : $this->eventMap[$aMessage->name()];
 
-        $invokeStrategy = null;
+        foreach ($eventHandlerAliases as $eventHandlerAlias) {
 
-        foreach ($this->getInvokeStrategies() as $invokeStrategyName) {
-            $invokeStrategy = $this->getInvokeStrategyManager()->get($invokeStrategyName);
-
-            if ($invokeStrategy->canInvoke($handler, $event)) {
-                break;
-            }
+            $handler = $this->eventHandlerLocator->get($eventHandlerAlias);
 
             $invokeStrategy = null;
-        }
 
-        if (is_null($invokeStrategy)) {
-            throw new RuntimeException(sprintf(
-                'No InvokeStrategy can invoke event %s on handler %s',
-                get_class($event),
-                get_class($handler)
-            ));
-        }
+            foreach ($this->getInvokeStrategies() as $invokeStrategyName) {
+                $invokeStrategy = $this->getInvokeStrategyManager()->get($invokeStrategyName);
 
-        $invokeStrategy->invoke($handler, $event);
+                if ($invokeStrategy->canInvoke($handler, $event)) {
+                    break;
+                }
+
+                $invokeStrategy = null;
+            }
+
+            if (is_null($invokeStrategy)) {
+                throw new RuntimeException(sprintf(
+                    'No InvokeStrategy can invoke event %s on handler %s',
+                    get_class($event),
+                    get_class($handler)
+                ));
+            }
+
+            $invokeStrategy->invoke($handler, $event);
+        }
     }
 
     /**

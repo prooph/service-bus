@@ -36,12 +36,15 @@ class EventReceiverTest extends TestCase
 
     public $eventPayload = null;
 
+    public $called = 0;
+
     protected function setUp()
     {
         $eventHandlerLocator = new ServiceBusManager();
 
         $this->eventHeader  = null;
         $this->eventPayload = null;
+        $this->called       = 0;
 
         $self = $this;
 
@@ -56,11 +59,13 @@ class EventReceiverTest extends TestCase
 
             $self->eventHeader  = $eventHeader;
             $self->eventPayload = $anEvent->payload();
+            $self->called++;
         });
 
+        //callback should be called twice that simulates multiple EventHandler
         $this->eventReceiver = new EventReceiver(
             array(
-                'Codeliner\ServiceBusTest\Mock\SomethingDone' => 'test-case-callback'
+                'Codeliner\ServiceBusTest\Mock\SomethingDone' => array('test-case-callback', 'test-case-callback')
             ),
             $eventHandlerLocator
         );
@@ -83,6 +88,7 @@ class EventReceiverTest extends TestCase
 
         $this->assertTrue($header->sameHeaderAs($this->eventHeader));
         $this->assertEquals(array('data' => 'test'), $this->eventPayload);
+        $this->assertEquals(2, $this->called);
     }
 }
  
