@@ -35,7 +35,7 @@ use Codeliner\ServiceBus\Example\Command\EchoText;
 use Codeliner\ServiceBus\Initializer\LocalSynchronousInitializer;
 use Codeliner\ServiceBus\Service\ServiceBusManager;
 
-//The ServiceBusManager is the central class, that manages the complete service bus environment
+//The ServiceBusManager is the central class, that manages the service bus environment
 $serviceBusManager = new ServiceBusManager();
 
 //We use an Initializer to configure a local in memory service bus
