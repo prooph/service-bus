@@ -82,6 +82,7 @@ class ServiceBusManager extends ServiceManager
     public function initialize()
     {
         $this->events()->trigger(__FUNCTION__, $this);
+        $this->initialized = true;
         return $this;
     }
 
@@ -102,6 +103,10 @@ class ServiceBusManager extends ServiceManager
      */
     public function getCommandBus($aName = null)
     {
+        if (!$this->initialized) {
+            $this->initialize();
+        }
+
         \Assert\that($aName)->nullOr()->notEmpty()->string();
 
         if (is_null($aName)) {
@@ -123,7 +128,7 @@ class ServiceBusManager extends ServiceManager
     /**
      * @param string $aName
      */
-    public function setDefaultEventdBus($aName)
+    public function setDefaultEventBus($aName)
     {
         \Assert\that($aName)->notEmpty()->string();
 
@@ -137,6 +142,10 @@ class ServiceBusManager extends ServiceManager
      */
     public function getEventBus($aName = null)
     {
+        if (!$this->initialized) {
+            $this->initialize();
+        }
+
         \Assert\that($aName)->nullOr()->notEmpty()->string();
 
         if (is_null($aName)) {

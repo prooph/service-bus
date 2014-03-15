@@ -135,7 +135,7 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
         }
 
         $serviceBusManager->setDefaultCommandBus('local-command-bus');
-        $serviceBusManager->setDefaultEventdBus('local-event-bus');
+        $serviceBusManager->setDefaultEventBus('local-event-bus');
 
         $commandMap = array();
 

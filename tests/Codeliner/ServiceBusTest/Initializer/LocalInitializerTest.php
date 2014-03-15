@@ -11,7 +11,6 @@
 
 namespace Codeliner\ServiceBusTest\Initializer;
 
-use Codeliner\ServiceBus\Event\EventInterface;
 use Codeliner\ServiceBus\Initializer\LocalSynchronousInitializer;
 use Codeliner\ServiceBus\Service\ServiceBusManager;
 use Codeliner\ServiceBusTest\Mock\DoSomething;
@@ -19,8 +18,6 @@ use Codeliner\ServiceBusTest\Mock\HandleCommandHandler;
 use Codeliner\ServiceBusTest\Mock\OnEventHandler;
 use Codeliner\ServiceBusTest\Mock\SomethingDone;
 use Codeliner\ServiceBusTest\TestCase;
-use Zend\EventManager\GlobalEventManager;
-use Zend\EventManager\StaticEventManager;
 
 /**
  * Class LocalInitializerTest
