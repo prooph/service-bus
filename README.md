@@ -13,7 +13,7 @@ Why another CQRS/Messaging library?
 The goal of PHPServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [php-resque
 ](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or RESTful Messaging API.
 It is designed with flexibility in mind. Almost all components can be extended with custom behavior. But flexibility has it's price. The structure of PHPServiceBus
-is more complex than of the other libraries. If you just want to get familiar with CQRS and/or messaging one of the above libs is maybe a better choice.
+is more complex than of the other libraries. If you just want to get familiar with CQRS and/or messaging, maybe another lib is a better choice.
 
 IoC and EDA
 -----------
