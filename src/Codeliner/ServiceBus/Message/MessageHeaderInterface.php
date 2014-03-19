@@ -22,6 +22,12 @@ use Rhumsaa\Uuid\Uuid;
 interface MessageHeaderInterface
 {
     /**
+     * @param array $aMessageHeaderArray
+     * @return MessageHeaderInterface
+     */
+    public static function fromArray(array $aMessageHeaderArray);
+
+    /**
      * @return Uuid
      */
     public function uuid();
@@ -51,4 +57,9 @@ interface MessageHeaderInterface
      * @return bool
      */
     public function sameHeaderAs(MessageHeaderInterface $other);
+
+    /**
+     * @return array
+     */
+    public function toArray();
 }

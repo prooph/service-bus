@@ -35,6 +35,22 @@ class StandardMessage implements MessageInterface
     protected $payload;
 
     /**
+     * @param array $aMessageArray
+     * @return MessageInterface
+     */
+    public static function fromArray(array $aMessageArray)
+    {
+        \Assert\that($aMessageArray)->keyExists('name')->keyExists('header')->keyExists('payload');
+        \Assert\that($aMessageArray['name'])->notEmpty()->string();
+        \Assert\that($aMessageArray['header'])->isArray();
+        \Assert\that($aMessageArray['payload'])->isArray();
+
+        $header = MessageHeader::fromArray($aMessageArray['header']);
+
+        return new static($aMessageArray['name'], $header, $aMessageArray['payload']);
+    }
+
+    /**
      * @param string                 $aName
      * @param MessageHeaderInterface $aMessageHeader
      * @param array                  $aPayload
@@ -70,5 +86,17 @@ class StandardMessage implements MessageInterface
     public function payload()
     {
         return $this->payload;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return array(
+            'name'    => $this->name(),
+            'header'  => $this->header()->toArray(),
+            'payload' => $this->payload()
+        );
     }
 }

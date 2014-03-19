@@ -20,6 +20,12 @@ namespace Codeliner\ServiceBus\Message;
 interface MessageInterface
 {
     /**
+     * @param array $aMessageArray
+     * @return MessageInterface
+     */
+    public static function fromArray(array $aMessageArray);
+
+    /**
      * @return string
      */
     public function name();
@@ -33,4 +39,9 @@ interface MessageInterface
      * @return array
      */
     public function payload();
+
+    /**
+     * @return array
+     */
+    public function toArray();
 } 

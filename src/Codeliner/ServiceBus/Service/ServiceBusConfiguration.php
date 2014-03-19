@@ -12,6 +12,7 @@
 namespace Codeliner\ServiceBus\Service;
 
 use Codeliner\ServiceBus\Command\CommandFactoryInterface;
+use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -30,7 +31,12 @@ class ServiceBusConfiguration implements ConfigInterface
     /**
      * @var array
      */
-    protected $commandHandlers = array();
+    protected $services = array();
+
+    /**
+     * @var array
+     */
+    protected $eventHandlers   = array();
 
     /**
      * @var CommandFactoryInterface
@@ -48,6 +54,16 @@ class ServiceBusConfiguration implements ConfigInterface
     protected $commandReceiverManager;
 
     /**
+     * @param null|array $aConfiguration
+     */
+    public function __construct(array $aConfiguration = null)
+    {
+        if (is_array($aConfiguration)) {
+            $this->setConfiguration($aConfiguration);
+        }
+    }
+
+    /**
      * Configure service manager
      *
      * @param ServiceManager $serviceManager
@@ -59,11 +75,15 @@ class ServiceBusConfiguration implements ConfigInterface
 
         $serviceManager->setAllowOverride(true);
 
-        if (count($this->commandHandlers)) {
-            foreach ($this->commandHandlers as $alias => $commandHandler) {
-                $serviceManager->setService($alias, $commandHandler);
+        if (count($this->services)) {
+            foreach ($this->services as $alias => $service) {
+                $serviceManager->setService($alias, $service);
             }
         }
+
+        $serviceBusManagerServicesConfig = new Config($this->configuration[Definition::CONFIG_ROOT]);
+
+        $serviceBusManagerServicesConfig->configureServiceManager($serviceManager);
 
         if (!is_null($this->commandFactory)) {
             $serviceManager->setService(Definition::COMMAND_FACTORY, $this->commandFactory);
@@ -97,7 +117,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setConfiguration(array $configuration)
     {
-        if (array_key_exists(Definition::CONFIG_ROOT, $configuration)) {
+        if (! array_key_exists(Definition::CONFIG_ROOT, $configuration)) {
             $configuration = array(Definition::CONFIG_ROOT => $configuration);
         }
 
@@ -143,7 +163,21 @@ class ServiceBusConfiguration implements ConfigInterface
             $aliasOrCommandHandler = get_class($commandHandler);
         }
 
-        $this->commandHandlers[$aliasOrCommandHandler] = $commandHandler;
+        $this->services[$aliasOrCommandHandler] = $commandHandler;
+    }
+
+    /**
+     * @param mixed      $aliasOrEventHandler
+     * @param null|mixed $eventHandler
+     */
+    public function addEventHandler($aliasOrEventHandler, $eventHandler = null)
+    {
+        if (is_null($eventHandler)) {
+            $eventHandler = $aliasOrEventHandler;
+            $aliasOrEventHandler = get_class($eventHandler);
+        }
+
+        $this->services[$aliasOrEventHandler] = $eventHandler;
     }
 
     /**

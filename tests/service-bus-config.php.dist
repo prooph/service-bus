@@ -1,0 +1,13 @@
+<?php
+return array(
+    'invokables' => array(
+        'file_remover' => 'Codeliner\ServiceBusTest\Mock\FileRemover'
+    ),
+    'command_bus' => array(
+        'php-resque-test-bus' => array(
+            'command_map' => array(
+                'Codeliner\ServiceBusTest\Mock\RemoveFileCommand' => 'file_remover'
+            )
+        )
+    ),
+);

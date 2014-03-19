@@ -30,6 +30,10 @@ class MessageDispatcherManager extends AbstractPluginManager
         'inmemorymessagedispatcher'      => 'Codeliner\ServiceBus\Message\InMemoryMessageDispatcher',
     );
 
+    protected $factories = array(
+        'phpresquemessagedispatcher'     => 'Codeliner\ServiceBus\Message\PhpResque\PhpResqueMessageDispatcherFactory',
+    );
+
     /**
      * Validate the plugin
      *

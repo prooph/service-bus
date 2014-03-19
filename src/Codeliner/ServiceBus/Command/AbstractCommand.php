@@ -54,6 +54,11 @@ class AbstractCommand implements CommandInterface
     public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, \DateTime $aCreatedOn = null)
     {
         if (!is_null($aPayload)) {
+
+            if (! is_array($aPayload)) {
+                $aPayload = $this->convertPayload($aPayload);
+            }
+
             if (is_array($aPayload)) {
                 $this->payload = $aPayload;
             } elseif ($aPayload instanceof PayloadInterface) {
@@ -114,6 +119,17 @@ class AbstractCommand implements CommandInterface
     public function createdOn()
     {
         return $this->createdOn;
+    }
+
+    /**
+     * Hook point for extending classes, override this method to convert payload to array
+     *
+     * @param mixed $aPayload
+     * @return mixed
+     */
+    protected function convertPayload($aPayload)
+    {
+        return $aPayload;
     }
 }
  

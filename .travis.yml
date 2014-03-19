@@ -3,6 +3,9 @@ language: php
 php:
   - 5.4
 
+services:
+  - redis-server
+
 
 before_script:
   - composer self-update

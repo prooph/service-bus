@@ -52,6 +52,31 @@ class MessageHeader implements MessageHeaderInterface
     protected $type;
 
     /**
+     * @param array $aMessageHeaderArray
+     * @return MessageHeaderInterface
+     */
+    public static function fromArray(array $aMessageHeaderArray)
+    {
+        \Assert\that($aMessageHeaderArray)
+            ->keyExists('uuid')
+            ->keyExists('createdOn')
+            ->keyExists('version')
+            ->keyExists('sender')
+            ->keyExists('type');
+
+        $uuid = Uuid::fromString($aMessageHeaderArray['uuid']);
+        $createdOn = new \DateTime($aMessageHeaderArray['createdOn']);
+
+        return new static(
+            $uuid,
+            $createdOn,
+            $aMessageHeaderArray['version'],
+            $aMessageHeaderArray['sender'],
+            $aMessageHeaderArray['type']
+        );
+    }
+
+    /**
      * @param Uuid      $aUuid
      * @param \DateTime $aCreatedOn
      * @param int       $aVersion
@@ -132,5 +157,19 @@ class MessageHeader implements MessageHeaderInterface
             ->append($this->type(), $other->type())
             ->strict()
             ->equals();
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return array(
+            'uuid'      => $this->uuid()->toString(),
+            'createdOn' => $this->createdOn()->format(\DateTime::ISO8601),
+            'version'   => $this->version(),
+            'sender'    => $this->sender(),
+            'type'      => $this->type()
+        );
     }
 }

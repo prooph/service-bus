@@ -89,5 +89,19 @@ class MessageHeaderTest extends TestCase
 
         $this->assertTrue($header->sameHeaderAs($sameHeader));
     }
+
+    /**
+     * @test
+     */
+    public function it_converts_itself_to_array_and_back()
+    {
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+
+        $headerArray = $header->toArray();
+
+        $sameHeader = MessageHeader::fromArray($headerArray);
+
+        $this->assertTrue($header->sameHeaderAs($sameHeader));
+    }
 }
  
