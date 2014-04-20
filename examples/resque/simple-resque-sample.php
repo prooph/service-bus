@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is part of the codeliner/php-service-bus.
- * (c) Alexander Miertsch <kontakt@codeliner.ws>
+ * This file is part of the prooph/php-service-bus.
+ * (c) Alexander Miertsch <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,10 +19,10 @@ namespace {
 
     include 'classes.php';
 
-    use Codeliner\ServiceBus\Example\Resque\WriteLine;
-    use Codeliner\ServiceBus\Service\ServiceBusConfiguration;
-    use Codeliner\ServiceBus\Service\ServiceBusManager;
-    use Codeliner\ServiceBus\Service\StaticServiceBusRegistry;
+    use Prooph\ServiceBus\Example\Resque\WriteLine;
+    use Prooph\ServiceBus\Service\ServiceBusConfiguration;
+    use Prooph\ServiceBus\Service\ServiceBusManager;
+    use Prooph\ServiceBus\Service\StaticServiceBusRegistry;
     use Zend\EventManager\EventInterface;
     use Zend\EventManager\StaticEventManager;
 

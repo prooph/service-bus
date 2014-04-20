@@ -1,14 +1,14 @@
 {
-    "name": "codeliner/php-service-bus",
+    "name": "prooph/service-bus",
     "description": "PHP Enterprise Service Bus Implementation",
     "type": "library",
     "license": "BSD-3-Clause",
-    "homepage": "https://github.com/codeliner/php-service-bus/",
+    "homepage": "https://github.com/prooph/service-bus/",
     "authors": [
         {
             "name": "Alexander Miertsch",
-            "email": "kontakt@codeliner.ws",
-            "homepage": "http://www.codeliner.ws/"
+            "email": "contact@prooph.de",
+            "homepage": "http://www.prooph.de/"
         }
     ],
     "keywords": [
@@ -17,7 +17,9 @@
         "Service Bus",
         "Messaging",
         "CQRS",
-        "library"
+        "library",
+        "DDD",
+        "ZF2"
     ],
     "require": {
         "php": ">=5.4",
@@ -25,20 +27,22 @@
         "codeliner/php-equalsbuilder": "1.1.*",
         "codeliner/array-reader": "1.0.*",
         "beberlei/assert": "*",
-        "zendframework/zend-servicemanager" : "2.2.*",
-        "zendframework/zend-eventmanager" : "2.2.*"
+        "zendframework/zend-servicemanager" : "2.3.*",
+        "zendframework/zend-eventmanager" : "2.3.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
-        "chrisboulton/php-resque": "1.2.x"
+        "chrisboulton/php-resque": "1.2.x",
+        "prooph/event-store": "dev-master"
     },
     "suggest": {
         "chrisboulton/php-resque": "Use php-resque as Message Dispatcher"
     },
     "autoload": {
         "psr-0": { 
-            "Codeliner\\ServiceBus\\": "src/",
-            "Codeliner\\ServiceBusTest\\": "tests/"
+            "Prooph\\ServiceBus\\": "src/",
+            "Prooph\\ServiceBusTest\\": "tests/"
         }
-    }
+    },
+    "minimum-stability" : "dev"
 }

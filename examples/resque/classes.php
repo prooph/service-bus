@@ -1,16 +1,16 @@
 <?php
 /*
- * This file is part of the codeliner/php-service-bus.
- * (c) Alexander Miertsch <kontakt@codeliner.ws>
+ * This file is part of the prooph/php-service-bus.
+ * (c) Alexander Miertsch <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
  * Date: 17.03.14 - 00:26
  */
-namespace Codeliner\ServiceBus\Example\Resque {
+namespace Prooph\ServiceBus\Example\Resque {
 
-    use Codeliner\ServiceBus\Command\AbstractCommand;
+    use Prooph\ServiceBus\Command\AbstractCommand;
     use Zend\ServiceManager\FactoryInterface;
     use Zend\ServiceManager\ServiceLocatorInterface;
 

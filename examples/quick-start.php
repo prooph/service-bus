@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is part of the codeliner/php-service-bus.
- * (c) Alexander Miertsch <kontakt@codeliner.ws>
+ * This file is part of the prooph/php-service-bus.
+ * (c) Alexander Miertsch <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,9 +12,9 @@ namespace {
     require_once '../vendor/autoload.php';
 }
 
-namespace Codeliner\ServiceBus\Example\Command {
+namespace Prooph\ServiceBus\Example\Command {
 
-    use Codeliner\ServiceBus\Command\AbstractCommand;
+    use Prooph\ServiceBus\Command\AbstractCommand;
 
     class EchoText extends AbstractCommand
     {
@@ -35,9 +35,9 @@ namespace Codeliner\ServiceBus\Example\Command {
 }
 
 namespace {
-    use Codeliner\ServiceBus\Example\Command\EchoText;
-    use Codeliner\ServiceBus\Initializer\LocalSynchronousInitializer;
-    use Codeliner\ServiceBus\Service\ServiceBusManager;
+    use Prooph\ServiceBus\Example\Command\EchoText;
+    use Prooph\ServiceBus\Initializer\LocalSynchronousInitializer;
+    use Prooph\ServiceBus\Service\ServiceBusManager;
 
     //The ServiceBusManager is the central class, that manages the complete service bus environment
     $serviceBusManager = new ServiceBusManager();
@@ -47,7 +47,7 @@ namespace {
 
     //Register a callback as CommandHandler for the EchoText command
     $localEnvironmentInitializer->setCommandHandler(
-        'Codeliner\ServiceBus\Example\Command\EchoText',
+        'Prooph\ServiceBus\Example\Command\EchoText',
         function (EchoText $aCommand) {
             echo $aCommand->getText();
         }
