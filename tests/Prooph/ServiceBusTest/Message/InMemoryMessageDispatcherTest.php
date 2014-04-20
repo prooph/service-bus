@@ -21,6 +21,7 @@ use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\HandleCommandHandler;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -73,7 +74,7 @@ class InMemoryMessageDispatcherTest extends TestCase
     {
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',
-            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
+            new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
             array('data' => 'test payload')
         );
 
@@ -94,7 +95,7 @@ class InMemoryMessageDispatcherTest extends TestCase
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',
-            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
+            new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
             array('data' => 'test payload')
         );
 

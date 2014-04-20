@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBus\Command;
 
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Interface CommandInterface
@@ -32,7 +33,7 @@ interface CommandInterface
     public function version();
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function createdOn();
 

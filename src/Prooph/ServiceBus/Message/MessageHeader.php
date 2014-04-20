@@ -13,6 +13,7 @@ namespace Prooph\ServiceBus\Message;
 
 use Codeliner\Comparison\EqualsBuilder;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class MessageHeader
@@ -30,7 +31,7 @@ class MessageHeader implements MessageHeaderInterface
     protected $uuid;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdOn;
 
@@ -65,7 +66,7 @@ class MessageHeader implements MessageHeaderInterface
             ->keyExists('type');
 
         $uuid = Uuid::fromString($aMessageHeaderArray['uuid']);
-        $createdOn = new \DateTime($aMessageHeaderArray['createdOn']);
+        $createdOn = DateTime::fromNativeDateTime(new \DateTime($aMessageHeaderArray['createdOn']));
 
         return new static(
             $uuid,
@@ -78,12 +79,12 @@ class MessageHeader implements MessageHeaderInterface
 
     /**
      * @param Uuid      $aUuid
-     * @param \DateTime $aCreatedOn
+     * @param DateTime $aCreatedOn
      * @param int       $aVersion
      * @param string    $aSender
      * @param string    $aType
      */
-    public function __construct(Uuid $aUuid, \DateTime $aCreatedOn, $aVersion, $aSender, $aType)
+    public function __construct(Uuid $aUuid, DateTime $aCreatedOn, $aVersion, $aSender, $aType)
     {
         \Assert\that($aVersion)
             ->notEmpty('MessageHeader.version must not be empty')
@@ -112,7 +113,7 @@ class MessageHeader implements MessageHeaderInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function createdOn()
     {
@@ -151,7 +152,7 @@ class MessageHeader implements MessageHeaderInterface
     {
         return EqualsBuilder::create()
             ->append($this->uuid()->toString(), $other->uuid()->toString())
-            ->append($this->createdOn()->getTimestamp(), $other->createdOn()->getTimestamp())
+            ->append($this->createdOn()->toNativeDateTime()->getTimestamp(), $other->createdOn()->toNativeDateTime()->getTimestamp())
             ->append($this->version(), $other->version())
             ->append($this->sender(), $other->sender())
             ->append($this->type(), $other->type())
@@ -166,7 +167,7 @@ class MessageHeader implements MessageHeaderInterface
     {
         return array(
             'uuid'      => $this->uuid()->toString(),
-            'createdOn' => $this->createdOn()->format(\DateTime::ISO8601),
+            'createdOn' => $this->createdOn()->toNativeDateTime()->format(\DateTime::ISO8601),
             'version'   => $this->version(),
             'sender'    => $this->sender(),
             'type'      => $this->type()

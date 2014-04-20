@@ -25,6 +25,7 @@
         "php": ">=5.4",
         "rhumsaa/uuid" : "2.5.*",
         "codeliner/php-equalsbuilder": "1.1.*",
+        "codeliner/shared-domain-set": "1.2.*",
         "codeliner/array-reader": "1.0.*",
         "beberlei/assert": "*",
         "zendframework/zend-servicemanager" : "2.3.*",
@@ -33,7 +34,7 @@
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
         "chrisboulton/php-resque": "1.2.x",
-        "prooph/event-store": "dev-master"
+        "prooph/event-store": "0.1.0"
     },
     "suggest": {
         "chrisboulton/php-resque": "Use php-resque as Message Dispatcher"
@@ -43,6 +44,5 @@
             "Prooph\\ServiceBus\\": "src/",
             "Prooph\\ServiceBusTest\\": "tests/"
         }
-    },
-    "minimum-stability" : "dev"
+    }
 }

@@ -49,7 +49,7 @@ class MessageFactory implements MessageFactoryInterface
     {
         $messageHeader = new MessageHeader(
             $anEvent->uuid(),
-            $anEvent->createdOn(),
+            $anEvent->occurredOn(),
             $anEvent->version(),
             $aSenderName,
             MessageHeader::TYPE_EVENT

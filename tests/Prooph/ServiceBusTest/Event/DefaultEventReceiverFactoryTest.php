@@ -23,6 +23,7 @@ use Prooph\ServiceBusTest\Mock\SomethingDoneHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDoneInvokeStrategy;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class DefaultEventReceiverFactoryTest
@@ -137,7 +138,7 @@ class DefaultEventReceiverFactoryTest extends TestCase
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\SomethingDone',
-            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_EVENT),
+            new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case-bus', MessageHeader::TYPE_EVENT),
             array('data' => 'test payload')
         );
 

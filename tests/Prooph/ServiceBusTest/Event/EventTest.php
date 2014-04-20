@@ -15,6 +15,7 @@ use Prooph\ServiceBusTest\Mock\PayloadMockObject;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class EventTest
@@ -77,13 +78,13 @@ class EventTest extends TestCase
     {
         $event = new SomethingDone(array('data' => 'test payload'));
 
-        $this->assertInstanceOf('\DateTime', $event->createdOn());
+        $this->assertInstanceOf('ValueObjects\DateTime\DateTime', $event->occurredOn());
 
-        $createdOn = new \DateTime('2014-03-14 21:27:00');
+        $occurredOn = DateTime::fromNativeDateTime(new \DateTime('2014-03-14 21:27:00'));
 
-        $event = new SomethingDone(array('data' => 'test payload'), 1, null, $createdOn);
+        $event = new SomethingDone(array('data' => 'test payload'), 1, null, $occurredOn);
 
-        $this->assertEquals($createdOn->getTimestamp(), $event->createdOn()->getTimestamp());
+        $this->assertEquals($occurredOn->toNativeDateTime()->getTimestamp(), $event->occurredOn()->toNativeDateTime()->getTimestamp());
     }
 }
  

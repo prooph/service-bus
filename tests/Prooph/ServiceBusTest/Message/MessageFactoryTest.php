@@ -62,7 +62,7 @@ class MessageFactoryTest extends TestCase
 
         $testHeader = new MessageHeader(
             $somethingDone->uuid(),
-            $somethingDone->createdOn(),
+            $somethingDone->occurredOn(),
             $somethingDone->version(),
             'test-case-bus',
             MessageHeader::TYPE_EVENT

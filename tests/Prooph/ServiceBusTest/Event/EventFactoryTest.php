@@ -17,6 +17,7 @@ use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class EventFactoryTest
@@ -33,7 +34,7 @@ class EventFactoryTest extends TestCase
     {
         $eventFactory = new EventFactory();
 
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
+        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_EVENT);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\SomethingDone',
@@ -45,7 +46,7 @@ class EventFactoryTest extends TestCase
 
         $eventHeader = new MessageHeader(
             $event->uuid(),
-            $event->createdOn(),
+            $event->occurredOn(),
             $event->version(),
             'test-case',
             MessageHeader::TYPE_EVENT

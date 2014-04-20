@@ -15,6 +15,7 @@ use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class StandardMessageTest
@@ -36,7 +37,7 @@ class StandardMessageTest extends TestCase
 
     protected function setUp()
     {
-        $this->header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $this->header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $this->message = new StandardMessage('TestMessage', $this->header, array('data' => 'a test'));
     }

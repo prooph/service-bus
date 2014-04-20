@@ -23,6 +23,7 @@ use Prooph\ServiceBusTest\Mock\DoSomethingHandler;
 use Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class DefaultCommandReceiverFactoryTest
@@ -137,7 +138,7 @@ class DefaultCommandReceiverFactoryTest extends TestCase
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',
-            new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
+            new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case-bus', MessageHeader::TYPE_COMMAND),
             array('data' => 'test payload')
         );
 

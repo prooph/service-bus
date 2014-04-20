@@ -11,6 +11,7 @@
 
 namespace Prooph\ServiceBus\Event;
 
+use Codeliner\Domain\Shared\DomainEventInterface;
 use Rhumsaa\Uuid\Uuid;
 
 /**
@@ -19,26 +20,7 @@ use Rhumsaa\Uuid\Uuid;
  * @package Prooph\ServiceBus\Event
  * @author Alexander Miertsch <contact@prooph.de>
  */
-interface EventInterface
+interface EventInterface extends DomainEventInterface
 {
-    /**
-     * @return Uuid
-     */
-    public function uuid();
-
-    /**
-     * @return int
-     */
-    public function version();
-
-    /**
-     * @return \DateTime
-     */
-    public function createdOn();
-
-    /**
-     * @return array
-     */
-    public function payload();
 }
  

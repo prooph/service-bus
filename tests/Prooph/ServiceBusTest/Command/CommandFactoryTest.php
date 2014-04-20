@@ -17,6 +17,7 @@ use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
+use ValueObjects\DateTime\DateTime;
 
 /**
  * Class CommandFactoryTest
@@ -33,7 +34,7 @@ class CommandFactoryTest extends TestCase
     {
         $commandFactory = new CommandFactory();
 
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',
