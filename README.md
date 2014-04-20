@@ -3,7 +3,7 @@ ProophServiceBus
 
 PHP 5.4+ Enterprise Service Bus Implementation
 
-[![Build Status](https://travis-ci.org/prooph/php-service-bus.png?branch=master)](https://travis-ci.org/prooph/php-service-bus)
+[![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
 This library is heavily inspired by [malocher/cqrs-esb](https://github.com/malocher/cqrs-esb), [beberlei/litecqrs-php](https://github.com/beberlei/litecqrs-php) and [szjani/mf4php](https://github.com/szjani/mf4php).
 
@@ -24,7 +24,7 @@ But let's explore it step by step.
 Installation
 ------------
 
-You can install ProophServiceBus via composer by adding `"prooph/php-service-bus": "dev-master"` as requirement to your composer.json.
+You can install ProophServiceBus via composer by adding `"prooph/service-bus": "dev-master"` as requirement to your composer.json.
 
 Quick Start
 -----------
