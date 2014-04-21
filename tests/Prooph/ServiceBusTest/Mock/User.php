@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBusTest\Mock;
 
 use Prooph\EventStore\EventSourcing\EventSourcedAggregateRoot;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * Class User
@@ -21,6 +22,31 @@ use Prooph\EventStore\EventSourcing\EventSourcedAggregateRoot;
  */
 class User extends EventSourcedAggregateRoot
 {
+    protected $id;
 
+    protected $name;
+
+    public function __construct($name)
+    {
+        $id = Uuid::uuid4();
+
+        $this->apply(new UserCreated($id, array('name' => $name)));
+    }
+
+    public function id()
+    {
+        return $this->id;
+    }
+
+    public function name()
+    {
+        return $this->name;
+    }
+
+    protected function onUserCreated(UserCreated $e)
+    {
+        $this->id = $e->aggregateId();
+        $this->name = $e->getName();
+    }
 }
  

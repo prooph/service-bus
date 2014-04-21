@@ -12,8 +12,11 @@
 namespace Prooph\ServiceBus\Service;
 
 use Prooph\ServiceBus\Command\CommandBusInterface;
+use Prooph\ServiceBus\Command\CommandInterface;
 use Prooph\ServiceBus\Event\EventBusInterface;
+use Prooph\ServiceBus\Event\EventInterface;
 use Prooph\ServiceBus\Exception\RuntimeException;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ConfigInterface;
@@ -29,7 +32,7 @@ use Zend\ServiceManager\ServiceManager;
 class ServiceBusManager extends ServiceManager
 {
     /**
-     * @var EventManagerInterface
+     * @var EventManager
      */
     protected $events;
 
@@ -87,6 +90,50 @@ class ServiceBusManager extends ServiceManager
     }
 
     /**
+     * Facade method that can handle all commands and events
+     *
+     * Event listener can listen to the "route" event to decide which bus should be used for a specific message
+     * If a listener routes the message, it should return a boolean TRUE
+     * If no listener routes the message by it's own the message is send/publish to the related default bus
+     *
+     * @param mixed $message
+     * @throws \Prooph\ServiceBus\Exception\RuntimeException
+     */
+    public function route($message)
+    {
+        $argv = compact("message");
+
+        $argv = $this->events()->prepareArgs($argv);
+
+        $event = new Event(__FUNCTION__, $this, $argv);
+
+        $result = $this->events()->triggerUntil($event, function ($res) {
+            return is_bool($res)? $res : false;
+        });
+
+        if ($result->stopped()) {
+            return;
+        }
+
+        if ($message instanceof CommandInterface) {
+            $this->getCommandBus()->send($message);
+            return;
+        }
+
+        if ($message instanceof EventInterface) {
+            $this->getEventBus()->publish($message);
+            return;
+        }
+
+        throw new RuntimeException(
+            sprintf(
+                "Routing the message -%s- failed. No route event handler has handled the message and it is neither a command nor an event",
+                get_class($message)
+            )
+        );
+    }
+
+    /**
      * @param string $aName
      */
     public function setDefaultCommandBus($aName)
@@ -103,11 +150,28 @@ class ServiceBusManager extends ServiceManager
      */
     public function getCommandBus($aName = null)
     {
+        \Assert\that($aName)->nullOr()->notEmpty()->string();
+
         if (!$this->initialized) {
             $this->initialize();
         }
 
-        \Assert\that($aName)->nullOr()->notEmpty()->string();
+        $argv = array("name" => $aName);
+
+        $argv = $this->events()->prepareArgs($argv);
+
+        $event = new Event(__FUNCTION__ . ".pre", $this, $argv);
+
+        $result = $this->events()->triggerUntil($event, function ($res) {
+            return $res instanceof CommandBusInterface;
+        });
+
+        if ($result->stopped()) {
+            return $result->last();
+        }
+
+        $aName = $event->getParam('name');
+
 
         if (is_null($aName)) {
             if (is_null($this->defaultCommandBus)) {
@@ -142,11 +206,27 @@ class ServiceBusManager extends ServiceManager
      */
     public function getEventBus($aName = null)
     {
+        \Assert\that($aName)->nullOr()->notEmpty()->string();
+
         if (!$this->initialized) {
             $this->initialize();
         }
 
-        \Assert\that($aName)->nullOr()->notEmpty()->string();
+        $argv = array("name" => $aName);
+
+        $argv = $this->events()->prepareArgs($argv);
+
+        $event = new Event(__FUNCTION__ . ".pre", $this, $argv);
+
+        $result = $this->events()->triggerUntil($event, function ($res) {
+            return $res instanceof EventBusInterface;
+        });
+
+        if ($result->stopped()) {
+            return $result->last();
+        }
+
+        $aName = $event->getParam('name');
 
         if (is_null($aName)) {
             if (is_null($this->defaultEventBus)) {
@@ -165,7 +245,7 @@ class ServiceBusManager extends ServiceManager
     }
 
     /**
-     * @return EventManagerInterface
+     * @return EventManager
      */
     public function events()
     {

@@ -11,14 +11,20 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
+use Prooph\EventStore\EventSourcing\AggregateChangedEvent;
+use Prooph\ServiceBus\Event\EventInterface;
+
 /**
- * Class UserCreatedEvent
+ * Class UserCreated
  *
  * @package Prooph\ServiceBusTest\Mock
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class UserCreatedEvent 
+class UserCreated extends AggregateChangedEvent implements EventInterface
 {
-
+    public function getName()
+    {
+        return $this->toPayloadReader()->stringValue("name");
+    }
 }
  
