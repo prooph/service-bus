@@ -21,6 +21,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -52,6 +53,11 @@ class ServiceBusManager extends ServiceManager
     protected $defaultEventBus;
 
     /**
+     * @var ServiceLocatorInterface
+     */
+    protected $mainServiceLocator;
+
+    /**
      * @var array
      */
     protected $invokableClasses = array(
@@ -71,10 +77,9 @@ class ServiceBusManager extends ServiceManager
     {
         parent::__construct($config);
 
-        $self = $this;
-        $this->addInitializer(function ($instance) use ($self) {
+        $this->addInitializer(function ($instance) {
             if ($instance instanceof ServiceLocatorAwareInterface) {
-                $instance->setServiceLocator($self);
+                $instance->setServiceLocator($this->getMainServiceLocator());
             }
         });
     }
@@ -282,5 +287,25 @@ class ServiceBusManager extends ServiceManager
         $this->events      = null;
         $this->initialized = false;
         $this->instances   = array();
+    }
+
+    /**
+     * @return ServiceLocatorInterface
+     */
+    public function getMainServiceLocator()
+    {
+        if (!is_null($this->mainServiceLocator)) {
+            return $this->mainServiceLocator;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     */
+    public function setMainServiceLocator(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->mainServiceLocator = $serviceLocator;
     }
 }
