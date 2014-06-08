@@ -14,7 +14,11 @@ namespace Prooph\ServiceBus\EventStoreFeature;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Feature\FeatureInterface;
 use Prooph\EventStore\PersistenceEvent\PostCommitEvent;
+use Prooph\EventStore\Stream\StreamEvent;
+use Prooph\EventStore\Stream\StreamId;
+use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\Service\ServiceBusManager;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * Class PersistedEventDispatcher
@@ -52,9 +56,30 @@ class PersistedEventDispatcher implements FeatureInterface
      */
     public function onPostCommit(PostCommitEvent $e)
     {
-        foreach ($e->getPersistedEvents() as $persistedEvent) {
-            $this->serviceBusManager->route($persistedEvent);
+        foreach ($e->getPersistedStreams() as $persistedStream) {
+
+            foreach ($persistedStream->streamEvents() as $persistedStreamEvent) {
+                $this->serviceBusManager->route(
+                    $this->toServiceBusEvent($persistedStream->streamId(),$persistedStreamEvent)
+                );
+            }
         }
+    }
+
+    protected function toServiceBusEvent(StreamId $streamId, StreamEvent $streamEvent)
+    {
+        $payload = $streamEvent->payload();
+
+        $payload['streamId'] = $streamId->toString();
+        $payload['eventName'] = $streamEvent->eventName()->toString();
+
+        try {
+            $uuid = Uuid::fromString($streamEvent->eventId()->toString());
+        } catch (\Exception $e) {
+            $uuid = Uuid::uuid4();
+        }
+
+        return new AbstractEvent($payload, $streamEvent->version(), $uuid, $streamEvent->occurredOn());
     }
 }
  

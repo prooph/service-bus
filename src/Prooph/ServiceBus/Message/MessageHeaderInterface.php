@@ -12,7 +12,6 @@
 namespace Prooph\ServiceBus\Message;
 
 use Rhumsaa\Uuid\Uuid;
-use ValueObjects\DateTime\DateTime;
 
 /**
  * Interface MessageHeaderInterface
@@ -34,7 +33,7 @@ interface MessageHeaderInterface
     public function uuid();
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function createdOn();
 

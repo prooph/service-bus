@@ -20,9 +20,9 @@ namespace Prooph\ServiceBus\Command;
 interface CommandBusInterface
 {
     /**
-     * @param CommandInterface $aCommand
+     * @param mixed $aCommand
      *
      * @return void
      */
-    public function send(CommandInterface $aCommand);
+    public function send($aCommand);
 }

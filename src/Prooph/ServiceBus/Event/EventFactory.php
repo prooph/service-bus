@@ -13,6 +13,8 @@ namespace Prooph\ServiceBus\Event;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
+use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class EventFactory
@@ -23,28 +25,88 @@ use Prooph\ServiceBus\Message\MessageInterface;
 class EventFactory implements EventFactoryInterface
 {
     /**
+     * @var EventManager
+     */
+    protected $lifeCycleEvents;
+
+    /**
      * @param MessageInterface $aMessage
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @return EventInterface
+     * @return mixed an Event
      */
     public function fromMessage(MessageInterface $aMessage)
     {
-        $eventClass = $aMessage->name();
+        $result = $this->getLifeCycleEvents()->triggerUntil(
+            __FUNCTION__,
+            $this,
+            array('message' => $aMessage),
+            function ($res) {
+                return !empty($res);
+            }
+        );
 
-        if (!class_exists($eventClass)) {
+        if (! $result->stopped()) {
             throw new RuntimeException(
                 sprintf(
-                    "Class for %s event can not be found",
-                    $eventClass
+                    "Event %s can not be build from Message. No appropriate EventFactory registered",
+                    $aMessage->name()
                 )
+
             );
         }
 
-        return new $eventClass(
-            $aMessage->payload(),
-            $aMessage->header()->version(),
-            $aMessage->header()->uuid(),
-            $aMessage->header()->createdOn()
-        );
+        return $result->last();
+    }
+
+    public function setEventManager(EventManager $eventManager)
+    {
+        $eventManager->addIdentifiers(array(
+            'ProophEventFactory',
+            get_class($this)
+        ));
+
+        $eventManager->attach('fromMessage', function(Event $e) {
+
+            $message = $e->getParam('message');
+
+            $eventClass = $message->name();
+
+            if (!class_exists($eventClass)) {
+                throw new RuntimeException(
+                    sprintf(
+                        "Class for %s event can not be found",
+                        $eventClass
+                    )
+                );
+            }
+
+            $eventRef = new \ReflectionClass($eventClass);
+
+            if ($eventClass !== 'Prooph\ServiceBus\Event\AbstractEvent'
+                && ! $eventRef->isSubclassOf('Prooph\ServiceBus\Event\AbstractEvent')) {
+                return null;
+            }
+
+            return new $eventClass(
+                $message->payload(),
+                $message->header()->version(),
+                $message->header()->uuid(),
+                $message->header()->createdOn()
+            );
+        }, -100);
+
+        $this->lifeCycleEvents = $eventManager;
+    }
+
+    /**
+     * @return EventManager
+     */
+    public function getLifeCycleEvents()
+    {
+        if (is_null($this->lifeCycleEvents)) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->lifeCycleEvents;
     }
 }

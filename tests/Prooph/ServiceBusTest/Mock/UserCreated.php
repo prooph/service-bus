@@ -11,8 +11,7 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\EventStore\EventSourcing\AggregateChangedEvent;
-use Prooph\ServiceBus\Event\EventInterface;
+use Prooph\EventSourcing\DomainEvent\AggregateChangedEvent;
 
 /**
  * Class UserCreated
@@ -20,7 +19,7 @@ use Prooph\ServiceBus\Event\EventInterface;
  * @package Prooph\ServiceBusTest\Mock
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class UserCreated extends AggregateChangedEvent implements EventInterface
+class UserCreated extends AggregateChangedEvent
 {
     public function getName()
     {

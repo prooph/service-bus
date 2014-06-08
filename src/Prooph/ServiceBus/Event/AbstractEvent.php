@@ -10,18 +10,20 @@
  */
 
 namespace Prooph\ServiceBus\Event;
+
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\PayloadInterface;
 use Rhumsaa\Uuid\Uuid;
-use ValueObjects\DateTime\DateTime;
 
 /**
  * Class AbstractEvent
  *
+ * Can be used as base event class
+ *
  * @package Prooph\ServiceBus\Event
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class AbstractEvent implements EventInterface
+class AbstractEvent
 {
     /**
      * @var Uuid
@@ -34,7 +36,7 @@ class AbstractEvent implements EventInterface
     protected $version;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $occurredOn;
 
@@ -47,10 +49,10 @@ class AbstractEvent implements EventInterface
      * @param null      $aPayload
      * @param int       $aVersion
      * @param Uuid      $aUuid
-     * @param DateTime $aOccurredOn
+     * @param \DateTime $aOccurredOn
      * @throws RuntimeException
      */
-    public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, DateTime $aOccurredOn = null)
+    public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, \DateTime $aOccurredOn = null)
     {
         if (!is_null($aPayload)) {
 
@@ -82,7 +84,7 @@ class AbstractEvent implements EventInterface
         $this->uuid = $aUuid;
 
         if (is_null($aOccurredOn)) {
-            $aOccurredOn = DateTime::now();
+            $aOccurredOn = new \DateTime();
         }
 
         $this->occurredOn = $aOccurredOn;
@@ -113,7 +115,7 @@ class AbstractEvent implements EventInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function occurredOn()
     {

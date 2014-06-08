@@ -10,8 +10,11 @@
  */
 
 namespace Prooph\ServiceBus\Command;
+
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
+use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class CommandFactory
@@ -22,28 +25,88 @@ use Prooph\ServiceBus\Message\MessageInterface;
 class CommandFactory implements CommandFactoryInterface
 {
     /**
+     * @var EventManager
+     */
+    protected $lifeCycleEvents;
+
+    /**
      * @param MessageInterface $aMessage
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @return CommandInterface
+     * @return mixed a command
      */
     public function fromMessage(MessageInterface $aMessage)
     {
-        $commandClass = $aMessage->name();
+        $result = $this->getLifeCycleEvents()->triggerUntil(
+            __FUNCTION__,
+            $this,
+            array('message' => $aMessage),
+            function ($res) {
+                return !empty($res);
+            }
+        );
 
-        if (!class_exists($commandClass)) {
+        if (! $result->stopped()) {
             throw new RuntimeException(
                 sprintf(
-                    "Class for %s command can not be found",
-                    $commandClass
+                    "Command %s can not be build from Message. No appropriate CommandFactory registered",
+                    $aMessage->name()
                 )
+
             );
         }
 
-        return new $commandClass(
-            $aMessage->payload(),
-            $aMessage->header()->version(),
-            $aMessage->header()->uuid(),
-            $aMessage->header()->createdOn()
-        );
+        return $result->last();
+    }
+
+    public function setEventManager(EventManager $eventManager)
+    {
+        $eventManager->addIdentifiers(array(
+            'ProophCommandFactory',
+            get_class($this)
+        ));
+
+        $eventManager->attach('fromMessage', function(Event $e) {
+
+            $message = $e->getParam('message');
+
+            $commandClass = $message->name();
+
+            if (!class_exists($commandClass)) {
+                throw new RuntimeException(
+                    sprintf(
+                        "Class for %s command can not be found",
+                        $commandClass
+                    )
+                );
+            }
+
+            $commandRef = new \ReflectionClass($commandClass);
+
+            if ($commandClass !== 'Prooph\ServiceBus\Command\AbstractCommand'
+                && ! $commandRef->isSubclassOf('Prooph\ServiceBus\Command\AbstractCommand')) {
+                return null;
+            }
+
+            return new $commandClass(
+                $message->payload(),
+                $message->header()->version(),
+                $message->header()->uuid(),
+                $message->header()->createdOn()
+            );
+        }, -100);
+
+        $this->lifeCycleEvents = $eventManager;
+    }
+
+    /**
+     * @return EventManager
+     */
+    public function getLifeCycleEvents()
+    {
+        if (is_null($this->lifeCycleEvents)) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->lifeCycleEvents;
     }
 }

@@ -23,17 +23,17 @@ use Prooph\ServiceBus\Event\EventInterface;
 interface MessageFactoryInterface 
 {
     /**
-     * @param CommandInterface $aCommand
-     * @param string           $aSenderName
+     * @param mixed $aCommand
+     * @param string $aSenderName
      * @return MessageInterface
      */
-    public function fromCommand(CommandInterface $aCommand, $aSenderName);
+    public function fromCommand($aCommand, $aSenderName);
 
     /**
-     * @param EventInterface $anEvent
-     * @param string         $aSenderName
+     * @param mixed $anEvent
+     * @param string $aSenderName
      * @return MessageInterface
      */
-    public function fromEvent(EventInterface $anEvent, $aSenderName);
+    public function fromEvent($anEvent, $aSenderName);
 }
  

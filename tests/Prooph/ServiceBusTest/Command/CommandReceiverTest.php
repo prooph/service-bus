@@ -19,8 +19,6 @@ use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
-use ValueObjects\DateTime\DateTime;
-use Zend\EventManager\Event;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -76,7 +74,7 @@ class CommandReceiverTest extends TestCase
      */
     public function it_handles_a_message_and_calls_the_related_command_on_configured_handler()
     {
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',
@@ -101,7 +99,7 @@ class CommandReceiverTest extends TestCase
         $postHandleTriggered        = false;
 
 
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',

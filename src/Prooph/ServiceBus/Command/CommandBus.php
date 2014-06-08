@@ -69,11 +69,11 @@ class CommandBus implements CommandBusInterface
     }
 
     /**
-     * @param CommandInterface $aCommand
+     * @param mixed $aCommand
      *
      * @return void
      */
-    public function send(CommandInterface $aCommand)
+    public function send($aCommand)
     {
         $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('command' => $aCommand));
 

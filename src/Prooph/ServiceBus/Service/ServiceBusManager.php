@@ -11,11 +11,14 @@
 
 namespace Prooph\ServiceBus\Service;
 
+use Prooph\ServiceBus\Command\AbstractCommand;
 use Prooph\ServiceBus\Command\CommandBusInterface;
 use Prooph\ServiceBus\Command\CommandInterface;
+use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\Event\EventBusInterface;
 use Prooph\ServiceBus\Event\EventInterface;
 use Prooph\ServiceBus\Exception\RuntimeException;
+use Prooph\ServiceBus\LifeCycleEvent\InitializeEvent;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
@@ -89,7 +92,7 @@ class ServiceBusManager extends ServiceManager
      */
     public function initialize()
     {
-        $this->events()->trigger(__FUNCTION__, $this);
+        $this->events()->trigger(new InitializeEvent($this));
         $this->initialized = true;
         return $this;
     }
@@ -120,12 +123,12 @@ class ServiceBusManager extends ServiceManager
             return;
         }
 
-        if ($message instanceof CommandInterface) {
+        if ($message instanceof AbstractCommand) {
             $this->getCommandBus()->send($message);
             return;
         }
 
-        if ($message instanceof EventInterface) {
+        if ($message instanceof AbstractEvent) {
             $this->getEventBus()->publish($message);
             return;
         }

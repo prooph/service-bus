@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Command\CommandInterface;
+use Prooph\ServiceBus\Command\AbstractCommand;
 
 /**
  * Class HandleCommandStrategy
@@ -23,13 +23,13 @@ class HandleCommandStrategy implements InvokeStrategyInterface
 {
 
     /**
-     * @param mixed            $aHandler
-     * @param CommandInterface $aCommandOrEvent
+     * @param mixed $aHandler
+     * @param mixed $aCommandOrEvent
      * @return bool
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        if (! $aCommandOrEvent instanceof CommandInterface) {
+        if (! $aCommandOrEvent instanceof AbstractCommand) {
             return false;
         }
 
@@ -40,7 +40,7 @@ class HandleCommandStrategy implements InvokeStrategyInterface
 
     /**
      * @param mixed $aHandler
-     * @param CommandInterface $aCommandOrEvent
+     * @param mixed $aCommandOrEvent
      */
     public function invoke($aHandler, $aCommandOrEvent)
     {
@@ -50,10 +50,10 @@ class HandleCommandStrategy implements InvokeStrategyInterface
     }
 
     /**
-     * @param CommandInterface $aCommand
+     * @param mixed $aCommand
      * @return string
      */
-    protected function determineCommandName(CommandInterface $aCommand)
+    protected function determineCommandName($aCommand)
     {
         return join('', array_slice(explode('\\', get_class($aCommand)), -1));
     }

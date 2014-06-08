@@ -23,7 +23,7 @@ interface EventFactoryInterface
 {
     /**
      * @param MessageInterface $aMessage
-     * @return EventInterface
+     * @return mixed an Event
      */
     public function fromMessage(MessageInterface $aMessage);
 }

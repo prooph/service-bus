@@ -14,7 +14,6 @@ namespace Prooph\ServiceBusTest\Message;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
-use ValueObjects\DateTime\DateTime;
 
 /**
  * Class MessageHeaderTest
@@ -31,7 +30,7 @@ class MessageHeaderTest extends TestCase
     {
         $uuid = Uuid::uuid4();
 
-        $header = new MessageHeader($uuid, DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader($uuid, new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $this->assertEquals($uuid->toString(), $header->uuid()->toString());
     }
@@ -41,11 +40,11 @@ class MessageHeaderTest extends TestCase
      */
     public function it_has_a_created_on_datetime()
     {
-        $createdOn = DateTime::now();
+        $createdOn = new \DateTime();
 
         $header = new MessageHeader(Uuid::uuid4(), $createdOn, 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
-        $this->assertEquals($createdOn->toNativeDateTime()->getTimestamp(), $header->createdOn()->toNativeDateTime()->getTimestamp());
+        $this->assertEquals($createdOn->getTimestamp(), $header->createdOn()->getTimestamp());
     }
 
     /**
@@ -53,7 +52,7 @@ class MessageHeaderTest extends TestCase
      */
     public function it_has_a_version()
     {
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $this->assertEquals(1, $header->version());
     }
@@ -63,7 +62,7 @@ class MessageHeaderTest extends TestCase
      */
     public function it_has_a_sender()
     {
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $this->assertEquals('test-case', $header->sender());
     }
@@ -73,7 +72,7 @@ class MessageHeaderTest extends TestCase
      */
     public function it_has_a_type()
     {
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $this->assertEquals('command', $header->type());
     }
@@ -84,7 +83,7 @@ class MessageHeaderTest extends TestCase
     public function it_is_same_header_as()
     {
         $uuid       = Uuid::uuid4();
-        $createdOn  = DateTime::now();
+        $createdOn  = new \DateTime();
         $header     = new MessageHeader($uuid, $createdOn, 1, 'test-case', MessageHeader::TYPE_COMMAND);
         $sameHeader = new MessageHeader($uuid, $createdOn, 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
@@ -96,7 +95,7 @@ class MessageHeaderTest extends TestCase
      */
     public function it_converts_itself_to_array_and_back()
     {
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
 
         $headerArray = $header->toArray();
 

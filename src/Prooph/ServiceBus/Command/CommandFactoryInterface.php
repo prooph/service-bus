@@ -22,7 +22,7 @@ interface CommandFactoryInterface
 {
     /**
      * @param MessageInterface $aMessage
-     * @return CommandInterface
+     * @return mixed a command
      */
     public function fromMessage(MessageInterface $aMessage);
 }

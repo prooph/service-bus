@@ -14,15 +14,16 @@ namespace Prooph\ServiceBus\Command;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\PayloadInterface;
 use Rhumsaa\Uuid\Uuid;
-use ValueObjects\DateTime\DateTime;
 
 /**
  * Class AbstractCommand
  *
+ * Can be used as base class for commands.
+ *
  * @package Prooph\ServiceBus\Command
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class AbstractCommand implements CommandInterface
+class AbstractCommand
 {
     /**
      * @var Uuid
@@ -35,7 +36,7 @@ class AbstractCommand implements CommandInterface
     protected $version;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $createdOn;
 
@@ -48,10 +49,10 @@ class AbstractCommand implements CommandInterface
      * @param null $aPayload
      * @param int $aVersion
      * @param Uuid $aUuid
-     * @param DateTime $aCreatedOn
+     * @param \DateTime $aCreatedOn
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, DateTime $aCreatedOn = null)
+    public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, \DateTime $aCreatedOn = null)
     {
         if (!is_null($aPayload)) {
 
@@ -83,7 +84,7 @@ class AbstractCommand implements CommandInterface
         $this->uuid = $aUuid;
 
         if (is_null($aCreatedOn)) {
-            $aCreatedOn = DateTime::now();
+            $aCreatedOn = new \DateTime();
         }
 
         $this->createdOn = $aCreatedOn;
@@ -114,7 +115,7 @@ class AbstractCommand implements CommandInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function createdOn()
     {

@@ -11,10 +11,8 @@
 
 namespace Prooph\ServiceBus\Initializer;
 
-use Prooph\ServiceBus\Command\CommandInterface;
-use Prooph\ServiceBus\Event\EventInterface;
+use Prooph\ServiceBus\LifeCycleEvent\InitializeEvent;
 use Prooph\ServiceBus\Service\Definition;
-use Zend\EventManager\EventInterface as ZendEventInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -42,12 +40,12 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
     protected $eventHandlers = array();
 
     /**
-     * @param CommandInterface|string $aCommand
-     * @param mixed                   $aCommandHandler
+     * @param mixed|string $aCommand
+     * @param mixed $aCommandHandler
      */
     public function setCommandHandler($aCommand, $aCommandHandler)
     {
-        if ($aCommand instanceof CommandInterface) {
+        if (is_object($aCommand)) {
             $aCommand = get_class($aCommand);
         }
 
@@ -57,12 +55,12 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
     }
 
     /**
-     * @param EventInterface|string $anEvent
-     * @param mixed                 $anEventHandler
+     * @param mixed|string $anEvent
+     * @param mixed $anEventHandler
      */
     public function addEventHandler($anEvent, $anEventHandler)
     {
-        if ($anEvent instanceof EventInterface) {
+        if (is_object($anEvent)) {
             $anEvent = get_class($anEvent);
         }
 
@@ -87,7 +85,7 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('initialize', array($this, 'initializeLocalServiceBus'));
+        $this->listeners[] = $events->attach(InitializeEvent::NAME, array($this, 'initializeLocalServiceBus'));
     }
 
     /**
@@ -107,12 +105,11 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
     }
 
     /**
-     * @param EventInterface $e
+     * @param InitializeEvent $e
      */
-    public function initializeLocalServiceBus(ZendEventInterface $e)
+    public function initializeLocalServiceBus(InitializeEvent $e)
     {
-        /* @var $serviceBusManager \Prooph\ServiceBus\Service\ServiceBusManager */
-        $serviceBusManager = $e->getTarget();
+        $serviceBusManager = $e->getServiceBusManager();
 
         $serviceBusManager->setAllowOverride(true);
 

@@ -1,7 +1,7 @@
 ProophServiceBus
 ===============
 
-PHP 5.4+ Enterprise Service Bus Implementation
+PHP Enterprise Service Bus Implementation supporting CQRS and DDD
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 

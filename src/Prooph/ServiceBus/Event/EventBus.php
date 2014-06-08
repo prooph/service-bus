@@ -68,11 +68,11 @@ class EventBus implements EventBusInterface
     }
 
     /**
-     * @param EventInterface $anEvent
+     * @param mixed $anEvent
      *
      * @return void
      */
-    public function publish(EventInterface $anEvent)
+    public function publish($anEvent)
     {
         $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('event' => $anEvent));
 

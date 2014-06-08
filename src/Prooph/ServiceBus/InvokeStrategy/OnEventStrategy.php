@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBus\InvokeStrategy;
 
 use Prooph\ServiceBus\Command\CommandInterface;
+use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\Event\EventInterface;
 
 /**
@@ -23,13 +24,13 @@ use Prooph\ServiceBus\Event\EventInterface;
 class OnEventStrategy implements InvokeStrategyInterface
 {
     /**
-     * @param mixed                           $aHandler
-     * @param CommandInterface|EventInterface $aCommandOrEvent
+     * @param mixed $aHandler
+     * @param mixed $aCommandOrEvent
      * @return bool
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        if (! $aCommandOrEvent instanceof EventInterface) {
+        if (! $aCommandOrEvent instanceof AbstractEvent) {
             return false;
         }
 
@@ -39,8 +40,8 @@ class OnEventStrategy implements InvokeStrategyInterface
     }
 
     /**
-     * @param mixed                           $aHandler
-     * @param CommandInterface|EventInterface $aCommandOrEvent
+     * @param mixed $aHandler
+     * @param mixed $aCommandOrEvent
      */
     public function invoke($aHandler, $aCommandOrEvent)
     {
@@ -50,10 +51,10 @@ class OnEventStrategy implements InvokeStrategyInterface
     }
 
     /**
-     * @param EventInterface $anEvent
+     * @param mixed $anEvent
      * @return string
      */
-    protected function determineEventName(EventInterface $anEvent)
+    protected function determineEventName($anEvent)
     {
         return join('', array_slice(explode('\\', get_class($anEvent)), -1));
     }

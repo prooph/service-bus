@@ -19,7 +19,6 @@ use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
 use Rhumsaa\Uuid\Uuid;
-use ValueObjects\DateTime\DateTime;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -80,7 +79,7 @@ class EventReceiverTest extends TestCase
      */
     public function it_handles_a_message_and_calls_the_related_event_on_configured_handler()
     {
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_EVENT);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\SomethingDone',
@@ -105,7 +104,7 @@ class EventReceiverTest extends TestCase
         $postInvokeHandlerTriggered = false;
         $postHandleTriggered        = false;
 
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_EVENT);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\SomethingDone',
@@ -167,7 +166,7 @@ class EventReceiverTest extends TestCase
     {
         $this->called = 0;
 
-        $header = new MessageHeader(Uuid::uuid4(), DateTime::now(), 1, 'test-case', MessageHeader::TYPE_EVENT);
+        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\SomethingDone',

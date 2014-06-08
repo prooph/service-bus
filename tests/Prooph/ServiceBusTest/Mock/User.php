@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\EventStore\EventSourcing\EventSourcedAggregateRoot;
+use Prooph\EventSourcing\EventSourcedAggregateRoot;
 use Rhumsaa\Uuid\Uuid;
 
 /**
