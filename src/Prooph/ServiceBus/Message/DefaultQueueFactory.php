@@ -34,6 +34,7 @@ class DefaultQueueFactory implements AbstractFactoryInterface
     {
         try {
             \Assert\that($requestedName)->notEmpty()->string();
+            \Assert\that($serviceLocator)->isInstanceOf("Prooph\ServiceBus\Service\QueueManager");
             return true;
         } catch (\InvalidArgumentException $ex) {
             return false;
