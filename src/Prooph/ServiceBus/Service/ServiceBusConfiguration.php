@@ -41,12 +41,6 @@ class ServiceBusConfiguration implements ConfigInterface
     protected $eventHandlers   = array();
 
     /**
-     * @var CommandFactoryInterface
-     */
-    protected $commandFactory;
-
-
-    /**
      * @param null|array $aConfiguration
      */
     public function __construct(array $aConfiguration = null)
@@ -77,10 +71,6 @@ class ServiceBusConfiguration implements ConfigInterface
         $serviceBusManagerServicesConfig = new Config($this->configuration[Definition::CONFIG_ROOT]);
 
         $serviceBusManagerServicesConfig->configureServiceManager($serviceManager);
-
-        if (!is_null($this->commandFactory)) {
-            $serviceManager->setService(Definition::COMMAND_FACTORY, $this->commandFactory);
-        }
 
         if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS])) {
             $serviceManager->setDefaultCommandBus(

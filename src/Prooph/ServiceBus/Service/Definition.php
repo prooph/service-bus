@@ -33,6 +33,8 @@ class Definition
 
     const COMMAND_FACTORY                   = "command_factory";
 
+    const COMMAND_FACTORY_LOADER            = "command_factory_loader";
+
     const EVENT_BUS                         = "event_bus";
 
     const DEFAULT_EVENT_BUS                 = "default_event_bus";
@@ -43,6 +45,8 @@ class Definition
 
     const EVENT_FACTORY                     = "event_factory";
 
+    const EVENT_FACTORY_LOADER              = "event_factory_loader";
+
     const QUEUE                             = "queue";
 
     const MESSAGE_DISPATCHER                = "message_dispatcher";
@@ -50,6 +54,8 @@ class Definition
     const IN_MEMORY_MESSAGE_DISPATCHER      = "in_memory_message_dispatcher";
 
     const MESSAGE_FACTORY                   = "message_factory";
+
+    const MESSAGE_FACTORY_LOADER            = "message_factory_loader";
 
     const COMMAND_BUS_LOADER               = "command_bus_loader";
     

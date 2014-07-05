@@ -13,6 +13,7 @@ namespace Prooph\ServiceBus\Command;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
+use Prooph\ServiceBus\Service\CommandFactoryLoader;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\InvokeStrategyLoader;
 use Zend\EventManager\EventManager;
@@ -33,9 +34,9 @@ class CommandReceiver implements CommandReceiverInterface
     protected $commandMap = array();
 
     /**
-     * @var CommandFactoryInterface
+     * @var CommandFactoryLoader
      */
-    protected $commandFactory;
+    protected $commandFactoryLoader;
 
     /**
      * @var ServiceLocatorInterface
@@ -85,7 +86,7 @@ class CommandReceiver implements CommandReceiverInterface
             return;
         }
 
-        $command = $this->getCommandFactory()->fromMessage($aMessage);
+        $command = $this->getCommandFactoryLoader()->get($aMessage->name())->fromMessage($aMessage);
 
         $handler = $this->commandHandlerLocator->get($this->commandMap[$aMessage->name()]);
 
@@ -128,23 +129,19 @@ class CommandReceiver implements CommandReceiverInterface
     }
 
     /**
-     * @param CommandFactoryInterface $aCommandFactory
+     * @param CommandFactoryLoader $aCommandFactoryLoader
      */
-    public function setCommandFactory(CommandFactoryInterface $aCommandFactory)
+    public function setCommandFactoryLoader(CommandFactoryLoader $aCommandFactoryLoader)
     {
-        $this->commandFactory = $aCommandFactory;
+        $this->commandFactoryLoader = $aCommandFactoryLoader;
     }
 
     /**
-     * @return CommandFactoryInterface
+     * @return CommandFactoryLoader
      */
-    public function getCommandFactory()
+    public function getCommandFactoryLoader()
     {
-        if (is_null($this->commandFactory)) {
-            $this->commandFactory = new CommandFactory();
-        }
-
-        return $this->commandFactory;
+        return $this->commandFactoryLoader;
     }
 
     /**

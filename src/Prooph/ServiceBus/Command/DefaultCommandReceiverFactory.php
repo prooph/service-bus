@@ -126,9 +126,7 @@ class DefaultCommandReceiverFactory implements AbstractFactoryInterface
             );
         }
 
-        if ($mainServiceLocator->has(Definition::COMMAND_FACTORY)) {
-            $commandReceiver->setCommandFactory($mainServiceLocator->get(Definition::COMMAND_FACTORY));
-        }
+        $commandReceiver->setCommandFactoryLoader($mainServiceLocator->get(Definition::COMMAND_FACTORY_LOADER));
 
         return $commandReceiver;
     }

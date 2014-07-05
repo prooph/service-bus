@@ -84,7 +84,8 @@ class AbstractLoaderFactory implements AbstractFactoryInterface
                 Definition::EVENT_RECEIVER_LOADER => 'Prooph\ServiceBus\Service\EventReceiverLoader',
                 Definition::INVOKE_STRATEGY_LOADER => 'Prooph\ServiceBus\Service\InvokeStrategyLoader',
                 Definition::MESSAGE_DISPATCHER_LOADER => 'Prooph\ServiceBus\Service\MessageDispatcherLoader',
-                Definition::QUEUE_LOADER => 'Prooph\ServiceBus\Service\QueueLoader'
+                Definition::QUEUE_LOADER => 'Prooph\ServiceBus\Service\QueueLoader',
+                Definition::COMMAND_FACTORY_LOADER => 'Prooph\ServiceBus\Service\CommandFactoryLoader',
             );
         }
 

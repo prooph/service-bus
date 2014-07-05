@@ -88,9 +88,6 @@ class DefaultCommandReceiverFactoryTest extends TestCase
         //Register InvokeStrategyLoader as Service
         $this->serviceBusManager->setService(Definition::INVOKE_STRATEGY_LOADER, $invokeStrategyLoader);
 
-        //Register CommandFactory as Service, this is not necessary but we do it for testing purposes
-        $this->serviceBusManager->setService(Definition::COMMAND_FACTORY, new CommandFactory());
-
         $this->commandReceiverLoader = new CommandReceiverLoader();
 
         //Set MainServiceManager as ServiceLocator for the CommandReceiverLoader
@@ -119,11 +116,6 @@ class DefaultCommandReceiverFactoryTest extends TestCase
 
         $commandReceiver = $defaultCommandReceiverFactory
             ->createServiceWithName($this->commandReceiverLoader, 'testcasebus', 'test-case-bus');
-
-        $this->assertSame(
-            $this->serviceBusManager->get(Definition::COMMAND_FACTORY),
-            $commandReceiver->getCommandFactory()
-        );
 
         $this->assertSame(
             $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_LOADER),

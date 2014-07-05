@@ -16,6 +16,7 @@ use Prooph\ServiceBus\Command\CommandReceiver;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\Queue;
+use Prooph\ServiceBus\Service\CommandFactoryLoader;
 use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
@@ -60,6 +61,8 @@ class CommandBusTest extends TestCase
             ),
             $serviceBusManager
         );
+
+        $commandReceiver->setCommandFactoryLoader(new CommandFactoryLoader());
 
         $commandReceiverLoader = new CommandReceiverLoader();
 

@@ -15,6 +15,7 @@ use Prooph\ServiceBus\Command\CommandFactory;
 use Prooph\ServiceBus\Command\CommandReceiver;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
+use Prooph\ServiceBus\Service\CommandFactoryLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\TestCase;
@@ -67,6 +68,8 @@ class CommandReceiverTest extends TestCase
             ),
             $commandHandlerLocator
         );
+
+        $this->commandReceiver->setCommandFactoryLoader(new CommandFactoryLoader());
     }
 
     /**
