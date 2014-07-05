@@ -15,6 +15,7 @@ use Prooph\ServiceBus\Event\EventFactory;
 use Prooph\ServiceBus\Event\EventReceiver;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
+use Prooph\ServiceBus\Service\EventFactoryLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
@@ -72,6 +73,8 @@ class EventReceiverTest extends TestCase
             ),
             $eventHandlerLocator
         );
+
+        $this->eventReceiver->setEventFactoryLoader(new EventFactoryLoader());
     }
 
     /**

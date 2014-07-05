@@ -121,11 +121,6 @@ class DefaultEventReceiverFactoryTest extends TestCase
             ->createServiceWithName($this->eventReceiverLoader, 'testcasebus', 'test-case-bus');
 
         $this->assertSame(
-            $this->serviceBusManager->get(Definition::EVENT_FACTORY),
-            $eventReceiver->getEventFactory()
-        );
-
-        $this->assertSame(
             $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_LOADER),
             $eventReceiver->getInvokeStrategyLoader()
         );

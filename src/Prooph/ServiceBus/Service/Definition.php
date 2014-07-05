@@ -31,8 +31,6 @@ class Definition
 
     const COMMAND_HANDLER_INVOKE_STRATEGIES = 'command_handler_invoke_strategies';
 
-    const COMMAND_FACTORY                   = "command_factory";
-
     const COMMAND_FACTORY_LOADER            = "command_factory_loader";
 
     const EVENT_BUS                         = "event_bus";

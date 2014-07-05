@@ -14,6 +14,7 @@ namespace Prooph\ServiceBus\Event;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Service\Definition;
+use Prooph\ServiceBus\Service\EventFactoryLoader;
 use Prooph\ServiceBus\Service\InvokeStrategyLoader;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
@@ -33,9 +34,9 @@ class EventReceiver implements EventReceiverInterface
     protected $eventMap = array();
 
     /**
-     * @var EventFactoryInterface
+     * @var EventFactoryLoader
      */
-    protected $eventFactory;
+    protected $eventFactoryLoader;
 
     /**
      * @var ServiceLocatorInterface
@@ -84,7 +85,7 @@ class EventReceiver implements EventReceiverInterface
             return;
         }
 
-        $event = $this->getEventFactory()->fromMessage($aMessage);
+        $event = $this->getEventFactoryLoader()->get($aMessage->name())->fromMessage($aMessage);
 
         $eventHandlerAliases = (is_string($this->eventMap[$aMessage->name()]))?
             array($this->eventMap[$aMessage->name()])
@@ -131,23 +132,19 @@ class EventReceiver implements EventReceiverInterface
     }
 
     /**
-     * @param EventFactoryInterface $anEventFactory
+     * @param EventFactoryLoader $anEventFactory
      */
-    public function setEventFactory(EventFactoryInterface $anEventFactory)
+    public function setEventFactoryLoader(EventFactoryLoader $anEventFactory)
     {
-        $this->eventFactory = $anEventFactory;
+        $this->eventFactoryLoader = $anEventFactory;
     }
 
     /**
-     * @return EventFactoryInterface
+     * @return EventFactoryLoader
      */
-    public function getEventFactory()
+    public function getEventFactoryLoader()
     {
-        if (is_null($this->eventFactory)) {
-            $this->eventFactory = new EventFactory();
-        }
-
-        return $this->eventFactory;
+        return $this->eventFactoryLoader;
     }
 
     /**

@@ -126,9 +126,7 @@ class DefaultEventReceiverFactory implements AbstractFactoryInterface
             );
         }
 
-        if ($mainServiceLocator->has(Definition::EVENT_FACTORY)) {
-            $eventReceiver->setEventFactory($mainServiceLocator->get(Definition::EVENT_FACTORY));
-        }
+        $eventReceiver->setEventFactoryLoader($mainServiceLocator->get(Definition::EVENT_FACTORY_LOADER));
 
         return $eventReceiver;
     }
