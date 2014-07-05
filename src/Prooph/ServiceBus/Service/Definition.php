@@ -21,6 +21,8 @@ class Definition
 {
     const CONFIG_ROOT                       = "prooph.service_bus";
 
+    const CONFIG_ROOT_ESCAPED               = "prooph\.service_bus";
+
     const COMMAND_BUS                       = "command_bus";
 
     const DEFAULT_COMMAND_BUS               = "default_command_bus";

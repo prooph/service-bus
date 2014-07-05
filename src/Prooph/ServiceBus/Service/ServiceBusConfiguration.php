@@ -11,6 +11,7 @@
 
 namespace Prooph\ServiceBus\Service;
 
+use Codeliner\ArrayReader\ArrayReader;
 use Prooph\ServiceBus\Command\CommandFactoryInterface;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ConfigInterface;
@@ -25,6 +26,7 @@ class ServiceBusConfiguration implements ConfigInterface
     protected $configuration = array(
         Definition::CONFIG_ROOT => array(
             Definition::COMMAND_BUS => array(),
+            Definition::EVENT_BUS => array(),
         )
     );
 
@@ -43,15 +45,6 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     protected $commandFactory;
 
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $invokeStrategyLoader;
-
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $commandReceiverLoader;
 
     /**
      * @param null|array $aConfiguration
@@ -87,14 +80,6 @@ class ServiceBusConfiguration implements ConfigInterface
 
         if (!is_null($this->commandFactory)) {
             $serviceManager->setService(Definition::COMMAND_FACTORY, $this->commandFactory);
-        }
-
-        if (!is_null($this->invokeStrategyLoader)) {
-            $serviceManager->setService(Definition::INVOKE_STRATEGY_LOADER, $this->invokeStrategyLoader);
-        }
-
-        if (!is_null($this->commandReceiverLoader)) {
-            $serviceManager->setService(Definition::COMMAND_RECEIVER_LOADER, $this->commandReceiverLoader);
         }
 
         if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS])) {
@@ -186,22 +171,6 @@ class ServiceBusConfiguration implements ConfigInterface
     public function setCommandFactory(CommandFactoryInterface $commandFactory)
     {
         $this->commandFactory = $commandFactory;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $commandReceiverLoader
-     */
-    public function setCommandReceiverLoader(ServiceLocatorInterface $commandReceiverLoader)
-    {
-        $this->commandReceiverLoader = $commandReceiverLoader;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $invokeStrategyLoader
-     */
-    public function setInvokeStrategyLoader(ServiceLocatorInterface $invokeStrategyLoader)
-    {
-        $this->invokeStrategyLoader = $invokeStrategyLoader;
     }
 }
  

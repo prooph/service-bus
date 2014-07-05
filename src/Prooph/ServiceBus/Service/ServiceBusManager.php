@@ -61,19 +61,6 @@ class ServiceBusManager extends ServiceManager
     protected $mainServiceLocator;
 
     /**
-     * @var array
-     */
-    protected $invokableClasses = array(
-        'commandbusloader'         => 'Prooph\ServiceBus\Service\CommandBusLoader',
-        'commandreceiverloader'    => 'Prooph\ServiceBus\Service\CommandReceiverLoader',
-        'invokestrategyloader'     => 'Prooph\ServiceBus\Service\InvokeStrategyLoader',
-        'messagedispatcherloader'  => 'Prooph\ServiceBus\Service\MessageDispatcherLoader',
-        'queueloader'              => 'Prooph\ServiceBus\Service\QueueLoader',
-        'eventreceiverloader'      => 'Prooph\ServiceBus\Service\EventReceiverLoader',
-        'eventbusloader'           => 'Prooph\ServiceBus\Service\EventBusLoader',
-    );
-
-    /**
      * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config = null)
@@ -85,6 +72,8 @@ class ServiceBusManager extends ServiceManager
                 $instance->setServiceLocator($this->getMainServiceLocator());
             }
         });
+
+        $this->addAbstractFactory('Prooph\ServiceBus\Service\Factory\AbstractLoaderFactory');
     }
 
     /**
