@@ -25,8 +25,8 @@
     "require": {
         "php": ">=5.4",
         "rhumsaa/uuid" : "2.5.*",
-        "codeliner/php-equalsbuilder": "1.1.*",
-        "codeliner/array-reader": "1.0.*",
+        "codeliner/php-equalsbuilder": "~1.1",
+        "codeliner/array-reader": "~1.1",
         "beberlei/assert": "*",
         "zendframework/zend-servicemanager" : "2.3.*",
         "zendframework/zend-eventmanager" : "2.3.*",
@@ -40,7 +40,7 @@
     },
     "suggest": {
         "chrisboulton/php-resque": "Use php-resque as Message Dispatcher",
-        "prooph/event-store": "Use ProophEventStore and let ServiceBus dispatch persited DomainEvents"
+        "prooph/event-store": "Use ProophEventStore and let ServiceBus dispatch persisted DomainEvents"
     },
     "autoload": {
         "psr-0": { 

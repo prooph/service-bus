@@ -164,7 +164,8 @@ class PersistedEventDispatcherTest extends TestCase
 
         $config = array(
             "adapter" => array(
-                "Prooph\EventStore\Adapter\Zf2\Zf2EventStoreAdapter" => array(
+                'type' => "Prooph\EventStore\Adapter\Zf2\Zf2EventStoreAdapter",
+                'options' => array(
                     'connection' => array(
                         'driver' => 'Pdo_Sqlite',
                         'database' => ':memory:'

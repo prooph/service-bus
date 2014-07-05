@@ -11,6 +11,7 @@
 
 namespace Prooph\ServiceBus\Initializer;
 
+use Codeliner\ArrayReader\ArrayReader;
 use Prooph\ServiceBus\LifeCycleEvent\InitializeEvent;
 use Prooph\ServiceBus\Service\Definition;
 use Zend\EventManager\EventManagerInterface;
@@ -134,7 +135,14 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
         $serviceBusManager->setDefaultCommandBus('local-command-bus');
         $serviceBusManager->setDefaultEventBus('local-event-bus');
 
-        $commandMap = array();
+        $configReader = new ArrayReader($configuration);
+
+        $commandMap = $configReader->arrayValue(
+            str_replace(".", "\.", Definition::CONFIG_ROOT) . '.'
+            . Definition::COMMAND_BUS . '.'
+            . 'local-command-bus' . '.'
+            . Definition::COMMAND_MAP
+        );
 
         foreach ($this->commandHandlers as $commandName => $commandHandler) {
             $serviceBusManager->setService($commandName . '_local_handler', $commandHandler);
@@ -147,10 +155,18 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
             Definition::MESSAGE_DISPATCHER => 'in_memory_message_dispatcher'
         );
 
-        $eventMap = array();
+        $eventMap = $configReader->arrayValue(
+            str_replace(".", "\.", Definition::CONFIG_ROOT) . '.'
+            . Definition::EVENT_BUS . '.'
+            . 'local-event-bus' . '.'
+            . Definition::EVENT_MAP
+        );
 
         foreach ($this->eventHandlers as $eventName => $handlersOfEvent) {
-            $eventMap[$eventName] = array();
+
+            if (! isset($eventMap[$eventName])) {
+                $eventMap[$eventName] = array();
+            }
 
             foreach ($handlersOfEvent as $handlerIndex => $eventHandler) {
                 $serviceBusManager->setService($eventName . '_local_handler_' . $handlerIndex, $eventHandler);
