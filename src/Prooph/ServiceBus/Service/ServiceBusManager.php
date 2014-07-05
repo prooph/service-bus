@@ -64,13 +64,13 @@ class ServiceBusManager extends ServiceManager
      * @var array
      */
     protected $invokableClasses = array(
-        'commandbusmanager'         => 'Prooph\ServiceBus\Service\CommandBusManager',
-        'commandreceivermanager'    => 'Prooph\ServiceBus\Service\CommandReceiverManager',
-        'invokestrategymanager'     => 'Prooph\ServiceBus\Service\InvokeStrategyManager',
-        'messagedispatchermanager'  => 'Prooph\ServiceBus\Service\MessageDispatcherManager',
-        'queuemanager'              => 'Prooph\ServiceBus\Service\QueueManager',
-        'eventreceivermanager'      => 'Prooph\ServiceBus\Service\EventReceiverManager',
-        'eventbusmanager'           => 'Prooph\ServiceBus\Service\EventBusManager',
+        'commandbusloader'         => 'Prooph\ServiceBus\Service\CommandBusLoader',
+        'commandreceiverloader'    => 'Prooph\ServiceBus\Service\CommandReceiverLoader',
+        'invokestrategyloader'     => 'Prooph\ServiceBus\Service\InvokeStrategyLoader',
+        'messagedispatcherloader'  => 'Prooph\ServiceBus\Service\MessageDispatcherLoader',
+        'queueloader'              => 'Prooph\ServiceBus\Service\QueueLoader',
+        'eventreceiverloader'      => 'Prooph\ServiceBus\Service\EventReceiverLoader',
+        'eventbusloader'           => 'Prooph\ServiceBus\Service\EventBusLoader',
     );
 
     /**
@@ -191,10 +191,10 @@ class ServiceBusManager extends ServiceManager
                 );
             }
 
-            return $this->get('commandbusmanager')->get($this->defaultCommandBus);
+            return $this->get(Definition::COMMAND_BUS_LOADER)->get($this->defaultCommandBus);
         }
 
-        return $this->get('commandbusmanager')->get($aName);
+        return $this->get(Definition::COMMAND_BUS_LOADER)->get($aName);
     }
 
     /**
@@ -246,10 +246,10 @@ class ServiceBusManager extends ServiceManager
                 );
             }
 
-            return $this->get('eventbusmanager')->get($this->defaultEventBus);
+            return $this->get(Definition::EVENT_BUS_LOADER)->get($this->defaultEventBus);
         }
 
-        return $this->get('eventbusmanager')->get($aName);
+        return $this->get(Definition::EVENT_BUS_LOADER)->get($aName);
     }
 
     /**

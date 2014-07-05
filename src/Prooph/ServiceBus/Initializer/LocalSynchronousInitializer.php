@@ -183,16 +183,16 @@ class LocalSynchronousInitializer implements ListenerAggregateInterface
         $serviceBusManager->setService('configuration', $configuration);
 
         /* @var $messageDispatcher \Prooph\ServiceBus\Message\InMemoryMessageDispatcher */
-        $messageDispatcher = $serviceBusManager->get('message_dispatcher_manager')->get('in_memory_message_dispatcher');
+        $messageDispatcher = $serviceBusManager->get(Definition::MESSAGE_DISPATCHER_LOADER)->get('in_memory_message_dispatcher');
 
-        $commandReceiverManager = $serviceBusManager->get('command_receiver_manager');
+        $commandReceiverLoader = $serviceBusManager->get(Definition::COMMAND_RECEIVER_LOADER);
 
-        $eventReceiverManager   = $serviceBusManager->get('event_receiver_manager');
+        $eventReceiverLoader   = $serviceBusManager->get(Definition::EVENT_RECEIVER_LOADER);
 
-        $queue = $serviceBusManager->get('queue_manager')->get('local-queue');
+        $queue = $serviceBusManager->get(Definition::QUEUE_LOADER)->get('local-queue');
 
-        $messageDispatcher->registerCommandReceiverManagerForQueue($queue, $commandReceiverManager);
-        $messageDispatcher->registerEventReceiverManagerForQueue($queue, $eventReceiverManager);
+        $messageDispatcher->registerCommandReceiverLoaderForQueue($queue, $commandReceiverLoader);
+        $messageDispatcher->registerEventReceiverLoaderForQueue($queue, $eventReceiverLoader);
 
         $serviceBusManager->setAllowOverride(false);
     }

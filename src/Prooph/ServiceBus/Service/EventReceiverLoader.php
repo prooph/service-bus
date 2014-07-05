@@ -17,14 +17,14 @@ use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\ConfigInterface;
 
 /**
- * Class EventReceiverManager
+ * Class EventReceiverLoader
  *
  * @method EventReceiverInterface get($name) Get EventReceiver by name or alias
  *
  * @package Prooph\ServiceBus\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class EventReceiverManager extends AbstractPluginManager
+class EventReceiverLoader extends AbstractPluginManager
 {
     /**
      * @param ConfigInterface $aConfig

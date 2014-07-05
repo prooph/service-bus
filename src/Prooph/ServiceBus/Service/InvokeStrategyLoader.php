@@ -6,35 +6,32 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 11.03.14 - 19:39
+ * Date: 08.03.14 - 23:14
  */
 
 namespace Prooph\ServiceBus\Service;
 
-use Prooph\ServiceBus\Command\CommandBusInterface;
-use Prooph\ServiceBus\Command\DefaultCommandBusFactory;
 use Prooph\ServiceBus\Exception\RuntimeException;
+use Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\Exception;
 
 /**
- * Class CommandBusManager
+ * Class InvokeStrategyLoader
  *
  * @package Prooph\ServiceBus\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class CommandBusManager extends AbstractPluginManager
+class InvokeStrategyLoader extends AbstractPluginManager
 {
     /**
-     * @param ConfigInterface $aConfig
+     * @var array
      */
-    public function __construct(ConfigInterface $aConfig = null)
-    {
-        parent::__construct($aConfig);
-
-        $this->abstractFactories[] = new DefaultCommandBusFactory();
-    }
+    protected $invokableClasses = array(
+        'callbackstrategy'      => 'Prooph\ServiceBus\InvokeStrategy\CallbackStrategy',
+        'handlecommandstrategy' => 'Prooph\ServiceBus\InvokeStrategy\HandleCommandStrategy',
+        'oneventstrategy'       => 'Prooph\ServiceBus\InvokeStrategy\OnEventStrategy',
+    );
 
     /**
      * Validate the plugin
@@ -43,14 +40,14 @@ class CommandBusManager extends AbstractPluginManager
      * of FilterInterface.
      *
      * @param  mixed $plugin
+     * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @return void
-     * @throws RuntimeException if invalid
      */
     public function validatePlugin($plugin)
     {
-        if (! $plugin instanceof CommandBusInterface) {
+        if (! $plugin instanceof InvokeStrategyInterface) {
             throw new RuntimeException(sprintf(
-                'CommandBus must be instance of Prooph\ServiceBus\Command\CommandBusInterface,'
+                'InvokeStrategy must be instance of Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface,'
                 . 'instance of type %s given',
                 ((is_object($plugin)? get_class($plugin)  : gettype($plugin)))
             ));

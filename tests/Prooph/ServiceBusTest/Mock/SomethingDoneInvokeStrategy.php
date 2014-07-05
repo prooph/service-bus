@@ -11,8 +11,6 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\ServiceBus\Command\CommandInterface;
-use Prooph\ServiceBus\Event\EventInterface;
 use Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
 
 /**
@@ -25,7 +23,7 @@ class SomethingDoneInvokeStrategy implements InvokeStrategyInterface
 {
     /**
      * @param mixed $aHandler
-     * @param CommandInterface|EventInterface $aCommandOrEvent
+     * @param mixed $aCommandOrEvent
      * @return bool
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
@@ -35,7 +33,7 @@ class SomethingDoneInvokeStrategy implements InvokeStrategyInterface
 
     /**
      * @param mixed $aHandler
-     * @param CommandInterface|EventInterface $aCommandOrEvent
+     * @param mixed $aCommandOrEvent
      */
     public function invoke($aHandler, $aCommandOrEvent)
     {

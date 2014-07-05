@@ -16,8 +16,8 @@ use Prooph\ServiceBus\Event\EventReceiver;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\Queue;
-use Prooph\ServiceBus\Service\EventBusManager;
-use Prooph\ServiceBus\Service\EventReceiverManager;
+use Prooph\ServiceBus\Service\EventBusLoader;
+use Prooph\ServiceBus\Service\EventReceiverLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\OnEventHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
@@ -63,12 +63,12 @@ class EventBusTest extends TestCase
             $serviceBusManager
         );
 
-        $eventReceiverManager = new EventReceiverManager();
+        $eventReceiverLoader = new EventReceiverLoader();
 
-        $eventReceiverManager->setService('test-case-bus', $eventReceiver);
+        $eventReceiverLoader->setService('test-case-bus', $eventReceiver);
 
-        $messageDispatcher->registerEventReceiverManagerForQueue($queue, $eventReceiverManager);
-        $messageDispatcher->registerEventReceiverManagerForQueue($queue2, $eventReceiverManager);
+        $messageDispatcher->registerEventReceiverLoaderForQueue($queue, $eventReceiverLoader);
+        $messageDispatcher->registerEventReceiverLoaderForQueue($queue2, $eventReceiverLoader);
 
         $this->eventBus = new EventBus('test-case-bus', $messageDispatcher, array($queue, $queue2));
     }

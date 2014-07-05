@@ -17,14 +17,14 @@ use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\Exception;
 
 /**
- * Class MessageDispatcherManager
+ * Class MessageDispatcherLoader
  *
  * @method MessageDispatcherInterface get($name) Get MessageDispatcher by name or alias
  *
  * @package Prooph\ServiceBus\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class MessageDispatcherManager extends AbstractPluginManager
+class MessageDispatcherLoader extends AbstractPluginManager
 {
     protected $invokableClasses = array(
         'inmemorymessagedispatcher'      => 'Prooph\ServiceBus\Message\InMemoryMessageDispatcher',

@@ -14,7 +14,7 @@ namespace Prooph\ServiceBus\Command;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\InvokeStrategyManager;
+use Prooph\ServiceBus\Service\InvokeStrategyLoader;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -50,7 +50,7 @@ class CommandReceiver implements CommandReceiverInterface
     /**
      * @var ServiceLocatorInterface
      */
-    protected $invokeStrategyManager;
+    protected $invokeStrategyLoader;
 
     /**
      * @var EventManagerInterface
@@ -101,7 +101,7 @@ class CommandReceiver implements CommandReceiverInterface
         $invokeStrategy = null;
 
         foreach ($this->getInvokeStrategies() as $invokeStrategyName) {
-            $invokeStrategy = $this->getInvokeStrategyManager()->get($invokeStrategyName);
+            $invokeStrategy = $this->getInvokeStrategyLoader()->get($invokeStrategyName);
 
             if ($invokeStrategy->canInvoke($handler, $command)) {
                 break;
@@ -164,23 +164,23 @@ class CommandReceiver implements CommandReceiverInterface
     }
 
     /**
-     * @param ServiceLocatorInterface $anInvokeStrategyManager
+     * @param ServiceLocatorInterface $anInvokeStrategyLoader
      */
-    public function setInvokeStrategyManager(ServiceLocatorInterface $anInvokeStrategyManager)
+    public function setInvokeStrategyLoader(ServiceLocatorInterface $anInvokeStrategyLoader)
     {
-        $this->invokeStrategyManager = $anInvokeStrategyManager;
+        $this->invokeStrategyLoader = $anInvokeStrategyLoader;
     }
 
     /**
      * @return ServiceLocatorInterface
      */
-    public function getInvokeStrategyManager()
+    public function getInvokeStrategyLoader()
     {
-        if (is_null($this->invokeStrategyManager)) {
-            $this->invokeStrategyManager = new InvokeStrategyManager();
+        if (is_null($this->invokeStrategyLoader)) {
+            $this->invokeStrategyLoader = new InvokeStrategyLoader();
         }
 
-        return $this->invokeStrategyManager;
+        return $this->invokeStrategyLoader;
     }
 
     public function events()

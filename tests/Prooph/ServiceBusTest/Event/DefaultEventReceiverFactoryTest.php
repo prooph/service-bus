@@ -16,8 +16,8 @@ use Prooph\ServiceBus\Event\EventFactory;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\EventReceiverManager;
-use Prooph\ServiceBus\Service\InvokeStrategyManager;
+use Prooph\ServiceBus\Service\EventReceiverLoader;
+use Prooph\ServiceBus\Service\InvokeStrategyLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\SomethingDoneHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDoneInvokeStrategy;
@@ -43,9 +43,9 @@ class DefaultEventReceiverFactoryTest extends TestCase
     private $somethingDoneHandler;
 
     /**
-     * @var EventReceiverManager
+     * @var EventReceiverLoader
      */
-    private $eventReceiverManager;
+    private $eventReceiverLoader;
 
     protected function setUp()
     {
@@ -78,23 +78,23 @@ class DefaultEventReceiverFactoryTest extends TestCase
         //Register SomethingDoneHandler as Service
         $this->serviceBusManager->setService('something_done_handler', $this->somethingDoneHandler);
 
-        $invokeStrategyManager = new InvokeStrategyManager();
+        $invokeStrategyLoader = new InvokeStrategyLoader();
 
         //Register DoSomethingInvokeStrategy as Service
-        $invokeStrategyManager->setService('something_done_invoke_strategy', new SomethingDoneInvokeStrategy());
+        $invokeStrategyLoader->setService('something_done_invoke_strategy', new SomethingDoneInvokeStrategy());
 
         $this->serviceBusManager->setAllowOverride(true);
 
-        //Register InvokeStrategyManager as Service
-        $this->serviceBusManager->setService(Definition::INVOKE_STRATEGY_MANAGER, $invokeStrategyManager);
+        //Register InvokeStrategyLoader as Service
+        $this->serviceBusManager->setService(Definition::INVOKE_STRATEGY_LOADER, $invokeStrategyLoader);
 
         //Register EventFactory as Service, this is not necessary but we do it for testing purposes
         $this->serviceBusManager->setService(Definition::EVENT_FACTORY, new EventFactory());
 
-        $this->eventReceiverManager = new EventReceiverManager();
+        $this->eventReceiverLoader = new EventReceiverLoader();
 
-        //Set MainServiceManager as ServiceLocator for the CommandReceiverManager
-        $this->eventReceiverManager->setServiceLocator($this->serviceBusManager);
+        //Set MainServiceManager as ServiceLocator for the CommandReceiverLoader
+        $this->eventReceiverLoader->setServiceLocator($this->serviceBusManager);
     }
 
     /**
@@ -106,7 +106,7 @@ class DefaultEventReceiverFactoryTest extends TestCase
 
         $this->assertTrue(
             $defaultEventReceiverFactory
-                ->canCreateServiceWithName($this->eventReceiverManager, 'testcasebus', 'test-case-bus')
+                ->canCreateServiceWithName($this->eventReceiverLoader, 'testcasebus', 'test-case-bus')
         );
     }
 
@@ -118,7 +118,7 @@ class DefaultEventReceiverFactoryTest extends TestCase
         $defaultEventReceiverFactory = new DefaultEventReceiverFactory();
 
         $eventReceiver = $defaultEventReceiverFactory
-            ->createServiceWithName($this->eventReceiverManager, 'testcasebus', 'test-case-bus');
+            ->createServiceWithName($this->eventReceiverLoader, 'testcasebus', 'test-case-bus');
 
         $this->assertSame(
             $this->serviceBusManager->get(Definition::EVENT_FACTORY),
@@ -126,8 +126,8 @@ class DefaultEventReceiverFactoryTest extends TestCase
         );
 
         $this->assertSame(
-            $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_MANAGER),
-            $eventReceiver->getInvokeStrategyManager()
+            $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_LOADER),
+            $eventReceiver->getInvokeStrategyLoader()
         );
 
         $this->assertEquals(

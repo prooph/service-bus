@@ -49,19 +49,19 @@ class Definition
 
     const MESSAGE_FACTORY                   = "message_factory";
 
-    const COMMAND_BUS_MANAGER               = "command_bus_manager";
+    const COMMAND_BUS_LOADER               = "command_bus_loader";
     
-    const COMMAND_RECEIVER_MANAGER          = "command_receiver_manager";
+    const COMMAND_RECEIVER_LOADER          = "command_receiver_loader";
 
-    const EVENT_BUS_MANAGER                 = "event_bus_manager";
+    const EVENT_BUS_LOADER                 = "event_bus_loader";
 
-    const EVENT_RECEIVER_MANAGER            = "event_receiver_manager";
+    const EVENT_RECEIVER_LOADER            = "event_receiver_loader";
 
-    const INVOKE_STRATEGY_MANAGER           = "invoke_strategy_manager";
+    const INVOKE_STRATEGY_LOADER           = "invoke_strategy_loader";
 
-    const MESSAGE_DISPATCHER_MANAGER        = "message_dispatcher_manager";
+    const MESSAGE_DISPATCHER_LOADER        = "message_dispatcher_loader";
 
-    const QUEUE_MANAGER                     = "queue_manager";
+    const QUEUE_LOADER                     = "queue_loader";
 
     const SERVICE_BUS_COMPONENT             = 'service_bus_component';
 }

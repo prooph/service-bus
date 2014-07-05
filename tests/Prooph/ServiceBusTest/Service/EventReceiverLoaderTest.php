@@ -6,23 +6,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 09.03.14 - 22:04
+ * Date: 11.03.14 - 22:17
  */
 
 namespace Prooph\ServiceBusTest\Service;
 
-use Prooph\ServiceBus\Service\CommandReceiverManager;
 use Prooph\ServiceBus\Service\Definition;
+use Prooph\ServiceBus\Service\EventReceiverLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\TestCase;
 
 /**
- * Class CommandReceiverManagerTest
+ * Class EventReceiverLoaderTest
  *
  * @package Prooph\ServiceBusTest\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class CommandReceiverManagerTest extends TestCase
+class EventReceiverLoaderTest extends TestCase
 {
     /**
      * @var ServiceBusManager
@@ -30,9 +30,9 @@ class CommandReceiverManagerTest extends TestCase
     private $serviceBusManager;
 
     /**
-     * @var CommandReceiverManager
+     * @var EventReceiverLoader
      */
-    private $commandReceiverManager;
+    private $eventReceiverLoader;
 
     protected function setUp()
     {
@@ -40,18 +40,14 @@ class CommandReceiverManagerTest extends TestCase
 
         $config = array(
             Definition::CONFIG_ROOT => array(
-                Definition::COMMAND_BUS => array(
+                Definition::EVENT_BUS => array(
                     //name of the bus, must match with the Message.header.sender
                     'test-case-bus' => array(
-                        Definition::COMMAND_MAP => array(
+                        Definition::EVENT_MAP => array(
                             //DoSomething command is mapped to the DoSometingHandler alias
-                            'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
+                            'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
                         )
                     )
-                ),
-                Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
-                    //Alias of the DoSomethingInvokeStrategy
-                    'do_something_invoke_strategy'
                 )
             )
         );
@@ -59,19 +55,19 @@ class CommandReceiverManagerTest extends TestCase
         //Add global config as service
         $this->serviceBusManager->setService('configuration', $config);
 
-        $this->commandReceiverManager = new CommandReceiverManager();
+        $this->eventReceiverLoader = new EventReceiverLoader();
 
-        //Set MainServiceManager as ServiceLocator for the CommandReceiverManager
-        $this->commandReceiverManager->setServiceLocator($this->serviceBusManager);
+        //Set MainServiceManager as ServiceLocator for the CommandReceiverLoader
+        $this->eventReceiverLoader->setServiceLocator($this->serviceBusManager);
     }
 
     /**
      * @test
      */
-    public function it_returns_the_default_command_receiver()
+    public function it_returns_the_default_event_receiver()
     {
-        $commandReceiver = $this->commandReceiverManager->get('test-case-bus');
+        $eventReceiver = $this->eventReceiverLoader->get('test-case-bus');
 
-        $this->assertInstanceOf('Prooph\ServiceBus\Command\CommandReceiver', $commandReceiver);
+        $this->assertInstanceOf('Prooph\ServiceBus\Event\EventReceiver', $eventReceiver);
     }
 }

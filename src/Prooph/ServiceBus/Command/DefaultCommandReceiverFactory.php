@@ -12,7 +12,7 @@
 namespace Prooph\ServiceBus\Command;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Service\CommandReceiverManager;
+use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\Definition;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -35,7 +35,7 @@ class DefaultCommandReceiverFactory implements AbstractFactoryInterface
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        return $serviceLocator instanceof CommandReceiverManager;
+        return $serviceLocator instanceof CommandReceiverLoader;
     }
 
     /**
@@ -49,11 +49,11 @@ class DefaultCommandReceiverFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        if (!$serviceLocator instanceof CommandReceiverManager) {
+        if (!$serviceLocator instanceof CommandReceiverLoader) {
             throw new RuntimeException(
                 sprintf(
                     "%s is used in the wrong context. It can only be used within a'
-                     . ' Prooph\ServiceBus\Service\CommandReceiverManager",
+                     . ' Prooph\ServiceBus\Service\CommandReceiverLoader",
                     get_class($this)
                 )
             );
@@ -120,9 +120,9 @@ class DefaultCommandReceiverFactory implements AbstractFactoryInterface
             );
         }
 
-        if ($mainServiceLocator->has(Definition::INVOKE_STRATEGY_MANAGER)) {
-            $commandReceiver->setInvokeStrategyManager(
-                $mainServiceLocator->get(Definition::INVOKE_STRATEGY_MANAGER)
+        if ($mainServiceLocator->has(Definition::INVOKE_STRATEGY_LOADER)) {
+            $commandReceiver->setInvokeStrategyLoader(
+                $mainServiceLocator->get(Definition::INVOKE_STRATEGY_LOADER)
             );
         }
 

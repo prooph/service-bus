@@ -15,9 +15,9 @@ use Prooph\ServiceBus\Command\CommandFactory;
 use Prooph\ServiceBus\Command\DefaultCommandReceiverFactory;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
-use Prooph\ServiceBus\Service\CommandReceiverManager;
+use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\InvokeStrategyManager;
+use Prooph\ServiceBus\Service\InvokeStrategyLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomethingHandler;
 use Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy;
@@ -43,9 +43,9 @@ class DefaultCommandReceiverFactoryTest extends TestCase
     private $doSomethingHandler;
 
     /**
-     * @var CommandReceiverManager
+     * @var CommandReceiverLoader
      */
-    private $commandReceiverManager;
+    private $commandReceiverLoader;
 
     protected function setUp()
     {
@@ -78,23 +78,23 @@ class DefaultCommandReceiverFactoryTest extends TestCase
         //Register DoSomethingHandler as Service
         $this->serviceBusManager->setService('do_something_handler', $this->doSomethingHandler);
 
-        $invokeStrategyManager = new InvokeStrategyManager();
+        $invokeStrategyLoader = new InvokeStrategyLoader();
 
         //Register DoSomethingInvokeStrategy as Service
-        $invokeStrategyManager->setService('do_something_invoke_strategy', new DoSomethingInvokeStrategy());
+        $invokeStrategyLoader->setService('do_something_invoke_strategy', new DoSomethingInvokeStrategy());
 
         $this->serviceBusManager->setAllowOverride(true);
 
-        //Register InvokeStrategyManager as Service
-        $this->serviceBusManager->setService(Definition::INVOKE_STRATEGY_MANAGER, $invokeStrategyManager);
+        //Register InvokeStrategyLoader as Service
+        $this->serviceBusManager->setService(Definition::INVOKE_STRATEGY_LOADER, $invokeStrategyLoader);
 
         //Register CommandFactory as Service, this is not necessary but we do it for testing purposes
         $this->serviceBusManager->setService(Definition::COMMAND_FACTORY, new CommandFactory());
 
-        $this->commandReceiverManager = new CommandReceiverManager();
+        $this->commandReceiverLoader = new CommandReceiverLoader();
 
-        //Set MainServiceManager as ServiceLocator for the CommandReceiverManager
-        $this->commandReceiverManager->setServiceLocator($this->serviceBusManager);
+        //Set MainServiceManager as ServiceLocator for the CommandReceiverLoader
+        $this->commandReceiverLoader->setServiceLocator($this->serviceBusManager);
     }
 
     /**
@@ -106,7 +106,7 @@ class DefaultCommandReceiverFactoryTest extends TestCase
 
         $this->assertTrue(
             $defaultCommandReceiverFactory
-                ->canCreateServiceWithName($this->commandReceiverManager, 'testcasebus', 'test-case-bus')
+                ->canCreateServiceWithName($this->commandReceiverLoader, 'testcasebus', 'test-case-bus')
         );
     }
 
@@ -118,7 +118,7 @@ class DefaultCommandReceiverFactoryTest extends TestCase
         $defaultCommandReceiverFactory = new DefaultCommandReceiverFactory();
 
         $commandReceiver = $defaultCommandReceiverFactory
-            ->createServiceWithName($this->commandReceiverManager, 'testcasebus', 'test-case-bus');
+            ->createServiceWithName($this->commandReceiverLoader, 'testcasebus', 'test-case-bus');
 
         $this->assertSame(
             $this->serviceBusManager->get(Definition::COMMAND_FACTORY),
@@ -126,8 +126,8 @@ class DefaultCommandReceiverFactoryTest extends TestCase
         );
 
         $this->assertSame(
-            $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_MANAGER),
-            $commandReceiver->getInvokeStrategyManager()
+            $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_LOADER),
+            $commandReceiver->getInvokeStrategyLoader()
         );
 
         $this->assertEquals(

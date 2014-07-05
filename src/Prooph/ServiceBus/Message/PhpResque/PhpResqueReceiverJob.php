@@ -52,11 +52,11 @@ class PhpResqueReceiverJob
 
         if ($message->header()->type() === MessageHeader::TYPE_COMMAND) {
             $receiver = $this->serviceBusManager
-                ->get(Definition::COMMAND_RECEIVER_MANAGER)
+                ->get(Definition::COMMAND_RECEIVER_LOADER)
                 ->get($message->header()->sender());
         } else {
             $receiver = $this->serviceBusManager
-                ->get(Definition::EVENT_RECEIVER_MANAGER)
+                ->get(Definition::EVENT_RECEIVER_LOADER)
                 ->get($message->header()->sender());
         }
 

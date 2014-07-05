@@ -13,7 +13,7 @@ namespace Prooph\ServiceBusTest\Command;
 
 use Prooph\ServiceBus\Command\DefaultCommandBusFactory;
 use Prooph\ServiceBus\Message\Queue;
-use Prooph\ServiceBus\Service\CommandBusManager;
+use Prooph\ServiceBus\Service\CommandBusLoader;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
@@ -67,12 +67,12 @@ class DefaultCommandBusFactoryTest extends TestCase
         //Register DoSomethingHandler as Service
         $this->serviceBusManager->setService('do_something_handler', $this->doSomethingHandler);
 
-        $inMemoryMessageDispatcher = $this->serviceBusManager->get(Definition::MESSAGE_DISPATCHER_MANAGER)
+        $inMemoryMessageDispatcher = $this->serviceBusManager->get(Definition::MESSAGE_DISPATCHER_LOADER)
             ->get(Definition::IN_MEMORY_MESSAGE_DISPATCHER);
 
-        $inMemoryMessageDispatcher->registerCommandReceiverManagerForQueue(
+        $inMemoryMessageDispatcher->registerCommandReceiverLoaderForQueue(
             new Queue('local'),
-            $this->serviceBusManager->get(Definition::COMMAND_RECEIVER_MANAGER)
+            $this->serviceBusManager->get(Definition::COMMAND_RECEIVER_LOADER)
         );
     }
 
@@ -81,12 +81,12 @@ class DefaultCommandBusFactoryTest extends TestCase
      */
     public function it_creates_a_fully_configured_command_bus()
     {
-        $commandBusManager = new CommandBusManager();
-        $commandBusManager->setServiceLocator($this->serviceBusManager);
+        $commandBusLoader = new CommandBusLoader();
+        $commandBusLoader->setServiceLocator($this->serviceBusManager);
 
         $factory = new DefaultCommandBusFactory();
 
-        $commandBus = $factory->createServiceWithName($commandBusManager, 'testcasebus', 'test-case-bus');
+        $commandBus = $factory->createServiceWithName($commandBusLoader, 'testcasebus', 'test-case-bus');
 
         $doSomething = DoSomething::fromData('test payload');
 

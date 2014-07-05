@@ -46,12 +46,12 @@ class ServiceBusConfiguration implements ConfigInterface
     /**
      * @var ServiceLocatorInterface
      */
-    protected $invokeStrategyManager;
+    protected $invokeStrategyLoader;
 
     /**
      * @var ServiceLocatorInterface
      */
-    protected $commandReceiverManager;
+    protected $commandReceiverLoader;
 
     /**
      * @param null|array $aConfiguration
@@ -89,12 +89,12 @@ class ServiceBusConfiguration implements ConfigInterface
             $serviceManager->setService(Definition::COMMAND_FACTORY, $this->commandFactory);
         }
 
-        if (!is_null($this->invokeStrategyManager)) {
-            $serviceManager->setService(Definition::INVOKE_STRATEGY_MANAGER, $this->invokeStrategyManager);
+        if (!is_null($this->invokeStrategyLoader)) {
+            $serviceManager->setService(Definition::INVOKE_STRATEGY_LOADER, $this->invokeStrategyLoader);
         }
 
-        if (!is_null($this->commandReceiverManager)) {
-            $serviceManager->setService(Definition::COMMAND_RECEIVER_MANAGER, $this->commandReceiverManager);
+        if (!is_null($this->commandReceiverLoader)) {
+            $serviceManager->setService(Definition::COMMAND_RECEIVER_LOADER, $this->commandReceiverLoader);
         }
 
         if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS])) {
@@ -189,19 +189,19 @@ class ServiceBusConfiguration implements ConfigInterface
     }
 
     /**
-     * @param ServiceLocatorInterface $commandReceiverManager
+     * @param ServiceLocatorInterface $commandReceiverLoader
      */
-    public function setCommandReceiverManager(ServiceLocatorInterface $commandReceiverManager)
+    public function setCommandReceiverLoader(ServiceLocatorInterface $commandReceiverLoader)
     {
-        $this->commandReceiverManager = $commandReceiverManager;
+        $this->commandReceiverLoader = $commandReceiverLoader;
     }
 
     /**
-     * @param ServiceLocatorInterface $invokeStrategyManager
+     * @param ServiceLocatorInterface $invokeStrategyLoader
      */
-    public function setInvokeStrategyManager(ServiceLocatorInterface $invokeStrategyManager)
+    public function setInvokeStrategyLoader(ServiceLocatorInterface $invokeStrategyLoader)
     {
-        $this->invokeStrategyManager = $invokeStrategyManager;
+        $this->invokeStrategyLoader = $invokeStrategyLoader;
     }
 }
  

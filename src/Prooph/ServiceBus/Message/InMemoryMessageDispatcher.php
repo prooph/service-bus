@@ -12,9 +12,9 @@
 namespace Prooph\ServiceBus\Message;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Service\CommandReceiverManager;
+use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\EventReceiverManager;
+use Prooph\ServiceBus\Service\EventReceiverLoader;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
@@ -27,14 +27,14 @@ use Zend\EventManager\EventManagerInterface;
 class InMemoryMessageDispatcher implements MessageDispatcherInterface
 {
     /**
-     * @var CommandReceiverManager[]
+     * @var CommandReceiverLoader[]
      */
-    protected $commandReceiverManagerQueueMap = array();
+    protected $commandReceiverLoaderQueueMap = array();
 
     /**
-     * @var EventReceiverManager[]
+     * @var EventReceiverLoader[]
      */
-    protected $eventReceiverManagerQueueMap   = array();
+    protected $eventReceiverLoaderQueueMap   = array();
 
     /**
      * @var EventManagerInterface
@@ -61,16 +61,16 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
         }
 
         if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
-            if (!isset($this->commandReceiverManagerQueueMap[$aQueue->name()])) {
+            if (!isset($this->commandReceiverLoaderQueueMap[$aQueue->name()])) {
                 throw new RuntimeException(
                     sprintf(
-                        'No CommandReceiverManager registered for queue -%s-',
+                        'No CommandReceiverLoader registered for queue -%s-',
                         $aQueue->name()
                     )
                 );
             }
 
-            $commandReceiver = $this->commandReceiverManagerQueueMap[$aQueue->name()]
+            $commandReceiver = $this->commandReceiverLoaderQueueMap[$aQueue->name()]
                 ->get($aMessage->header()->sender());
 
             $commandReceiver->handle($aMessage);
@@ -85,16 +85,16 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
         }
 
         if ($aMessage->header()->type() === MessageHeader::TYPE_EVENT) {
-            if (!isset($this->eventReceiverManagerQueueMap[$aQueue->name()])) {
+            if (!isset($this->eventReceiverLoaderQueueMap[$aQueue->name()])) {
                 throw new RuntimeException(
                     sprintf(
-                        'No EventReceiverManager registered for queue -%s-',
+                        'No EventReceiverLoader registered for queue -%s-',
                         $aQueue->name()
                     )
                 );
             }
 
-            $eventReceiver = $this->eventReceiverManagerQueueMap[$aQueue->name()]
+            $eventReceiver = $this->eventReceiverLoaderQueueMap[$aQueue->name()]
                 ->get($aMessage->header()->sender());
 
             $eventReceiver->handle($aMessage);
@@ -111,24 +111,24 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
 
     /**
      * @param QueueInterface         $aQueue
-     * @param CommandReceiverManager $aCommandReceiverManager
+     * @param CommandReceiverLoader $aCommandReceiverLoader
      */
-    public function registerCommandReceiverManagerForQueue(
+    public function registerCommandReceiverLoaderForQueue(
         QueueInterface $aQueue,
-        CommandReceiverManager $aCommandReceiverManager
+        CommandReceiverLoader $aCommandReceiverLoader
     ) {
-        $this->commandReceiverManagerQueueMap[$aQueue->name()] = $aCommandReceiverManager;
+        $this->commandReceiverLoaderQueueMap[$aQueue->name()] = $aCommandReceiverLoader;
     }
 
     /**
      * @param QueueInterface       $aQueue
-     * @param EventReceiverManager $anEventReceiverManager
+     * @param EventReceiverLoader $anEventReceiverLoader
      */
-    public function registerEventReceiverManagerForQueue(
+    public function registerEventReceiverLoaderForQueue(
         QueueInterface $aQueue,
-        EventReceiverManager $anEventReceiverManager
+        EventReceiverLoader $anEventReceiverLoader
     ) {
-        $this->eventReceiverManagerQueueMap[$aQueue->name()] = $anEventReceiverManager;
+        $this->eventReceiverLoaderQueueMap[$aQueue->name()] = $anEventReceiverLoader;
     }
 
     /**

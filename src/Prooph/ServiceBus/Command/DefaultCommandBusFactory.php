@@ -12,7 +12,7 @@
 namespace Prooph\ServiceBus\Command;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Service\CommandBusManager;
+use Prooph\ServiceBus\Service\CommandBusLoader;
 use Prooph\ServiceBus\Service\Definition;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -36,7 +36,7 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        return $serviceLocator instanceof CommandBusManager;
+        return $serviceLocator instanceof CommandBusLoader;
     }
 
     /**
@@ -50,11 +50,11 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        if (!$serviceLocator instanceof CommandBusManager) {
+        if (!$serviceLocator instanceof CommandBusLoader) {
             throw new RuntimeException(
                 sprintf(
                     "%s is used in the wrong context. It can only be used within a'
-                     . ' Prooph\ServiceBus\Service\CommandBusManager",
+                     . ' Prooph\ServiceBus\Service\CommandBusLoader",
                     get_class($this)
                 )
             );
@@ -122,9 +122,9 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
             );
         }
 
-        $queue = $mainServiceLocator->get(Definition::QUEUE_MANAGER)->get($configuration[Definition::QUEUE]);
+        $queue = $mainServiceLocator->get(Definition::QUEUE_LOADER)->get($configuration[Definition::QUEUE]);
 
-        $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_MANAGER)
+        $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_LOADER)
             ->get($configuration[Definition::MESSAGE_DISPATCHER]);
 
         $commandBus = new CommandBus($requestedName, $messageDispatcher, $queue);

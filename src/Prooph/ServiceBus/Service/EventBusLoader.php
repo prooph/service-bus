@@ -6,32 +6,35 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 08.03.14 - 23:14
+ * Date: 12.03.14 - 16:05
  */
 
 namespace Prooph\ServiceBus\Service;
 
+use Prooph\ServiceBus\Event\DefaultEventBusFactory;
+use Prooph\ServiceBus\Event\EventBusInterface;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
 use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\ConfigInterface;
 use Zend\ServiceManager\Exception;
 
 /**
- * Class InvokeStrategyManager
+ * Class EventBusLoader
  *
  * @package Prooph\ServiceBus\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class InvokeStrategyManager extends AbstractPluginManager
+class EventBusLoader extends AbstractPluginManager
 {
     /**
-     * @var array
+     * @param ConfigInterface $aConfig
      */
-    protected $invokableClasses = array(
-        'callbackstrategy'      => 'Prooph\ServiceBus\InvokeStrategy\CallbackStrategy',
-        'handlecommandstrategy' => 'Prooph\ServiceBus\InvokeStrategy\HandleCommandStrategy',
-        'oneventstrategy'       => 'Prooph\ServiceBus\InvokeStrategy\OnEventStrategy',
-    );
+    public function __construct(ConfigInterface $aConfig = null)
+    {
+        parent::__construct($aConfig);
+
+        $this->abstractFactories[] = new DefaultEventBusFactory();
+    }
 
     /**
      * Validate the plugin
@@ -45,9 +48,9 @@ class InvokeStrategyManager extends AbstractPluginManager
      */
     public function validatePlugin($plugin)
     {
-        if (! $plugin instanceof InvokeStrategyInterface) {
+        if (! $plugin instanceof EventBusInterface) {
             throw new RuntimeException(sprintf(
-                'InvokeStrategy must be instance of Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface,'
+                'EventBus must be instance of Prooph\ServiceBus\Command\EventBusInterface,'
                 . 'instance of type %s given',
                 ((is_object($plugin)? get_class($plugin)  : gettype($plugin)))
             ));

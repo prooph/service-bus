@@ -16,7 +16,7 @@ use Prooph\ServiceBus\Command\CommandReceiver;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\Queue;
-use Prooph\ServiceBus\Service\CommandReceiverManager;
+use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\HandleCommandHandler;
@@ -61,11 +61,11 @@ class CommandBusTest extends TestCase
             $serviceBusManager
         );
 
-        $commandReceiverManager = new CommandReceiverManager();
+        $commandReceiverLoader = new CommandReceiverLoader();
 
-        $commandReceiverManager->setService('test-case-bus', $commandReceiver);
+        $commandReceiverLoader->setService('test-case-bus', $commandReceiver);
 
-        $messageDispatcher->registerCommandReceiverManagerForQueue($queue, $commandReceiverManager);
+        $messageDispatcher->registerCommandReceiverLoaderForQueue($queue, $commandReceiverLoader);
 
         $this->commandBus = new CommandBus('test-case-bus', $messageDispatcher, $queue);
     }

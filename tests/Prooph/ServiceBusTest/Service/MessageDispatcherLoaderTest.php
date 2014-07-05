@@ -12,27 +12,27 @@
 namespace Prooph\ServiceBusTest\Service;
 
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\MessageDispatcherManager;
+use Prooph\ServiceBus\Service\MessageDispatcherLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\TestCase;
 
 /**
- * Class MessageDispatcherManagerTest
+ * Class MessageDispatcherLoaderTest
  *
  * @package Prooph\ServiceBusTest\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class MessageDispatcherManagerTest extends TestCase
+class MessageDispatcherLoaderTest extends TestCase
 {
     /**
      * @test
      */
     public function it_returns_an_in_memory_message_dispatcher()
     {
-        $messageDispatcherManager = new MessageDispatcherManager();
-        $messageDispatcherManager->setServiceLocator(new ServiceBusManager());
+        $messageDispatcherLoader = new MessageDispatcherLoader();
+        $messageDispatcherLoader->setServiceLocator(new ServiceBusManager());
 
-        $inMemoryMessageDispatcher = $messageDispatcherManager->get(Definition::IN_MEMORY_MESSAGE_DISPATCHER);
+        $inMemoryMessageDispatcher = $messageDispatcherLoader->get(Definition::IN_MEMORY_MESSAGE_DISPATCHER);
 
         $this->assertInstanceOf('Prooph\ServiceBus\Message\InMemoryMessageDispatcher', $inMemoryMessageDispatcher);
     }

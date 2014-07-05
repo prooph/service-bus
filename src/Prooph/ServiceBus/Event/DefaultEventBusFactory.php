@@ -13,7 +13,7 @@ namespace Prooph\ServiceBus\Event;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\EventBusManager;
+use Prooph\ServiceBus\Service\EventBusLoader;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -35,7 +35,7 @@ class DefaultEventBusFactory implements AbstractFactoryInterface
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        return $serviceLocator instanceof EventBusManager;
+        return $serviceLocator instanceof EventBusLoader;
     }
 
     /**
@@ -49,11 +49,11 @@ class DefaultEventBusFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        if (!$serviceLocator instanceof EventBusManager) {
+        if (!$serviceLocator instanceof EventBusLoader) {
             throw new RuntimeException(
                 sprintf(
                     "%s is used in the wrong context. It can only be used within a'
-                     . ' Prooph\ServiceBus\Service\EventBusManager",
+                     . ' Prooph\ServiceBus\Service\EventBusLoader",
                     get_class($this)
                 )
             );
@@ -123,17 +123,17 @@ class DefaultEventBusFactory implements AbstractFactoryInterface
 
         $queues = array();
 
-        $queueManager = $mainServiceLocator->get(Definition::QUEUE_MANAGER);
+        $queueLoader = $mainServiceLocator->get(Definition::QUEUE_LOADER);
 
         if (is_string($configuration[Definition::QUEUE])) {
-            $queues[] = $queueManager->get($configuration[Definition::QUEUE]);
+            $queues[] = $queueLoader->get($configuration[Definition::QUEUE]);
         } else {
             foreach ($configuration[Definition::QUEUE] as $queueDefinition) {
-                $queues[] = $queueManager->get($queueDefinition);
+                $queues[] = $queueLoader->get($queueDefinition);
             }
         }
 
-        $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_MANAGER)
+        $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_LOADER)
             ->get($configuration[Definition::MESSAGE_DISPATCHER]);
 
         $eventBus = new EventBus($requestedName, $messageDispatcher, $queues);

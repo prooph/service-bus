@@ -11,25 +11,25 @@
 
 namespace Prooph\ServiceBusTest\Service;
 
-use Prooph\ServiceBus\Service\InvokeStrategyManager;
+use Prooph\ServiceBus\Service\InvokeStrategyLoader;
 use Prooph\ServiceBusTest\TestCase;
 
 /**
- * Class InvokeStrategyManagerTest
+ * Class InvokeStrategyLoaderTest
  *
  * @package Prooph\ServiceBusTest\Service
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class InvokeStrategyManagerTest extends TestCase
+class InvokeStrategyLoaderTest extends TestCase
 {
     /**
      * @test
      */
     public function it_returns_a_callback_strategy()
     {
-        $invokeStrategyManager = new InvokeStrategyManager();
+        $invokeStrategyLoader = new InvokeStrategyLoader();
 
-        $callbackStrategy = $invokeStrategyManager->get('callback_strategy');
+        $callbackStrategy = $invokeStrategyLoader->get('callback_strategy');
 
         $this->assertInstanceOf('Prooph\ServiceBus\InvokeStrategy\CallbackStrategy', $callbackStrategy);
     }
@@ -39,9 +39,9 @@ class InvokeStrategyManagerTest extends TestCase
      */
     public function it_returns_a_handle_command_strategy()
     {
-        $invokeStrategyManager = new InvokeStrategyManager();
+        $invokeStrategyLoader = new InvokeStrategyLoader();
 
-        $handleCommandStrategy = $invokeStrategyManager->get('handle_command_strategy');
+        $handleCommandStrategy = $invokeStrategyLoader->get('handle_command_strategy');
 
         $this->assertInstanceOf('Prooph\ServiceBus\InvokeStrategy\HandleCommandStrategy', $handleCommandStrategy);
     }
@@ -51,9 +51,9 @@ class InvokeStrategyManagerTest extends TestCase
      */
     public function it_returns_a_on_event_strategy()
     {
-        $invokeStrategyManager = new InvokeStrategyManager();
+        $invokeStrategyLoader = new InvokeStrategyLoader();
 
-        $onEventStrategy = $invokeStrategyManager->get('on_event_strategy');
+        $onEventStrategy = $invokeStrategyLoader->get('on_event_strategy');
 
         $this->assertInstanceOf('Prooph\ServiceBus\InvokeStrategy\OnEventStrategy', $onEventStrategy);
     }

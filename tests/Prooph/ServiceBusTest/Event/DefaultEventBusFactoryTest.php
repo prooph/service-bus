@@ -14,7 +14,7 @@ namespace Prooph\ServiceBusTest\Event;
 use Prooph\ServiceBus\Event\DefaultEventBusFactory;
 use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\EventBusManager;
+use Prooph\ServiceBus\Service\EventBusLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\OnEventHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
@@ -68,17 +68,17 @@ class DefaultEventBusFactoryTest extends TestCase
         //Register DoSomethingHandler as Service
         $this->serviceBusManager->setService('something_done_handler', $this->somethingDoneHandler);
 
-        $inMemoryMessageDispatcher = $this->serviceBusManager->get(Definition::MESSAGE_DISPATCHER_MANAGER)
+        $inMemoryMessageDispatcher = $this->serviceBusManager->get(Definition::MESSAGE_DISPATCHER_LOADER)
             ->get(Definition::IN_MEMORY_MESSAGE_DISPATCHER);
 
-        $inMemoryMessageDispatcher->registerEventReceiverManagerForQueue(
+        $inMemoryMessageDispatcher->registerEventReceiverLoaderForQueue(
             new Queue('local'),
-            $this->serviceBusManager->get(Definition::EVENT_RECEIVER_MANAGER)
+            $this->serviceBusManager->get(Definition::EVENT_RECEIVER_LOADER)
         );
 
-        $inMemoryMessageDispatcher->registerEventReceiverManagerForQueue(
+        $inMemoryMessageDispatcher->registerEventReceiverLoaderForQueue(
             new Queue('local-2'),
-            $this->serviceBusManager->get(Definition::EVENT_RECEIVER_MANAGER)
+            $this->serviceBusManager->get(Definition::EVENT_RECEIVER_LOADER)
         );
     }
 
@@ -87,12 +87,12 @@ class DefaultEventBusFactoryTest extends TestCase
      */
     public function it_creates_a_fully_configured_event_bus()
     {
-        $eventBusManager = new EventBusManager();
-        $eventBusManager->setServiceLocator($this->serviceBusManager);
+        $eventBusLoader = new EventBusLoader();
+        $eventBusLoader->setServiceLocator($this->serviceBusManager);
 
         $factory = new DefaultEventBusFactory();
 
-        $eventBus = $factory->createServiceWithName($eventBusManager, 'testcasebus', 'test-case-bus');
+        $eventBus = $factory->createServiceWithName($eventBusLoader, 'testcasebus', 'test-case-bus');
 
         $somethingDone = SomethingDone::fromData('test payload');
 

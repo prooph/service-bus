@@ -60,9 +60,9 @@ class InMemoryMessageDispatcherTest extends TestCase
 
         $localQueue = new Queue('local');
 
-        $this->messageDispatcher->registerCommandReceiverManagerForQueue(
+        $this->messageDispatcher->registerCommandReceiverLoaderForQueue(
             $localQueue,
-            $serviceBus->get(Definition::COMMAND_RECEIVER_MANAGER)
+            $serviceBus->get(Definition::COMMAND_RECEIVER_LOADER)
         );
     }
 
