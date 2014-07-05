@@ -15,6 +15,7 @@ use Prooph\ServiceBus\Event\DefaultEventBusFactory;
 use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\EventBusLoader;
+use Prooph\ServiceBus\Service\MessageFactoryLoader;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\OnEventHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
@@ -93,6 +94,8 @@ class DefaultEventBusFactoryTest extends TestCase
         $factory = new DefaultEventBusFactory();
 
         $eventBus = $factory->createServiceWithName($eventBusLoader, 'testcasebus', 'test-case-bus');
+
+        $eventBus->setMessageFactoryLoader(new MessageFactoryLoader());
 
         $somethingDone = SomethingDone::fromData('test payload');
 

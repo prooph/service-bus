@@ -138,9 +138,8 @@ class DefaultEventBusFactory implements AbstractFactoryInterface
 
         $eventBus = new EventBus($requestedName, $messageDispatcher, $queues);
 
-        if ($mainServiceLocator->has(Definition::MESSAGE_FACTORY)) {
-            $eventBus->setMessageFactory($mainServiceLocator->get(Definition::MESSAGE_FACTORY));
-        }
+        $eventBus->setMessageFactoryLoader($mainServiceLocator->get(Definition::MESSAGE_FACTORY_LOADER));
+
 
         return $eventBus;
     }

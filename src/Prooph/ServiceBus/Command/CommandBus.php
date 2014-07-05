@@ -18,6 +18,7 @@ use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\QueueInterface;
 use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBus\Service\Definition;
+use Prooph\ServiceBus\Service\MessageFactoryLoader;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
@@ -45,9 +46,9 @@ class CommandBus implements CommandBusInterface
     protected $name;
 
     /**
-     * @var MessageFactoryInterface
+     * @var MessageFactoryLoader
      */
-    protected $messageFactory;
+    protected $messageFactoryLoader;
 
     /**
      * @var EventManagerInterface
@@ -81,7 +82,7 @@ class CommandBus implements CommandBusInterface
             return;
         }
 
-        $message = $this->getMessageFactory()->fromCommand($aCommand, $this->name);
+        $message = $this->getMessageFactoryLoader()->get(get_class($aCommand))->fromCommand($aCommand, $this->name);
 
         $this->messageDispatcher->dispatch($this->queue, $message);
 
@@ -89,23 +90,19 @@ class CommandBus implements CommandBusInterface
     }
 
     /**
-     * @param MessageFactoryInterface $aMessageFactory
+     * @param MessageFactoryLoader $aMessageFactoryLoader
      */
-    public function setMessageFactory(MessageFactoryInterface $aMessageFactory)
+    public function setMessageFactoryLoader(MessageFactoryLoader $aMessageFactoryLoader)
     {
-        $this->messageFactory = $aMessageFactory;
+        $this->messageFactoryLoader = $aMessageFactoryLoader;
     }
 
     /**
-     * @return MessageFactoryInterface
+     * @return MessageFactoryLoader
      */
-    public function getMessageFactory()
+    public function getMessageFactoryLoader()
     {
-        if (is_null($this->messageFactory)) {
-            $this->messageFactory = new MessageFactory();
-        }
-
-        return $this->messageFactory;
+        return $this->messageFactoryLoader;
     }
 
     /**

@@ -51,8 +51,6 @@ class Definition
 
     const IN_MEMORY_MESSAGE_DISPATCHER      = "in_memory_message_dispatcher";
 
-    const MESSAGE_FACTORY                   = "message_factory";
-
     const MESSAGE_FACTORY_LOADER            = "message_factory_loader";
 
     const COMMAND_BUS_LOADER               = "command_bus_loader";
