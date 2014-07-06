@@ -71,6 +71,10 @@ class ServiceBusManager extends ServiceManager
      */
     public function __construct(ConfigInterface $config = null)
     {
+        if (is_null($config)) {
+            $config = new ServiceBusConfiguration();
+        }
+
         parent::__construct($config);
 
         $this->addInitializer(function ($instance) {

@@ -52,6 +52,23 @@ class AbstractCommand implements MessageNameProvider
     protected $payload = array();
 
     /**
+     * @return AbstractCommand
+     */
+    public static function getNew()
+    {
+        return new static(get_called_class());
+    }
+
+    /**
+     * @param mixed $aPayload
+     * @return AbstractCommand
+     */
+    public static function fromPayload($aPayload)
+    {
+        return new static(get_called_class(), $aPayload);
+    }
+
+    /**
      * @param string $aMessageName
      * @param null $aPayload
      * @param int $aVersion

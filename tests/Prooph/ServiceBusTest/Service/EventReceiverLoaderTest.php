@@ -13,6 +13,7 @@ namespace Prooph\ServiceBusTest\Service;
 
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\EventReceiverLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\TestCase;
 
@@ -36,22 +37,14 @@ class EventReceiverLoaderTest extends TestCase
 
     protected function setUp()
     {
-        $this->serviceBusManager = new ServiceBusManager();
-
         $config = array(
-            Definition::EVENT_BUS => array(
-                //name of the bus, must match with the Message.header.sender
-                'test-case-bus' => array(
-                    Definition::EVENT_MAP => array(
-                        //DoSomething command is mapped to the DoSometingHandler alias
-                        'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-                    )
-                )
+            Definition::EVENT_MAP => array(
+                //DoSomething command is mapped to the DoSometingHandler alias
+                'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
             )
         );
 
-        //Add global config as service
-        $this->serviceBusManager->setService('configuration', $config);
+        $this->serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration($config));
 
         $this->eventReceiverLoader = new EventReceiverLoader();
 

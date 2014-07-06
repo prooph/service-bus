@@ -14,7 +14,7 @@ require_once '../../vendor/autoload.php';
 
 include 'classes.php';
 
-putenv('QUEUE=resque-sample-queue');
+putenv('QUEUE=resque-sample-bus');
 putenv('APP_INCLUDE=classes.php');
 
 include '../../vendor/chrisboulton/php-resque/resque.php';

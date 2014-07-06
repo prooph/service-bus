@@ -33,8 +33,6 @@ namespace {
             new ServiceBusConfiguration(array(
                 'command_bus' => array(
                     'resque-sample-bus' => array(
-                        //Configure the queue to be used by the resque-sample-bus
-                        'queue' => 'resque-sample-queue',
                         //Configure the message_dispatcher to be used by the resque-sample-bus
                         'message_dispatcher' => 'php_resque_message_dispatcher'
                     )
@@ -68,7 +66,7 @@ namespace {
         );
 
         //Prepare the Command
-        $writeLine = new WriteLine($_GET['write']);
+        $writeLine = WriteLine::fromPayload($_GET['write']);
 
         //...and send it to a receiver via CommandBus
         $serviceBusManager->getCommandBus('resque-sample-bus')->send($writeLine);
