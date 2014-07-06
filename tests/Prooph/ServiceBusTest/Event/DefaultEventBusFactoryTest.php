@@ -44,20 +44,18 @@ class DefaultEventBusFactoryTest extends TestCase
         $this->serviceBusManager = new ServiceBusManager();
 
         $config = array(
-            Definition::CONFIG_ROOT => array(
-                Definition::EVENT_BUS => array(
-                    //name of the bus, must match with the Message.header.sender
-                    'test-case-bus' => array(
-                        Definition::EVENT_MAP => array(
-                            //SomethingDone event is mapped to the OnEventHandler alias
-                            'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-                        ),
-                        //Configure two queues, something_done_handler should be invoked two times
-                        Definition::QUEUE => array('local', 'local-2'),
-                        Definition::MESSAGE_DISPATCHER => Definition::IN_MEMORY_MESSAGE_DISPATCHER,
-                    )
-                ),
-            )
+            Definition::EVENT_BUS => array(
+                //name of the bus, must match with the Message.header.sender
+                'test-case-bus' => array(
+                    Definition::EVENT_MAP => array(
+                        //SomethingDone event is mapped to the OnEventHandler alias
+                        'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
+                    ),
+                    //Configure two queues, something_done_handler should be invoked two times
+                    Definition::QUEUE => array('local', 'local-2'),
+                    Definition::MESSAGE_DISPATCHER => Definition::IN_MEMORY_MESSAGE_DISPATCHER,
+                )
+            ),
         );
 
         //Add global config as service

@@ -35,8 +35,6 @@ class PhpResqueMessageDispatcherFactory implements FactoryInterface
 
         $configuration = $mainServiceLocator->get('configuration');
 
-        $configuration = $configuration[Definition::CONFIG_ROOT];
-
         $options = null;
 
         if (isset($configuration[Definition::MESSAGE_DISPATCHER])

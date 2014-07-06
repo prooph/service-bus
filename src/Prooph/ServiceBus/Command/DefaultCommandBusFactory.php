@@ -64,24 +64,8 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
 
         $configuration = $mainServiceLocator->get('configuration');
 
-        if (!isset($configuration[Definition::CONFIG_ROOT])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Config root %s is missing in global configuration',
-                    Definition::CONFIG_ROOT
-                )
-            );
-        }
-
-        $configuration = $configuration[Definition::CONFIG_ROOT];
-
         if (!isset($configuration[Definition::COMMAND_BUS])) {
-            throw new RuntimeException(
-                sprintf(
-                    'command_bus config is missing in %s configuration',
-                    Definition::CONFIG_ROOT
-                )
-            );
+            throw new RuntimeException('command_bus config is missing');
         }
 
         $configuration = $configuration[Definition::COMMAND_BUS];
@@ -89,9 +73,8 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
         if (!isset($configuration[$requestedName])) {
             throw new RuntimeException(
                 sprintf(
-                    'Configuration for %s bus is missing in %s.%s configuration',
+                    'Configuration for %s bus is missing in %s configuration',
                     $requestedName,
-                    Definition::CONFIG_ROOT,
                     Definition::COMMAND_BUS
                 )
             );
@@ -102,9 +85,8 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
         if (!isset($configuration[Definition::MESSAGE_DISPATCHER])) {
             throw new RuntimeException(
                 sprintf(
-                    'MessageDispatcher alias is missing for %s bus in %s.%s configuration',
+                    'MessageDispatcher alias is missing for %s bus in %s configuration',
                     $requestedName,
-                    Definition::CONFIG_ROOT,
                     Definition::COMMAND_BUS
                 )
             );

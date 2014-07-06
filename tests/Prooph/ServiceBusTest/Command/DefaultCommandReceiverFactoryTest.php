@@ -52,20 +52,18 @@ class DefaultCommandReceiverFactoryTest extends TestCase
         $this->serviceBusManager = new ServiceBusManager();
 
         $config = array(
-            Definition::CONFIG_ROOT => array(
-                Definition::COMMAND_BUS => array(
-                    //name of the bus, must match with the Message.header.sender
-                    'test-case-bus' => array(
-                        Definition::COMMAND_MAP => array(
-                            //DoSomething command is mapped to the DoSometingHandler alias
-                            'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
-                        )
+            Definition::COMMAND_BUS => array(
+                //name of the bus, must match with the Message.header.sender
+                'test-case-bus' => array(
+                    Definition::COMMAND_MAP => array(
+                        //DoSomething command is mapped to the DoSometingHandler alias
+                        'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
                     )
-                ),
-                Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
-                    //Alias of the DoSomethingInvokeStrategy
-                    'do_something_invoke_strategy'
                 )
+            ),
+            Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
+                //Alias of the DoSomethingInvokeStrategy
+                'do_something_invoke_strategy'
             )
         );
 

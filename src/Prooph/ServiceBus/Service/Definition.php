@@ -19,10 +19,6 @@ namespace Prooph\ServiceBus\Service;
  */
 class Definition
 {
-    const CONFIG_ROOT                       = "prooph.service_bus";
-
-    const CONFIG_ROOT_ESCAPED               = "prooph\.service_bus";
-
     const SERVICE_BUS_MANAGER               = "service_bus_manager";
 
     const COMMAND_BUS                       = "command_bus";

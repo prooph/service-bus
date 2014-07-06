@@ -39,14 +39,12 @@ class EventReceiverLoaderTest extends TestCase
         $this->serviceBusManager = new ServiceBusManager();
 
         $config = array(
-            Definition::CONFIG_ROOT => array(
-                Definition::EVENT_BUS => array(
-                    //name of the bus, must match with the Message.header.sender
-                    'test-case-bus' => array(
-                        Definition::EVENT_MAP => array(
-                            //DoSomething command is mapped to the DoSometingHandler alias
-                            'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-                        )
+            Definition::EVENT_BUS => array(
+                //name of the bus, must match with the Message.header.sender
+                'test-case-bus' => array(
+                    Definition::EVENT_MAP => array(
+                        //DoSomething command is mapped to the DoSometingHandler alias
+                        'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
                     )
                 )
             )

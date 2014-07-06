@@ -20,11 +20,21 @@ class ServiceBusConfiguration implements ConfigInterface
     /**
      * @var array
      */
-    protected $configuration = array(
-        Definition::CONFIG_ROOT => array(
-            Definition::SERVICE_BUS_MANAGER => array(),
-            Definition::COMMAND_BUS => array(),
-            Definition::EVENT_BUS => array(),
+    protected $configuration = array();
+
+    protected $defaultConfig = array(
+        Definition::SERVICE_BUS_MANAGER => array(),
+        Definition::COMMAND_BUS => array(),
+        Definition::EVENT_BUS => array(),
+        Definition::COMMAND_MAP => array(),
+        Definition::EVENT_MAP => array(),
+        Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
+            "callback_strategy",
+            "handle_command_strategy"
+        ),
+        Definition::EVENT_HANDLER_INVOKE_STRATEGIES => array(
+            "callback_strategy",
+            "on_event_strategy"
         )
     );
 
@@ -62,20 +72,20 @@ class ServiceBusConfiguration implements ConfigInterface
         }
 
         $serviceBusManagerServicesConfig = new Config(
-            $this->configuration[Definition::CONFIG_ROOT][Definition::SERVICE_BUS_MANAGER]
+            $this->configuration[Definition::SERVICE_BUS_MANAGER]
         );
 
         $serviceBusManagerServicesConfig->configureServiceManager($serviceManager);
 
-        if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS])) {
+        if (isset($this->configuration[Definition::DEFAULT_COMMAND_BUS])) {
             $serviceManager->setDefaultCommandBus(
-                $this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_COMMAND_BUS]
+                $this->configuration[Definition::DEFAULT_COMMAND_BUS]
             );
         }
 
-        if (isset($this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_EVENT_BUS])) {
+        if (isset($this->configuration[Definition::DEFAULT_EVENT_BUS])) {
             $serviceManager->setDefaultEventBus(
-                $this->configuration[Definition::CONFIG_ROOT][Definition::DEFAULT_EVENT_BUS]
+                $this->configuration[Definition::DEFAULT_EVENT_BUS]
             );
         }
 
@@ -87,13 +97,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setConfiguration(array $configuration)
     {
-        if (! array_key_exists(Definition::CONFIG_ROOT, $configuration)) {
-            $configuration = array(Definition::CONFIG_ROOT => $configuration);
-        }
-
-        if (! array_key_exists("service_bus_manager", $configuration[Definition::CONFIG_ROOT])) {
-            $configuration[Definition::CONFIG_ROOT]["service_bus_manager"] = array();
-        }
+        $configuration = array_merge_recursive($this->defaultConfig, $configuration);
 
         $this->configuration = $configuration;
     }
@@ -103,7 +107,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setCommandHandlerInvokeStrategies(array $invokeStrategies)
     {
-        $this->configuration[Definition::CONFIG_ROOT][Definition::COMMAND_HANDLER_INVOKE_STRATEGIES] = $invokeStrategies;
+        $this->configuration[Definition::COMMAND_HANDLER_INVOKE_STRATEGIES] = $invokeStrategies;
     }
 
     /**
@@ -111,7 +115,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setEventHandlerInvokeStrategies(array $invokeStrategies)
     {
-        $this->configuration[Definition::CONFIG_ROOT][Definition::EVENT_HANDLER_INVOKE_STRATEGIES] = $invokeStrategies;
+        $this->configuration[Definition::EVENT_HANDLER_INVOKE_STRATEGIES] = $invokeStrategies;
     }
 
     /**
@@ -119,7 +123,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setCommandMap(array $commandMap)
     {
-        $this->configuration[Definition::CONFIG_ROOT][Definition::COMMAND_MAP] = $commandMap;
+        $this->configuration[Definition::COMMAND_MAP] = $commandMap;
     }
 
     /**
@@ -127,7 +131,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     public function setEventMap(array $eventMap)
     {
-        $this->configuration[Definition::CONFIG_ROOT][Definition::EVENT_MAP] = $eventMap;
+        $this->configuration[Definition::EVENT_MAP] = $eventMap;
     }
 
     /**

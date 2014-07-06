@@ -30,14 +30,12 @@ class ServiceBusConfigurationTest extends TestCase
     public function it_sets_up_invoke_strategy_manager_with_configured_invoke_strategy()
     {
         $serviceBusConfiguration = new ServiceBusConfiguration(array(
-            Definition::CONFIG_ROOT => array(
-                Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
-                    'do_something_invoke_strategy'
-                ),
-                Definition::INVOKE_STRATEGY_LOADER => array(
-                    'invokables' => array(
-                        'do_something_invoke_strategy' => 'Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy'
-                    )
+            Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
+                'do_something_invoke_strategy'
+            ),
+            Definition::INVOKE_STRATEGY_LOADER => array(
+                'invokables' => array(
+                    'do_something_invoke_strategy' => 'Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy'
                 )
             )
         ));
@@ -55,11 +53,9 @@ class ServiceBusConfigurationTest extends TestCase
     public function it_sets_up_command_bus_loader_with_configured_factory()
     {
         $serviceBusConfiguration = new ServiceBusConfiguration(array(
-            Definition::CONFIG_ROOT => array(
-                Definition::COMMAND_BUS_LOADER => array(
-                    'factories' => array(
-                        'mock-custom-bus' => 'Prooph\ServiceBusTest\Mock\Configtest\CustomBusFactory',
-                    )
+            Definition::COMMAND_BUS_LOADER => array(
+                'factories' => array(
+                    'mock-custom-bus' => 'Prooph\ServiceBusTest\Mock\Configtest\CustomBusFactory',
                 )
             )
         ));
@@ -77,11 +73,9 @@ class ServiceBusConfigurationTest extends TestCase
     public function it_sets_up_command_receiver_loader_with_configured_factory()
     {
         $serviceBusConfiguration = new ServiceBusConfiguration(array(
-            Definition::CONFIG_ROOT => array(
-                Definition::COMMAND_RECEIVER_LOADER => array(
-                    'factories' => array(
-                        'mock-custom-receiver' => 'Prooph\ServiceBusTest\Mock\Configtest\CustomCommandReceiverFactory',
-                    )
+            Definition::COMMAND_RECEIVER_LOADER => array(
+                'factories' => array(
+                    'mock-custom-receiver' => 'Prooph\ServiceBusTest\Mock\Configtest\CustomCommandReceiverFactory',
                 )
             )
         ));

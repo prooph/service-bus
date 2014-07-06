@@ -52,20 +52,18 @@ class DefaultEventReceiverFactoryTest extends TestCase
         $this->serviceBusManager = new ServiceBusManager();
 
         $config = array(
-            Definition::CONFIG_ROOT => array(
-                Definition::EVENT_BUS => array(
-                    //name of the bus, must match with the Message.header.sender
-                    'test-case-bus' => array(
-                        Definition::EVENT_MAP => array(
-                            //SomethingDone event is mapped to the SomethingDoneHandler alias
-                            'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-                        )
+            Definition::EVENT_BUS => array(
+                //name of the bus, must match with the Message.header.sender
+                'test-case-bus' => array(
+                    Definition::EVENT_MAP => array(
+                        //SomethingDone event is mapped to the SomethingDoneHandler alias
+                        'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
                     )
-                ),
-                Definition::EVENT_HANDLER_INVOKE_STRATEGIES => array(
-                    //Alias of the SomethingDoneInvokeStrategy
-                    'something_done_invoke_strategy'
                 )
+            ),
+            Definition::EVENT_HANDLER_INVOKE_STRATEGIES => array(
+                //Alias of the SomethingDoneInvokeStrategy
+                'something_done_invoke_strategy'
             )
         );
 

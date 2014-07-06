@@ -171,18 +171,14 @@ class ServiceBusManager extends ServiceManager
         $messageName = ($routeEventOrMessage instanceof MessageNameProvider)?
             $routeEventOrMessage->getMessageName() : get_class($routeEventOrMessage);
 
-        $commandMap = $this->getConfigReader()->arrayValue(
-            Definition::CONFIG_ROOT_ESCAPED . '.' . Definition::DIRECT_COMMAND_MAP
-        );
+        $commandMap = $this->getConfigReader()->arrayValue(Definition::COMMAND_MAP);
 
         if (array_key_exists($messageName, $commandMap)) {
             $this->routeCommandTo($routeEventOrMessage, $commandMap[$messageName]);
             return true;
         }
 
-        $eventMap =  $this->getConfigReader()->arrayValue(
-            Definition::CONFIG_ROOT_ESCAPED . '.' . Definition::DIRECT_EVENT_MAP
-        );
+        $eventMap =  $this->getConfigReader()->arrayValue(Definition::EVENT_MAP);
 
         if (array_key_exists($messageName, $eventMap)) {
             $eventHandlers = $eventMap[$messageName];
@@ -255,11 +251,9 @@ class ServiceBusManager extends ServiceManager
             return;
         }
 
-        $commandInvokeStrategies = $this->getConfigReader()->arrayValue(
-            Definition::CONFIG_ROOT_ESCAPED . '.' . Definition::COMMAND_HANDLER_INVOKE_STRATEGIES
-        );
+        $commandInvokeStrategies = $this->getConfigReader()->arrayValue(Definition::COMMAND_HANDLER_INVOKE_STRATEGIES);
 
-        $invokeStrategyLoader = $this->get(Definition::INVOKE_STRATEGY_LOADER);
+        $invokeStrategyLoader = $this->getInvokeStrategyLoader();
 
         $invokeStrategy = null;
 
@@ -341,11 +335,9 @@ class ServiceBusManager extends ServiceManager
             return;
         }
 
-        $eventInvokeStrategies = $this->getConfigReader()->arrayValue(
-            Definition::CONFIG_ROOT_ESCAPED . '.' . Definition::EVENT_HANDLER_INVOKE_STRATEGIES
-        );
+        $eventInvokeStrategies = $this->getConfigReader()->arrayValue(Definition::EVENT_HANDLER_INVOKE_STRATEGIES);
 
-        $invokeStrategyLoader = $this->get(Definition::INVOKE_STRATEGY_LOADER);
+        $invokeStrategyLoader = $this->getInvokeStrategyLoader();
 
         $invokeStrategy = null;
 

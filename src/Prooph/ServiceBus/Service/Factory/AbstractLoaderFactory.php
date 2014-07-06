@@ -62,9 +62,7 @@ class AbstractLoaderFactory implements AbstractFactoryInterface
             $this->configReader = new ArrayReader($serviceLocator->get('configuration'));
         }
 
-        $config = new Config($this->configReader->arrayValue(
-            Definition::CONFIG_ROOT_ESCAPED . '.' . $requestedName
-        ));
+        $config = new Config($this->configReader->arrayValue($requestedName));
 
         $loaderClass = $this->getServicesMap()[$requestedName];
 

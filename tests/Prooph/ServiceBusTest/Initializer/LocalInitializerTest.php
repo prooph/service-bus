@@ -67,12 +67,10 @@ class LocalInitializerTest extends TestCase
     public function it_merges_configured_command_map_with_attached_command_handlers()
     {
         $serviceBusConfig = new ServiceBusConfiguration(array(
-            Definition::CONFIG_ROOT => array(
-                Definition::COMMAND_BUS => array(
-                    'local-command-bus' => array(
-                        Definition::COMMAND_MAP => array(
-                            'My\Custom\Command' => 'My\Custom\CommandHandler'
-                        )
+            Definition::COMMAND_BUS => array(
+                'local-command-bus' => array(
+                    Definition::COMMAND_MAP => array(
+                        'My\Custom\Command' => 'My\Custom\CommandHandler'
                     )
                 )
             )
@@ -94,7 +92,7 @@ class LocalInitializerTest extends TestCase
 
         $configuration = $serviceBusManager->get('configuration');
 
-        $localCommandBusConfig = $configuration[Definition::CONFIG_ROOT][Definition::COMMAND_BUS]['local-command-bus'];
+        $localCommandBusConfig = $configuration[Definition::COMMAND_BUS]['local-command-bus'];
 
         $checkConfig = array(
             Definition::COMMAND_MAP => array(
@@ -116,14 +114,12 @@ class LocalInitializerTest extends TestCase
         $somethingDone = SomethingDone::fromData('event payload');
 
         $serviceBusConfig = new ServiceBusConfiguration(array(
-            Definition::CONFIG_ROOT => array(
-                Definition::EVENT_BUS => array(
-                    'local-event-bus' => array(
-                        Definition::EVENT_MAP => array(
-                            'My\Custom\Event' => array('My\Custom\EventHandler'),
-                            get_class($somethingDone) => array('My\Custom\SomethingDoneHandler'),
+            Definition::EVENT_BUS => array(
+                'local-event-bus' => array(
+                    Definition::EVENT_MAP => array(
+                        'My\Custom\Event' => array('My\Custom\EventHandler'),
+                        get_class($somethingDone) => array('My\Custom\SomethingDoneHandler'),
 
-                        )
                     )
                 )
             )
@@ -143,7 +139,7 @@ class LocalInitializerTest extends TestCase
 
         $configuration = $serviceBusManager->get('configuration');
 
-        $localEventBusConfig = $configuration[Definition::CONFIG_ROOT][Definition::EVENT_BUS]['local-event-bus'];
+        $localEventBusConfig = $configuration[Definition::EVENT_BUS]['local-event-bus'];
 
         $checkConfig = array(
             Definition::EVENT_MAP => array(
