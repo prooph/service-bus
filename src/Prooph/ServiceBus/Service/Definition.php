@@ -55,19 +55,17 @@ class Definition
 
     const MESSAGE_FACTORY_LOADER            = "message_factory_loader";
 
-    const COMMAND_BUS_LOADER               = "command_bus_loader";
+    const COMMAND_BUS_LOADER                = "command_bus_loader";
     
-    const COMMAND_RECEIVER_LOADER          = "command_receiver_loader";
+    const COMMAND_RECEIVER_LOADER           = "command_receiver_loader";
 
-    const EVENT_BUS_LOADER                 = "event_bus_loader";
+    const EVENT_BUS_LOADER                  = "event_bus_loader";
 
-    const EVENT_RECEIVER_LOADER            = "event_receiver_loader";
+    const EVENT_RECEIVER_LOADER             = "event_receiver_loader";
 
-    const INVOKE_STRATEGY_LOADER           = "invoke_strategy_loader";
+    const INVOKE_STRATEGY_LOADER            = "invoke_strategy_loader";
 
-    const MESSAGE_DISPATCHER_LOADER        = "message_dispatcher_loader";
-
-    const QUEUE_LOADER                     = "queue_loader";
+    const MESSAGE_DISPATCHER_LOADER         = "message_dispatcher_loader";
 
     const SERVICE_BUS_COMPONENT             = 'service_bus_component';
 }

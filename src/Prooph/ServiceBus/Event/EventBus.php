@@ -14,6 +14,7 @@ namespace Prooph\ServiceBus\Event;
 use Prooph\ServiceBus\Message\MessageDispatcherInterface;
 use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\MessageFactoryInterface;
+use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Message\QueueInterface;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\MessageFactoryLoader;
@@ -34,9 +35,9 @@ class EventBus implements EventBusInterface
     protected $messageDispatcher;
 
     /**
-     * @var QueueInterface[]
+     * @var QueueInterface
      */
-    protected $queueCollection;
+    protected $queue;
 
     /**
      * @var string
@@ -56,16 +57,14 @@ class EventBus implements EventBusInterface
     /**
      * @param string                     $aName
      * @param MessageDispatcherInterface $aMessageDispatcher
-     * @param QueueInterface[]           $aQueueCollection
      */
-    public function __construct($aName, MessageDispatcherInterface $aMessageDispatcher, array $aQueueCollection)
+    public function __construct($aName, MessageDispatcherInterface $aMessageDispatcher)
     {
         \Assert\that($aName)->notEmpty('EventBus.name must not be empty')->string('EventBus.name must be a string');
-        \Assert\that($aQueueCollection)->all()->isInstanceOf('Prooph\ServiceBus\Message\QueueInterface');
 
         $this->name              = $aName;
         $this->messageDispatcher = $aMessageDispatcher;
-        $this->queueCollection   = $aQueueCollection;
+        $this->queue             = new Queue($this->name);
     }
 
     /**
@@ -81,22 +80,11 @@ class EventBus implements EventBusInterface
             return;
         }
 
-        $message = $this->getMessageFactoryLoader()->get(get_class($anEvent))->fromEvent($anEvent, $this->name);
+        $message = $this->getMessageFactoryLoader()
+            ->getMessageFactoryFor(get_class($anEvent))
+            ->fromEvent($anEvent, $this->name);
 
-        foreach ($this->queueCollection as $queue) {
-
-            $params = compact('message', 'queue');
-
-            $results = $this->events()->trigger('publish_on_queue.pre', $this, $params);
-
-            if ($results->stopped()) {
-                continue;
-            }
-
-            $this->messageDispatcher->dispatch($queue, $message);
-
-            $this->events()->trigger('publish_on_queue.post', $this, $params);
-        }
+        $this->messageDispatcher->dispatch($this->queue, $message);
 
         $this->events()->trigger(__FUNCTION__ . '.post', $this, array('event' => $anEvent, 'message' => $message));
     }

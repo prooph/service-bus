@@ -56,5 +56,14 @@ class MessageFactoryLoader extends AbstractPluginManager
             ));
         }
     }
+
+    /**
+     * @param string $aMessageName
+     * @return MessageFactoryInterface
+     */
+    public function getMessageFactoryFor($aMessageName)
+    {
+        return $this->get($aMessageName);
+    }
 }
  

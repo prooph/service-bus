@@ -15,6 +15,8 @@ use Prooph\ServiceBus\Message\MessageDispatcherInterface;
 use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\MessageFactoryInterface;
 use Prooph\ServiceBus\Message\MessageHeader;
+use Prooph\ServiceBus\Message\MessageNameProvider;
+use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Message\QueueInterface;
 use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBus\Service\Definition;
@@ -36,11 +38,6 @@ class CommandBus implements CommandBusInterface
     protected $messageDispatcher;
 
     /**
-     * @var QueueInterface
-     */
-    protected $queue;
-
-    /**
      * @var string
      */
     protected $name;
@@ -58,15 +55,14 @@ class CommandBus implements CommandBusInterface
     /**
      * @param string                     $aName
      * @param MessageDispatcherInterface $aMessageDispatcher
-     * @param QueueInterface             $aQueue
      */
-    public function __construct($aName, MessageDispatcherInterface $aMessageDispatcher, QueueInterface $aQueue)
+    public function __construct($aName, MessageDispatcherInterface $aMessageDispatcher)
     {
         \Assert\that($aName)->notEmpty('CommandBus.name must not be empty')->string('CommandBus.name must be a string');
 
         $this->name              = $aName;
         $this->messageDispatcher = $aMessageDispatcher;
-        $this->queue             = $aQueue;
+        $this->queue             = new Queue($this->name);
     }
 
     /**
@@ -82,7 +78,11 @@ class CommandBus implements CommandBusInterface
             return;
         }
 
-        $message = $this->getMessageFactoryLoader()->get(get_class($aCommand))->fromCommand($aCommand, $this->name);
+        $commandName = ($aCommand instanceof MessageNameProvider)? $aCommand->getMessageName() : get_class($aCommand);
+
+        $message = $this->getMessageFactoryLoader()
+            ->getMessageFactoryFor($commandName)
+            ->fromCommand($aCommand, $this->name);
 
         $this->messageDispatcher->dispatch($this->queue, $message);
 

@@ -99,18 +99,6 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
 
         $configuration = $configuration[$requestedName];
 
-
-        if (!isset($configuration[Definition::QUEUE])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Queue alias is missing for %s bus in %s.%s configuration',
-                    $requestedName,
-                    Definition::CONFIG_ROOT,
-                    Definition::COMMAND_BUS
-                )
-            );
-        }
-
         if (!isset($configuration[Definition::MESSAGE_DISPATCHER])) {
             throw new RuntimeException(
                 sprintf(
@@ -122,16 +110,12 @@ class DefaultCommandBusFactory implements AbstractFactoryInterface
             );
         }
 
-        $queue = $mainServiceLocator->get(Definition::QUEUE_LOADER)->get($configuration[Definition::QUEUE]);
-
         $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_LOADER)
             ->get($configuration[Definition::MESSAGE_DISPATCHER]);
 
-        $commandBus = new CommandBus($requestedName, $messageDispatcher, $queue);
-
+        $commandBus = new CommandBus($requestedName, $messageDispatcher);
 
         $commandBus->setMessageFactoryLoader($mainServiceLocator->get(Definition::MESSAGE_FACTORY_LOADER));
-
 
         return $commandBus;
     }

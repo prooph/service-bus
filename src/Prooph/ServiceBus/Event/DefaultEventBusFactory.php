@@ -98,18 +98,6 @@ class DefaultEventBusFactory implements AbstractFactoryInterface
 
         $configuration = $configuration[$requestedName];
 
-
-        if (!isset($configuration[Definition::QUEUE])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Queue definition is missing for %s bus in %s.%s configuration',
-                    $requestedName,
-                    Definition::CONFIG_ROOT,
-                    Definition::EVENT_BUS
-                )
-            );
-        }
-
         if (!isset($configuration[Definition::MESSAGE_DISPATCHER])) {
             throw new RuntimeException(
                 sprintf(
@@ -121,25 +109,12 @@ class DefaultEventBusFactory implements AbstractFactoryInterface
             );
         }
 
-        $queues = array();
-
-        $queueLoader = $mainServiceLocator->get(Definition::QUEUE_LOADER);
-
-        if (is_string($configuration[Definition::QUEUE])) {
-            $queues[] = $queueLoader->get($configuration[Definition::QUEUE]);
-        } else {
-            foreach ($configuration[Definition::QUEUE] as $queueDefinition) {
-                $queues[] = $queueLoader->get($queueDefinition);
-            }
-        }
-
         $messageDispatcher = $mainServiceLocator->get(Definition::MESSAGE_DISPATCHER_LOADER)
             ->get($configuration[Definition::MESSAGE_DISPATCHER]);
 
-        $eventBus = new EventBus($requestedName, $messageDispatcher, $queues);
+        $eventBus = new EventBus($requestedName, $messageDispatcher);
 
         $eventBus->setMessageFactoryLoader($mainServiceLocator->get(Definition::MESSAGE_FACTORY_LOADER));
-
 
         return $eventBus;
     }
