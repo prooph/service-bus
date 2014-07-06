@@ -115,37 +115,19 @@ class ServiceBusConfiguration implements ConfigInterface
     }
 
     /**
-     * @param string $commandBusOrDirectCommandMap
      * @param array $commandMap
      */
-    public function setCommandMapFor($commandBusOrDirectCommandMap, array $commandMap)
+    public function setCommandMap(array $commandMap)
     {
-        if ($commandBusOrDirectCommandMap === Definition::DIRECT_COMMAND_MAP) {
-            $this->configuration[Definition::DIRECT_COMMAND_MAP] = $commandMap;
-            return;
-        }
-
-        $this->configuration[Definition::CONFIG_ROOT]
-            [Definition::COMMAND_BUS]
-            [$commandBusOrDirectCommandMap]
-            [Definition::COMMAND_MAP] = $commandMap;
+        $this->configuration[Definition::CONFIG_ROOT][Definition::COMMAND_MAP] = $commandMap;
     }
 
     /**
-     * @param string $eventBusOrDirectEventMap
      * @param array $eventMap
      */
-    public function setEventMapFor($eventBusOrDirectEventMap, array $eventMap)
+    public function setEventMap(array $eventMap)
     {
-        if ($eventBusOrDirectEventMap === Definition::DIRECT_EVENT_MAP) {
-            $this->configuration[Definition::DIRECT_COMMAND_MAP] = $eventMap;
-            return;
-        }
-
-        $this->configuration[Definition::CONFIG_ROOT]
-        [Definition::EVENT_BUS]
-        [$eventBusOrDirectEventMap]
-        [Definition::EVENT_MAP] = $eventMap;
+        $this->configuration[Definition::CONFIG_ROOT][Definition::EVENT_MAP] = $eventMap;
     }
 
     /**
