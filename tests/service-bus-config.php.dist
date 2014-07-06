@@ -1,7 +1,9 @@
 <?php
 return array(
-    'invokables' => array(
-        'file_remover' => 'Prooph\ServiceBusTest\Mock\FileRemover'
+    \Prooph\ServiceBus\Service\Definition::SERVICE_BUS_MANAGER => array(
+        'invokables' => array(
+            'file_remover' => 'Prooph\ServiceBusTest\Mock\FileRemover'
+        ),
     ),
     'command_bus' => array(
         'php-resque-test-bus' => array(

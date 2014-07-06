@@ -11,11 +11,8 @@
 
 namespace Prooph\ServiceBus\Service;
 
-use Codeliner\ArrayReader\ArrayReader;
-use Prooph\ServiceBus\Command\CommandFactoryInterface;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ConfigInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 
 class ServiceBusConfiguration implements ConfigInterface
@@ -25,6 +22,7 @@ class ServiceBusConfiguration implements ConfigInterface
      */
     protected $configuration = array(
         Definition::CONFIG_ROOT => array(
+            Definition::SERVICE_BUS_MANAGER => array(),
             Definition::COMMAND_BUS => array(),
             Definition::EVENT_BUS => array(),
         )
@@ -34,11 +32,6 @@ class ServiceBusConfiguration implements ConfigInterface
      * @var array
      */
     protected $services = array();
-
-    /**
-     * @var array
-     */
-    protected $eventHandlers   = array();
 
     /**
      * @param null|array $aConfiguration
@@ -68,7 +61,9 @@ class ServiceBusConfiguration implements ConfigInterface
             }
         }
 
-        $serviceBusManagerServicesConfig = new Config($this->configuration[Definition::CONFIG_ROOT]);
+        $serviceBusManagerServicesConfig = new Config(
+            $this->configuration[Definition::CONFIG_ROOT][Definition::SERVICE_BUS_MANAGER]
+        );
 
         $serviceBusManagerServicesConfig->configureServiceManager($serviceManager);
 
@@ -96,15 +91,11 @@ class ServiceBusConfiguration implements ConfigInterface
             $configuration = array(Definition::CONFIG_ROOT => $configuration);
         }
 
-        $this->configuration = $configuration;
-    }
+        if (! array_key_exists("service_bus_manager", $configuration[Definition::CONFIG_ROOT])) {
+            $configuration[Definition::CONFIG_ROOT]["service_bus_manager"] = array();
+        }
 
-    /**
-     * @param array $configuration
-     */
-    public function setCommandBusConfiguration(array $configuration)
-    {
-        $this->configuration[Definition::CONFIG_ROOT][Definition::COMMAND_BUS] = $configuration;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -116,15 +107,45 @@ class ServiceBusConfiguration implements ConfigInterface
     }
 
     /**
-     * @param $commandBus
+     * @param array $invokeStrategies
+     */
+    public function setEventHandlerInvokeStrategies(array $invokeStrategies)
+    {
+        $this->configuration[Definition::CONFIG_ROOT][Definition::EVENT_HANDLER_INVOKE_STRATEGIES] = $invokeStrategies;
+    }
+
+    /**
+     * @param string $commandBusOrDirectCommandMap
      * @param array $commandMap
      */
-    public function setCommandMap($commandBus, array $commandMap)
+    public function setCommandMapFor($commandBusOrDirectCommandMap, array $commandMap)
     {
+        if ($commandBusOrDirectCommandMap === Definition::DIRECT_COMMAND_MAP) {
+            $this->configuration[Definition::DIRECT_COMMAND_MAP] = $commandMap;
+            return;
+        }
+
         $this->configuration[Definition::CONFIG_ROOT]
             [Definition::COMMAND_BUS]
-            [$commandBus]
+            [$commandBusOrDirectCommandMap]
             [Definition::COMMAND_MAP] = $commandMap;
+    }
+
+    /**
+     * @param string $eventBusOrDirectEventMap
+     * @param array $eventMap
+     */
+    public function setEventMapFor($eventBusOrDirectEventMap, array $eventMap)
+    {
+        if ($eventBusOrDirectEventMap === Definition::DIRECT_EVENT_MAP) {
+            $this->configuration[Definition::DIRECT_COMMAND_MAP] = $eventMap;
+            return;
+        }
+
+        $this->configuration[Definition::CONFIG_ROOT]
+        [Definition::EVENT_BUS]
+        [$eventBusOrDirectEventMap]
+        [Definition::EVENT_MAP] = $eventMap;
     }
 
     /**
@@ -153,14 +174,6 @@ class ServiceBusConfiguration implements ConfigInterface
         }
 
         $this->services[$aliasOrEventHandler] = $eventHandler;
-    }
-
-    /**
-     * @param CommandFactoryInterface $commandFactory
-     */
-    public function setCommandFactory(CommandFactoryInterface $commandFactory)
-    {
-        $this->commandFactory = $commandFactory;
     }
 }
  

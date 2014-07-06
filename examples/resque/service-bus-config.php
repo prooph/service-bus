@@ -6,8 +6,10 @@ return array(
     'prooph.service_bus' => array(
         //We can use the ServiceBusManager as IoC-Container and configure factories,
         //which are responsible for construct MessageHandler
-        'factories' => array(
-            'file_writer' => 'Prooph\ServiceBus\Example\Resque\FileWriterFactory'
+        'service_bus_manager' => array(
+            'factories' => array(
+                'file_writer' => 'Prooph\ServiceBus\Example\Resque\FileWriterFactory'
+            ),
         ),
         'command_bus' => array(
             'resque-sample-bus' => array(
