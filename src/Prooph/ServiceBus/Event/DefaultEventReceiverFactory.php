@@ -59,76 +59,7 @@ class DefaultEventReceiverFactory implements AbstractFactoryInterface
             );
         }
 
-        $mainServiceLocator = $serviceLocator->getServiceLocator();
-
-        $configuration = $mainServiceLocator->get('configuration');
-
-        if (!isset($configuration[Definition::CONFIG_ROOT])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Config root %s is missing in global configuration',
-                    Definition::CONFIG_ROOT
-                )
-            );
-        }
-
-        $configuration = $configuration[Definition::CONFIG_ROOT];
-
-        if (!isset($configuration[Definition::EVENT_BUS])) {
-            throw new RuntimeException(
-                sprintf(
-                    'event_bus config is missing in %s configuration',
-                    Definition::CONFIG_ROOT
-                )
-            );
-        }
-
-        $configuration = $configuration[Definition::EVENT_BUS];
-
-        if (! isset($configuration[$requestedName])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Configuration for %s bus is missing in %s.%s configuration',
-                    $requestedName,
-                    Definition::CONFIG_ROOT,
-                    Definition::EVENT_BUS
-                )
-            );
-        }
-
-        $configuration = $configuration[$requestedName];
-
-        if (!isset($configuration[Definition::EVENT_MAP])) {
-            throw new RuntimeException(
-                sprintf(
-                    '%s Configuration for %s bus is missing in %s.%s configuration',
-                    Definition::EVENT_MAP,
-                    $requestedName,
-                    Definition::CONFIG_ROOT,
-                    Definition::EVENT_BUS
-                )
-            );
-        }
-
-        $eventReceiver = new EventReceiver($configuration[Definition::EVENT_MAP], $mainServiceLocator);
-
-        $configuration = $mainServiceLocator->get('configuration');
-
-        if (isset($configuration[Definition::CONFIG_ROOT][Definition::EVENT_HANDLER_INVOKE_STRATEGIES])) {
-            $eventReceiver->setInvokeStrategies(
-                $configuration[Definition::CONFIG_ROOT][Definition::EVENT_HANDLER_INVOKE_STRATEGIES]
-            );
-        }
-
-        if ($mainServiceLocator->has(Definition::INVOKE_STRATEGY_LOADER)) {
-            $eventReceiver->setInvokeStrategyLoader(
-                $mainServiceLocator->get(Definition::INVOKE_STRATEGY_LOADER)
-            );
-        }
-
-        $eventReceiver->setEventFactoryLoader($mainServiceLocator->get(Definition::EVENT_FACTORY_LOADER));
-
-        return $eventReceiver;
+        return new EventReceiver($serviceLocator->getServiceLocator());
     }
 }
  

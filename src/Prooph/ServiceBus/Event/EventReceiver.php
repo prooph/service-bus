@@ -11,14 +11,11 @@
 
 namespace Prooph\ServiceBus\Event;
 
-use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\EventFactoryLoader;
-use Prooph\ServiceBus\Service\InvokeStrategyLoader;
+use Prooph\ServiceBus\Service\ServiceBusManager;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class EventReceiver
@@ -29,29 +26,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class EventReceiver implements EventReceiverInterface
 {
     /**
-     * @var array
+     * @var ServiceBusManager
      */
-    protected $eventMap = array();
-
-    /**
-     * @var EventFactoryLoader
-     */
-    protected $eventFactoryLoader;
-
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $eventHandlerLocator;
-
-    /**
-     * @var array
-     */
-    protected $invokeStrategies = array('callback_strategy', 'on_event_strategy');
-
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $invokeStrategyLoader;
+    protected $serviceBusManager;
 
     /**
      * @var EventManagerInterface
@@ -59,13 +36,11 @@ class EventReceiver implements EventReceiverInterface
     protected $events;
 
     /**
-     * @param array                   $anEventMap
-     * @param ServiceLocatorInterface $anEventHandlerLocator
+     * @param ServiceBusManager $anEventHandlerLocator
      */
-    public function __construct(array $anEventMap, ServiceLocatorInterface $anEventHandlerLocator)
+    public function __construct(ServiceBusManager $anEventHandlerLocator)
     {
-        $this->eventMap = $anEventMap;
-        $this->eventHandlerLocator = $anEventHandlerLocator;
+        $this->serviceBusManager = $anEventHandlerLocator;
     }
 
     /**
@@ -75,128 +50,46 @@ class EventReceiver implements EventReceiverInterface
      */
     public function handle(MessageInterface $aMessage)
     {
-        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('message' => $aMessage));
+        $params = array('message' => $aMessage);
+        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, $params);
 
         if ($results->stopped()) {
             return;
         }
 
-        if (!isset($this->eventMap[$aMessage->name()])) {
-            return;
-        }
+        $event = $this->serviceBusManager->getEventFactoryLoader()
+            ->getEventFactoryFor($aMessage->name())
+            ->fromMessage($aMessage);
 
-        $event = $this->getEventFactoryLoader()->get($aMessage->name())->fromMessage($aMessage);
-
-        $eventHandlerAliases = (is_string($this->eventMap[$aMessage->name()]))?
-            array($this->eventMap[$aMessage->name()])
-            : $this->eventMap[$aMessage->name()];
-
-        foreach ($eventHandlerAliases as $eventHandlerAlias) {
-
-            $handler = $this->eventHandlerLocator->get($eventHandlerAlias);
-
-            $params = compact('event', 'handler');
-
-            $results = $this->events()->trigger('invoke_handler.pre', $this, $params);
-
-            if ($results->stopped()) {
-                continue;
-            }
-
-            $invokeStrategy = null;
-
-            foreach ($this->getInvokeStrategies() as $invokeStrategyName) {
-                $invokeStrategy = $this->getInvokeStrategyLoader()->get($invokeStrategyName);
-
-                if ($invokeStrategy->canInvoke($handler, $event)) {
-                    break;
-                }
-
-                $invokeStrategy = null;
-            }
-
-            if (is_null($invokeStrategy)) {
-                throw new RuntimeException(sprintf(
-                    'No InvokeStrategy can invoke event %s on handler %s',
-                    get_class($event),
-                    get_class($handler)
-                ));
-            }
-
-            $invokeStrategy->invoke($handler, $event);
-
-            $this->events()->trigger('invoke_handler.post', $this, $params);
-        }
+        $this->serviceBusManager->routeDirect($event);
 
         $this->events()->trigger(__FUNCTION__ . '.post', $this, array('message' => $aMessage, 'event' => $event));
     }
 
     /**
-     * @param EventFactoryLoader $anEventFactory
-     */
-    public function setEventFactoryLoader(EventFactoryLoader $anEventFactory)
-    {
-        $this->eventFactoryLoader = $anEventFactory;
-    }
-
-    /**
-     * @return EventFactoryLoader
-     */
-    public function getEventFactoryLoader()
-    {
-        return $this->eventFactoryLoader;
-    }
-
-    /**
-     * @param array $anInvokeStrategies
-     */
-    public function setInvokeStrategies(array $anInvokeStrategies)
-    {
-        $this->invokeStrategies = $anInvokeStrategies;
-    }
-
-    /**
-     * @return array
-     */
-    public function getInvokeStrategies()
-    {
-        return $this->invokeStrategies;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $anInvokeStrategyLoader
-     */
-    public function setInvokeStrategyLoader(ServiceLocatorInterface $anInvokeStrategyLoader)
-    {
-        $this->invokeStrategyLoader = $anInvokeStrategyLoader;
-    }
-
-    /**
-     * @return ServiceLocatorInterface
-     */
-    public function getInvokeStrategyLoader()
-    {
-        if (is_null($this->invokeStrategyLoader)) {
-            $this->invokeStrategyLoader = new InvokeStrategyLoader();
-        }
-
-        return $this->invokeStrategyLoader;
-    }
-
-    /**
-     * @return EventManagerInterface
+     * @return EventManager
      */
     public function events()
     {
         if (is_null($this->events)) {
-            $this->events = new EventManager(array(
-                Definition::SERVICE_BUS_COMPONENT,
-                'event_receiver',
-                __CLASS__
-            ));
+            $this->setEventManager(new EventManager());
         }
 
         return $this->events;
+    }
+
+    /**
+     * @param EventManagerInterface $events
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $events->setIdentifiers(array(
+            Definition::SERVICE_BUS_COMPONENT,
+            'event_receiver',
+            __CLASS__
+        ));
+
+        $this->events = $events;
     }
 }
  

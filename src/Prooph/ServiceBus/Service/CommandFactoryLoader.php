@@ -55,5 +55,14 @@ class CommandFactoryLoader extends AbstractPluginManager
             ));
         }
     }
+
+    /**
+     * @param string $aMessageName
+     * @return CommandFactoryInterface
+     */
+    public function getCommandFactoryFor($aMessageName)
+    {
+        return $this->get($aMessageName);
+    }
 }
  

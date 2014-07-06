@@ -49,5 +49,14 @@ class EventFactoryLoader extends AbstractPluginManager
             ));
         }
     }
+
+    /**
+     * @param string $aMessageName
+     * @return EventFactoryInterface
+     */
+    public function getEventFactoryFor($aMessageName)
+    {
+        return $this->get($aMessageName);
+    }
 }
  

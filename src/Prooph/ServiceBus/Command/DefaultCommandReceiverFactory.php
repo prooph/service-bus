@@ -13,7 +13,6 @@ namespace Prooph\ServiceBus\Command;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Service\CommandReceiverLoader;
-use Prooph\ServiceBus\Service\Definition;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -59,75 +58,6 @@ class DefaultCommandReceiverFactory implements AbstractFactoryInterface
             );
         }
 
-        $mainServiceLocator = $serviceLocator->getServiceLocator();
-
-        $configuration = $mainServiceLocator->get('configuration');
-
-        if (!isset($configuration[Definition::CONFIG_ROOT])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Config root %s is missing in global configuration',
-                    Definition::CONFIG_ROOT
-                )
-            );
-        }
-
-        $configuration = $configuration[Definition::CONFIG_ROOT];
-
-        if (!isset($configuration[Definition::COMMAND_BUS])) {
-            throw new RuntimeException(
-                sprintf(
-                    'command_bus config is missing in %s configuration',
-                    Definition::CONFIG_ROOT
-                )
-            );
-        }
-
-        $configuration = $configuration[Definition::COMMAND_BUS];
-
-        if (!isset($configuration[$requestedName])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Configuration for %s bus is missing in %s.%s configuration',
-                    $requestedName,
-                    Definition::CONFIG_ROOT,
-                    Definition::COMMAND_BUS
-                )
-            );
-        }
-
-        $configuration = $configuration[$requestedName];
-
-        if (!isset($configuration[Definition::COMMAND_MAP])) {
-            throw new RuntimeException(
-                sprintf(
-                    '%s Configuration for %s bus is missing in %s.%s configuration',
-                    Definition::COMMAND_MAP,
-                    $requestedName,
-                    Definition::CONFIG_ROOT,
-                    Definition::COMMAND_BUS
-                )
-            );
-        }
-
-        $commandReceiver = new CommandReceiver($configuration[Definition::COMMAND_MAP], $mainServiceLocator);
-
-        $configuration = $mainServiceLocator->get('configuration');
-
-        if (isset($configuration[Definition::CONFIG_ROOT][Definition::COMMAND_HANDLER_INVOKE_STRATEGIES])) {
-            $commandReceiver->setInvokeStrategies(
-                $configuration[Definition::CONFIG_ROOT][Definition::COMMAND_HANDLER_INVOKE_STRATEGIES]
-            );
-        }
-
-        if ($mainServiceLocator->has(Definition::INVOKE_STRATEGY_LOADER)) {
-            $commandReceiver->setInvokeStrategyLoader(
-                $mainServiceLocator->get(Definition::INVOKE_STRATEGY_LOADER)
-            );
-        }
-
-        $commandReceiver->setCommandFactoryLoader($mainServiceLocator->get(Definition::COMMAND_FACTORY_LOADER));
-
-        return $commandReceiver;
+        return new CommandReceiver($serviceLocator->getServiceLocator());
     }
 }

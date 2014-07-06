@@ -11,14 +11,11 @@
 
 namespace Prooph\ServiceBus\Command;
 
-use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageInterface;
-use Prooph\ServiceBus\Service\CommandFactoryLoader;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\InvokeStrategyLoader;
+use Prooph\ServiceBus\Service\ServiceBusManager;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class CommandReceiver
@@ -29,29 +26,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class CommandReceiver implements CommandReceiverInterface
 {
     /**
-     * @var array
+     * @var ServiceBusManager
      */
-    protected $commandMap = array();
-
-    /**
-     * @var CommandFactoryLoader
-     */
-    protected $commandFactoryLoader;
-
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $commandHandlerLocator;
-
-    /**
-     * @var array
-     */
-    protected $invokeStrategies = array('callback_strategy', 'handle_command_strategy');
-
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $invokeStrategyLoader;
+    protected $serviceBusManager;
 
     /**
      * @var EventManagerInterface
@@ -59,13 +36,11 @@ class CommandReceiver implements CommandReceiverInterface
     protected $events;
 
     /**
-     * @param array                   $aCommandMap
-     * @param ServiceLocatorInterface $aCommandHandlerLocator
+     * @param ServiceBusManager $serviceBusManager
      */
-    public function __construct(array $aCommandMap, ServiceLocatorInterface $aCommandHandlerLocator)
+    public function __construct(ServiceBusManager $serviceBusManager)
     {
-        $this->commandMap = $aCommandMap;
-        $this->commandHandlerLocator = $aCommandHandlerLocator;
+        $this->serviceBusManager = $serviceBusManager;
     }
 
     /**
@@ -75,121 +50,46 @@ class CommandReceiver implements CommandReceiverInterface
      */
     public function handle(MessageInterface $aMessage)
     {
-        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, array('message' => $aMessage));
+        $params = array('message' => $aMessage);
+
+        $results = $this->events()->trigger(__FUNCTION__ . '.pre', $this, $params);
 
         if ($results->stopped()) {
             return;
         }
 
+        $command = $this->serviceBusManager->getCommandFactoryLoader()
+            ->getCommandFactoryFor($aMessage->name())
+            ->fromMessage($aMessage);
 
-        if (!isset($this->commandMap[$aMessage->name()])) {
-            return;
-        }
-
-        $command = $this->getCommandFactoryLoader()->get($aMessage->name())->fromMessage($aMessage);
-
-        $handler = $this->commandHandlerLocator->get($this->commandMap[$aMessage->name()]);
-
-
-        $params = compact('command', 'handler');
-
-        $results = $this->events()->trigger('invoke_handler.pre', $this, $params);
-
-        if ($results->stopped()) {
-            return;
-        }
-
-        $invokeStrategy = null;
-
-        foreach ($this->getInvokeStrategies() as $invokeStrategyName) {
-            $invokeStrategy = $this->getInvokeStrategyLoader()->get($invokeStrategyName);
-
-            if ($invokeStrategy->canInvoke($handler, $command)) {
-                break;
-            }
-
-            $invokeStrategy = null;
-        }
-
-        if (is_null($invokeStrategy)) {
-            throw new RuntimeException(sprintf(
-                'No InvokeStrategy can invoke command %s on handler %s',
-                get_class($command),
-                get_class($handler)
-            ));
-        }
-
-        $invokeStrategy->invoke($handler, $command);
-
-        $this->events()->trigger('invoke_handler.post', $this, $params);
-
-        $params['message'] = $aMessage;
+        $this->serviceBusManager->routeDirect($command);
 
         $this->events()->trigger(__FUNCTION__. '.post', $this, $params);
     }
 
     /**
-     * @param CommandFactoryLoader $aCommandFactoryLoader
+     * @return EventManager
      */
-    public function setCommandFactoryLoader(CommandFactoryLoader $aCommandFactoryLoader)
-    {
-        $this->commandFactoryLoader = $aCommandFactoryLoader;
-    }
-
-    /**
-     * @return CommandFactoryLoader
-     */
-    public function getCommandFactoryLoader()
-    {
-        return $this->commandFactoryLoader;
-    }
-
-    /**
-     * @param array $anInvokeStrategies
-     */
-    public function setInvokeStrategies(array $anInvokeStrategies)
-    {
-        $this->invokeStrategies = $anInvokeStrategies;
-    }
-
-    /**
-     * @return array
-     */
-    public function getInvokeStrategies()
-    {
-        return $this->invokeStrategies;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $anInvokeStrategyLoader
-     */
-    public function setInvokeStrategyLoader(ServiceLocatorInterface $anInvokeStrategyLoader)
-    {
-        $this->invokeStrategyLoader = $anInvokeStrategyLoader;
-    }
-
-    /**
-     * @return ServiceLocatorInterface
-     */
-    public function getInvokeStrategyLoader()
-    {
-        if (is_null($this->invokeStrategyLoader)) {
-            $this->invokeStrategyLoader = new InvokeStrategyLoader();
-        }
-
-        return $this->invokeStrategyLoader;
-    }
-
     public function events()
     {
         if (is_null($this->events)) {
-            $this->events = new EventManager(array(
-                Definition::SERVICE_BUS_COMPONENT,
-                'command_receiver',
-                __CLASS__
-            ));
+            $this->setEventManager(new EventManager());
         }
 
         return $this->events;
+    }
+
+    /**
+     * @param EventManagerInterface $events
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $events->setIdentifiers(array(
+            Definition::SERVICE_BUS_COMPONENT,
+            'command_receiver',
+            __CLASS__
+        ));
+
+        $this->events = $events;
     }
 }
