@@ -564,4 +564,76 @@ class ServiceBusManager extends ServiceManager
 
         return $this->configReader;
     }
+
+    /**
+     * @return CommandBusLoader
+     */
+    public function getCommandBusLoader()
+    {
+        return $this->get(Definition::COMMAND_BUS_LOADER);
+    }
+
+    /**
+     * @return EventBusLoader
+     */
+    public function getEventBusLoader()
+    {
+        return $this->get(Definition::EVENT_BUS_LOADER);
+    }
+
+    /**
+     * @return CommandFactoryLoader
+     */
+    public function getCommandFactoryLoader()
+    {
+        return $this->get(Definition::COMMAND_FACTORY_LOADER);
+    }
+
+    /**
+     * @return EventFactoryLoader
+     */
+    public function getEventFactoryLoader()
+    {
+        return $this->get(Definition::EVENT_FACTORY_LOADER);
+    }
+
+    /**
+     * @return CommandReceiverLoader
+     */
+    public function getCommandReceiverLoader()
+    {
+        return $this->get(Definition::COMMAND_RECEIVER_LOADER);
+    }
+
+    /**
+     * @return EventReceiverLoader
+     */
+    public function getEventReceiverLoader()
+    {
+        return $this->get(Definition::EVENT_RECEIVER_LOADER);
+    }
+
+    /**
+     * @return InvokeStrategyLoader
+     */
+    public function getInvokeStrategyLoader()
+    {
+        return $this->get(Definition::INVOKE_STRATEGY_LOADER);
+    }
+
+    /**
+     * @return MessageDispatcherLoader
+     */
+    public function getMessageDispatcherLoader()
+    {
+        return $this->get(Definition::MESSAGE_DISPATCHER_LOADER);
+    }
+
+    /**
+     * @return MessageFactoryLoader
+     */
+    public function getMessageFactoryLoader()
+    {
+        return $this->get(Definition::MESSAGE_FACTORY_LOADER);
+    }
 }
