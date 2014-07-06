@@ -71,7 +71,6 @@ class PersistedEventDispatcher implements FeatureInterface
         $payload = $streamEvent->payload();
 
         $payload['streamId'] = $streamId->toString();
-        $payload['eventName'] = $streamEvent->eventName()->toString();
 
         try {
             $uuid = Uuid::fromString($streamEvent->eventId()->toString());
@@ -79,7 +78,13 @@ class PersistedEventDispatcher implements FeatureInterface
             $uuid = Uuid::uuid4();
         }
 
-        return new AbstractEvent($payload, $streamEvent->version(), $uuid, $streamEvent->occurredOn());
+        return new AbstractEvent(
+            $streamEvent->eventName()->toString(),
+            $payload,
+            $streamEvent->version(),
+            $uuid,
+            $streamEvent->occurredOn()
+        );
     }
 }
  

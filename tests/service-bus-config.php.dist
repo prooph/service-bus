@@ -5,11 +5,7 @@ return array(
             'file_remover' => 'Prooph\ServiceBusTest\Mock\FileRemover'
         ),
     ),
-    'command_bus' => array(
-        'php-resque-test-bus' => array(
-            'command_map' => array(
-                'Prooph\ServiceBusTest\Mock\RemoveFileCommand' => 'file_remover'
-            )
-        )
+    \Prooph\ServiceBus\Service\Definition::COMMAND_MAP => array(
+        'Prooph\ServiceBusTest\Mock\RemoveFileCommand' => 'file_remover'
     ),
 );

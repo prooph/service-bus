@@ -24,6 +24,8 @@ use Prooph\ServiceBus\EventStoreFeature\PersistedEventDispatcher;
 use Prooph\ServiceBus\Initializer\LocalSynchronousInitializer;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
+use Prooph\ServiceBus\Service\Definition;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\User;
 use Prooph\ServiceBusTest\Mock\UserCreated;
@@ -45,45 +47,15 @@ class PersistedEventDispatcherTest extends TestCase
      */
     public function it_dispatches_persisted_event_to_local_event_bus()
     {
-        $serviceBusManager = new ServiceBusManager();
-
-        $localEnv = new LocalSynchronousInitializer();
-
         $userCreatedEventReceived = false;
 
-        $localEnv->addEventHandler(
-            'Prooph\ServiceBusTest\Mock\UserCreated',
-            function(UserCreated $e) use (&$userCreatedEventReceived) {
-                $userCreatedEventReceived = $e;
-            }
-        );
-
-        $serviceBusManager->events()->attach($localEnv);
-
-        $eventHydrator = new AggregateChangedEventHydrator();
-
-        $serviceBusManager->events()->attach('route', function (Event $e) use ($eventHydrator) {
-            $message = $e->getParam('message');
-
-            if ($message instanceof AbstractEvent) {
-                $payload = $message->payload();
-
-                $eventName = new EventName($payload['eventName']);
-                $streamId  = new StreamId($payload['streamId']);
-                $eventId   = new EventId($message->uuid()->toString());
-
-                unset($payload['eventName']);
-                unset($payload['streamId']);
-
-                $streamEvent = new StreamEvent($eventId, $eventName, $payload, $message->version(), $message->occurredOn());
-
-                $aggregateChangedEvents = $eventHydrator->toAggregateChangedEvents($streamId, array($streamEvent));
-
-                $serviceBusManager = $e->getTarget();
-
-                $serviceBusManager->getEventBus()->publish($aggregateChangedEvents[0]);
-            }
-        });
+        $serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration(array(
+            Definition::EVENT_MAP => array(
+                'Prooph\ServiceBusTest\Mock\UserCreated' => function(AbstractEvent $e) use (&$userCreatedEventReceived) {
+                    $userCreatedEventReceived = $e;
+                }
+            )
+        )));
 
         StaticEventManager::getInstance();
 
@@ -202,12 +174,12 @@ class PersistedEventDispatcherTest extends TestCase
 
         $eventStore->commit();
 
-        $this->assertInstanceOf('Prooph\ServiceBusTest\Mock\UserCreated', $userCreatedEventReceived);
+        $this->assertInstanceOf('Prooph\ServiceBus\Event\AbstractEvent', $userCreatedEventReceived);
 
-        $this->assertEquals($user->id(), $userCreatedEventReceived->aggregateId());
-        $this->assertEquals(array('name' => 'Alex'), $userCreatedEventReceived->payload());
+        $this->assertEquals($user->id(), $userCreatedEventReceived->payload()['streamId']);
+        $this->assertEquals(array('name' => 'Alex', 'streamId' => $user->id()), $userCreatedEventReceived->payload());
         $this->assertEquals(1, $userCreatedEventReceived->version());
-        $this->assertInstanceOf('ValueObjects\DateTime\DateTime', $userCreatedEventReceived->occurredOn());
+        $this->assertInstanceOf('DateTime', $userCreatedEventReceived->occurredOn());
         $this->assertInstanceOf('Rhumsaa\Uuid\Uuid', $userCreatedEventReceived->uuid());
     }
 }

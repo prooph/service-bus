@@ -21,6 +21,11 @@ use Prooph\ServiceBus\Command\AbstractCommand;
  */
 class RemoveFileCommand extends AbstractCommand
 {
+    public static function fromPayload($aPayload)
+    {
+        return new static(__CLASS__, $aPayload);
+    }
+
     protected function convertPayload($aFile)
     {
         return array('file' => $aFile);

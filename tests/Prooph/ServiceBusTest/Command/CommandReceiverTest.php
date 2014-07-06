@@ -16,6 +16,8 @@ use Prooph\ServiceBus\Command\CommandReceiver;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBus\Service\CommandFactoryLoader;
+use Prooph\ServiceBus\Service\Definition;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\TestCase;
@@ -41,14 +43,18 @@ class CommandReceiverTest extends TestCase
 
     protected function setUp()
     {
-        $commandHandlerLocator = new ServiceBusManager();
+        $serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration(array(
+            Definition::COMMAND_MAP => array(
+                'Prooph\ServiceBusTest\Mock\DoSomething' => 'test-case-callback'
+            )
+        )));
 
         $this->commandHeader  = null;
         $this->commandPayload = null;
 
         $self = $this;
 
-        $commandHandlerLocator->setService('test-case-callback', function (DoSomething $aCommand) use ($self) {
+        $serviceBusManager->setService('test-case-callback', function (DoSomething $aCommand) use ($self) {
 
             $commandHeader = new MessageHeader(
                 $aCommand->uuid(),
@@ -62,14 +68,7 @@ class CommandReceiverTest extends TestCase
             $self->commandPayload = $aCommand->payload();
         });
 
-        $this->commandReceiver = new CommandReceiver(
-            array(
-                'Prooph\ServiceBusTest\Mock\DoSomething' => 'test-case-callback'
-            ),
-            $commandHandlerLocator
-        );
-
-        $this->commandReceiver->setCommandFactoryLoader(new CommandFactoryLoader());
+        $this->commandReceiver = new CommandReceiver($serviceBusManager);
     }
 
     /**
@@ -97,8 +96,6 @@ class CommandReceiverTest extends TestCase
     public function it_triggers_all_related_events()
     {
         $preHandleTriggered         = false;
-        $preInvokeHandlerTriggered  = false;
-        $postInvokeHandlerTriggered = false;
         $postHandleTriggered        = false;
 
 
@@ -123,29 +120,10 @@ class CommandReceiverTest extends TestCase
         );
 
         $this->commandReceiver->events()->attach(
-            'invoke_handler.pre',
-            function (EventInterface $e) use (&$preInvokeHandlerTriggered, $command) {
-                $this->assertSame($command->uuid(), $e->getParam('command')->uuid());
-                $this->assertTrue(is_callable($e->getParam('handler')));
-                $preInvokeHandlerTriggered = true;
-            }
-        );
-
-        $this->commandReceiver->events()->attach(
-            'invoke_handler.post',
-            function (EventInterface $e) use (&$postInvokeHandlerTriggered, $command) {
-                $this->assertSame($command->uuid(), $e->getParam('command')->uuid());
-                $this->assertTrue(is_callable($e->getParam('handler')));
-                $postInvokeHandlerTriggered = true;
-            }
-        );
-
-        $this->commandReceiver->events()->attach(
             'handle.post',
             function (EventInterface $e) use (&$postHandleTriggered, $command, $message) {
                 $this->assertSame($command->uuid(), $e->getParam('command')->uuid());
                 $this->assertSame($message, $e->getParam('message'));
-                $this->assertTrue(is_callable($e->getParam('handler')));
                 $postHandleTriggered = true;
             }
         );
@@ -153,8 +131,6 @@ class CommandReceiverTest extends TestCase
         $this->commandReceiver->handle($message);
 
         $this->assertTrue($preHandleTriggered);
-        $this->assertTrue($preInvokeHandlerTriggered);
-        $this->assertTrue($postInvokeHandlerTriggered);
         $this->assertTrue($postHandleTriggered);
     }
 }

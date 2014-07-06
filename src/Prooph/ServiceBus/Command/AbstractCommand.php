@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBus\Command;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
+use Prooph\ServiceBus\Message\MessageNameProvider;
 use Prooph\ServiceBus\Message\PayloadInterface;
 use Rhumsaa\Uuid\Uuid;
 
@@ -23,8 +24,13 @@ use Rhumsaa\Uuid\Uuid;
  * @package Prooph\ServiceBus\Command
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class AbstractCommand
+class AbstractCommand implements MessageNameProvider
 {
+    /**
+     * @var string
+     */
+    protected $name;
+
     /**
      * @var Uuid
      */
@@ -46,14 +52,17 @@ class AbstractCommand
     protected $payload = array();
 
     /**
+     * @param string $aMessageName
      * @param null $aPayload
      * @param int $aVersion
      * @param Uuid $aUuid
      * @param \DateTime $aCreatedOn
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function __construct($aPayload = null, $aVersion = 1, Uuid $aUuid = null, \DateTime $aCreatedOn = null)
+    public function __construct($aMessageName, $aPayload = null, $aVersion = 1, Uuid $aUuid = null, \DateTime $aCreatedOn = null)
     {
+        $this->name = $aMessageName;
+
         if (!is_null($aPayload)) {
 
             if (! is_array($aPayload)) {
@@ -131,6 +140,14 @@ class AbstractCommand
     protected function convertPayload($aPayload)
     {
         return $aPayload;
+    }
+
+    /**
+     * @return string Name of the message
+     */
+    public function getMessageName()
+    {
+        return $this->name;
     }
 }
  

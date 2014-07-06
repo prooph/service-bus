@@ -27,7 +27,7 @@ class SomethingDone extends AbstractEvent
      */
     public static function fromData($dataString)
     {
-        return new self(array('data' => $dataString));
+        return new self(__CLASS__, array('data' => $dataString));
     }
     /**
      * @return string

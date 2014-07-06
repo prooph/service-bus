@@ -48,7 +48,7 @@ class InMemoryMessageDispatcherTest extends TestCase
 
         $this->commandHandler = new HandleCommandHandler();
 
-        $config->setCommandMap('test-case-bus', array(
+        $config->setCommandMap(array(
             'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
         ));
 

@@ -18,7 +18,9 @@ use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Service\CommandFactoryLoader;
 use Prooph\ServiceBus\Service\CommandReceiverLoader;
+use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\MessageFactoryLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\HandleCommandHandler;
@@ -46,24 +48,23 @@ class CommandBusTest extends TestCase
     protected function setUp()
     {
         //The complete setup is done by hand to demonstrate the dependencies
-        $queue = new Queue('local');
+        $queue = new Queue('test-case-bus');
 
         $messageDispatcher = new InMemoryMessageDispatcher();
 
         $this->doSomethingHandler = new HandleCommandHandler();
 
-        $serviceBusManager = new ServiceBusManager();
+        $serviceBusManager = new ServiceBusManager(
+            new ServiceBusConfiguration(array(
+                Definition::COMMAND_MAP => array(
+                    'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
+                )
+            ))
+        );
 
         $serviceBusManager->setService('do_something_handler', $this->doSomethingHandler);
 
-        $commandReceiver = new CommandReceiver(
-            array(
-                'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
-            ),
-            $serviceBusManager
-        );
-
-        $commandReceiver->setCommandFactoryLoader(new CommandFactoryLoader());
+        $commandReceiver = new CommandReceiver($serviceBusManager);
 
         $commandReceiverLoader = new CommandReceiverLoader();
 
@@ -71,7 +72,7 @@ class CommandBusTest extends TestCase
 
         $messageDispatcher->registerCommandReceiverLoaderForQueue($queue, $commandReceiverLoader);
 
-        $this->commandBus = new CommandBus('test-case-bus', $messageDispatcher, $queue);
+        $this->commandBus = new CommandBus('test-case-bus', $messageDispatcher);
 
         $this->commandBus->setMessageFactoryLoader(new MessageFactoryLoader());
     }

@@ -15,7 +15,9 @@ use Prooph\ServiceBus\Event\EventFactory;
 use Prooph\ServiceBus\Event\EventReceiver;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\StandardMessage;
+use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\EventFactoryLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
@@ -43,7 +45,11 @@ class EventReceiverTest extends TestCase
 
     protected function setUp()
     {
-        $eventHandlerLocator = new ServiceBusManager();
+        $serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration(array(
+            Definition::EVENT_MAP => array(
+                'Prooph\ServiceBusTest\Mock\SomethingDone' => array('test-case-callback', 'test-case-callback')
+            )
+        )));
 
         $this->eventHeader  = null;
         $this->eventPayload = null;
@@ -51,7 +57,7 @@ class EventReceiverTest extends TestCase
 
         $self = $this;
 
-        $eventHandlerLocator->setService('test-case-callback', function (SomethingDone $anEvent) use ($self) {
+        $serviceBusManager->setService('test-case-callback', function (SomethingDone $anEvent) use ($self) {
 
             $eventHeader = new MessageHeader(
                 $anEvent->uuid(),
@@ -68,13 +74,8 @@ class EventReceiverTest extends TestCase
 
         //callback should be called twice that simulates multiple EventHandler
         $this->eventReceiver = new EventReceiver(
-            array(
-                'Prooph\ServiceBusTest\Mock\SomethingDone' => array('test-case-callback', 'test-case-callback')
-            ),
-            $eventHandlerLocator
+            $serviceBusManager
         );
-
-        $this->eventReceiver->setEventFactoryLoader(new EventFactoryLoader());
     }
 
     /**
@@ -103,8 +104,6 @@ class EventReceiverTest extends TestCase
     public function it_triggers_all_events()
     {
         $preHandleTriggered         = false;
-        $preInvokeHandlerTriggered  = false;
-        $postInvokeHandlerTriggered = false;
         $postHandleTriggered        = false;
 
         $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
@@ -128,24 +127,6 @@ class EventReceiverTest extends TestCase
         );
 
         $this->eventReceiver->events()->attach(
-            'invoke_handler.pre',
-            function (EventInterface $e) use (&$preInvokeHandlerTriggered, $event) {
-                $this->assertSame($event->uuid(), $e->getParam('event')->uuid());
-                $this->assertTrue(is_callable($e->getParam('handler')));
-                $preInvokeHandlerTriggered = true;
-            }
-        );
-
-        $this->eventReceiver->events()->attach(
-            'invoke_handler.post',
-            function (EventInterface $e) use (&$postInvokeHandlerTriggered, $event) {
-                $this->assertSame($event->uuid(), $e->getParam('event')->uuid());
-                $this->assertTrue(is_callable($e->getParam('handler')));
-                $postInvokeHandlerTriggered = true;
-            }
-        );
-
-        $this->eventReceiver->events()->attach(
             'handle.post',
             function (EventInterface $e) use (&$postHandleTriggered, $event, $message) {
                 $this->assertSame($event->uuid(), $e->getParam('event')->uuid());
@@ -157,38 +138,7 @@ class EventReceiverTest extends TestCase
         $this->eventReceiver->handle($message);
 
         $this->assertTrue($preHandleTriggered);
-        $this->assertTrue($preInvokeHandlerTriggered);
-        $this->assertTrue($postInvokeHandlerTriggered);
         $this->assertTrue($postHandleTriggered);
-    }
-
-    /**
-     * @test
-     */
-    public function it_skips_invoking_handler_if_listeners_stops_propagation()
-    {
-        $this->called = 0;
-
-        $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_EVENT);
-
-        $message = new StandardMessage(
-            'Prooph\ServiceBusTest\Mock\SomethingDone',
-            $header,
-            array('data' => 'test')
-        );
-
-        $this->eventReceiver->events()->attach(
-            'invoke_handler.pre',
-            function (EventInterface $e) {
-                if ($this->called == 1) {
-                    $e->stopPropagation(true);
-                }
-            }
-        );
-
-        $this->eventReceiver->handle($message);
-
-        $this->assertEquals(1, $this->called);
     }
 }
  

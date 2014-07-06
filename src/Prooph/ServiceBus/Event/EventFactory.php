@@ -88,6 +88,7 @@ class EventFactory implements EventFactoryInterface
             }
 
             return new $eventClass(
+                $eventClass,
                 $message->payload(),
                 $message->header()->version(),
                 $message->header()->uuid(),

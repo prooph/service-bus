@@ -18,6 +18,7 @@ use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\EventReceiverLoader;
 use Prooph\ServiceBus\Service\InvokeStrategyLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\SomethingDoneHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDoneInvokeStrategy;
@@ -49,17 +50,10 @@ class DefaultEventReceiverFactoryTest extends TestCase
 
     protected function setUp()
     {
-        $this->serviceBusManager = new ServiceBusManager();
-
         $config = array(
-            Definition::EVENT_BUS => array(
-                //name of the bus, must match with the Message.header.sender
-                'test-case-bus' => array(
-                    Definition::EVENT_MAP => array(
-                        //SomethingDone event is mapped to the SomethingDoneHandler alias
-                        'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-                    )
-                )
+            Definition::EVENT_MAP => array(
+                //SomethingDone event is mapped to the SomethingDoneHandler alias
+                'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
             ),
             Definition::EVENT_HANDLER_INVOKE_STRATEGIES => array(
                 //Alias of the SomethingDoneInvokeStrategy
@@ -67,8 +61,7 @@ class DefaultEventReceiverFactoryTest extends TestCase
             )
         );
 
-        //Add global config as service
-        $this->serviceBusManager->setService('configuration', $config);
+        $this->serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration($config));
 
         //Should handle the SomethingDone event
         $this->somethingDoneHandler = new SomethingDoneHandler();
@@ -117,16 +110,6 @@ class DefaultEventReceiverFactoryTest extends TestCase
 
         $eventReceiver = $defaultEventReceiverFactory
             ->createServiceWithName($this->eventReceiverLoader, 'testcasebus', 'test-case-bus');
-
-        $this->assertSame(
-            $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_LOADER),
-            $eventReceiver->getInvokeStrategyLoader()
-        );
-
-        $this->assertEquals(
-            array('something_done_invoke_strategy'),
-            $eventReceiver->getInvokeStrategies()
-        );
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\SomethingDone',

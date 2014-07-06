@@ -16,6 +16,7 @@ use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\EventBusLoader;
 use Prooph\ServiceBus\Service\MessageFactoryLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\OnEventHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
@@ -41,25 +42,20 @@ class DefaultEventBusFactoryTest extends TestCase
 
     protected function setUp()
     {
-        $this->serviceBusManager = new ServiceBusManager();
-
         $config = array(
+            Definition::EVENT_MAP => array(
+                //SomethingDone event is mapped to the OnEventHandler alias
+                'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
+            ),
             Definition::EVENT_BUS => array(
                 //name of the bus, must match with the Message.header.sender
                 'test-case-bus' => array(
-                    Definition::EVENT_MAP => array(
-                        //SomethingDone event is mapped to the OnEventHandler alias
-                        'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-                    ),
-                    //Configure two queues, something_done_handler should be invoked two times
-                    Definition::QUEUE => array('local', 'local-2'),
                     Definition::MESSAGE_DISPATCHER => Definition::IN_MEMORY_MESSAGE_DISPATCHER,
                 )
             ),
         );
 
-        //Add global config as service
-        $this->serviceBusManager->setService('configuration', $config);
+        $this->serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration($config));
 
         //Should handle the SomethingDone event
         $this->somethingDoneHandler = new OnEventHandler();
@@ -71,12 +67,7 @@ class DefaultEventBusFactoryTest extends TestCase
             ->get(Definition::IN_MEMORY_MESSAGE_DISPATCHER);
 
         $inMemoryMessageDispatcher->registerEventReceiverLoaderForQueue(
-            new Queue('local'),
-            $this->serviceBusManager->get(Definition::EVENT_RECEIVER_LOADER)
-        );
-
-        $inMemoryMessageDispatcher->registerEventReceiverLoaderForQueue(
-            new Queue('local-2'),
+            new Queue('test-case-bus'),
             $this->serviceBusManager->get(Definition::EVENT_RECEIVER_LOADER)
         );
     }
@@ -100,6 +91,6 @@ class DefaultEventBusFactoryTest extends TestCase
         $eventBus->publish($somethingDone);
 
         $this->assertEquals('test payload', $this->somethingDoneHandler->lastEvent()->data());
-        $this->assertEquals(2, $this->somethingDoneHandler->eventCount());
+        $this->assertEquals(1, $this->somethingDoneHandler->eventCount());
     }
 }

@@ -29,13 +29,13 @@ class EventTest extends TestCase
      */
     public function it_has_a_payload_array()
     {
-        $event = new SomethingDone(array('data' => 'test payload'));
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'));
 
         $this->assertEquals(array('data' => 'test payload'), $event->payload());
 
         $payloadObject = new PayloadMockObject(array('data' => 'test payload'));
 
-        $event = new SomethingDone($payloadObject);
+        $event = new SomethingDone('somenthing_done', $payloadObject);
 
         $this->assertEquals(array('data' => 'test payload'), $event->payload());
     }
@@ -45,11 +45,11 @@ class EventTest extends TestCase
      */
     public function it_has_a_version()
     {
-        $event = new SomethingDone(array('data' => 'test payload'));
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'));
 
         $this->assertEquals(1, $event->version());
 
-        $event = new SomethingDone(array('data' => 'test payload'), 2);
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'), 2);
 
         $this->assertEquals(2, $event->version());
     }
@@ -59,13 +59,13 @@ class EventTest extends TestCase
      */
     public function it_has_a_uuid()
     {
-        $event = new SomethingDone(array('data' => 'test payload'));
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'));
 
         $this->assertInstanceOf('Rhumsaa\Uuid\Uuid', $event->uuid());
 
         $uuid = Uuid::uuid4();
 
-        $event = new SomethingDone(array('data' => 'test payload'), 2, $uuid);
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'), 2, $uuid);
 
         $this->assertEquals($uuid->toString(), $event->uuid()->toString());
     }
@@ -75,13 +75,13 @@ class EventTest extends TestCase
      */
     public function it_has_a_created_on_datetime()
     {
-        $event = new SomethingDone(array('data' => 'test payload'));
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'));
 
         $this->assertInstanceOf('DateTime', $event->occurredOn());
 
         $occurredOn = new \DateTime('2014-03-14 21:27:00');
 
-        $event = new SomethingDone(array('data' => 'test payload'), 1, null, $occurredOn);
+        $event = new SomethingDone('somenthing_done', array('data' => 'test payload'), 1, null, $occurredOn);
 
         $this->assertEquals($occurredOn->getTimestamp(), $event->occurredOn()->getTimestamp());
     }

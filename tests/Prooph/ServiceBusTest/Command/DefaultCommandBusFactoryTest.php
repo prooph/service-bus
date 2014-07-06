@@ -15,6 +15,7 @@ use Prooph\ServiceBus\Command\DefaultCommandBusFactory;
 use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Service\CommandBusLoader;
 use Prooph\ServiceBus\Service\Definition;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\HandleCommandHandler;
@@ -40,24 +41,20 @@ class DefaultCommandBusFactoryTest extends TestCase
 
     protected function setUp()
     {
-        $this->serviceBusManager = new ServiceBusManager();
-
         $config = array(
+            Definition::COMMAND_MAP => array(
+                //DoSomething command is mapped to the DoSometingHandler alias
+                'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
+            ),
             Definition::COMMAND_BUS => array(
                 //name of the bus, must match with the Message.header.sender
                 'test-case-bus' => array(
-                    Definition::COMMAND_MAP => array(
-                        //DoSomething command is mapped to the DoSometingHandler alias
-                        'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
-                    ),
-                    Definition::QUEUE => 'local',
                     Definition::MESSAGE_DISPATCHER => Definition::IN_MEMORY_MESSAGE_DISPATCHER,
                 )
             ),
         );
 
-        //Add global config as service
-        $this->serviceBusManager->setService('configuration', $config);
+        $this->serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration($config));
 
         //Should handle the DoSomething command
         $this->doSomethingHandler = new HandleCommandHandler();
@@ -69,7 +66,7 @@ class DefaultCommandBusFactoryTest extends TestCase
             ->get(Definition::IN_MEMORY_MESSAGE_DISPATCHER);
 
         $inMemoryMessageDispatcher->registerCommandReceiverLoaderForQueue(
-            new Queue('local'),
+            new Queue('test-case-bus'),
             $this->serviceBusManager->get(Definition::COMMAND_RECEIVER_LOADER)
         );
     }

@@ -61,7 +61,6 @@ class PhpResqueMessageDispatcherTest extends TestCase
         $config = new ServiceBusConfiguration(array(
             'command_bus' => array(
                 'php-resque-test-bus' => array(
-                    'queue' => 'php-resque-test-queue',
                     'message_dispatcher' => 'php_resque_message_dispatcher'
                 )
             )
@@ -87,7 +86,7 @@ class PhpResqueMessageDispatcherTest extends TestCase
             }
         );
 
-        $removeFile = new RemoveFileCommand($this->testFile);
+        $removeFile = RemoveFileCommand::fromPayload($this->testFile);
 
         $serviceBusManager->getCommandBus('php-resque-test-bus')->send($removeFile);
 
@@ -97,7 +96,7 @@ class PhpResqueMessageDispatcherTest extends TestCase
 
         $this->assertEquals(\Resque_Job_Status::STATUS_WAITING, $status->get());
 
-        $worker = new \Resque_Worker(array('php-resque-test-queue'));
+        $worker = new \Resque_Worker(array('php-resque-test-bus'));
 
         $worker->work(0);
 

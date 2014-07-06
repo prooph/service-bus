@@ -50,6 +50,8 @@ class ServiceBusConfiguration implements ConfigInterface
     {
         if (is_array($aConfiguration)) {
             $this->setConfiguration($aConfiguration);
+        } else {
+            $this->configuration = $this->defaultConfig;
         }
     }
 

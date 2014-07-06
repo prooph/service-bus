@@ -18,6 +18,7 @@ use Prooph\ServiceBus\Message\StandardMessage;
 use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\InvokeStrategyLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\DoSomethingHandler;
 use Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy;
@@ -49,17 +50,10 @@ class DefaultCommandReceiverFactoryTest extends TestCase
 
     protected function setUp()
     {
-        $this->serviceBusManager = new ServiceBusManager();
-
         $config = array(
-            Definition::COMMAND_BUS => array(
-                //name of the bus, must match with the Message.header.sender
-                'test-case-bus' => array(
-                    Definition::COMMAND_MAP => array(
-                        //DoSomething command is mapped to the DoSometingHandler alias
-                        'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
-                    )
-                )
+            Definition::COMMAND_MAP => array(
+                //DoSomething command is mapped to the DoSometingHandler alias
+                'Prooph\ServiceBusTest\Mock\DoSomething' => 'do_something_handler'
             ),
             Definition::COMMAND_HANDLER_INVOKE_STRATEGIES => array(
                 //Alias of the DoSomethingInvokeStrategy
@@ -67,8 +61,7 @@ class DefaultCommandReceiverFactoryTest extends TestCase
             )
         );
 
-        //Add global config as service
-        $this->serviceBusManager->setService('configuration', $config);
+        $this->serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration($config));
 
         //Should handle the DoSomething command
         $this->doSomethingHandler = new DoSomethingHandler();
@@ -114,16 +107,6 @@ class DefaultCommandReceiverFactoryTest extends TestCase
 
         $commandReceiver = $defaultCommandReceiverFactory
             ->createServiceWithName($this->commandReceiverLoader, 'testcasebus', 'test-case-bus');
-
-        $this->assertSame(
-            $this->serviceBusManager->get(Definition::INVOKE_STRATEGY_LOADER),
-            $commandReceiver->getInvokeStrategyLoader()
-        );
-
-        $this->assertEquals(
-            array('do_something_invoke_strategy'),
-            $commandReceiver->getInvokeStrategies()
-        );
 
         $message = new StandardMessage(
             'Prooph\ServiceBusTest\Mock\DoSomething',

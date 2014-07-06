@@ -64,6 +64,8 @@ class CommandReceiver implements CommandReceiverInterface
 
         $this->serviceBusManager->routeDirect($command);
 
+        $params['command'] = $command;
+
         $this->events()->trigger(__FUNCTION__. '.post', $this, $params);
     }
 

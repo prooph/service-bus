@@ -28,7 +28,7 @@ class DoSomething extends AbstractCommand
      */
     public static function fromData($data)
     {
-        return new static(array('data' => $data));
+        return new static(__CLASS__, array('data' => $data));
     }
 
     /**

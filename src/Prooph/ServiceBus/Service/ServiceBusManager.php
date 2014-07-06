@@ -180,6 +180,8 @@ class ServiceBusManager extends ServiceManager
 
         $eventMap =  $this->getConfigReader()->arrayValue(Definition::EVENT_MAP);
 
+
+
         if (array_key_exists($messageName, $eventMap)) {
             $eventHandlers = $eventMap[$messageName];
 
@@ -227,7 +229,7 @@ class ServiceBusManager extends ServiceManager
         $command = $event->getParam("command");
         $commandHandler = $event->getParam("commandHandler");
 
-        if (! is_object($commandHandler)) {
+        if (! is_object($commandHandler) && ! is_callable($commandHandler)) {
             $commandHandler = $this->get($commandHandler);
         }
 
@@ -276,6 +278,8 @@ class ServiceBusManager extends ServiceManager
             ));
         }
 
+        $invokeStrategy->invoke($commandHandler, $command);
+
         $this->events()->trigger('invoke_command.post', $this, $params);
     }
 
@@ -311,7 +315,7 @@ class ServiceBusManager extends ServiceManager
         $event = $routeEvent->getParam("event");
         $eventHandler = $routeEvent->getParam("eventHandler");
 
-        if (! is_object($eventHandler)) {
+        if (! is_object($eventHandler) && ! is_callable($eventHandler)) {
             $eventHandler = $this->get($eventHandler);
         }
 

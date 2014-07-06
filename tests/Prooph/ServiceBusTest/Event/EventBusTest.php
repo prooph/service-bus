@@ -16,10 +16,12 @@ use Prooph\ServiceBus\Event\EventReceiver;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\Queue;
+use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\EventBusLoader;
 use Prooph\ServiceBus\Service\EventFactoryLoader;
 use Prooph\ServiceBus\Service\EventReceiverLoader;
 use Prooph\ServiceBus\Service\MessageFactoryLoader;
+use Prooph\ServiceBus\Service\ServiceBusConfiguration;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\OnEventHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
@@ -47,34 +49,31 @@ class EventBusTest extends TestCase
     protected function setUp()
     {
         //The complete setup is done by hand to demonstrate the dependencies
-        $queue  = new Queue('local');
-        $queue2 = new Queue('local-2');
+        $queue  = new Queue('test-case-bus');
 
         $messageDispatcher = new InMemoryMessageDispatcher();
 
         $this->somethingDoneHandler = new OnEventHandler();
 
-        $serviceBusManager = new ServiceBusManager();
+        $serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration(array(
+            Definition::EVENT_MAP => array(
+                'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
+            )
+        )));
 
         $serviceBusManager->setService('something_done_handler', $this->somethingDoneHandler);
 
         $eventReceiver = new EventReceiver(
-            array(
-                'Prooph\ServiceBusTest\Mock\SomethingDone' => 'something_done_handler'
-            ),
             $serviceBusManager
         );
-
-        $eventReceiver->setEventFactoryLoader(new EventFactoryLoader());
 
         $eventReceiverLoader = new EventReceiverLoader();
 
         $eventReceiverLoader->setService('test-case-bus', $eventReceiver);
 
         $messageDispatcher->registerEventReceiverLoaderForQueue($queue, $eventReceiverLoader);
-        $messageDispatcher->registerEventReceiverLoaderForQueue($queue2, $eventReceiverLoader);
 
-        $this->eventBus = new EventBus('test-case-bus', $messageDispatcher, array($queue, $queue2));
+        $this->eventBus = new EventBus('test-case-bus', $messageDispatcher, $queue);
 
         $this->eventBus->setMessageFactoryLoader(new MessageFactoryLoader());
     }
@@ -82,14 +81,14 @@ class EventBusTest extends TestCase
     /**
      * @test
      */
-    public function it_sends_a_command_to_the_defined_queue_by_using_provided_message_dispatcher()
+    public function it_sends_an_event_to_the_defined_queue_by_using_provided_message_dispatcher()
     {
         $somethingDone = SomethingDone::fromData('test payload');
 
         $this->eventBus->publish($somethingDone);
 
         $this->assertEquals('test payload', $this->somethingDoneHandler->lastEvent()->data());
-        $this->assertEquals(2, $this->somethingDoneHandler->eventCount());
+        $this->assertEquals(1, $this->somethingDoneHandler->eventCount());
     }
 
     /**
@@ -98,8 +97,6 @@ class EventBusTest extends TestCase
     public function it_triggers_all_events()
     {
         $prePublishTriggered         = false;
-        $prePublishOnQueueTriggered  = false;
-        $postPublishOnQueueTriggered = false;
         $postPublishTriggered        = false;
 
         $somethingDone = SomethingDone::fromData('test payload');
@@ -117,24 +114,6 @@ class EventBusTest extends TestCase
         );
 
         $this->eventBus->events()->attach(
-            'publish_on_queue.pre',
-            function (EventInterface $e) use (&$prePublishOnQueueTriggered, $message) {
-                $this->assertTrue($message->header()->sameHeaderAs($e->getParam('message')->header()));
-                $this->assertInstanceOf('Prooph\ServiceBus\Message\QueueInterface', $e->getParam('queue'));
-                $prePublishOnQueueTriggered = true;
-            }
-        );
-
-        $this->eventBus->events()->attach(
-            'publish_on_queue.post',
-            function (EventInterface $e) use (&$postPublishOnQueueTriggered, $message) {
-                $this->assertTrue($message->header()->sameHeaderAs($e->getParam('message')->header()));
-                $this->assertInstanceOf('Prooph\ServiceBus\Message\QueueInterface', $e->getParam('queue'));
-                $postPublishOnQueueTriggered = true;
-            }
-        );
-
-        $this->eventBus->events()->attach(
             'publish.post',
             function (EventInterface $e) use (&$postPublishTriggered, $somethingDone, $message) {
                 $this->assertSame($somethingDone, $e->getParam('event'));
@@ -146,8 +125,6 @@ class EventBusTest extends TestCase
         $this->eventBus->publish($somethingDone);
 
         $this->assertTrue($prePublishTriggered);
-        $this->assertTrue($prePublishOnQueueTriggered);
-        $this->assertTrue($postPublishOnQueueTriggered);
         $this->assertTrue($postPublishTriggered);
     }
 
