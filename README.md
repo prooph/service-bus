@@ -27,7 +27,7 @@ You can install ProophServiceBus via composer by adding `"prooph/service-bus": "
 Quick Start
 -----------
 
-[ ] muss erledigt werden
+- [ ] muss erledigt werden
 
 The simplest way to get started is to configure a command map
 and use the routing mechanism of the ServiceBus to pass a command directly (synchronous) to a command handler.
