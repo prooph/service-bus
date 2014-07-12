@@ -102,7 +102,7 @@ class ServiceBusManager extends ServiceManager
      * Event listener can listen to the "route" event to decide which bus should be used for a specific message
      * If a listener routes the message, it should return a boolean TRUE
      * If no listener routes the message by it's own the message is send/published directly to a handler
-     * (if one is defined via direct_command/event_map) or to the related default bus
+     * (if one is defined via command_map/event_map) or to the related default bus
      *
      * @param mixed $message
      * @throws \Prooph\ServiceBus\Exception\RuntimeException If method could not be routed
@@ -148,7 +148,7 @@ class ServiceBusManager extends ServiceManager
     /**
      * The method acts as listener for the route event but can also be called by a client by passing in the message to route.
      *
-     * The method checks if message class can be found in the direct_command_map or direct_event_map.
+     * The method checks if message class can be found in the command_map or event_map.
      * If so it loads the appropriate handler for the message and route the message directly to it
      * without using the messaging layer.
      *

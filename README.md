@@ -45,7 +45,7 @@ $serviceBusConfig->setCommandMap(array(
     }
 ));
 
-//The ServiceBusManager is the central class, that manages the complete service bus environment
+//The ServiceBusManager is the central class and manages the service bus environment
 $serviceBusManager = new ServiceBusManager($serviceBusConfig);
 
 //We create a new Command
