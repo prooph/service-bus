@@ -16,6 +16,7 @@ use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\MessageFactoryInterface;
 use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Message\QueueInterface;
+use Prooph\ServiceBus\Message\ServiceBusSerializable;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\MessageFactoryLoader;
 use Zend\EventManager\EventManager;
@@ -80,8 +81,10 @@ class EventBus implements EventBusInterface
             return;
         }
 
+        $eventName = ($anEvent instanceof MessageNameProvider)? $anEvent->getMessageName() : get_class($anEvent);
+
         $message = $this->getMessageFactoryLoader()
-            ->getMessageFactoryFor(get_class($anEvent))
+            ->getMessageFactoryFor($eventName)
             ->fromEvent($anEvent, $this->name);
 
         $this->messageDispatcher->dispatch($this->queue, $message);
