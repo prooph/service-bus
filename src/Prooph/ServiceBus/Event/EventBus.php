@@ -16,6 +16,7 @@ use Prooph\ServiceBus\Message\MessageFactory;
 use Prooph\ServiceBus\Message\MessageFactoryInterface;
 use Prooph\ServiceBus\Message\Queue;
 use Prooph\ServiceBus\Message\QueueInterface;
+use Prooph\ServiceBus\Message\MessageNameProvider;
 use Prooph\ServiceBus\Message\ServiceBusSerializable;
 use Prooph\ServiceBus\Service\Definition;
 use Prooph\ServiceBus\Service\MessageFactoryLoader;
