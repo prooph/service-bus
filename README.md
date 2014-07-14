@@ -11,18 +11,33 @@ Why another CQRS/Messaging library?
 
 The goal of ProophServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or RESTful Messaging API.
 It is designed with flexibility in mind. Almost all components can be extended with custom behavior and an event-driven system provides various possibilities to hook into the process and adjust it to meet your needs.
+The library uses the [ServiceManager](http://framework.zend.com/manual/2.0/en/modules/zend.service-manager.quick-start.html) and [EventManager](http://framework.zend.com/manual/2.0/en/modules/zend.event-manager.event-manager.html) implementations of the ZendFramework 2 which offer flexible and easy to use solutions for IoC and EDA. But let's explore it step by step.
 
-IoC and EDA
------------
+Features
+--------
 
-Like mentioned above, each part of ProophServiceBus can be extended or exchanged. The library uses the [ServiceManager](http://framework.zend.com/manual/2.0/en/modules/zend.service-manager.quick-start.html) and [EventManager](http://framework.zend.com/manual/2.0/en/modules/zend.event-manager.event-manager.html) implementations
-of the ZendFramework 2. Specific managers and factories construct the various components used to send commands, publish events and receive them.
-But let's explore it step by step.
+- [x] Unified interface for synchronous and asynchronous message dispatching.
+- [x] Support for custom messages. Send whatever you want over the bus.
+- [x] Configurable routing system.
+- [x] Support for topic based dispatching.
+- [x] Hook points to provide monitoring capability.
+- [x] CQRS support
+  - [x] One handler per command.
+  - [x] Many handlers per event.
+- [x] Easy to use for simple use cases but flexible enough to support indivdual requirements
+- [x] [ProophEventStore](https://github.com/prooph/event-store) integration
+- [x] [ZF2](https://github.com/prooph/ProophServiceBusModule) integration
+- [ ] Exchangeable messaging system
+  - [x] Simple message routing without any dispatcher (fast and easy to use, synchronous messaging)
+  - [x] In memory message dispatcher (useful to test the message serialization command/event -> message -> command/event)
+  - [x] [PhpResque](https://github.com/chrisboulton/php-resque) message dispatcher (asynchronous)
+  - [ ] [RabbitMQ](https://www.rabbitmq.com/) message dispatcher
+  - [ ] [Pheanstalk](https://github.com/pda/pheanstalk) message dispatcher
 
 Installation
 ------------
 
-You can install ProophServiceBus via composer by adding `"prooph/service-bus": "~0.3.0"` as requirement to your composer.json.
+You can install ProophServiceBus via composer by adding `"prooph/service-bus": "~0.3"` as requirement to your composer.json.
 
 Quick Start
 -----------
@@ -61,7 +76,7 @@ $serviceBusManager->route($echoText);
 What's next?
 ------------
 
-Read the [Wiki](https://github.com/prooph/php-service-bus/wiki)
+The library is in an early state and a lot of features have to be implemented until we will release the first stable version. We apologize for the lack of documentation. We are working on it. With the 0.3.0 release ProophServiceBus has made a huge step forward and the main functionality has its final structure so we can start to document some of the key features. If you are looking for a more advanced use case then check out the [resque example](https://github.com/prooph/service-bus/wiki/Examples).
 
 Contribute
 ----------
