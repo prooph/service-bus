@@ -29,10 +29,10 @@ Features
 - [x] [ZF2](https://github.com/prooph/ProophServiceBusModule) integration
 - [ ] Exchangeable messaging system
   - [x] Simple message routing without any dispatcher (fast and easy to use, synchronous messaging)
-  - [x] In memory message dispatcher (useful to test the message serialization command/event -> message -> command/event)
+  - [x] In memory message dispatcher (mock for a normally asynchronous message dispatcher)
   - [x] [PhpResque](https://github.com/chrisboulton/php-resque) message dispatcher (asynchronous)
-  - [ ] [RabbitMQ](https://www.rabbitmq.com/) message dispatcher
-  - [ ] [Pheanstalk](https://github.com/pda/pheanstalk) message dispatcher
+  - [ ] [RabbitMQ](https://www.rabbitmq.com/) message dispatcher (asynchronous)
+  - [ ] [Pheanstalk](https://github.com/pda/pheanstalk) message dispatcher (asynchronous)
 
 Installation
 ------------
