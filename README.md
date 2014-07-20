@@ -78,6 +78,12 @@ What's next?
 
 The library is in an early state and a lot of features have to be implemented until we will release the first stable version. We apologize for the lack of documentation. We are working on it. With the 0.3.0 release ProophServiceBus has made a huge step forward and the main functionality has its final structure so we can start to document some of the key features. If you are looking for a more advanced use case then check out the [resque example](https://github.com/prooph/service-bus/wiki/Examples).
 
+ZF2 Integration
+---------------
+
+[ProophServiceBusModule](https://github.com/prooph/ProophServiceBusModule) seamlessly integrates ProophServiceBus with a ZF2 application.
+
+
 Contribute
 ----------
 
