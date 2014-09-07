@@ -56,22 +56,15 @@ class PersistedEventDispatcher implements FeatureInterface
      */
     public function onPostCommit(PostCommitEvent $e)
     {
-        foreach ($e->getPersistedStreams() as $persistedStream) {
-
-            foreach ($persistedStream->streamEvents() as $persistedStreamEvent) {
-                $this->serviceBusManager->route(
-                    $this->toServiceBusEvent($persistedStream->streamId(),$persistedStreamEvent)
-                );
-            }
+        foreach ($e->getRecordedEvents() as $streamEvent) {
+            $this->serviceBusManager->route(
+                $this->toServiceBusEvent($streamEvent)
+            );
         }
     }
 
-    protected function toServiceBusEvent(StreamId $streamId, StreamEvent $streamEvent)
+    protected function toServiceBusEvent(StreamEvent $streamEvent)
     {
-        $payload = $streamEvent->payload();
-
-        $payload['streamId'] = $streamId->toString();
-
         try {
             $uuid = Uuid::fromString($streamEvent->eventId()->toString());
         } catch (\Exception $e) {
@@ -80,7 +73,7 @@ class PersistedEventDispatcher implements FeatureInterface
 
         return new AbstractEvent(
             $streamEvent->eventName()->toString(),
-            $payload,
+            $streamEvent->payload(),
             $streamEvent->version(),
             $uuid,
             $streamEvent->occurredOn()

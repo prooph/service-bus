@@ -24,10 +24,10 @@
     ],
     "require": {
         "php": ">=5.4",
-        "rhumsaa/uuid" : "2.5.*",
+        "rhumsaa/uuid" : "~2.5",
         "codeliner/php-equalsbuilder": "~1.1",
         "codeliner/array-reader": "~1.1",
-        "beberlei/assert": "*",
+        "beberlei/assert": "~2.0",
         "zendframework/zend-servicemanager" : "2.3.*",
         "zendframework/zend-eventmanager" : "2.3.*",
         "zendframework/zend-serializer" : "2.3.*"
@@ -35,8 +35,8 @@
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
         "chrisboulton/php-resque": "1.2.x",
-        "prooph/event-store": "dev-master",
-        "prooph/event-sourcing": "dev-master"
+        "prooph/event-store": "dev-0.5-dev",
+        "prooph/event-sourcing": "dev-0.5-dev"
     },
     "suggest": {
         "chrisboulton/php-resque": "Use php-resque as Message Dispatcher",
@@ -44,8 +44,13 @@
     },
     "autoload": {
         "psr-0": { 
-            "Prooph\\ServiceBus\\": "src/",
-            "Prooph\\ServiceBusTest\\": "tests/"
+            "Prooph\\ServiceBus\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Prooph\\ServiceBusTest\\": "tests/",
+            "Prooph\\EventSourcingTest\\": "vendor/prooph/event-sourcing/tests"
         }
     }
 }

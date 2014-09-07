@@ -10,10 +10,14 @@
  */
 namespace Prooph\ServiceBusTest\EventStoreFeature;
 
+use Prooph\EventSourcing\AggregateChanged;
 use Prooph\EventSourcing\DomainEvent\AggregateChangedEvent;
+use Prooph\EventSourcing\EventStoreIntegration\AggregateTranslator;
 use Prooph\EventSourcing\Mapping\AggregateChangedEventHydrator;
+use Prooph\EventStore\Aggregate\AggregateRepository;
 use Prooph\EventStore\Configuration\Configuration;
 use Prooph\EventStore\EventStore;
+use Prooph\EventStore\Stream\AggregateStreamStrategy;
 use Prooph\EventStore\Stream\EventId;
 use Prooph\EventStore\Stream\EventName;
 use Prooph\EventStore\Stream\StreamEvent;
@@ -30,6 +34,7 @@ use Prooph\ServiceBus\Service\ServiceBusManager;
 use Prooph\ServiceBusTest\Mock\User;
 use Prooph\ServiceBusTest\Mock\UserCreated;
 use Prooph\ServiceBusTest\TestCase;
+use Rhumsaa\Uuid\Uuid;
 use ValueObjects\DateTime\DateTime;
 use Zend\EventManager\Event;
 use Zend\EventManager\StaticEventManager;
@@ -51,7 +56,7 @@ class PersistedEventDispatcherTest extends TestCase
 
         $serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration(array(
             Definition::EVENT_MAP => array(
-                'Prooph\ServiceBusTest\Mock\UserCreated' => function(AbstractEvent $e) use (&$userCreatedEventReceived) {
+                'Prooph\EventSourcingTest\Mock\UserCreated' => function(AbstractEvent $e) use (&$userCreatedEventReceived) {
                     $userCreatedEventReceived = $e;
                 }
             )
@@ -65,10 +70,10 @@ class PersistedEventDispatcherTest extends TestCase
             $event = $e->getParam('event');
             $sender = $e->getParam('sender');
 
-            if ($event instanceof AggregateChangedEvent) {
+            if ($event instanceof AggregateChanged) {
                 $messageHeader = new MessageHeader(
                     $event->uuid(),
-                    $event->occurredOn()->toNativeDateTime(),
+                    $event->occurredOn(),
                     $event->version(),
                     $sender,
                     MessageHeader::TYPE_EVENT
@@ -97,57 +102,22 @@ class PersistedEventDispatcherTest extends TestCase
 
             unset($payload['__aggregateId__']);
 
-            $eventRef = new \ReflectionClass($eventClass);
-
-            $event = $eventRef->newInstanceWithoutConstructor();
-
-            $uuidProp = $eventRef->getProperty('uuid');
-
-            $uuidProp->setAccessible(true);
-
-            $uuidProp->setValue($event, $message->header()->uuid());
-
-            $aggregateIdProp = $eventRef->getProperty('aggregateId');
-
-            $aggregateIdProp->setAccessible(true);
-
-            $aggregateIdProp->setValue($event, $aggregateId);
-
-            $occurredOnProp = $eventRef->getProperty('occurredOn');
-
-            $occurredOnProp->setAccessible(true);
-
-            $occurredOnProp->setValue($event, DateTime::fromNativeDateTime($message->header()->createdOn()));
-
-            $versionProp = $eventRef->getProperty('version');
-
-            $versionProp->setAccessible(true);
-
-            $versionProp->setValue($event, $message->header()->version());
-
-            $payloadProp = $eventRef->getProperty('payload');
-
-            $payloadProp->setAccessible(true);
-
-            $payloadProp->setValue($event, $payload);
+            $event = $eventClass::reconstitute(
+                $aggregateId,
+                $payload,
+                $message->header()->uuid(),
+                $message->header()->createdOn(),
+                $message->header()->version()
+            );
 
             return $event;
         });
 
         $config = array(
             "adapter" => array(
-                'type' => "Prooph\EventStore\Adapter\Zf2\Zf2EventStoreAdapter",
-                'options' => array(
-                    'connection' => array(
-                        'driver' => 'Pdo_Sqlite',
-                        'database' => ':memory:'
-                    )
-                )
+                'type' => "Prooph\EventStore\Adapter\InMemoryAdapter",
             ),
             "feature_manager" => array(
-                "invokables" => array(
-                    "ProophEventSourcingFeature" => 'Prooph\EventSourcing\EventStoreFeature\ProophEventSourcingFeature'
-                ),
                 "factories" => array(
                     "persisted_event_dispatcher" => function ($fm) use ($serviceBusManager) {
                         return new PersistedEventDispatcher($serviceBusManager);
@@ -155,8 +125,7 @@ class PersistedEventDispatcherTest extends TestCase
                 )
             ),
             "features" => array(
-                "persisted_event_dispatcher",
-                "ProophEventSourcingFeature"
+                "persisted_event_dispatcher"
             )
         );
 
@@ -164,22 +133,27 @@ class PersistedEventDispatcherTest extends TestCase
 
         $eventStore = new EventStore($esConfig);
 
-        $eventStore->getAdapter()->createSchema(array("User"));
+        $userRepo = new AggregateRepository($eventStore, new AggregateTranslator(), new AggregateStreamStrategy($eventStore));
 
         $eventStore->beginTransaction();
 
-        $user = new User("Alex");
+        $user = \Prooph\EventSourcingTest\Mock\User::nameNew('Alex');
 
-        $eventStore->attach($user);
+        $userRepo->addAggregateRoot($user);
 
         $eventStore->commit();
 
         $this->assertInstanceOf('Prooph\ServiceBus\Event\AbstractEvent', $userCreatedEventReceived);
 
-        $this->assertEquals($user->id(), $userCreatedEventReceived->payload()['streamId']);
-        $this->assertEquals(array('name' => 'Alex', 'streamId' => $user->id()), $userCreatedEventReceived->payload());
+        $this->assertEquals($user->id(), $userCreatedEventReceived->payload()['aggregate_id']);
+        $this->assertEquals(array(
+            'id' => $user->id(),
+            'name' => 'Alex',
+            'aggregate_id' => $user->id()),
+            $userCreatedEventReceived->payload()
+        );
         $this->assertEquals(1, $userCreatedEventReceived->version());
-        $this->assertInstanceOf('DateTime', $userCreatedEventReceived->occurredOn());
+        $this->assertInstanceOf('\DateTime', $userCreatedEventReceived->occurredOn());
         $this->assertInstanceOf('Rhumsaa\Uuid\Uuid', $userCreatedEventReceived->uuid());
     }
 }
