@@ -13,6 +13,8 @@ namespace Prooph\ServiceBus\Process;
 
 use Prooph\ServiceBus\CommandBus;
 use Zend\EventManager\Event;
+use Zend\Log\Logger;
+use Zend\Log\LoggerInterface;
 
 /**
  * Class CommandDispatch
@@ -30,9 +32,10 @@ class CommandDispatch extends Event
     const HANDLE_ERROR        = "handle-error";
     const FINALIZE            = "finalize";
 
-    const LOG_INFO_MSG    = "info";
-    const LOG_WARNING_MSG = "warning";
-    const LOG_ERROR_MSG   = "error";
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @param mixed $command
@@ -112,59 +115,24 @@ class CommandDispatch extends Event
     }
 
     /**
-     * @return \ArrayObject[index => array(log_type => info|warning|error, log_msg => string)]
+     * @return LoggerInterface
      */
-    public function getLog()
+    public function getLogger()
     {
-        return $this->getParam('log');
+        if (is_null($this->logger)) {
+            $this->logger = new Logger();
+            $this->logger->addWriter('null');
+        }
+
+        return $this->logger;
     }
 
     /**
-     * @param string $message
-     * @return CommandDispatch
-     * @throws \InvalidArgumentException
+     * @param LoggerInterface $logger
      */
-    public function addInfoMsg($message)
+    public function useLogger(LoggerInterface $logger)
     {
-        \Assert\that($message)->string();
-        $this->getLog()[] = array('log_type' => self::LOG_INFO_MSG, 'log_msg' => $message);
-
-        return $this;
-    }
-
-    /**
-     * @param string $message
-     * @return CommandDispatch
-     * @throws \InvalidArgumentException
-     */
-    public function addWarningMsg($message)
-    {
-        \Assert\that($message)->string();
-        $this->getLog()[] = array('log_type' => self::LOG_WARNING_MSG, 'log_msg' => $message);
-
-        return $this;
-    }
-
-    /**
-     * @param string $message
-     * @return CommandDispatch
-     * @throws \InvalidArgumentException
-     */
-    public function addErrorMsg($message)
-    {
-        \Assert\that($message)->string();
-        $this->getLog()[] = array('log_type' => self::LOG_ERROR_MSG, 'log_msg' => $message);
-        $this->setParam('error-occurred', true);
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isErrorOccurred()
-    {
-        return $this->getParam('error-occurred', false);
+        $this->logger = $logger;
     }
 }
  
