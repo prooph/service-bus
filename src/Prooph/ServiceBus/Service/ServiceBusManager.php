@@ -12,7 +12,7 @@
 namespace Prooph\ServiceBus\Service;
 
 use Codeliner\ArrayReader\ArrayReader;
-use Prooph\ServiceBus\Command\AbstractCommand;
+use Prooph\ServiceBus\Command\Command;
 use Prooph\ServiceBus\Command\CommandBusInterface;
 use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\Event\EventBusInterface;
@@ -127,7 +127,7 @@ class ServiceBusManager extends ServiceManager
             return;
         }
 
-        if ($message instanceof AbstractCommand) {
+        if ($message instanceof Command) {
             $this->getCommandBus()->send($message);
             return;
         }

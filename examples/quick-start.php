@@ -14,9 +14,9 @@ namespace {
 
 namespace Prooph\ServiceBus\Example\Command {
 
-    use Prooph\ServiceBus\Command\AbstractCommand;
+    use Prooph\ServiceBus\Command\Command;
 
-    class EchoText extends AbstractCommand
+    class EchoText extends Command
     {
         protected function convertPayload($textOrPayload)
         {

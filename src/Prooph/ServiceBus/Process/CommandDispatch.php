@@ -12,6 +12,9 @@
 namespace Prooph\ServiceBus\Process;
 
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Message\MessageHeader;
+use Prooph\ServiceBus\Message\MessageInterface;
+use Prooph\ServiceBus\Message\MessageNameProvider;
 use Zend\EventManager\Event;
 use Zend\Log\Logger;
 use Zend\Log\LoggerInterface;
@@ -40,11 +43,28 @@ class CommandDispatch extends Event
     /**
      * @param mixed $command
      * @param CommandBus $commandBus
+     * @throws \InvalidArgumentException
      * @return CommandDispatch
      */
     public static function initializeWith($command, CommandBus $commandBus)
     {
-        return new self(self::INITIALIZE, $commandBus, array('command' => $command, 'log' => new \ArrayObject()));
+        $instance = new self(self::INITIALIZE, $commandBus, array('command' => $command));
+
+        if ($command instanceof MessageNameProvider) {
+            $instance->setCommandName($command->getMessageName());
+        }
+
+        if ($command instanceof MessageInterface) {
+            if ($command->header()->type() !== MessageHeader::TYPE_COMMAND) {
+                throw new \InvalidArgumentException(
+                    sprintf("Message %s cannot be handled. Message is not of type command.", $command->name())
+                );
+            }
+
+            $instance->setCommandName($command->name());
+        }
+
+        return $instance;
     }
 
     /**

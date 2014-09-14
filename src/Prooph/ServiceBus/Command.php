@@ -9,7 +9,7 @@
  * Date: 08.03.14 - 21:03
  */
 
-namespace Prooph\ServiceBus\Command;
+namespace Prooph\ServiceBus;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageNameProvider;
@@ -17,14 +17,14 @@ use Prooph\ServiceBus\Message\PayloadInterface;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * Class AbstractCommand
+ * Class Command
  *
  * Can be used as base class for commands.
  *
  * @package Prooph\ServiceBus\Command
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class AbstractCommand implements MessageNameProvider
+class Command implements MessageNameProvider
 {
     /**
      * @var string
@@ -52,7 +52,7 @@ class AbstractCommand implements MessageNameProvider
     protected $payload = array();
 
     /**
-     * @return AbstractCommand
+     * @return Command
      */
     public static function getNew()
     {
@@ -61,7 +61,7 @@ class AbstractCommand implements MessageNameProvider
 
     /**
      * @param mixed $aPayload
-     * @return AbstractCommand
+     * @return Command
      */
     public static function fromPayload($aPayload)
     {

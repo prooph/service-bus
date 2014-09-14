@@ -23,6 +23,8 @@ use Rhumsaa\Uuid\Uuid;
 /**
  * Class PersistedEventDispatcher
  *
+ * @TODO Move to own library
+ *
  * @package Prooph\ServiceBus\EventStoreFeature
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */

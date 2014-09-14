@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Command\AbstractCommand;
+use Prooph\ServiceBus\Command;
 
 /**
  * Class HandleCommandStrategy
@@ -29,7 +29,7 @@ class HandleCommandStrategy implements InvokeStrategyInterface
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        if (! $aCommandOrEvent instanceof AbstractCommand) {
+        if (! $aCommandOrEvent instanceof Command) {
             return false;
         }
 

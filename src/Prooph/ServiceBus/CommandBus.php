@@ -25,6 +25,8 @@ use Zend\Stdlib\CallbackHandler;
 /**
  * Class CommandBus
  *
+ * @TODO Add tests for CommandBus
+ *
  * @package Prooph\ServiceBus
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
@@ -113,7 +115,7 @@ class CommandBus implements EventManagerAwareInterface
      */
     public function dispatch($command)
     {
-        $commandDispatch = CommandDispatch::initializeWith($command);
+        $commandDispatch = CommandDispatch::initializeWith($command, $this);
 
         if (! is_null($this->logger)) {
             $commandDispatch->useLogger($this->logger);

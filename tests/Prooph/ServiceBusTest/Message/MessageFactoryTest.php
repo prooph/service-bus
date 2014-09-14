@@ -12,7 +12,6 @@
 namespace Prooph\ServiceBusTest\Message;
 
 use Prooph\ServiceBus\Message\MessageFactory;
-use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;

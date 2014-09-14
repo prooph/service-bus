@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBus\Message;
 
-use Prooph\ServiceBus\Command\AbstractCommand;
+use Prooph\ServiceBus\Command;
 use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Zend\EventManager\Event;
@@ -120,7 +120,7 @@ class MessageFactory implements MessageFactoryInterface
             $command = $e->getParam('command');
             $sender  = $e->getParam('sender');
 
-            if ($command instanceof AbstractCommand) {
+            if ($command instanceof Command) {
                 $messageHeader = new MessageHeader(
                     $command->uuid(),
                     $command->createdOn(),

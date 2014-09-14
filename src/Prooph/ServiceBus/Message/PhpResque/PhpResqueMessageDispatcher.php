@@ -21,6 +21,8 @@ use Zend\EventManager\EventManagerInterface;
 /**
  * Class PhpResqueMessageDispatcher
  *
+ * @TODO Move to own library
+ *
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <contact@prooph.de>
  */

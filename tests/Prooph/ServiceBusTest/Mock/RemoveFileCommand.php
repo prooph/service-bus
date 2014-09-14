@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\ServiceBus\Command\AbstractCommand;
+use Prooph\ServiceBus\Command\Command;
 
 /**
  * Class RemoveFileCommand
@@ -19,7 +19,7 @@ use Prooph\ServiceBus\Command\AbstractCommand;
  * @package Prooph\ServiceBusTest\Mock
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class RemoveFileCommand extends AbstractCommand
+class RemoveFileCommand extends Command
 {
     public static function fromPayload($aPayload)
     {

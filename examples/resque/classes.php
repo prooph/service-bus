@@ -10,11 +10,11 @@
  */
 namespace Prooph\ServiceBus\Example\Resque {
 
-    use Prooph\ServiceBus\Command\AbstractCommand;
+    use Prooph\ServiceBus\Command\Command;
     use Zend\ServiceManager\FactoryInterface;
     use Zend\ServiceManager\ServiceLocatorInterface;
 
-    class WriteLine extends AbstractCommand
+    class WriteLine extends Command
     {
         protected function convertPayload($aText)
         {

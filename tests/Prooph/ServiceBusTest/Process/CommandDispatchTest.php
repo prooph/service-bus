@@ -23,6 +23,8 @@ use Prooph\ServiceBusTest\TestCase;
  */
 class CommandDispatchTest extends TestCase
 {
+    //@TODO Add tests for initialize with MessageNameProvider and MessageInterface commands
+
     /**
      * @test
      */
