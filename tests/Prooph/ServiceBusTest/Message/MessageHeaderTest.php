@@ -80,19 +80,6 @@ class MessageHeaderTest extends TestCase
     /**
      * @test
      */
-    public function it_is_same_header_as()
-    {
-        $uuid       = Uuid::uuid4();
-        $createdOn  = new \DateTime();
-        $header     = new MessageHeader($uuid, $createdOn, 1, 'test-case', MessageHeader::TYPE_COMMAND);
-        $sameHeader = new MessageHeader($uuid, $createdOn, 1, 'test-case', MessageHeader::TYPE_COMMAND);
-
-        $this->assertTrue($header->sameHeaderAs($sameHeader));
-    }
-
-    /**
-     * @test
-     */
     public function it_converts_itself_to_array_and_back()
     {
         $header = new MessageHeader(Uuid::uuid4(), new \DateTime(), 1, 'test-case', MessageHeader::TYPE_COMMAND);
@@ -101,7 +88,7 @@ class MessageHeaderTest extends TestCase
 
         $sameHeader = MessageHeader::fromArray($headerArray);
 
-        $this->assertTrue($header->sameHeaderAs($sameHeader));
+        $this->assertEquals($header->toArray(), $sameHeader->toArray());
     }
 }
  

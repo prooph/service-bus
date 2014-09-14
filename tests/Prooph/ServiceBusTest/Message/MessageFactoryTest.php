@@ -36,16 +36,6 @@ class MessageFactoryTest extends TestCase
 
         $message = $messageFactory->fromCommand($doSomething, 'test-case-bus');
 
-        $testHeader = new MessageHeader(
-            $doSomething->uuid(),
-            $doSomething->createdOn(),
-            $doSomething->version(),
-            'test-case-bus',
-            MessageHeader::TYPE_COMMAND
-        );
-
-        $this->assertTrue($message->header()->sameHeaderAs($testHeader));
-
         $this->assertEquals(array('data' => 'test command'), $message->payload());
     }
 
@@ -59,16 +49,6 @@ class MessageFactoryTest extends TestCase
         $somethingDone = SomethingDone::fromData('test event');
 
         $message = $messageFactory->fromEvent($somethingDone, 'test-case-bus');
-
-        $testHeader = new MessageHeader(
-            $somethingDone->uuid(),
-            $somethingDone->occurredOn(),
-            $somethingDone->version(),
-            'test-case-bus',
-            MessageHeader::TYPE_EVENT
-        );
-
-        $this->assertTrue($message->header()->sameHeaderAs($testHeader));
 
         $this->assertEquals(array('data' => 'test event'), $message->payload());
     }

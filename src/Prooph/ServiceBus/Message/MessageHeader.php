@@ -144,22 +144,6 @@ class MessageHeader implements MessageHeaderInterface
     }
 
     /**
-     * @param MessageHeaderInterface $other
-     * @return bool
-     */
-    public function sameHeaderAs(MessageHeaderInterface $other)
-    {
-        return EqualsBuilder::create()
-            ->append($this->uuid()->toString(), $other->uuid()->toString())
-            ->append($this->createdOn()->getTimestamp(), $other->createdOn()->getTimestamp())
-            ->append($this->version(), $other->version())
-            ->append($this->sender(), $other->sender())
-            ->append($this->type(), $other->type())
-            ->strict()
-            ->equals();
-    }
-
-    /**
      * @return array
      */
     public function toArray()

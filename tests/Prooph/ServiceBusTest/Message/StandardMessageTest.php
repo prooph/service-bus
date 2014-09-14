@@ -54,7 +54,7 @@ class StandardMessageTest extends TestCase
      */
     public function it_has_a_header()
     {
-        $this->assertTrue($this->message->header()->sameHeaderAs($this->header));
+        $this->assertInstanceOf('Prooph\ServiceBus\Message\MessageHeader', $this->message->header());
     }
 
     /**
@@ -63,20 +63,6 @@ class StandardMessageTest extends TestCase
     public function it_has_a_payload()
     {
         $this->assertEquals(array('data' => 'a test'), $this->message->payload());
-    }
-
-    /**
-     * @test
-     */
-    public function it_converts_itself_to_array_and_back()
-    {
-        $messageArray = $this->message->toArray();
-
-        $sameMessage = StandardMessage::fromArray($messageArray);
-
-        $this->assertEquals($this->message->name(), $sameMessage->name());
-        $this->assertTrue($this->message->header()->sameHeaderAs($sameMessage->header()));
-        $this->assertEquals($this->message->payload(), $sameMessage->payload());
     }
 }
  

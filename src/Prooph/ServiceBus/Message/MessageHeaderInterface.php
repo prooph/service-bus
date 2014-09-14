@@ -53,12 +53,6 @@ interface MessageHeaderInterface
     public function type();
 
     /**
-     * @param MessageHeaderInterface $other
-     * @return bool
-     */
-    public function sameHeaderAs(MessageHeaderInterface $other);
-
-    /**
      * @return array
      */
     public function toArray();
