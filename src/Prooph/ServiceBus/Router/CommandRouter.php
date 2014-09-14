@@ -35,7 +35,7 @@ class CommandRouter extends AbstractListenerAggregate
     protected $tmpCommandName;
 
     /**
-     * @param array[commandName => commandHandler] $commandMap
+     * @param null|array[commandName => commandHandler] $commandMap
      */
     public function __construct(array $commandMap = null)
     {
