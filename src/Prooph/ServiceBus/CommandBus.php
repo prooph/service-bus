@@ -20,6 +20,7 @@ use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Log\LoggerInterface;
+use Zend\Stdlib\CallbackHandler;
 
 /**
  * Class CommandBus
@@ -63,13 +64,46 @@ class CommandBus implements EventManagerAwareInterface
     }
 
     /**
+     * @param ListenerAggregateInterface|LoggerInterface $plugin
+     * @return $this
+     * @throws Exception\RuntimeException
+     */
+    public function deactivate($plugin)
+    {
+        if ($plugin instanceof ListenerAggregateInterface) {
+            $plugin->detach($this->getEventManager());
+        } else if ($plugin instanceof LoggerInterface) {
+            $this->logger = null;
+        } else {
+            throw new RuntimeException(
+                sprintf(
+                    "CommandBus cannot detach plugin of type %s.",
+                    (is_object($plugin))? get_class($plugin) : gettype($plugin)
+                )
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string $eventName
      * @param callable $listener
      * @param int $priority
+     * @return \Zend\Stdlib\CallbackHandler
      */
     public function on($eventName, $listener, $priority = 1)
     {
-        $this->getEventManager()->attach($eventName, $listener, $priority);
+        return $this->getEventManager()->attach($eventName, $listener, $priority);
+    }
+
+    /**
+     * @param CallbackHandler $callbackHandler
+     * @return bool
+     */
+    public function off(CallbackHandler $callbackHandler)
+    {
+        return $this->getEventManager()->detach($callbackHandler);
     }
 
     /**
