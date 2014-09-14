@@ -20,9 +20,8 @@ namespace Prooph\ServiceBus\Message;
 interface MessageDispatcherInterface
 {
     /**
-     * @param QueueInterface   $aQueue
-     * @param MessageInterface $aMessage
+     * @param MessageInterface $message
      * @return void
      */
-    public function dispatch(QueueInterface $aQueue, MessageInterface $aMessage);
+    public function dispatch(MessageInterface $message);
 }

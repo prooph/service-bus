@@ -12,9 +12,7 @@
 namespace Prooph\ServiceBus\Message;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Service\CommandReceiverLoader;
 use Prooph\ServiceBus\Service\Definition;
-use Prooph\ServiceBus\Service\EventReceiverLoader;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
@@ -27,108 +25,59 @@ use Zend\EventManager\EventManagerInterface;
 class InMemoryMessageDispatcher implements MessageDispatcherInterface
 {
     /**
-     * @var CommandReceiverLoader[]
-     */
-    protected $commandReceiverLoaderQueueMap = array();
-
-    /**
-     * @var EventReceiverLoader[]
-     */
-    protected $eventReceiverLoaderQueueMap   = array();
-
-    /**
      * @var EventManagerInterface
      */
     protected $events;
 
+    protected $commandBus;
+
+    protected $eventBus;
+
     /**
-     * @param QueueInterface $aQueue
-     * @param MessageInterface $aMessage
+     * @param MessageInterface $message
      * @throws \Prooph\ServiceBus\Exception\RuntimeException If no ReceiverManager is registered for Queue
      * @throws \Exception If handling of message fails
      * @return void
      */
-    public function dispatch(QueueInterface $aQueue, MessageInterface $aMessage)
+    public function dispatch(MessageInterface $message)
     {
         $results = $this->events()->trigger(
             __FUNCTION__. '.pre',
             $this,
-            array('queue' => $aQueue, 'message' => $aMessage)
+            array('message' => $message)
         );
 
         if ($results->stopped()) {
             return;
         }
 
-        if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
-            if (!isset($this->commandReceiverLoaderQueueMap[$aQueue->name()])) {
-                throw new RuntimeException(
-                    sprintf(
-                        'No CommandReceiverLoader registered for queue -%s-',
-                        $aQueue->name()
-                    )
-                );
-            }
+        if ($message->header()->type() === MessageHeader::TYPE_COMMAND) {
 
-            $commandReceiver = $this->commandReceiverLoaderQueueMap[$aQueue->name()]
-                ->get($aMessage->header()->sender());
+            //@TODO pass $message back to command bus
 
-            $commandReceiver->handle($aMessage);
 
             $this->events()->trigger(
                 __FUNCTION__. '.post',
                 $this,
-                array('queue' => $aQueue, 'message' => $aMessage, 'receiver' => $commandReceiver)
+                array('message' => $message)
             );
 
             return;
         }
 
-        if ($aMessage->header()->type() === MessageHeader::TYPE_EVENT) {
-            if (!isset($this->eventReceiverLoaderQueueMap[$aQueue->name()])) {
-                throw new RuntimeException(
-                    sprintf(
-                        'No EventReceiverLoader registered for queue -%s-',
-                        $aQueue->name()
-                    )
-                );
-            }
+        if ($message->header()->type() === MessageHeader::TYPE_EVENT) {
 
-            $eventReceiver = $this->eventReceiverLoaderQueueMap[$aQueue->name()]
-                ->get($aMessage->header()->sender());
+            //@TODO pass $message back to event bus
 
-            $eventReceiver->handle($aMessage);
 
             $this->events()->trigger(
                 __FUNCTION__. '.post',
                 $this,
-                array('queue' => $aQueue, 'message' => $aMessage, 'receiver' => $eventReceiver)
+                array('message' => $message)
             );
 
             return;
         }
-    }
-
-    /**
-     * @param QueueInterface         $aQueue
-     * @param CommandReceiverLoader $aCommandReceiverLoader
-     */
-    public function registerCommandReceiverLoaderForQueue(
-        QueueInterface $aQueue,
-        CommandReceiverLoader $aCommandReceiverLoader
-    ) {
-        $this->commandReceiverLoaderQueueMap[$aQueue->name()] = $aCommandReceiverLoader;
-    }
-
-    /**
-     * @param QueueInterface       $aQueue
-     * @param EventReceiverLoader $anEventReceiverLoader
-     */
-    public function registerEventReceiverLoaderForQueue(
-        QueueInterface $aQueue,
-        EventReceiverLoader $anEventReceiverLoader
-    ) {
-        $this->eventReceiverLoaderQueueMap[$aQueue->name()] = $anEventReceiverLoader;
     }
 
     /**
