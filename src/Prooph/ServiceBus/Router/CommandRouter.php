@@ -39,8 +39,10 @@ class CommandRouter extends AbstractListenerAggregate
      */
     public function __construct(array $commandMap = null)
     {
-        foreach ($commandMap as $commandName => $handler) {
-            $this->map($commandName)->to($handler);
+        if (! is_null($commandMap)) {
+            foreach ($commandMap as $commandName => $handler) {
+                $this->route($commandName)->to($handler);
+            }
         }
     }
 
@@ -56,7 +58,7 @@ class CommandRouter extends AbstractListenerAggregate
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(CommandDispatch::ROUTE, array($this, "onRoute"));
+        $this->listeners[] = $events->attach(CommandDispatch::ROUTE, array($this, "onRouteEvent"));
     }
 
     /**
@@ -64,12 +66,12 @@ class CommandRouter extends AbstractListenerAggregate
      * @return $this
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function map($commandName)
+    public function route($commandName)
     {
         \Assert\that($commandName)->notEmpty()->string();
 
         if (! is_null($this->tmpCommandName)) {
-            throw new RuntimeException(sprintf("Previous command %s is not mapped to a handler."));
+            throw new RuntimeException(sprintf("Command %s is not mapped to a handler."));
         }
 
         $this->tmpCommandName = $commandName;
@@ -94,7 +96,7 @@ class CommandRouter extends AbstractListenerAggregate
 
         if (is_null($this->tmpCommandName)) {
             throw new RuntimeException(sprintf(
-                "Cannot map handler %s to a command. Please use method map before calling method to",
+                "Cannot map handler %s to a command. Please use method route before calling method to",
                 (is_object($commandHandler))? get_class($commandHandler) : (is_string($commandHandler))? $commandHandler : gettype($commandHandler)
             ));
         }
@@ -109,7 +111,7 @@ class CommandRouter extends AbstractListenerAggregate
     /**
      * @param CommandDispatch $commandDispatch
      */
-    public function onRoute(CommandDispatch $commandDispatch)
+    public function onRouteEvent(CommandDispatch $commandDispatch)
     {
         if (is_null($commandDispatch->getCommandName())) {
             $commandDispatch->getLogger()->notice(
