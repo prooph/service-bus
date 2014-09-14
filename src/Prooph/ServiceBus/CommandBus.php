@@ -14,7 +14,6 @@ namespace Prooph\ServiceBus;
 use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
-use Prooph\ServiceBus\Service\Definition;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -205,7 +204,6 @@ class CommandBus implements EventManagerAwareInterface
     public function setEventManager(EventManagerInterface $eventManager)
     {
         $eventManager->addIdentifiers(array(
-            Definition::SERVICE_BUS_COMPONENT,
             'command_bus',
             __CLASS__
         ));

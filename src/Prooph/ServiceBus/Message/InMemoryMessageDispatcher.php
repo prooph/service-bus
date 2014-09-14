@@ -11,8 +11,6 @@
 
 namespace Prooph\ServiceBus\Message;
 
-use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Service\Definition;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
@@ -87,7 +85,6 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
     {
         if (is_null($this->events)) {
             $this->events = new EventManager(array(
-                Definition::SERVICE_BUS_COMPONENT,
                 'message_dispatcher',
                 __CLASS__
             ));
