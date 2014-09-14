@@ -24,23 +24,19 @@
     ],
     "require": {
         "php": ">=5.4",
-        "rhumsaa/uuid" : "~2.5",
-        "codeliner/php-equalsbuilder": "~1.1",
-        "codeliner/array-reader": "~1.1",
         "beberlei/assert": "~2.0",
-        "zendframework/zend-servicemanager" : "2.3.*",
-        "zendframework/zend-eventmanager" : "2.3.*",
-        "zendframework/zend-serializer" : "2.3.*"
+        "zendframework/zend-eventmanager" : "~2.3",
+        "zendframework/zend-log" : "~2.3"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
-        "chrisboulton/php-resque": "1.2.x",
-        "prooph/event-store": "dev-0.5-dev",
-        "prooph/event-sourcing": "dev-0.5-dev"
+        "chrisboulton/php-resque": "~1.2",
+        "prooph/event-store": "~0.5",
+        "prooph/event-sourcing": "~0.2"
     },
     "suggest": {
         "chrisboulton/php-resque": "Use php-resque as Message Dispatcher",
-        "prooph/event-store": "Use ProophEventStore and let ServiceBus dispatch persisted DomainEvents"
+        "prooph/event-store": "Use ProophEventStore and let the EventBus dispatch persisted DomainEvents"
     },
     "autoload": {
         "psr-0": { 
