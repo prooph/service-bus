@@ -3,6 +3,40 @@ ProophServiceBus
 
 PHP Enterprise Service Bus Implementation supporting CQRS and DDD
 
+THE LIB IS UNDER HEAVY REFACTRING! In v0.4.0 the system will be much simpler to use without losing it's power and flexibility. To achieve this we have to change the public interface. The central ServiceBusManager will no longer exist and you have to use dedicated CommandBus and EventBus implementations which can be extended by plugins/middleware.
+
+Here's a little preview:
+
+
+```php
+
+//The dispatcher of a command message
+//A command can only be dsipatched to one handler
+$commandBus = new CommandBus();
+
+//Commands and Events can nearly be everything: objects, arrays, strings .. 
+$command = CreateUser::fromPayload(array('name' => 'John Doe'));
+
+//The CommandRouter is one of the available plugins. And it's easy to write your own one.
+//Plugins can route messages, translate them to other objects, invoke handlers and so on ...
+$router = new CommandRouter();
+
+//MessageHandler can be objects or callables ...
+$router->route('CreateUser')->to(function(CreateUser $command) {/* your domain logic goes here ... */ });
+
+$commandBus->utilize($router);
+
+//.. just tell the bus how a handler can be invoked with a message
+$callbackInvokeStrategy = new CallbackInvokeStrategy();
+
+$coomandBus->utilize($callbackInvokeStrategy);
+
+$commandBus->dispatch($command);
+
+```
+
+#You can't wait until v0.4.0 is relaesed? Here is the currently available version of the lib 
+
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
 
