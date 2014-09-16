@@ -124,7 +124,7 @@ class CommandBus implements EventManagerAwareInterface
             $this->trigger($commandDispatch);
 
             if (is_null($commandDispatch->getCommandName())) {
-                $commandDispatch->setName(CommandDispatch::DETECT_COMMAND_NAME);
+                $commandDispatch->setName(CommandDispatch::DETECT_MESSAGE_NAME);
 
                 $this->trigger($commandDispatch);
             }

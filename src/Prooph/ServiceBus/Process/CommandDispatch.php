@@ -28,7 +28,7 @@ use Zend\Log\LoggerInterface;
 class CommandDispatch extends Event
 {
     const INITIALIZE          = "initialize";
-    const DETECT_COMMAND_NAME = "detect-command-name";
+    const DETECT_MESSAGE_NAME = "detect-message-name";
     const ROUTE               = "route";
     const LOCATE_HANDLER      = "locate-handler";
     const INVOKE_HANDLER      = "invoke-handler";
