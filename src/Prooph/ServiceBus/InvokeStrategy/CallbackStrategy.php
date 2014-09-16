@@ -17,12 +17,12 @@ namespace Prooph\ServiceBus\InvokeStrategy;
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class CallbackStrategy
+class CallbackStrategy extends AbstractInvokeStrategy
 {
 
     /**
-     * @param mixed                           $aHandler
-     * @param CommandInterface|EventInterface $aCommandOrEvent
+     * @param mixed $aHandler
+     * @param mixed $aCommandOrEvent
      * @return bool
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
@@ -31,8 +31,8 @@ class CallbackStrategy
     }
 
     /**
-     * @param mixed                           $aHandler
-     * @param CommandInterface|EventInterface $aCommandOrEvent
+     * @param mixed $aHandler
+     * @param mixed $aCommandOrEvent
      */
     public function invoke($aHandler, $aCommandOrEvent)
     {

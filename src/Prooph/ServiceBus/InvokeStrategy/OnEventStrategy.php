@@ -11,7 +11,6 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Command\CommandInterface;
 use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\Event\EventInterface;
 
@@ -21,7 +20,7 @@ use Prooph\ServiceBus\Event\EventInterface;
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class OnEventStrategy
+class OnEventStrategy extends AbstractInvokeStrategy
 {
     /**
      * @param mixed $aHandler
