@@ -26,21 +26,15 @@ interface MessageTranslatorInterface
     public function canTranslateToMessage($aCommandOrEvent);
 
     /**
-     * @param mixed $aCommand
+     * @param mixed $aCommandOrEvent
      * @return MessageInterface
      */
-    public function fromCommandToMessage($aCommand);
-
-    /**
-     * @param mixed $anEvent
-     * @return MessageInterface
-     */
-    public function fromEventToMessage($anEvent);
+    public function translateToMessage($aCommandOrEvent);
 
     /**
      * @param MessageInterface $aMessage
-     * @return mixed
+     * @return mixed command or event
      */
-    public function fromMessageToCommandOrEvent(MessageInterface $aMessage);
+    public function translateFromMessage(MessageInterface $aMessage);
 }
  

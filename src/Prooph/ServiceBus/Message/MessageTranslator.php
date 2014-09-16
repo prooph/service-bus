@@ -36,21 +36,29 @@ class MessageTranslator implements MessageTranslatorInterface
     }
 
     /**
-     * @param mixed $aCommand
+     * @param mixed $aCommandOrEvent
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @return MessageInterface
      */
-    public function fromCommandToMessage($aCommand)
+    public function translateToMessage($aCommandOrEvent)
     {
-        if (! $aCommand instanceof Command) {
-            throw new RuntimeException(
-                sprintf(
-                    "Can not build message. Provided command must be of type Prooph\ServiceBus\Command but type of %s given",
-                    is_object($aCommand)? get_class($aCommand) : gettype($aCommand)
-                )
-            );
-        }
+        if ($aCommandOrEvent instanceof Command) return $this->fromCommandToMessage($aCommandOrEvent);
+        if ($aCommandOrEvent instanceof Event)   return $this->fromEventToMessage($aCommandOrEvent);
 
+        throw new RuntimeException(
+            sprintf(
+                "Can not build message. Invalid command or event type %s given",
+                is_object($aCommandOrEvent)? get_class($aCommandOrEvent) : gettype($aCommandOrEvent)
+            )
+        );
+    }
+
+    /**
+     * @param mixed $aCommand
+     * @return MessageInterface
+     */
+    protected function fromCommandToMessage($aCommand)
+    {
         $messageHeader = new MessageHeader(
             $aCommand->uuid(),
             $aCommand->createdOn(),
@@ -64,20 +72,10 @@ class MessageTranslator implements MessageTranslatorInterface
 
     /**
      * @param mixed $anEvent
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @return MessageInterface
      */
-    public function fromEventToMessage($anEvent)
+    protected function fromEventToMessage($anEvent)
     {
-        if (! $anEvent instanceof Event) {
-            throw new RuntimeException(
-                sprintf(
-                    "Can not build message. Provided event must be of type Prooph\ServiceBus\Event but type of %s given",
-                    is_object($anEvent)? get_class($anEvent) : gettype($anEvent)
-                )
-            );
-        }
-
         $messageHeader = new MessageHeader(
             $anEvent->uuid(),
             $anEvent->occurredOn(),
@@ -92,7 +90,7 @@ class MessageTranslator implements MessageTranslatorInterface
      * @param MessageInterface $aMessage
      * @return mixed
      */
-    public function fromMessageToCommandOrEvent(MessageInterface $aMessage)
+    public function translateFromMessage(MessageInterface $aMessage)
     {
         if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
             return $this->fromMessageToCommand($aMessage);
