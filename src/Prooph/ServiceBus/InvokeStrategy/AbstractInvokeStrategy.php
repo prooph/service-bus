@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBus\InvokeStrategy;
 
 use Prooph\ServiceBus\Process\CommandDispatch;
+use Prooph\ServiceBus\Process\EventDispatch;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
@@ -53,6 +54,7 @@ abstract class AbstractInvokeStrategy extends AbstractListenerAggregate
     public function attach(EventManagerInterface $events)
     {
         $events->attach(CommandDispatch::INVOKE_HANDLER, array($this, 'onInvoke'), $this->priority);
+        $events->attach(EventDispatch::INVOKE_LISTENER, array($this, 'onInvoke'), $this->priority);
     }
 
     /**
@@ -60,13 +62,17 @@ abstract class AbstractInvokeStrategy extends AbstractListenerAggregate
      */
     public function onInvoke(Event $e)
     {
-        //@TODO Add event handling as well
         $message = null;
         $handler = null;
 
         if ($e instanceof CommandDispatch) {
             $message = $e->getCommand();
             $handler = $e->getCommandHandler();
+        }else if ($e instanceof EventDispatch) {
+            $message = $e->getEvent();
+            $handler = $e->getCurrentEventListener();
+        } else {
+            return;
         }
 
         if ($this->canInvoke($handler, $message)) {
@@ -77,8 +83,6 @@ abstract class AbstractInvokeStrategy extends AbstractListenerAggregate
                 is_object($handler)? get_class($handler) : json_encode($handler)
             ));
         }
-
-        return;
     }
 }
  
