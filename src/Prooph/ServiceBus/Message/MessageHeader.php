@@ -11,7 +11,6 @@
 
 namespace Prooph\ServiceBus\Message;
 
-use Codeliner\Comparison\EqualsBuilder;
 use Rhumsaa\Uuid\Uuid;
 
 /**
@@ -40,11 +39,6 @@ class MessageHeader implements MessageHeaderInterface
     protected $version;
 
     /**
-     * @var string
-     */
-    protected $sender;
-
-    /**
      * Type of the Message, can either be command or event
      *
      * @var string
@@ -61,7 +55,6 @@ class MessageHeader implements MessageHeaderInterface
             ->keyExists('uuid')
             ->keyExists('createdOn')
             ->keyExists('version')
-            ->keyExists('sender')
             ->keyExists('type');
 
         $uuid = Uuid::fromString($aMessageHeaderArray['uuid']);
@@ -71,7 +64,6 @@ class MessageHeader implements MessageHeaderInterface
             $uuid,
             $createdOn,
             $aMessageHeaderArray['version'],
-            $aMessageHeaderArray['sender'],
             $aMessageHeaderArray['type']
         );
     }
@@ -80,18 +72,13 @@ class MessageHeader implements MessageHeaderInterface
      * @param Uuid      $aUuid
      * @param \DateTime $aCreatedOn
      * @param int       $aVersion
-     * @param string    $aSender
      * @param string    $aType
      */
-    public function __construct(Uuid $aUuid, \DateTime $aCreatedOn, $aVersion, $aSender, $aType)
+    public function __construct(Uuid $aUuid, \DateTime $aCreatedOn, $aVersion, $aType)
     {
         \Assert\that($aVersion)
             ->notEmpty('MessageHeader.version must not be empty')
             ->integer('MessageHeader.version must be an integer');
-
-        \Assert\that($aSender)
-            ->notEmpty('MessageHeader.sender must not be empty')
-            ->string('MessageHeader.sender must be a string');
 
         \Assert\that($aType)
             ->inArray(array(self::TYPE_COMMAND, self::TYPE_EVENT), 'MessageHeader.type must be command or event');
@@ -99,7 +86,6 @@ class MessageHeader implements MessageHeaderInterface
         $this->uuid      = $aUuid;
         $this->createdOn = $aCreatedOn;
         $this->version   = $aVersion;
-        $this->sender    = $aSender;
         $this->type      = $aType;
     }
 
@@ -130,14 +116,6 @@ class MessageHeader implements MessageHeaderInterface
     /**
      * @return string
      */
-    public function sender()
-    {
-        return $this->sender;
-    }
-
-    /**
-     * @return string
-     */
     public function type()
     {
         return $this->type;
@@ -152,7 +130,6 @@ class MessageHeader implements MessageHeaderInterface
             'uuid'      => $this->uuid()->toString(),
             'createdOn' => $this->createdOn()->format(\DateTime::ISO8601),
             'version'   => $this->version(),
-            'sender'    => $this->sender(),
             'type'      => $this->type()
         );
     }

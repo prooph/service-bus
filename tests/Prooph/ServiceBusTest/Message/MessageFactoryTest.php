@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBusTest\Message;
 
-use Prooph\ServiceBus\Message\MessageFactory;
+use Prooph\ServiceBus\Message\MessageTranslator;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
@@ -29,7 +29,7 @@ class MessageFactoryTest extends TestCase
      */
     public function it_creates_message_from_command_and_sender_name()
     {
-        $messageFactory = new MessageFactory();
+        $messageFactory = new MessageTranslator();
 
         $doSomething = DoSomething::fromData('test command');
 
@@ -43,7 +43,7 @@ class MessageFactoryTest extends TestCase
      */
     public function it_creates_message_from_event_and_sender_name()
     {
-        $messageFactory = new MessageFactory();
+        $messageFactory = new MessageTranslator();
 
         $somethingDone = SomethingDone::fromData('test event');
 

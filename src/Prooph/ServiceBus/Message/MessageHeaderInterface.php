@@ -45,11 +45,6 @@ interface MessageHeaderInterface
     /**
      * @return string
      */
-    public function sender();
-
-    /**
-     * @return string
-     */
     public function type();
 
     /**

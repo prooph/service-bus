@@ -11,29 +11,36 @@
 
 namespace Prooph\ServiceBus\Message;
 
-use Prooph\ServiceBus\Command\CommandInterface;
-use Prooph\ServiceBus\Event\EventInterface;
-
 /**
- * Interface MessageFactoryInterface
+ * Interface MessageTranslatorInterface
  *
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <contact@prooph.de>
  */
-interface MessageFactoryInterface 
+interface MessageTranslatorInterface
 {
     /**
+     * @param $aCommandOrEvent
+     * @return bool
+     */
+    public function canTranslateToMessage($aCommandOrEvent);
+
+    /**
      * @param mixed $aCommand
-     * @param string $aSenderName
      * @return MessageInterface
      */
-    public function fromCommand($aCommand, $aSenderName);
+    public function fromCommandToMessage($aCommand);
 
     /**
      * @param mixed $anEvent
-     * @param string $aSenderName
      * @return MessageInterface
      */
-    public function fromEvent($anEvent, $aSenderName);
+    public function fromEventToMessage($anEvent);
+
+    /**
+     * @param MessageInterface $aMessage
+     * @return mixed
+     */
+    public function fromMessageToCommandOrEvent(MessageInterface $aMessage);
 }
  
