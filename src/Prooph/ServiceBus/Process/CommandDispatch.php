@@ -15,7 +15,7 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Message\MessageNameProvider;
-use Zend\EventManager\Event;
+use Zend\EventManager\Event as ProcessEvent;
 use Zend\Log\Logger;
 use Zend\Log\LoggerInterface;
 
@@ -25,7 +25,7 @@ use Zend\Log\LoggerInterface;
  * @package Prooph\ServiceBus\Process
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandDispatch extends Event
+class CommandDispatch extends ProcessEvent
 {
     const INITIALIZE          = "initialize";
     const DETECT_MESSAGE_NAME = "detect-message-name";
