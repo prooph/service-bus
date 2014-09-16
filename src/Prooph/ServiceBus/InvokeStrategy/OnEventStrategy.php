@@ -21,7 +21,7 @@ use Prooph\ServiceBus\Event\EventInterface;
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class OnEventStrategy implements InvokeStrategyInterface
+class OnEventStrategy
 {
     /**
      * @param mixed $aHandler

@@ -19,7 +19,7 @@ use Prooph\ServiceBus\Command;
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class HandleCommandStrategy implements InvokeStrategyInterface
+class HandleCommandStrategy
 {
 
     /**

@@ -11,15 +11,13 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Command\CommandInterface;
-
 /**
  * Class CallbackStrategy
  *
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class CallbackStrategy implements InvokeStrategyInterface
+class CallbackStrategy
 {
 
     /**
