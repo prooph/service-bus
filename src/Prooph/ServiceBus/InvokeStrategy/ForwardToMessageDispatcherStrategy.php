@@ -11,6 +11,11 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
+use Prooph\ServiceBus\Message\MessageDispatcherInterface;
+use Prooph\ServiceBus\Message\MessageInterface;
+use Prooph\ServiceBus\Message\MessageTranslator;
+use Prooph\ServiceBus\Message\MessageTranslatorInterface;
+
 /**
  * Class ForwardToMessageDispatcherStrategy
  *
@@ -20,9 +25,19 @@ namespace Prooph\ServiceBus\InvokeStrategy;
 class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
 {
     /**
-     * @var
+     * @var MessageTranslatorInterface
      */
-    protected $messageFactory;
+    protected $messageTranslator;
+
+    /**
+     * @param MessageTranslatorInterface $messageTranslator
+     */
+    public function __construct(
+        MessageTranslatorInterface $messageTranslator = null
+    )
+    {
+        $this->messageTranslator = $messageTranslator;
+    }
 
     /**
      * @param mixed $aHandler
@@ -31,7 +46,14 @@ class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
      */
     protected function canInvoke($aHandler, $aCommandOrEvent)
     {
-        // TODO: Implement canInvoke() method.
+        if ($aHandler instanceof MessageDispatcherInterface) {
+            if ($aCommandOrEvent instanceof MessageInterface
+                || $this->getMessageTranslator()->canTranslateToMessage($aCommandOrEvent)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -40,9 +62,25 @@ class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
      */
     protected function invoke($aHandler, $aCommandOrEvent)
     {
-        // TODO: Implement invoke() method.
+        $message = $aCommandOrEvent;
+
+        if (! $message instanceof MessageInterface) {
+            $message = $this->getMessageTranslator()->translateToMessage($aCommandOrEvent);
+        }
+
+        $aHandler->dispatch($message);
     }
 
+    /**
+     * @return MessageTranslatorInterface
+     */
+    protected function getMessageTranslator()
+    {
+        if (is_null($this->messageTranslator)) {
+            $this->messageTranslator = new MessageTranslator();
+        }
 
+        return $this->getMessageTranslator;
+    }
 }
  
