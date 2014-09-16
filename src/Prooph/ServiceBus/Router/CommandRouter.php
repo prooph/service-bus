@@ -71,7 +71,7 @@ class CommandRouter extends AbstractListenerAggregate
         \Assert\that($commandName)->notEmpty()->string();
 
         if (! is_null($this->tmpCommandName)) {
-            throw new RuntimeException(sprintf("Command %s is not mapped to a handler."));
+            throw new RuntimeException(sprintf("Command %s is not mapped to a handler.", $this->tmpCommandName));
         }
 
         $this->tmpCommandName = $commandName;

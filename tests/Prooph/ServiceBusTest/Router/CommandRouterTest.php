@@ -41,5 +41,49 @@ class CommandRouterTest extends TestCase
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
     }
+
+    /**
+     * @test
+     */
+    public function it_fails_on_routing_a_second_command_before_first_definition_is_finished()
+    {
+        $router = new CommandRouter();
+
+        $router->route('Prooph\ServiceBusTest\Mock\DoSomething');
+
+        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
+
+        $router->route('AnotherCommand');
+    }
+
+    /**
+     * @test
+     */
+    public function it_fails_on_setting_a_handler_before_a_command_is_set()
+    {
+        $router = new CommandRouter();
+
+        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
+
+        $router->to('DoSomethingHandler');
+    }
+
+    /**
+     * @test
+     */
+    public function it_takes_a_routing_definition_on_instantiation()
+    {
+        $router = new CommandRouter(array(
+            'Prooph\ServiceBusTest\Mock\DoSomething' => 'DoSomethingHandler'
+        ));
+
+        $commandDispatch = CommandDispatch::initializeWith(DoSomething::getNew(), new CommandBus());
+
+        $commandDispatch->setName(CommandDispatch::ROUTE);
+
+        $router->onRouteEvent($commandDispatch);
+
+        $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
+    }
 }
  

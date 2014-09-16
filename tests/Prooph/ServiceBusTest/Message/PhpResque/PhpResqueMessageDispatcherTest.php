@@ -11,9 +11,6 @@
 
 namespace Prooph\ServiceBusTest\Message\PhpResque;
 
-use Prooph\ServiceBus\Service\ServiceBusConfiguration;
-use Prooph\ServiceBus\Service\ServiceBusManager;
-use Prooph\ServiceBus\Service\StaticServiceBusRegistry;
 use Prooph\ServiceBusTest\Mock\RemoveFileCommand;
 use Prooph\ServiceBusTest\TestCase;
 use Zend\EventManager\EventInterface;
@@ -44,7 +41,6 @@ class PhpResqueMessageDispatcherTest extends TestCase
 
     protected function tearDown()
     {
-        StaticServiceBusRegistry::reset();
 
         @unlink($this->testFile);
 
