@@ -108,7 +108,7 @@ class CommandDispatch extends Event
     }
 
     /**
-     * @return null|string|object
+     * @return null|string|object|callable
      */
     public function getCommandHandler()
     {

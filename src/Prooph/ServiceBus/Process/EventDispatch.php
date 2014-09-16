@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBus\Process;
 
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Message\MessageNameProvider;
@@ -21,6 +22,8 @@ use Zend\Log\LoggerInterface;
 
 /**
  * Class EventDispatch
+ *
+ * @TODO Add tests for EventDispatch
  *
  * @package Prooph\ServiceBus\Process
  * @author Alexander Miertsch <kontakt@codeliner.ws>
@@ -44,7 +47,7 @@ class EventDispatch extends ZendEvent
      * @param mixed $event
      * @param EventBus $eventBus
      * @throws \InvalidArgumentException
-     * @return CommandDispatch
+     * @return EventDispatch
      */
     public static function initializeWith($event, EventBus $eventBus)
     {
@@ -108,7 +111,7 @@ class EventDispatch extends ZendEvent
     }
 
     /**
-     * @return \ArrayObject(index => null|string|object)
+     * @return \ArrayObject(index => callable|string|object)
      */
     public function getEventListeners()
     {
@@ -116,12 +119,18 @@ class EventDispatch extends ZendEvent
     }
 
     /**
-     * @param array(index => null|string|object) $eventHandlerCollection
+     * @param array(index => callable|string|object) $eventHandlerCollection
+     * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @return EventDispatch
-     * @throws \InvalidArgumentException
      */
     public function setEventListeners(array $eventHandlerCollection)
     {
+        if ($this->getName() === self::LOCATE_LISTENER || $this->getName() === self::INVOKE_LISTENER) {
+            throw new RuntimeException(
+                "Cannot set event listeners. EventDispatch is already in dispatching phase."
+            );
+        }
+
         $this->setParam('event-listeners', new \ArrayObject());
 
         foreach ($eventHandlerCollection as $eventHandler) {
@@ -132,12 +141,19 @@ class EventDispatch extends ZendEvent
     }
 
     /**
-     * @param null|string|object $eventListener
+     * @param callable|string|object $eventListener
+     * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @throws \InvalidArgumentException
      * @return EventDispatch
      */
     public function addEventHandler($eventListener)
     {
+        if ($this->getName() === self::LOCATE_LISTENER || $this->getName() === self::INVOKE_LISTENER) {
+            throw new RuntimeException(
+                "Cannot set event listeners. EventDispatch is already in dispatching phase."
+            );
+        }
+
         if (! is_string($eventListener) && ! is_object($eventListener) && ! is_callable($eventListener)) {
             throw new \InvalidArgumentException(sprintf(
                 "Invalid event listener provided. Expected type is string, object or callable but type of %s given.",
@@ -148,6 +164,33 @@ class EventDispatch extends ZendEvent
         $this->getEventListeners()[] = $eventListener;
 
         return $this;
+    }
+
+    /**
+     * @param callable|string|object $eventListener
+     * @return EventDispatch
+     * @throws \InvalidArgumentException
+     */
+    public function setCurrentEventListener($eventListener)
+    {
+        if (! is_string($eventListener) && ! is_object($eventListener) && ! is_callable($eventListener)) {
+            throw new \InvalidArgumentException(sprintf(
+                "Invalid event listener provided. Expected type is string, object or callable but type of %s given.",
+                gettype($eventListener)
+            ));
+        }
+
+        $this->setParam('current-event-listener', $eventListener);
+
+        return $this;
+    }
+
+    /**
+     * @return callable|string|object|null
+     */
+    public function getCurrentEventListener()
+    {
+        return $this->getParam('current-event-listener');
     }
 
     /**
