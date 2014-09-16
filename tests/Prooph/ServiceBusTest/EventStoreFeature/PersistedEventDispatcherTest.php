@@ -17,7 +17,6 @@ use Prooph\EventStore\Configuration\Configuration;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Stream\AggregateStreamStrategy;
 use Prooph\EventStore\Stream\StreamId;
-use Prooph\ServiceBus\Event\AbstractEvent;
 use Prooph\ServiceBus\EventStoreFeature\EventStoreConnector;
 use Prooph\ServiceBus\EventStoreFeature\PersistedEventDispatcher;
 use Prooph\ServiceBus\Message\MessageHeader;
@@ -46,7 +45,7 @@ class PersistedEventDispatcherTest extends TestCase
 
         $serviceBusManager = new ServiceBusManager(new ServiceBusConfiguration(array(
             Definition::EVENT_MAP => array(
-                'Prooph\EventSourcingTest\Mock\UserCreated' => function(AbstractEvent $e) use (&$userCreatedEventReceived) {
+                'Prooph\EventSourcingTest\Mock\UserCreated' => function(Event $e) use (&$userCreatedEventReceived) {
                     $userCreatedEventReceived = $e;
                 }
             )

@@ -11,8 +11,7 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Event\AbstractEvent;
-use Prooph\ServiceBus\Event\EventInterface;
+use Prooph\ServiceBus\Event;
 
 /**
  * Class OnEventStrategy
@@ -29,7 +28,7 @@ class OnEventStrategy extends AbstractInvokeStrategy
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        if (! $aCommandOrEvent instanceof AbstractEvent) {
+        if (! $aCommandOrEvent instanceof Event) {
             return false;
         }
 

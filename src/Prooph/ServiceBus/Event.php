@@ -9,7 +9,7 @@
  * Date: 11.03.14 - 21:13
  */
 
-namespace Prooph\ServiceBus\Event;
+namespace Prooph\ServiceBus;
 
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageNameProvider;
@@ -17,14 +17,14 @@ use Prooph\ServiceBus\Message\PayloadInterface;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * Class AbstractEvent
+ * Class Event
  *
  * Can be used as base event class
  *
  * @package Prooph\ServiceBus\Event
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class AbstractEvent implements MessageNameProvider
+class Event implements MessageNameProvider
 {
     /**
      * @var string
@@ -52,7 +52,7 @@ class AbstractEvent implements MessageNameProvider
     protected $payload = array();
 
     /**
-     * @return AbstractEvent
+     * @return Event
      */
     public static function getNew()
     {
@@ -61,7 +61,7 @@ class AbstractEvent implements MessageNameProvider
 
     /**
      * @param mixed $aPayload
-     * @return AbstractEvent
+     * @return Event
      */
     public static function fromPayload($aPayload)
     {

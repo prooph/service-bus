@@ -12,9 +12,9 @@
 namespace Prooph\ServiceBus\Message;
 
 use Prooph\ServiceBus\Command;
-use Prooph\ServiceBus\Event\AbstractEvent;
+use Prooph\ServiceBus\Event;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Zend\EventManager\Event;
+use Zend\EventManager\Event as ZendEvent;
 use Zend\EventManager\EventManager;
 
 /**
@@ -115,7 +115,7 @@ class MessageFactory implements MessageFactoryInterface
             get_class($this)
         ));
 
-        $eventManager->attach('fromCommand', function(Event $e) {
+        $eventManager->attach('fromCommand', function(ZendEvent $e) {
 
             $command = $e->getParam('command');
             $sender  = $e->getParam('sender');
@@ -133,11 +133,11 @@ class MessageFactory implements MessageFactoryInterface
             }
         }, -100);
 
-        $eventManager->attach('fromEvent', function (Event $e) {
+        $eventManager->attach('fromEvent', function (ZendEvent $e) {
             $event = $e->getParam('event');
             $sender = $e->getParam('sender');
 
-            if ($event instanceof AbstractEvent) {
+            if ($event instanceof Event) {
                 $messageHeader = new MessageHeader(
                     $event->uuid(),
                     $event->occurredOn(),

@@ -11,7 +11,7 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\ServiceBus\Event\AbstractEvent;
+use Prooph\ServiceBus\Event;
 
 /**
  * Class SomethingDone
@@ -19,7 +19,7 @@ use Prooph\ServiceBus\Event\AbstractEvent;
  * @package Prooph\ServiceBusTest\Mock
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class SomethingDone extends AbstractEvent
+class SomethingDone extends Event
 {
     /**
      * @param string $dataString

@@ -16,7 +16,7 @@ use Prooph\EventStore\Feature\FeatureInterface;
 use Prooph\EventStore\PersistenceEvent\PostCommitEvent;
 use Prooph\EventStore\Stream\StreamEvent;
 use Prooph\EventStore\Stream\StreamId;
-use Prooph\ServiceBus\Event\AbstractEvent;
+use Prooph\ServiceBus\Event\Event;
 use Prooph\ServiceBus\Service\ServiceBusManager;
 use Rhumsaa\Uuid\Uuid;
 
@@ -73,7 +73,7 @@ class PersistedEventDispatcher implements FeatureInterface
             $uuid = Uuid::uuid4();
         }
 
-        return new AbstractEvent(
+        return new Event(
             $streamEvent->eventName()->toString(),
             $streamEvent->payload(),
             $streamEvent->version(),
