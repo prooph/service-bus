@@ -11,6 +11,8 @@
 
 namespace Prooph\ServiceBus\Message;
 
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\EventBus;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
@@ -27,13 +29,28 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
      */
     protected $events;
 
+    /**
+     * @var CommandBus
+     */
     protected $commandBus;
 
+    /**
+     * @var EventBus
+     */
     protected $eventBus;
 
     /**
+     * @param CommandBus $commandBus
+     * @param EventBus $eventBus
+     */
+    public function __construct(CommandBus $commandBus, EventBus $eventBus)
+    {
+        $this->commandBus = $commandBus;
+        $this->eventBus = $eventBus;
+    }
+
+    /**
      * @param MessageInterface $message
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException If no ReceiverManager is registered for Queue
      * @throws \Exception If handling of message fails
      * @return void
      */
@@ -51,7 +68,7 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
 
         if ($message->header()->type() === MessageHeader::TYPE_COMMAND) {
 
-            //@TODO pass $message back to command bus
+            $this->commandBus->dispatch($message);
 
 
             $this->events()->trigger(
@@ -65,7 +82,7 @@ class InMemoryMessageDispatcher implements MessageDispatcherInterface
 
         if ($message->header()->type() === MessageHeader::TYPE_EVENT) {
 
-            //@TODO pass $message back to event bus
+            $this->eventBus->dispatch($message);
 
 
             $this->events()->trigger(
