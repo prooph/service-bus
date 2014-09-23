@@ -32,11 +32,13 @@
         "phpunit/phpunit": "3.7.*",
         "chrisboulton/php-resque": "~1.2",
         "prooph/event-store": "~0.5",
-        "prooph/event-sourcing": "~0.2"
+        "prooph/event-sourcing": "~0.2",
+        "zendframework/zend-servicemanager": "~2.3"
     },
     "suggest": {
         "chrisboulton/php-resque": "Use php-resque as Message Dispatcher",
-        "prooph/event-store": "Use ProophEventStore and let the EventBus dispatch persisted DomainEvents"
+        "prooph/event-store": "Use ProophEventStore and let the EventBus dispatch persisted DomainEvents",
+        "zendframework/zend-servicemanager": "Use Zf2 ServiceLocator to lazy load your handlers and listeners"
     },
     "autoload": {
         "psr-0": { 
