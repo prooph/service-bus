@@ -11,13 +11,15 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
+use Prooph\ServiceBus\Event;
+
 /**
- * Class SomethingDoneHandler
+ * Class SomethingDoneListener
  *
  * @package Prooph\ServiceBusTest\Mock
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class SomethingDoneHandler
+class SomethingDoneListener
 {
     /**
      * @var SomethingDone
@@ -25,15 +27,15 @@ class SomethingDoneHandler
     private $lastEvent;
 
     /**
-     * @param SomethingDone $event
+     * @param Event $event
      */
-    public function somethingDone(SomethingDone $event)
+    public function somethingDone(Event $event)
     {
         $this->lastEvent = $event;
     }
 
     /**
-     * @return SomethingDone
+     * @return Event
      */
     public function lastEvent()
     {
