@@ -11,35 +11,38 @@
 
 namespace Prooph\ServiceBusTest\Message;
 
-use Prooph\ServiceBus\Message\MessageTranslator;
+use Prooph\ServiceBus\Message\FromMessageTranslator;
+use Prooph\ServiceBus\Message\ToMessageTranslator;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
 
 /**
- * Class MessageTranslatorTest
+ * Class ToAndFromMessageTranslatorTest
  *
  * @package Prooph\ServiceBusTest\Message
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class MessageTranslatorTest extends TestCase
+class ToAndFromMessageTranslatorTest extends TestCase
 {
     /**
      * @test
      */
     public function it_translates_command_to_and_from_message()
     {
-        $messageTranslator = new MessageTranslator();
+        $toMessageTranslator = new ToMessageTranslator();
 
         $doSomething = DoSomething::fromData('test command');
 
-        $this->assertTrue($messageTranslator->canTranslateToMessage($doSomething));
+        $this->assertTrue($toMessageTranslator->canTranslateToMessage($doSomething));
 
-        $message = $messageTranslator->translateToMessage($doSomething);
+        $message = $toMessageTranslator->translateToMessage($doSomething);
 
         $this->assertEquals(array('data' => 'test command'), $message->payload());
 
-        $command = $messageTranslator->translateFromMessage($message);
+        $fromMessageTranslator = new FromMessageTranslator();
+
+        $command = $fromMessageTranslator->translateFromMessage($message);
 
         $this->assertInstanceOf('Prooph\ServiceBus\Command', $command);
         $this->assertEquals($doSomething->getMessageName(), $command->getMessageName());
@@ -54,17 +57,19 @@ class MessageTranslatorTest extends TestCase
      */
     public function it_translates_event_to_and_from_message()
     {
-        $messageTranslator = new MessageTranslator();
+        $toMessageTranslator = new ToMessageTranslator();
 
         $somethingDone = SomethingDone::fromData('test event');
 
-        $this->assertTrue($messageTranslator->canTranslateToMessage($somethingDone));
+        $this->assertTrue($toMessageTranslator->canTranslateToMessage($somethingDone));
 
-        $message = $messageTranslator->translateToMessage($somethingDone);
+        $message = $toMessageTranslator->translateToMessage($somethingDone);
 
         $this->assertEquals(array('data' => 'test event'), $message->payload());
 
-        $event = $messageTranslator->translateFromMessage($message);
+        $fromMessageTranslator = new FromMessageTranslator();
+
+        $event = $fromMessageTranslator->translateFromMessage($message);
 
         $this->assertInstanceOf('Prooph\ServiceBus\Event', $event);
         $this->assertEquals($somethingDone->getMessageName(), $event->getMessageName());

@@ -14,15 +14,14 @@ namespace Prooph\ServiceBus\Message;
 use Prooph\ServiceBus\Command;
 use Prooph\ServiceBus\Event;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Zend\EventManager\EventManager;
 
 /**
- * Class MessageTranslator
+ * Class ToMessageTranslator
  *
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class MessageTranslator implements MessageTranslatorInterface
+class ToMessageTranslator implements ToMessageTranslatorInterface
 {
     /**
      * @param $aCommandOrEvent
@@ -84,48 +83,5 @@ class MessageTranslator implements MessageTranslatorInterface
         );
 
         return new StandardMessage($anEvent->getMessageName(), $messageHeader, $anEvent->payload());
-    }
-
-    /**
-     * @param MessageInterface $aMessage
-     * @return mixed
-     */
-    public function translateFromMessage(MessageInterface $aMessage)
-    {
-        if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
-            return $this->fromMessageToCommand($aMessage);
-        } else {
-            return $this->fromMessageToEvent($aMessage);
-        }
-    }
-
-    /**
-     * @param MessageInterface $aMessage
-     * @return \Prooph\ServiceBus\Command
-     */
-    protected function fromMessageToCommand(MessageInterface $aMessage)
-    {
-        return new Command(
-            $aMessage->name(),
-            $aMessage->payload(),
-            $aMessage->header()->version(),
-            $aMessage->header()->uuid(),
-            $aMessage->header()->createdOn()
-        );
-    }
-
-    /**
-     * @param MessageInterface $aMessage
-     * @return Event
-     */
-    protected function fromMessageToEvent(MessageInterface $aMessage)
-    {
-        return new Event(
-            $aMessage->name(),
-            $aMessage->payload(),
-            $aMessage->header()->version(),
-            $aMessage->header()->uuid(),
-            $aMessage->header()->createdOn()
-        );
     }
 }

@@ -12,12 +12,12 @@
 namespace Prooph\ServiceBus\Message;
 
 /**
- * Interface MessageTranslatorInterface
+ * Interface ToMessageTranslatorInterface
  *
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <contact@prooph.de>
  */
-interface MessageTranslatorInterface
+interface ToMessageTranslatorInterface
 {
     /**
      * @param $aCommandOrEvent
@@ -30,11 +30,5 @@ interface MessageTranslatorInterface
      * @return MessageInterface
      */
     public function translateToMessage($aCommandOrEvent);
-
-    /**
-     * @param MessageInterface $aMessage
-     * @return mixed command or event
-     */
-    public function translateFromMessage(MessageInterface $aMessage);
 }
  
