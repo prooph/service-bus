@@ -115,7 +115,16 @@ class EventDispatch extends ProcessEvent
      */
     public function getEventListeners()
     {
-        return $this->getParam('event-listeners', new \ArrayObject());
+        //We cannot work with a simple default here, cause we need the exact reference to the listeners stack
+        $eventListeners = $this->getParam('event-listeners');
+
+        if (is_null($eventListeners)) {
+            $eventListeners = new \ArrayObject();
+
+            $this->setParam('event-listeners', $eventListeners);
+        }
+
+        return $eventListeners;
     }
 
     /**
@@ -134,7 +143,7 @@ class EventDispatch extends ProcessEvent
         $this->setParam('event-listeners', new \ArrayObject());
 
         foreach ($eventHandlerCollection as $eventHandler) {
-            $this->addEventHandler($eventHandler);
+            $this->addEventListener($eventHandler);
         }
 
         return $this;
@@ -146,7 +155,7 @@ class EventDispatch extends ProcessEvent
      * @throws \InvalidArgumentException
      * @return EventDispatch
      */
-    public function addEventHandler($eventListener)
+    public function addEventListener($eventListener)
     {
         if ($this->getName() === self::LOCATE_LISTENER || $this->getName() === self::INVOKE_LISTENER) {
             throw new RuntimeException(
