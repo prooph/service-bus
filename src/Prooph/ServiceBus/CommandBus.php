@@ -24,8 +24,6 @@ use Zend\Stdlib\CallbackHandler;
 /**
  * Class CommandBus
  *
- * @TODO Add tests for CommandBus
- *
  * @package Prooph\ServiceBus
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */

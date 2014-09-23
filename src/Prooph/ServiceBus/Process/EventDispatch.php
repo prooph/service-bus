@@ -23,8 +23,6 @@ use Zend\Log\LoggerInterface;
 /**
  * Class EventDispatch
  *
- * @TODO Add tests for EventDispatch
- *
  * @package Prooph\ServiceBus\Process
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */

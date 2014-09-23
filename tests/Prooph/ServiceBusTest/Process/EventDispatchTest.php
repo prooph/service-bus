@@ -24,8 +24,6 @@ use Zend\Stdlib\ArrayObject;
  */
 class EventDispatchTest extends TestCase
 {
-    //@TODO Add tests for initialize with MessageNameProvider and MessageInterface events
-
     /**
      * @test
      */
