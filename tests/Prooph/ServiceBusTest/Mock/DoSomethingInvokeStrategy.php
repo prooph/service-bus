@@ -10,8 +10,8 @@
  */
 
 namespace Prooph\ServiceBusTest\Mock;
-
-use Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
+use Prooph\ServiceBus\Command;
+use Prooph\ServiceBus\InvokeStrategy\AbstractInvokeStrategy;
 
 /**
  * Class DoSomethingInvokeStrategy
@@ -19,7 +19,7 @@ use Prooph\ServiceBus\InvokeStrategy\InvokeStrategyInterface;
  * @package Prooph\ServiceBusTest\Mock
  * @author Alexander Miertsch <contact@prooph.de>
  */
-class DoSomethingInvokeStrategy implements InvokeStrategyInterface
+class DoSomethingInvokeStrategy extends AbstractInvokeStrategy
 {
     /**
      * @param mixed $aHandler
@@ -28,7 +28,7 @@ class DoSomethingInvokeStrategy implements InvokeStrategyInterface
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        return $aHandler instanceof DoSomethingHandler && $aCommandOrEvent instanceof DoSomething;
+        return $aHandler instanceof DoSomethingHandler && $aCommandOrEvent instanceof Command;
     }
 
     /**

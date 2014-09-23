@@ -13,7 +13,7 @@ namespace Prooph\ServiceBus\InvokeStrategy;
 
 use Prooph\ServiceBus\Message\MessageDispatcherInterface;
 use Prooph\ServiceBus\Message\MessageInterface;
-use Prooph\ServiceBus\Message\ToToMessageTranslator;
+use Prooph\ServiceBus\Message\ToMessageTranslator;
 use Prooph\ServiceBus\Message\ToMessageTranslatorInterface;
 
 /**
@@ -77,10 +77,10 @@ class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
     protected function getMessageTranslator()
     {
         if (is_null($this->messageTranslator)) {
-            $this->messageTranslator = new ToToMessageTranslator();
+            $this->messageTranslator = new ToMessageTranslator();
         }
 
-        return $this->getMessageTranslator;
+        return $this->messageTranslator;
     }
 }
  

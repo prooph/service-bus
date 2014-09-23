@@ -10,6 +10,7 @@
  */
 
 namespace Prooph\ServiceBusTest\Mock;
+use Prooph\ServiceBus\Command;
 
 /**
  * Class DoSomethingHandler
@@ -20,20 +21,20 @@ namespace Prooph\ServiceBusTest\Mock;
 class DoSomethingHandler
 {
     /**
-     * @var DoSomething
+     * @var Command
      */
     private $lastCommand;
 
     /**
-     * @param DoSomething $aCommand
+     * @param Command $aCommand
      */
-    public function doSomething(DoSomething $aCommand)
+    public function doSomething(Command $aCommand)
     {
         $this->lastCommand = $aCommand;
     }
 
     /**
-     * @return DoSomething
+     * @return Command
      */
     public function lastCommand()
     {
