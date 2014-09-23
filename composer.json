@@ -36,7 +36,6 @@
         "zendframework/zend-servicemanager": "~2.3"
     },
     "suggest": {
-        "chrisboulton/php-resque": "Use php-resque as Message Dispatcher",
         "prooph/event-store": "Use ProophEventStore and let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zf2 ServiceLocator to lazy load your handlers and listeners"
     },
