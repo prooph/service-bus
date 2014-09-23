@@ -44,8 +44,8 @@ class Zf2ServiceLocatorProxy extends AbstractListenerAggregate
      */
     public function attach(EventManagerInterface $events)
     {
-        $events->attach(CommandDispatch::LOCATE_HANDLER, 'onLocateCommandHandler');
-        $events->attach(EventDispatch::LOCATE_LISTENER, 'onLocateEventListener');
+        $events->attach(CommandDispatch::LOCATE_HANDLER, array($this, 'onLocateCommandHandler'));
+        $events->attach(EventDispatch::LOCATE_LISTENER, array($this, 'onLocateEventListener'));
     }
 
     public function onLocateCommandHandler(CommandDispatch $commandDispatch)

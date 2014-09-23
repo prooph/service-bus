@@ -18,9 +18,11 @@ use Prooph\ServiceBus\Message\FromMessageTranslator;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\ToMessageTranslator;
 use Prooph\ServiceBus\Router\EventRouter;
+use Prooph\ServiceBus\ServiceLocator\Zf2ServiceLocatorProxy;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\Mock\SomethingDoneInvokeStrategy;
 use Prooph\ServiceBusTest\Mock\SomethingDoneListener;
+use Zend\ServiceManager\ServiceManager;
 
 /**
  * Class EventBusTest
@@ -53,7 +55,7 @@ class EventBusTest extends TestCase
 
         $this->eventBus->utilize($router);
 
-        //Register message forwarder which translates command to message and forward it to the message dispatcher
+        //Register message forwarder which translates event to message and forward it to the message dispatcher
         $this->eventBus->utilize(new ForwardToMessageDispatcherStrategy(new ToMessageTranslator()));
     }
 
@@ -69,10 +71,20 @@ class EventBusTest extends TestCase
 
         $router = new EventRouter();
 
-        $router->route('Prooph\ServiceBusTest\Mock\SomethingDone')->to($this->somethingDoneListener);
+        $router->route('Prooph\ServiceBusTest\Mock\SomethingDone')->to('something_done_listener');
 
         $eventBus->utilize($router);
 
+        //Set up a ZF2 ServiceLocator to locate the event listener
+        //In this scenario it would be easier to route the event directly to the listener instance
+        //but we want to test the full stack
+        $serviceLocator = new ServiceManager();
+
+        $serviceLocator->setService('something_done_listener', $this->somethingDoneListener);
+
+        $eventBus->utilize(new Zf2ServiceLocatorProxy($serviceLocator));
+
+        //Register appropriate invoke strategy
         $eventBus->utilize(new SomethingDoneInvokeStrategy());
 
         //Set up message dispatcher with a prepared command bus that can dispatch the message to command handler
