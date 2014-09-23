@@ -41,29 +41,32 @@ The simplest way to get started is to set up a command or event bus with the def
 When you look at the different default plugins you should get an idea of how you can write your own plugins, if you need special behaviour.
 
 ```php
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Example\Command\EchoText;
-use Prooph\ServiceBus\Service\ServiceBusConfiguration;
-use Prooph\ServiceBus\Service\ServiceBusManager;
+use Prooph\ServiceBus\InvokeStrategy\CallbackStrategy;
+use Prooph\ServiceBus\Router\CommandRouter;
 
-//The ServiceBus environment is set up by a special configuration class
-$serviceBusConfig = new ServiceBusConfiguration();
+$commandBus = new CommandBus();
+
+$router = new CommandRouter();
 
 //Register a callback as CommandHandler for the EchoText command
-$serviceBusConfig->setCommandMap(array(
-    'Prooph\ServiceBus\Example\Command\EchoText' => function (EchoText $aCommand) {
+$router->route('Prooph\ServiceBus\Example\Command\EchoText')
+    ->to(function (EchoText $aCommand) {
         echo $aCommand->getText();
-    }
-));
+    });
 
-//The ServiceBusManager is the central class and manages the service bus environment
-$serviceBusManager = new ServiceBusManager($serviceBusConfig);
+//Expand command bus with the router plugin
+$commandBus->utilize($router);
+
+//Expand command bus with the callback invoke strategy
+$commandBus->utilize(new CallbackStrategy());
 
 //We create a new Command
-//Assume that the EchoText command extends Prooph\ServiceBus\Command\AbstractCommand
 $echoText = EchoText::fromPayload('It works');
 
-//... and send it to a handler via routing system of the ServiceBus
-$serviceBusManager->route($echoText);
+//... and dispatch it
+$commandBus->dispatch($echoText);
 
 //Output should be: It works
 ```
