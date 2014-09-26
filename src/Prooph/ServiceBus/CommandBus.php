@@ -108,7 +108,6 @@ class CommandBus implements EventManagerAwareInterface
     /**
      * @param mixed $command
      * @throws Exception\CommandDispatchException
-     * @return bool
      */
     public function dispatch($command)
     {

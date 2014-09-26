@@ -100,8 +100,7 @@ class EventBus
 
     /**
      * @param mixed $event
-     * @throws Exception\CommandDispatchException
-     * @return bool
+     * @throws Exception\EventDispatchException
      */
     public function dispatch($event)
     {

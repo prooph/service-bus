@@ -23,7 +23,7 @@ class EventDispatchException extends RuntimeException
     /**
      * @param EventDispatch $eventDispatch
      * @param \Exception $previousException
-     * @return CommandDispatchException
+     * @return EventDispatchException
      */
     public static function failed(EventDispatch $eventDispatch, \Exception $previousException = null)
     {
