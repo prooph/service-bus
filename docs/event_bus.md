@@ -1,5 +1,7 @@
 The EventBus
-==============
+============
+
+[Back to documentation](../README.md#documentation)
 
 # Usage
 

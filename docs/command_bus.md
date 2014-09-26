@@ -1,6 +1,8 @@
 The CommandBus
 ==============
 
+[Back to documentation](../README.md#documentation)
+
 # Usage
 
 When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) you can use
