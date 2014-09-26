@@ -1,5 +1,5 @@
-ProophServiceBus
-===============
+PSB - ProophServiceBus
+======================
 
 PHP Enterprise Service Bus Implementation supporting CQRS and DDD
 
@@ -9,25 +9,8 @@ PHP Enterprise Service Bus Implementation supporting CQRS and DDD
 Why another CQRS/Messaging library?
 -----------------------------------
 
-
 The goal of ProophServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or RESTful Messaging API.
 It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins or middleware. So you can easily hook into the process and adjust it to meet your needs.
-
-Features
---------
-
-- [x] Unified interface for synchronous and asynchronous message dispatching.
-- [x] Support for custom messages. Send whatever you want over the buses.
-- [x] Expendable core system.
-- [x] CQRS support
-  - [x] One handler per command.
-  - [x] Many handlers per event.
-- [x] Exchangeable messaging system
-  - [x] Simple command and event routing without a message dispatcher (fast and easy to use, synchronous messaging)
-  - [x] In memory message dispatcher (mock for a normally asynchronous message dispatcher)
-  - [ ] [PhpResque](https://github.com/chrisboulton/php-resque) message dispatcher (asynchronous, currently not available, use a version < 0.4.0 if you need it)
-  - [ ] [RabbitMQ](https://www.rabbitmq.com/) message dispatcher (asynchronous)
-  - [ ] [Pheanstalk](https://github.com/pda/pheanstalk) message dispatcher (asynchronous)
 
 Installation
 ------------
@@ -71,10 +54,11 @@ $commandBus->dispatch($echoText);
 //Output should be: It works
 ```
 
-What's next?
+Documentation
 ------------
 
-We lack some documentation. When we've documented the important parts, we will release the first stable version.
+- [Overview](docs/service_bus_system.md)
+
 
 
 Contribute
