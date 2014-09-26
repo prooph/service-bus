@@ -21,7 +21,6 @@ Quick Start
 -----------
 
 The simplest way to get started is to set up a command or event bus with the default components provided by ProophServiceBus.
-When you look at the different default plugins you should get an idea of how you can write your own plugins, if you need special behaviour.
 
 ```php
 use Prooph\ServiceBus\CommandBus;
@@ -45,7 +44,7 @@ $commandBus->utilize($router);
 //Expand command bus with the callback invoke strategy
 $commandBus->utilize(new CallbackStrategy());
 
-//We create a new Command
+//Create a new Command
 $echoText = EchoText::fromPayload('It works');
 
 //... and dispatch it
@@ -60,7 +59,8 @@ Documentation
 - [Overview](docs/service_bus_system.md)
 - [CommandBus](docs/command_bus.md)
 - [EventBus](docs/event_bus.md)
-- [Asynchronous Message Dispatcher](docs/message_dispatcher.md)
+- [Plugins](docs/plugins.md)
+- [Asynchronous MessageDispatcher](docs/message_dispatcher.md)
 
 
 Contribute

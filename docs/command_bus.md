@@ -49,7 +49,6 @@ class CommandBus implements \Zend\EventManager\EventManagerAwareInterface
     /**
      * @param mixed $command
      * @throws Exception\CommandDispatchException
-     * @return bool
      */
     public function dispatch($command);
 }
@@ -61,10 +60,10 @@ one triggers the dispatch process of the given command.
 # Event-Driven Dispatch
 
 The command dispatch is an event-driven process provided by [Zend\EventManager](http://framework.zend.com/manual/2.0/en/modules/zend.event-manager.event-manager.html).
-When a command is passed to the CommandBus via `CommandBus::dispatch` a new [CommandDispatch](command_dispatch.md) process is created by the CommandBus and populated with the given command.
+When a command is passed to the CommandBus via `CommandBus::dispatch` a new [CommandDispatch](../src/Prooph/ServiceBus/Process/CommandDispatch.php) process is created by the CommandBus and populated with the given command.
 Then the CommandBus triggers a chain of events. Listeners can listen on the events. They always get the CommandDispatch as the only argument and they can
 modify it to help the CommandBus finish the process. A CommandBus without any registered plugins is useless and will throw an exception cause
-by default the CommandBus do not know which command handler is responsible for the command.
+it does not know which command handler is responsible for the command.
 Following events are triggered in the listed order:
 
 - `initialize`: This event is triggered right after CommandBus::dispatch($command) is invoked. At this time the CommandDispatch only contains the command.
@@ -75,15 +74,23 @@ does not implement the interface the `detect-message-name` event is triggered an
 - `route`: During the `route` event a plugin should provide the responsible command handler either in form of a ready to use object or callable or as a string
 representing an alias of the command handler that can be used by a DIC to locate an instance. The plugin should provide the handler by using
 `CommandDispatch::setCommandHandler`.
-- `locate-handler` (optional): After routing the CommandBus checks if the command handler was provided as a string. If so it triggers the
+- `locate-handler` (optional): After routing the command, the CommandBus checks if the command handler was provided as a string. If so it triggers the
 `locate-handler` event. This is the latest time to provide an object or callable as command handler. If no plugin was able to provide one the CommandBus throws an exception.
-- `invoke-handler`: Having the command handler in place it's time to invoke it with the command. The CommandBus always triggers the event and performs no default action even if the
+- `invoke-handler`: Having the command handler in place it's time to invoke it with the command. The CommandBus always triggers the event. It performs no default action even if the
 command handler is a callable.
 - `handle-error`: If at any time a plugin or the CommandBus itself throws an exception it is caught and passed to the CommandDispatch. The normal event chain breaks and a
 `handle-error` event is triggered instead. Listeners can access the exception by calling `CommandDispatch::getException`. When all listeners are informed about the error
 the CommandBus throws a Prooph\ServiceBus\Exception\CommandDispatchException to inform the outside world about the error.
 - `finalize`: This event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
+
+# Commands
+
+A command can nearly be everything. PSB tries to get out of your way as much as it can. You are ask to use your own command implementation or you use the
+default [Command](../src/Prooph/ServiceBus/Command.php) class provided by PSB. It is a very good base class and PSB ships with translator plugins to translate a Command into a message
+that can be send to a remote interface. Check the [Asynchronous Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
+your own message translator plugin, a plugin that is capable of detecting the name of the command and an invoke strategy that knows how to invoke
+your command handlers with the command. Mix and match the plugins provided by PSB with your own ones to decouple your implementation from the PSB infrastructure.
 
 # Plugins
 
@@ -104,6 +111,8 @@ own plugins. It is really straight forward.
 If you add a Zend\Log\LoggerInterface as a plugin it is passed to the CommandDispatch and available during the dispatch so the
 listener plugins can log their activities. If no logger is provided the CommandDispatch uses a /dev/null logger. Thus plugins can
 invoke the logger without the need to consider if it is really available or not.
+
+
 
 
 
