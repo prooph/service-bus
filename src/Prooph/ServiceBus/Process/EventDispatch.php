@@ -220,5 +220,24 @@ class EventDispatch extends ProcessEvent
     {
         $this->logger = $logger;
     }
+
+    /**
+     * @param \Exception $exception
+     * @return $this
+     */
+    public function setException(\Exception $exception)
+    {
+        $this->setParam('exception', $exception);
+
+        return $this;
+    }
+
+    /**
+     * @return null|Exception
+     */
+    public function getException()
+    {
+        return $this->getParam('exception');
+    }
 }
  

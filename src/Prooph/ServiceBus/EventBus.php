@@ -140,6 +140,7 @@ class EventBus
             }
 
         } catch (\Exception $ex) {
+            $eventDispatch->setException($ex);
             $this->triggerError($eventDispatch);
             $this->triggerFinalize($eventDispatch);
             throw EventDispatchException::failed($eventDispatch, $ex);

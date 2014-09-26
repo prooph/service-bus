@@ -151,6 +151,7 @@ class CommandBus implements EventManagerAwareInterface
             $this->trigger($commandDispatch);
 
         } catch (\Exception $ex) {
+            $commandDispatch->setException($ex);
             $this->triggerError($commandDispatch);
             $this->triggerFinalize($commandDispatch);
             throw CommandDispatchException::failed($commandDispatch, $ex);
