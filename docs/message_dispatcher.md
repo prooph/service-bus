@@ -83,4 +83,4 @@ $eventBus->dispatch($message);
 
 # Available MessageDispatchers
 
-- [InMemoryMessageDispatcher](../src/Prooph/ServiceBus/Message/InMemoryMessageDispatcher.php)
+- [InMemoryMessageDispatcher](../src/Prooph/ServiceBus/Message/InMemoryMessageDispatcher.php): useful for tests, you can replace your async dispatcher with this one 
