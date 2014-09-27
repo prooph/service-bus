@@ -10,7 +10,7 @@ Why another CQRS/Messaging library?
 -----------------------------------
 
 The goal of ProophServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or RESTful Messaging API.
-It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins or middleware. So you can easily hook into the process and adjust it to meet your needs.
+It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins for additional functionality. You can easily hook into the process and adjust it to meet your needs.
 
 Installation
 ------------
@@ -54,7 +54,7 @@ $commandBus->dispatch($echoText);
 ```
 
 Documentation
-------------
+-------------
 
 - [Overview](docs/service_bus_system.md)
 - [CommandBus](docs/command_bus.md)
@@ -62,9 +62,15 @@ Documentation
 - [Plugins](docs/plugins.md)
 - [Asynchronous MessageDispatcher](docs/message_dispatcher.md)
 
+Support
+-------
+
+- Ask questions on [prooph-users](https://groups.google.com/forum/?hl=de#!forum/prooph) google group.
+- File issues at [https://github.com/prooph/service-bus/issues](https://github.com/prooph/service-bus/issues).
+
 
 Contribute
 ----------
 
 Please feel free to fork and extend existing or add new features and send a pull request with your changes!
-To establish a consistent code quality, please provide unit tests for all your changes and check your code using [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) against [PSR2 standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) using `./vendor/bin/phpcs -p --standard=PSR2 --ignore=vendor .`.
+To establish a consistent code quality, please provide unit tests for all your changes and may adapt the documentation.
