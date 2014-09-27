@@ -15,7 +15,7 @@ It is designed with flexibility in mind. An event-driven system provides the pos
 Installation
 ------------
 
-You can install ProophServiceBus via composer by adding `"prooph/service-bus": "~0.4"` as requirement to your composer.json.
+You can install ProophServiceBus via composer by adding `"prooph/service-bus": "~1.0"` as requirement to your composer.json.
 
 Quick Start
 -----------
