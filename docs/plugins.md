@@ -3,7 +3,7 @@ PSB Plugins
 
 [Back to documentation](../README.md#documentation)
 
-Plugins expand a message bus with additional functionality. The basic task of a message bus be it a [CommandBus](command_bus.md) or [EventBus](event_bus.md)
+Plugins expand a message bus with additional functionality. The basic task of a message bus, be it a [CommandBus](command_bus.md) or [EventBus](event_bus.md),
 is to dispatch a message. To achieve this goal the bus needs to collect some information about the message and perform
 actions to ensure that a responsible message handler is invoked. Detailed information about the process can be found on the appropriate bus documentation pages.
 Plugins hook into the dispatch process and provide the required information like the name of the message or a routing map and they also
@@ -86,10 +86,10 @@ $eventBus->dispatch(new SomethingDone());
 # FromMessageTranslator
 
 The [FromMessageTranslator](../src/Prooph/ServiceBus/Message/FromMessageTranslator.php) plugin does the opposite of the `ForwardToMessageDispatcherStrategy`.
-It listens on the `initialize` dispatch process event of a CommandBus or EventBus and if it detects an incoming [message](../src/Prooph/ServiceBus/Message/MessageInterface)
+It listens on the `initialize` dispatch process event of a CommandBus or EventBus and if it detects an incoming [message](../src/Prooph/ServiceBus/Message/MessageInterface.php)
 it translates the message to a [Command](../src/Prooph/ServiceBus/Command.php) or [Event](../src/Prooph/ServiceBus/Event.php) depending on the type
-provided in the [MessageHeader](../src/Prooph/ServiceBus/Message/MessageHeaderInterface). A receiver of an asynchronous dispatched message, for example a worker of a
-message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInterface) from the queue and forward it to a appropriate configured EventBus without additional work.
+provided in the [MessageHeader](../src/Prooph/ServiceBus/Message/MessageHeaderInterface.php). A receiver of an asynchronous dispatched message, for example a worker of a
+message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInterface.php) from the queue and forward it to a appropriate configured EventBus without additional work.
 
 # Zf2ServiceLocatorProxy
 

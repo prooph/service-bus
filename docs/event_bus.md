@@ -74,7 +74,7 @@ Following process events are triggered in the listed order:
 possibilities to provide the information. The event message can implement the [Prooph\ServiceBus\Message\MessageNameProvider](../src/Prooph/ServiceBus/Message/MessageNameProvider.php) interface.
 In this case the EventBus picks the message name directly from the event message and inject it manually in the EventDispatch. The `detect-message-name` event is not triggered. If the event message
 does not implement the interface the `detect-message-name` process event is triggered and a plugin needs to inject the name using `EventDispatch::setEventName`.
-- `route`: During the `route` event one or more plugins should provide a list of interested event message listeners either in form of ready to use objects or callables or as a strings
+- `route`: During the `route` event one or more plugins should provide a list of interested event message listeners either in form of ready to use objects or callables or as strings
 representing aliases of the event message listeners that can be used by a DIC to locate the listener instances. The plugins should provide and modify the list by using
 `EventDispatch::setEventListeners` and `EventDispatch::addEventListener`.
 - `locate-listener` (optional): After routing the event message, the EventBus loops over the list of interested event message listeners and checks for each of them
