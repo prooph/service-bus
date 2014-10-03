@@ -74,7 +74,7 @@ class EventRouter extends AbstractListenerAggregate
     {
         \Assert\that($eventName)->notEmpty()->string();
 
-        if (! is_null($this->tmpEventName) && empty($this->listeners[$this->tmpEventName])) {
+        if (! is_null($this->tmpEventName) && empty($this->eventMap[$this->tmpEventName])) {
             throw new RuntimeException(sprintf("event %s is not mapped to a listener.", $this->tmpEventName));
         }
 

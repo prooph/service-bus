@@ -60,6 +60,21 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
+    public function it_can_route_a_second_event_after_the_first_one_is_routed_to_at_least_one_listener()
+    {
+        $router = new EventRouter();
+
+        $router->route('Prooph\ServiceBusTest\Mock\SomethingDone')->to('a_listener');
+
+        $router->route('AnotherEvent');
+
+        //no exception occurred
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @test
+     */
     public function it_fails_on_setting_a_listener_before_an_event_is_set()
     {
         $router = new EventRouter();
