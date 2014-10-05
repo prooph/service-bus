@@ -42,6 +42,11 @@ class EventDispatch extends ProcessEvent
     private $logger;
 
     /**
+     * @var bool
+     */
+    private $isLoggingEnabled = false;
+
+    /**
      * @param mixed $event
      * @param EventBus $eventBus
      * @throws \InvalidArgumentException
@@ -219,6 +224,15 @@ class EventDispatch extends ProcessEvent
     public function useLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->isLoggingEnabled = true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoggingEnabled()
+    {
+        return $this->isLoggingEnabled;
     }
 
     /**

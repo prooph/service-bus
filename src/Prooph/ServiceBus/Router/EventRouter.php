@@ -137,13 +137,15 @@ class EventRouter extends AbstractListenerAggregate
         }
 
         if (!isset($this->eventMap[$eventDispatch->getEventName()])) {
-            $eventDispatch->getLogger()->debug(
-                sprintf(
-                    "%s: Cannot route %s to a listener. No listener registered for event.",
-                    get_called_class(),
-                    $eventDispatch->getEventName()
-                )
-            );
+            if ($eventDispatch->isLoggingEnabled()) {
+                $eventDispatch->getLogger()->debug(
+                    sprintf(
+                        "%s: Cannot route %s to a listener. No listener registered for event.",
+                        get_called_class(),
+                        $eventDispatch->getEventName()
+                    )
+                );
+            }
             return;
         }
 

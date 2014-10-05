@@ -121,13 +121,15 @@ class CommandRouter extends AbstractListenerAggregate
         }
 
         if (!isset($this->commandMap[$commandDispatch->getCommandName()])) {
-            $commandDispatch->getLogger()->debug(
-                sprintf(
-                    "%s: Cannot route %s to a handler. No handler registered for command.",
-                    get_called_class(),
-                    $commandDispatch->getCommandName()
-                )
-            );
+            if ($commandDispatch->isLoggingEnabled()) {
+                $commandDispatch->getLogger()->debug(
+                    sprintf(
+                        "%s: Cannot route %s to a handler. No handler registered for command.",
+                        get_called_class(),
+                        $commandDispatch->getCommandName()
+                    )
+                );
+            }
             return;
         }
 

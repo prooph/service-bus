@@ -77,11 +77,13 @@ abstract class AbstractInvokeStrategy extends AbstractListenerAggregate
 
         if ($this->canInvoke($handler, $message)) {
             $this->invoke($handler, $message);
-            $e->getLogger()->info(sprintf(
-                "Message %s invoked on handler %s",
-                is_object($message)? get_class($message) : json_encode($message),
-                is_object($handler)? get_class($handler) : json_encode($handler)
-            ));
+            if ($e->isLoggingEnabled()) {
+                $e->getLogger()->info(sprintf(
+                    "Message %s invoked on handler %s",
+                    is_object($message)? get_class($message) : json_encode($message),
+                    is_object($handler)? get_class($handler) : json_encode($handler)
+                ));
+            }
         }
     }
 }

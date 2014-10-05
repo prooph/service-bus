@@ -14,6 +14,7 @@ namespace Prooph\ServiceBusTest\Process;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Process\EventDispatch;
 use Prooph\ServiceBusTest\TestCase;
+use Zend\Log\Logger;
 use Zend\Stdlib\ArrayObject;
 
 /**
@@ -143,6 +144,20 @@ class EventDispatchTest extends TestCase
     public function it_has_always_a_logger_available()
     {
         $this->assertInstanceOf('Zend\Log\LoggerInterface', $this->getNewEventDispatch()->getLogger());
+    }
+
+    /**
+     * @test
+     */
+    public function it_gives_hint_whether_logging_is_enabled_or_not()
+    {
+        $eventDispatch = $this->getNewEventDispatch();
+
+        $this->assertFalse($eventDispatch->isLoggingEnabled());
+
+        $eventDispatch->useLogger(new Logger());
+
+        $this->assertTrue($eventDispatch->isLoggingEnabled());
     }
 
     /**

@@ -14,6 +14,7 @@ namespace Prooph\ServiceBusTest\Process;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBusTest\TestCase;
+use Zend\Log\Logger;
 
 /**
  * Class CommandDispatchTest
@@ -141,6 +142,20 @@ class CommandDispatchTest extends TestCase
     public function it_has_always_a_logger_available()
     {
         $this->assertInstanceOf('Zend\Log\LoggerInterface', $this->getNewCommandDispatch()->getLogger());
+    }
+
+    /**
+     * @test
+     */
+    public function it_gives_hint_whether_logging_is_enabled_or_not()
+    {
+        $commandDispatch = $this->getNewCommandDispatch();
+
+        $this->assertFalse($commandDispatch->isLoggingEnabled());
+
+        $commandDispatch->useLogger(new Logger());
+
+        $this->assertTrue($commandDispatch->isLoggingEnabled());
     }
 
     /**
