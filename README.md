@@ -5,8 +5,8 @@ PHP Enterprise Service Bus Facade supporting CQRS
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
-About Prooph
-------------
+About Prooph Software
+---------------------
 
 Prooph is the organisation behind [gingerframework](https://github.com/gingerframework/gingerframework) - a workflow framework written in PHP.
 The founder and lead developer is [codeliner](https://github.com/codeliner). Prooph provides CQRS+ES infrastructure components for the gingerframework.
