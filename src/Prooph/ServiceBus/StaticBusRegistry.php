@@ -73,6 +73,10 @@ class StaticBusRegistry
         return self::$eventBus;
     }
 
-
+    public static function reset()
+    {
+        self::$commandBus = null;
+        self::$eventBus   = null;
+    }
 }
  
