@@ -91,6 +91,9 @@ it translates the message to a [Command](../src/Prooph/ServiceBus/Command.php) o
 provided in the [MessageHeader](../src/Prooph/ServiceBus/Message/MessageHeaderInterface.php). A receiver of an asynchronous dispatched message, for example a worker of a
 message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInterface.php) from the queue and forward it to a appropriate configured EventBus without additional work.
 
+*Note: If the message name is an existing class it is used instead of the default implementation.
+       But the constructor of the class should accept the same arguments as the default implementation does, otherwise you need to use your own message translator.
+
 # Zf2ServiceLocatorProxy
 
 PSB ships with out-of-the-box support for [Zend\ServiceManager](http://framework.zend.com/manual/2.0/en/modules/zend.service-manager.intro.html). You can use the

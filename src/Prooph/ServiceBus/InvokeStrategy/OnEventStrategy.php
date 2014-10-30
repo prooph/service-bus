@@ -12,6 +12,7 @@
 namespace Prooph\ServiceBus\InvokeStrategy;
 
 use Prooph\ServiceBus\Event;
+use Prooph\ServiceBus\Message\MessageNameProvider;
 
 /**
  * Class OnEventStrategy
@@ -54,7 +55,8 @@ class OnEventStrategy extends AbstractInvokeStrategy
      */
     protected function determineEventName($anEvent)
     {
-        return join('', array_slice(explode('\\', get_class($anEvent)), -1));
+        $eventName = ($anEvent instanceof MessageNameProvider)? $anEvent->getMessageName() : get_class($anEvent);
+        return join('', array_slice(explode('\\', $eventName), -1));
     }
 }
  

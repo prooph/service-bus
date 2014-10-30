@@ -85,7 +85,9 @@ class FromMessageTranslator extends AbstractListenerAggregate
      */
     protected function fromMessageToCommand(MessageInterface $aMessage)
     {
-        return new Command(
+        $commandClass = (class_exists($aMessage->name()))? $aMessage->name() : 'Prooph\ServiceBus\Command';
+
+        return new $commandClass(
             $aMessage->name(),
             $aMessage->payload(),
             $aMessage->header()->version(),
@@ -100,7 +102,9 @@ class FromMessageTranslator extends AbstractListenerAggregate
      */
     protected function fromMessageToEvent(MessageInterface $aMessage)
     {
-        return new Event(
+        $eventClass = (class_exists($aMessage->name()))? $aMessage->name() : 'Prooph\ServiceBus\Event';
+
+        return new $eventClass(
             $aMessage->name(),
             $aMessage->payload(),
             $aMessage->header()->version(),
