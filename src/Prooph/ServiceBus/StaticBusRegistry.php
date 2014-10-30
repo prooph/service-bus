@@ -34,7 +34,7 @@ class StaticBusRegistry
     /**
      * @param \Prooph\ServiceBus\CommandBus $commandBus
      */
-    private static function setCommandBus(CommandBus $commandBus)
+    public static function setCommandBus(CommandBus $commandBus)
     {
         self::$commandBus = $commandBus;
     }
@@ -55,7 +55,7 @@ class StaticBusRegistry
     /**
      * @param \Prooph\ServiceBus\EventBus $eventBus
      */
-    private static function setEventBus(EventBus $eventBus)
+    public static function setEventBus(EventBus $eventBus)
     {
         self::$eventBus = $eventBus;
     }
