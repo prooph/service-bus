@@ -247,7 +247,7 @@ class EventDispatch extends ProcessEvent
     }
 
     /**
-     * @return null|Exception
+     * @return null|\Exception
      */
     public function getException()
     {

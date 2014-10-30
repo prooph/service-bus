@@ -37,7 +37,7 @@ class CommandRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $router->onRouteEvent($commandDispatch);
+        $router->onRouteCommand($commandDispatch);
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
     }
@@ -81,7 +81,7 @@ class CommandRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $router->onRouteEvent($commandDispatch);
+        $router->onRouteCommand($commandDispatch);
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
     }

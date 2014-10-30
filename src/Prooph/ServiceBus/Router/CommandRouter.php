@@ -58,7 +58,7 @@ class CommandRouter extends AbstractListenerAggregate
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(CommandDispatch::ROUTE, array($this, "onRouteEvent"));
+        $this->listeners[] = $events->attach(CommandDispatch::ROUTE, array($this, "onRouteCommand"));
     }
 
     /**
@@ -111,7 +111,7 @@ class CommandRouter extends AbstractListenerAggregate
     /**
      * @param CommandDispatch $commandDispatch
      */
-    public function onRouteEvent(CommandDispatch $commandDispatch)
+    public function onRouteCommand(CommandDispatch $commandDispatch)
     {
         if (is_null($commandDispatch->getCommandName())) {
             $commandDispatch->getLogger()->notice(

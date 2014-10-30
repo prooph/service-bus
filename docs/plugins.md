@@ -51,6 +51,38 @@ $router->route('My.Event.OrderWasPayed')->to("delivery_processor");
 $eventBus->utilize($router);
 ```
 
+## Prooph\ServiceBus\Router\RegexRouter
+
+The RegexRouter works with regular expressions to determine handlers for messages. It can be used together with a CommandBus and
+an EventBus but behaves different for both. When routing a command the RegexRouter makes sure that only one pattern matches.
+If more than one pattern matches it throws a `Prooph\ServiceBus\Exception\RuntimeException`. On the other hand when routing
+an event each time a pattern matches the corresponding listener is added to the list of listeners.
+
+```php
+//You can provide the pattern list as an associative array in the constructor ...
+$router = new RegexRouter(array('/^My\.Command\.Buy.*/' => new BuyArticleHandler()));
+
+//... or using the programmatic api
+$router->route('/^My\.Command\.Register.*/')->to(new RegisterUserHandler());
+
+//Add the router to a CommandBus
+$commandBus->utilize($router);
+
+//When routing an event you can provide a list of listeners for each pattern ...
+$router = new RegexRouter(array('/^My\.Event\.Article.*/' => array(new OrderCartUpdater(), new InventoryUpdater())));
+
+//... or using the programmatic api
+$router->route('/^My\.Event\.Article.*/')->to(new OrderCartUpdater());
+
+//The RegexRouter does not provide a andTo method like the EventRouter.
+//You need to call route again for the same pattern,
+//otherwise the router throws an exception
+$router->route('/^My\.Event\.Article.*/')->to(new InventoryUpdater());
+
+//Add the router to an EventBus
+$eventBus->utilize($router);
+```
+
 # Invoke Strategies
 
 An invoke strategy knows how a message handler can be invoked. You can register many invoke strategies at once depending on
