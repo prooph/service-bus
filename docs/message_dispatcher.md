@@ -83,4 +83,7 @@ $eventBus->dispatch($message);
 
 # Available MessageDispatchers
 
-- [InMemoryMessageDispatcher](../src/Prooph/ServiceBus/Message/InMemoryMessageDispatcher.php): useful for tests, you can replace your async dispatcher with this one 
+- [InMemoryMessageDispatcher](../src/Prooph/ServiceBus/Message/InMemoryMessageDispatcher.php): useful for tests, 
+  you can replace your async dispatcher with this one 
+- [PhpResqueMessageDispatcher](https://github.com/prooph/psb-php-resque-dispatcher): Perfect choice for async 
+  command processing
