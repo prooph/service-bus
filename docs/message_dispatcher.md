@@ -89,3 +89,5 @@ $eventBus->dispatch($message);
   command processing using a ultra fast redis queue
 - [BernardMessageDispatcher](https://github.com/prooph/psb-bernard-dispatcher): Queue multi-backend providing different
   drivers like Doctrine DBAL and Predis (see http://bernardphp.com for a complete list of drivers)
+- [GuzzleHttpMessageDispatcher](https://github.com/prooph/psb-http-dispatcher): Send messages to a remote system using
+  HTTP
