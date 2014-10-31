@@ -18,7 +18,7 @@ other libraries.
 Why another CQRS/Messaging library?
 -----------------------------------
 
-The goal of ProophServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or RESTful Messaging API.
+The goal of ProophServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or [RESTful Messaging API](https://github.com/prooph/psb-http-dispatcher).
 It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins for additional functionality. You can easily hook into the process and adjust it to meet your needs.
 
 Installation
