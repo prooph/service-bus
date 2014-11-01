@@ -32,6 +32,8 @@ Quick Start
 The simplest way to get started is to set up a command or event bus with the default components provided by ProophServiceBus.
 
 ```php
+<?php
+
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Example\Command\EchoText;
 use Prooph\ServiceBus\InvokeStrategy\CallbackStrategy;
