@@ -139,10 +139,20 @@ class EventBus
             }
 
         } catch (\Exception $ex) {
+            $failedPhase = $eventDispatch->getName();
             $eventDispatch->setException($ex);
+
             $this->triggerError($eventDispatch);
             $this->triggerFinalize($eventDispatch);
-            throw EventDispatchException::failed($eventDispatch, $ex);
+
+            //Check if a listener has removed the exception to indicate that it was able to handle it
+            if ($ex = $eventDispatch->getException()) {
+                $eventDispatch->setName($failedPhase);
+                throw EventDispatchException::failed($eventDispatch, $ex);
+            }
+
+            return;
+
         }
 
         $this->triggerFinalize($eventDispatch);
