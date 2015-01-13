@@ -15,9 +15,6 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Message\MessageNameProvider;
-use Zend\EventManager\Event as ProcessEvent;
-use Zend\Log\Logger;
-use Zend\Log\LoggerInterface;
 
 /**
  * Class CommandDispatch
@@ -25,25 +22,10 @@ use Zend\Log\LoggerInterface;
  * @package Prooph\ServiceBus\Process
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandDispatch extends ProcessEvent
+class CommandDispatch extends MessageDispatch
 {
-    const INITIALIZE          = "initialize";
-    const DETECT_MESSAGE_NAME = "detect-message-name";
-    const ROUTE               = "route";
     const LOCATE_HANDLER      = "locate-handler";
     const INVOKE_HANDLER      = "invoke-handler";
-    const HANDLE_ERROR        = "handle-error";
-    const FINALIZE            = "finalize";
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var bool
-     */
-    private $isLoggingEnabled = false;
 
     /**
      * @param mixed $command
@@ -53,10 +35,10 @@ class CommandDispatch extends ProcessEvent
      */
     public static function initializeWith($command, CommandBus $commandBus)
     {
-        $instance = new self(self::INITIALIZE, $commandBus, array('command' => $command));
+        $instance = new self(self::INITIALIZE, $commandBus, array('message' => $command));
 
         if ($command instanceof MessageNameProvider) {
-            $instance->setCommandName($command->getMessageName());
+            $instance->setMessageName($command->getMessageName());
         }
 
         if ($command instanceof MessageInterface) {
@@ -66,7 +48,7 @@ class CommandDispatch extends ProcessEvent
                 );
             }
 
-            $instance->setCommandName($command->name());
+            $instance->setMessageName($command->name());
         }
 
         return $instance;
@@ -77,21 +59,16 @@ class CommandDispatch extends ProcessEvent
      */
     public function getCommandName()
     {
-        return $this->getParam('command-name');
+        return $this->getParam('message-name');
     }
 
     /**
      * @param string $commandName
-     * @return CommandDispatch
      * @throws \InvalidArgumentException
      */
     public function setCommandName($commandName)
     {
-        \Assert\that($commandName)->notEmpty("Invalid command name provided.")->string("Invalid command name provided.");
-
-        $this->setParam('command-name', $commandName);
-
-        return $this;
+        $this->setMessageName($commandName);
     }
 
     /**
@@ -99,17 +76,15 @@ class CommandDispatch extends ProcessEvent
      */
     public function getCommand()
     {
-        return $this->getParam('command');
+        return $this->getMessage();
     }
 
     /**
      * @param mixed $command
-     * @return CommandDispatch
      */
     public function setCommand($command)
     {
-        $this->setParam('command', $command);
-        return $this;
+        $this->setMessage($command);
     }
 
     /**
@@ -122,7 +97,6 @@ class CommandDispatch extends ProcessEvent
 
     /**
      * @param string|object|callable $commandHandler
-     * @return CommandDispatch
      * @throws \InvalidArgumentException
      */
     public function setCommandHandler($commandHandler)
@@ -135,57 +109,6 @@ class CommandDispatch extends ProcessEvent
         }
 
         $this->setParam("command-handler", $commandHandler);
-
-        return $this;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        if (is_null($this->logger)) {
-            $this->logger = new Logger();
-            $this->logger->addWriter('null');
-        }
-
-        return $this->logger;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function useLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        $this->isLoggingEnabled = true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLoggingEnabled()
-    {
-        return $this->isLoggingEnabled;
-    }
-
-    /**
-     * @param \Exception $exception
-     * @return $this
-     */
-    public function setException(\Exception $exception)
-    {
-        $this->setParam('exception', $exception);
-
-        return $this;
-    }
-
-    /**
-     * @return null|Exception
-     */
-    public function getException()
-    {
-        return $this->getParam('exception');
     }
 }
  

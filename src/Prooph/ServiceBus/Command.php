@@ -19,7 +19,8 @@ use Rhumsaa\Uuid\Uuid;
 /**
  * Class Command
  *
- * Can be used as base class for commands.
+ * The class can be used as base class for commands, but it is no requirement.
+ * You can dispatch all kinds of messages as long as you register plugins that are able to handle your messages.
  *
  * @package Prooph\ServiceBus\Command
  * @author Alexander Miertsch <contact@prooph.de>

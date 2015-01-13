@@ -41,7 +41,7 @@ class RegexRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $regexRouter->onRouteCommand($commandDispatch);
+        $regexRouter->onRoute($commandDispatch);
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
     }
@@ -62,7 +62,7 @@ class RegexRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $regexRouter->onRouteCommand($commandDispatch);
+        $regexRouter->onRoute($commandDispatch);
     }
 
     /**
@@ -79,7 +79,7 @@ class RegexRouterTest extends TestCase
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 
-        $regexRouter->onRouteEvent($eventDispatch);
+        $regexRouter->onRoute($eventDispatch);
 
         $this->assertEquals(["SomethingDoneListener1", "SomethingDoneListener2"], $eventDispatch->getEventListeners()->getArrayCopy());
     }
@@ -125,7 +125,7 @@ class RegexRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $router->onRouteCommand($commandDispatch);
+        $router->onRoute($commandDispatch);
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
 
@@ -133,7 +133,7 @@ class RegexRouterTest extends TestCase
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 
-        $router->onRouteEvent($eventDispatch);
+        $router->onRoute($eventDispatch);
 
         $this->assertEquals(["SomethingDoneListener1", "SomethingDoneListener2"], $eventDispatch->getEventListeners()->getArrayCopy());
     }

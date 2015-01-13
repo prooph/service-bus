@@ -16,9 +16,6 @@ use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Message\MessageHeader;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Prooph\ServiceBus\Message\MessageNameProvider;
-use Zend\EventManager\Event as ProcessEvent;
-use Zend\Log\Logger;
-use Zend\Log\LoggerInterface;
 
 /**
  * Class EventDispatch
@@ -26,25 +23,10 @@ use Zend\Log\LoggerInterface;
  * @package Prooph\ServiceBus\Process
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class EventDispatch extends ProcessEvent
+class EventDispatch extends MessageDispatch
 {
-    const INITIALIZE          = "initialize";
-    const DETECT_MESSAGE_NAME = "detect-message-name";
-    const ROUTE               = "route";
     const LOCATE_LISTENER     = "locate-listener";
     const INVOKE_LISTENER     = "invoke-listener";
-    const HANDLE_ERROR        = "handle-error";
-    const FINALIZE            = "finalize";
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var bool
-     */
-    private $isLoggingEnabled = false;
 
     /**
      * @param mixed $event
@@ -54,10 +36,10 @@ class EventDispatch extends ProcessEvent
      */
     public static function initializeWith($event, EventBus $eventBus)
     {
-        $instance = new self(self::INITIALIZE, $eventBus, array('event' => $event));
+        $instance = new self(self::INITIALIZE, $eventBus, array('message' => $event));
 
         if ($event instanceof MessageNameProvider) {
-            $instance->setEventName($event->getMessageName());
+            $instance->setMessageName($event->getMessageName());
         }
 
         if ($event instanceof MessageInterface) {
@@ -67,7 +49,7 @@ class EventDispatch extends ProcessEvent
                 );
             }
 
-            $instance->setEventName($event->name());
+            $instance->setMessageName($event->name());
         }
 
         return $instance;
@@ -78,21 +60,16 @@ class EventDispatch extends ProcessEvent
      */
     public function getEventName()
     {
-        return $this->getParam('event-name');
+        return $this->getMessageName();
     }
 
     /**
      * @param string $eventName
-     * @return EventDispatch
      * @throws \InvalidArgumentException
      */
     public function setEventName($eventName)
     {
-        \Assert\that($eventName)->notEmpty("Invalid event name provided.")->string("Invalid event name provided.");
-
-        $this->setParam('event-name', $eventName);
-
-        return $this;
+        $this->setMessageName($eventName);
     }
 
     /**
@@ -100,17 +77,15 @@ class EventDispatch extends ProcessEvent
      */
     public function getEvent()
     {
-        return $this->getParam('event');
+        return $this->getMessage();
     }
 
     /**
      * @param mixed $event
-     * @return EventDispatch
      */
     public function setEvent($event)
     {
-        $this->setParam('event', $event);
-        return $this;
+        $this->setMessage($event);
     }
 
     /**
@@ -133,7 +108,6 @@ class EventDispatch extends ProcessEvent
     /**
      * @param array(index => callable|string|object) $eventHandlerCollection
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @return EventDispatch
      */
     public function setEventListeners(array $eventHandlerCollection)
     {
@@ -148,15 +122,12 @@ class EventDispatch extends ProcessEvent
         foreach ($eventHandlerCollection as $eventHandler) {
             $this->addEventListener($eventHandler);
         }
-
-        return $this;
     }
 
     /**
      * @param callable|string|object $eventListener
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @throws \InvalidArgumentException
-     * @return EventDispatch
      */
     public function addEventListener($eventListener)
     {
@@ -174,13 +145,10 @@ class EventDispatch extends ProcessEvent
         }
 
         $this->getEventListeners()[] = $eventListener;
-
-        return $this;
     }
 
     /**
      * @param callable|string|object $eventListener
-     * @return EventDispatch
      * @throws \InvalidArgumentException
      */
     public function setCurrentEventListener($eventListener)
@@ -193,8 +161,6 @@ class EventDispatch extends ProcessEvent
         }
 
         $this->setParam('current-event-listener', $eventListener);
-
-        return $this;
     }
 
     /**
@@ -203,55 +169,6 @@ class EventDispatch extends ProcessEvent
     public function getCurrentEventListener()
     {
         return $this->getParam('current-event-listener');
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        if (is_null($this->logger)) {
-            $this->logger = new Logger();
-            $this->logger->addWriter('null');
-        }
-
-        return $this->logger;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function useLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        $this->isLoggingEnabled = true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLoggingEnabled()
-    {
-        return $this->isLoggingEnabled;
-    }
-
-    /**
-     * @param \Exception $exception
-     * @return $this
-     */
-    public function setException(\Exception $exception)
-    {
-        $this->setParam('exception', $exception);
-
-        return $this;
-    }
-
-    /**
-     * @return null|\Exception
-     */
-    public function getException()
-    {
-        return $this->getParam('exception');
     }
 }
  
