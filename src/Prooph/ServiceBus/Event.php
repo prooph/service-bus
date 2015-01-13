@@ -19,7 +19,8 @@ use Rhumsaa\Uuid\Uuid;
 /**
  * Class Event
  *
- * Can be used as base event class
+ * The class can be used as base class for events, but it is no requirement.
+ * You can dispatch all kinds of messages as long as you register plugins that are able to handle your messages.
  *
  * @package Prooph\ServiceBus\Event
  * @author Alexander Miertsch <contact@prooph.de>
