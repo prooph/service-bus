@@ -72,23 +72,30 @@ it does not know which event message listener is interested in the event message
 Following process events are triggered in the listed order:
 
 - `initialize`: This process event is triggered right after EventBus::dispatch($event) is invoked. At this time the EventDispatch only contains the event message.
+
 - `detect-message-name` (optional): Before an event message listener can be located, the EventBus needs to know how the event message is named. Their are two
 possibilities to provide the information. The event message can implement the [Prooph\ServiceBus\Message\MessageNameProvider](../src/Prooph/ServiceBus/Message/MessageNameProvider.php) interface.
 In this case the EventBus picks the message name directly from the event message and inject it manually in the EventDispatch. The `detect-message-name` event is not triggered. If the event message
 does not implement the interface the `detect-message-name` process event is triggered and a plugin needs to inject the name using `EventDispatch::setEventName`.
+
 - `route`: During the `route` event one or more plugins should provide a list of interested event message listeners either in form of ready to use objects or callables or as strings
 representing aliases of the event message listeners that can be used by a DIC to locate the listener instances. The plugins should provide and modify the list by using
 `EventDispatch::setEventListeners` and `EventDispatch::addEventListener`.
+
 - `locate-listener` (optional): After routing the event message, the EventBus loops over the list of interested event message listeners and checks for each of them
 if the event message listener was provided as a string. If so it triggers a
 `locate-listener` process event. This is the latest time to provide an object or callable as event message listener. The listener alias can be requested from the EventDispatch by
 calling the method `EventDispatch::getCurrentEventListener` and the event message listener instance can be set via method `EventDispatch::setCurrentEventListener` If no plugin was able to provide an instance the EventBus throws an exception.
+
 - `invoke-listener`: Within the listener list loop the EventBus triggers the `invoke-listener` process event. The EventBus always triggers the event. It performs no default action even if the
 event message listener is a callable. Plugins can access the currently active listener from the list by requesting it from the `EventDispatch::getCurrentEventListener` method.
+
 - `handle-error`: If at any time a plugin or the EventBus itself throws an exception it is caught and passed to the EventDispatch. The normal process event chain breaks and a
 `handle-error` event is triggered instead. Plugins can access the exception by calling `EventDispatch::getException`.
-A `handle-error` listener or a `finalize` listener can unset the exception by calling `CommandDispatch::setException(null)`. When all listeners are informed about the error
+A `handle-error` listener or a `finalize` listener can unset the exception by calling `CommandDispatch::setException(null)`.
+When all listeners are informed about the error and no one has unset the exception
 the EventBus throws a Prooph\ServiceBus\Exception\EventDispatchException to inform the outside world about the error.
+
 - `finalize`: This process event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
 
