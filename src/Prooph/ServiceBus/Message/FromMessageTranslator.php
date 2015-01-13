@@ -11,15 +11,19 @@
 
 namespace Prooph\ServiceBus\Message;
 
-use Prooph\ServiceBus\Command;
-use Prooph\ServiceBus\Event;
-use Prooph\ServiceBus\Process\CommandDispatch;
-use Prooph\ServiceBus\Process\EventDispatch;
+use Prooph\ServiceBus\Process\MessageDispatch;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class FromMessageTranslator
+ *
+ * If incoming message is of type Prooph\ServiceBus\Message\MessageInterface
+ * it is translated to Prooph\ServiceBus\Command|mixed or Prooph\ServiceBus\Event|mixed
+ * depending on the Prooph\ServiceBus\Message\MessageHeader::TYPE_* and if the message name is an existing class
+ * 
+ * @see FromMessageTranslator::fromMessageToCommand
+ * @see FromMessageTranslator::fromMessageToEvent
  *
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <kontakt@codeliner.ws>
@@ -27,43 +31,29 @@ use Zend\EventManager\EventManagerInterface;
 class FromMessageTranslator extends AbstractListenerAggregate
 {
     /**
+     * Plugin listens on MessageDispatch::INITIALIZE with priority 100
+     *
+     * @param MessageDispatch $messageDispatch
+     */
+    public function __invoke(MessageDispatch $messageDispatch)
+    {
+        $message = $messageDispatch->getMessage();
+
+        if ($message instanceof MessageInterface) {
+            $message = $this->translateFromMessage($message);
+
+            $messageDispatch->setMessage($message);
+        }
+    }
+
+    /**
      * @param EventManagerInterface $events
      *
      * @return void
      */
     public function attach(EventManagerInterface $events)
     {
-        $identifiers = $events->getIdentifiers();
-
-        if (in_array('command_bus', $identifiers)) {
-            $this->listeners[] = $events->attach(CommandDispatch::INITIALIZE, array($this, 'onInitializeCommandDispatch'), 100);
-        }
-
-        if (in_array('event_bus', $identifiers)) {
-            $this->listeners[] = $events->attach(EventDispatch::INITIALIZE, array($this, 'onInitializeEventDispatch'), 100);
-        }
-    }
-
-    public function onInitializeCommandDispatch(CommandDispatch $commandDispatch)
-    {
-        $message = $commandDispatch->getCommand();
-
-        if ($message instanceof MessageInterface) {
-            $command = $this->translateFromMessage($message);
-
-            $commandDispatch->setCommand($command);
-        }
-    }
-
-    public function onInitializeEventDispatch(EventDispatch $eventDispatch)
-    {
-        $message = $eventDispatch->getEvent();
-
-        if ($message instanceof MessageInterface) {
-            $event = $this->translateFromMessage($message);
-
-            $eventDispatch->setEvent($event);
-        }
+        $events->attach(MessageDispatch::INITIALIZE, $this, 100);
     }
 
     /**
