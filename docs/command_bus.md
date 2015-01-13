@@ -106,8 +106,8 @@ your command handlers with the command. Mix and match the plugins provided by PS
 # Plugins
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
-Zend\EventManager\ListenerAggregateInterface (use the methods `�tilize` and `deactivate` to attach/detach them) or an instance of
-Zend\Log\LoggerInterface (also use methods `�tilize` and `deactivate` to attach/detach it).
+Zend\EventManager\ListenerAggregateInterface (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
+Zend\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on a CommandDispatch event is:
 
 ```php
