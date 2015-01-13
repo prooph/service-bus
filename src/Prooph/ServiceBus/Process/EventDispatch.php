@@ -65,14 +65,11 @@ class EventDispatch extends MessageDispatch
 
     /**
      * @param string $eventName
-     * @return EventDispatch
      * @throws \InvalidArgumentException
      */
     public function setEventName($eventName)
     {
         $this->setMessageName($eventName);
-
-        return $this;
     }
 
     /**
@@ -85,12 +82,10 @@ class EventDispatch extends MessageDispatch
 
     /**
      * @param mixed $event
-     * @return EventDispatch
      */
     public function setEvent($event)
     {
         $this->setMessage($event);
-        return $this;
     }
 
     /**
@@ -113,7 +108,6 @@ class EventDispatch extends MessageDispatch
     /**
      * @param array(index => callable|string|object) $eventHandlerCollection
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @return EventDispatch
      */
     public function setEventListeners(array $eventHandlerCollection)
     {
@@ -128,15 +122,12 @@ class EventDispatch extends MessageDispatch
         foreach ($eventHandlerCollection as $eventHandler) {
             $this->addEventListener($eventHandler);
         }
-
-        return $this;
     }
 
     /**
      * @param callable|string|object $eventListener
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @throws \InvalidArgumentException
-     * @return EventDispatch
      */
     public function addEventListener($eventListener)
     {
@@ -154,13 +145,10 @@ class EventDispatch extends MessageDispatch
         }
 
         $this->getEventListeners()[] = $eventListener;
-
-        return $this;
     }
 
     /**
      * @param callable|string|object $eventListener
-     * @return EventDispatch
      * @throws \InvalidArgumentException
      */
     public function setCurrentEventListener($eventListener)
@@ -173,8 +161,6 @@ class EventDispatch extends MessageDispatch
         }
 
         $this->setParam('current-event-listener', $eventListener);
-
-        return $this;
     }
 
     /**

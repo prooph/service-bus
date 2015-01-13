@@ -64,14 +64,11 @@ class CommandDispatch extends MessageDispatch
 
     /**
      * @param string $commandName
-     * @return CommandDispatch
      * @throws \InvalidArgumentException
      */
     public function setCommandName($commandName)
     {
         $this->setMessageName($commandName);
-
-        return $this;
     }
 
     /**
@@ -84,12 +81,10 @@ class CommandDispatch extends MessageDispatch
 
     /**
      * @param mixed $command
-     * @return CommandDispatch
      */
     public function setCommand($command)
     {
         $this->setMessage($command);
-        return $this;
     }
 
     /**
@@ -102,7 +97,6 @@ class CommandDispatch extends MessageDispatch
 
     /**
      * @param string|object|callable $commandHandler
-     * @return CommandDispatch
      * @throws \InvalidArgumentException
      */
     public function setCommandHandler($commandHandler)
@@ -115,8 +109,6 @@ class CommandDispatch extends MessageDispatch
         }
 
         $this->setParam("command-handler", $commandHandler);
-
-        return $this;
     }
 }
  
