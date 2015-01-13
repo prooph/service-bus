@@ -11,9 +11,11 @@
 
 namespace Prooph\ServiceBus\Router;
 
+use Assert\Assertion;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
+use Prooph\ServiceBus\Process\MessageDispatch;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
 
@@ -63,15 +65,7 @@ class RegexRouter extends AbstractListenerAggregate
      */
     public function attach(EventManagerInterface $events)
     {
-        $identifiers = $events->getIdentifiers();
-
-        if (in_array('command_bus', $identifiers)) {
-            $this->listeners[] = $events->attach(CommandDispatch::ROUTE, array($this, 'onRouteCommand'), 100);
-        }
-
-        if (in_array('event_bus', $identifiers)) {
-            $this->listeners[] = $events->attach(EventDispatch::ROUTE, array($this, 'onRouteEvent'), 100);
-        }
+        $this->listeners[] = $events->attach(MessageDispatch::ROUTE, [$this, 'onRoute'], 100);
     }
 
     /**
@@ -81,7 +75,8 @@ class RegexRouter extends AbstractListenerAggregate
      */
     public function route($pattern)
     {
-        \Assert\that($pattern)->notEmpty()->string();
+        Assertion::string($pattern);
+        Assertion::notEmpty($pattern);
 
         if (! is_null($this->tmpPattern)) {
             throw new RuntimeException(sprintf("pattern %s is not mapped to a handler.", $this->tmpPattern));
@@ -122,10 +117,19 @@ class RegexRouter extends AbstractListenerAggregate
     }
 
     /**
+     * @param MessageDispatch $messageDispatch
+     */
+    public function onRoute(MessageDispatch $messageDispatch)
+    {
+        if ($messageDispatch instanceof CommandDispatch) $this->onRouteCommand($messageDispatch);
+        else $this->onRouteEvent($messageDispatch);
+    }
+
+    /**
      * @param CommandDispatch $commandDispatch
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function onRouteCommand(CommandDispatch $commandDispatch)
+    private function onRouteCommand(CommandDispatch $commandDispatch)
     {
         if (is_null($commandDispatch->getCommandName())) {
             $commandDispatch->getLogger()->notice(
@@ -158,7 +162,7 @@ class RegexRouter extends AbstractListenerAggregate
     /**
      * @param EventDispatch $eventDispatch
      */
-    public function onRouteEvent(EventDispatch $eventDispatch)
+    private function onRouteEvent(EventDispatch $eventDispatch)
     {
         if (is_null($eventDispatch->getEventName())) {
             $eventDispatch->getLogger()->notice(
