@@ -55,7 +55,9 @@ class EventBus implements \Zend\EventManager\EventManagerAwareInterface
 The public api of the EventBus is very simple. Four of the five methods deal with adding or removing plugins and the last
 one triggers the dispatch process of the given event.
 
-** Note ** For the event-driven dispatch process the term `event` is used, too.  For example the first argument of the
+** Note: Only `dispatch` is implemented by the EventBus the four other public methods are provided by the basic MessageBus implementation.
+
+** Note: For the event-driven dispatch process the term `event` is used, too.  For example the first argument of the
 method `on` is called "eventName" or plugins should implement the Zend\EventManager\ListenerAggregateInterface. But these
 namings have nothing to do with the event messages dispatched by the EventBus. The same wording is used to describe something that happens
 now (the dispatch process) and something that happened in the past (the event message).
@@ -84,7 +86,8 @@ calling the method `EventDispatch::getCurrentEventListener` and the event messag
 - `invoke-listener`: Within the listener list loop the EventBus triggers the `invoke-listener` process event. The EventBus always triggers the event. It performs no default action even if the
 event message listener is a callable. Plugins can access the currently active listener from the list by requesting it from the `EventDispatch::getCurrentEventListener` method.
 - `handle-error`: If at any time a plugin or the EventBus itself throws an exception it is caught and passed to the EventDispatch. The normal process event chain breaks and a
-`handle-error` event is triggered instead. Plugins can access the exception by calling `EventDispatch::getException`. When all interested plugins are informed about the error
+`handle-error` event is triggered instead. Plugins can access the exception by calling `EventDispatch::getException`.
+A `handle-error` listener or a `finalize` listener can unset the exception by calling `CommandDispatch::setException(null)`. When all listeners are informed about the error
 the EventBus throws a Prooph\ServiceBus\Exception\EventDispatchException to inform the outside world about the error.
 - `finalize`: This process event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
@@ -100,8 +103,8 @@ your event message listeners with the event message. Mix and match the plugins p
 # Plugins
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
-Zend\EventManager\ListenerAggregateInterface (use the methods `ùtilize` and `deactivate` to attach/detach them) or an instance of
-Zend\Log\LoggerInterface (also use methods `ùtilize` and `deactivate` to attach/detach it).
+Zend\EventManager\ListenerAggregateInterface (use the methods `ï¿½tilize` and `deactivate` to attach/detach them) or an instance of
+Zend\Log\LoggerInterface (also use methods `ï¿½tilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on an EventDispatch is:
 
 ```php

@@ -18,7 +18,7 @@ external system in your test environment with a connection to a mocked command h
 # API
 
 ```php
-class CommandBus implements \Zend\EventManager\EventManagerAwareInterface
+class CommandBus extends MessageBus
 {
     /**
      * @param \Zend\EventManager\ListenerAggregateInterface|\Zend\Log\LoggerInterface $plugin
@@ -59,6 +59,8 @@ class CommandBus implements \Zend\EventManager\EventManagerAwareInterface
 The public api of the CommandBus is very simple. Four of the five methods deal with adding or removing plugins and the last
 one triggers the dispatch process of the given command.
 
+** Note: Only `dispatch` is implemented by the CommandBus the four other public methods are provided by the basic MessageBus implementation.
+
 # Event-Driven Dispatch
 
 The command dispatch is an event-driven process provided by [Zend\EventManager](http://framework.zend.com/manual/2.0/en/modules/zend.event-manager.event-manager.html).
@@ -81,8 +83,9 @@ representing an alias of the command handler that can be used by a DIC to locate
 - `invoke-handler`: Having the command handler in place it's time to invoke it with the command. The CommandBus always triggers the event. It performs no default action even if the
 command handler is a callable.
 - `handle-error`: If at any time a plugin or the CommandBus itself throws an exception it is caught and passed to the CommandDispatch. The normal event chain breaks and a
-`handle-error` event is triggered instead. Listeners can access the exception by calling `CommandDispatch::getException`. When all listeners are informed about the error
-the CommandBus throws a Prooph\ServiceBus\Exception\CommandDispatchException to inform the outside world about the error.
+`handle-error` event is triggered instead. Listeners can access the exception by calling `CommandDispatch::getException`.
+A `handle-error` listener or a `finalize` listener can unset the exception by calling `CommandDispatch::setException(null)`.
+When all listeners are informed about the error and no one has unset the exception the CommandBus throws a Prooph\ServiceBus\Exception\CommandDispatchException to inform the outside world about the error.
 - `finalize`: This event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
 
@@ -97,8 +100,8 @@ your command handlers with the command. Mix and match the plugins provided by PS
 # Plugins
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
-Zend\EventManager\ListenerAggregateInterface (use the methods `ùtilize` and `deactivate` to attach/detach them) or an instance of
-Zend\Log\LoggerInterface (also use methods `ùtilize` and `deactivate` to attach/detach it).
+Zend\EventManager\ListenerAggregateInterface (use the methods `ï¿½tilize` and `deactivate` to attach/detach them) or an instance of
+Zend\Log\LoggerInterface (also use methods `ï¿½tilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on a CommandDispatch event is:
 
 ```php
