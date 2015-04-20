@@ -28,9 +28,9 @@
         "codeliner/php-equalsbuilder": "~1.1",
         "codeliner/array-reader": "~1.1",
         "beberlei/assert": "~2.0",
-        "zendframework/zend-servicemanager" : "2.3.*",
-        "zendframework/zend-eventmanager" : "2.3.*",
-        "zendframework/zend-serializer" : "2.3.*"
+        "zendframework/zend-servicemanager" : "2.*",
+        "zendframework/zend-eventmanager" : "2.*",
+        "zendframework/zend-serializer" : "2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
