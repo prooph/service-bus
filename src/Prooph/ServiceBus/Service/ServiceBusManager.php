@@ -119,7 +119,7 @@ class ServiceBusManager extends ServiceManager
 
         $event = new Event(__FUNCTION__, $this, $argv);
 
-        $result = $this->events()->triggerUntil($event, function ($res) {
+        $result = $this->events()->trigger($event, function ($res) {
             return is_bool($res)? $res : false;
         });
 
@@ -222,7 +222,7 @@ class ServiceBusManager extends ServiceManager
 
         $event = new Event("route_command", $this, $argv);
 
-        $result = $this->events()->triggerUntil($event, function ($res) {
+        $result = $this->events()->trigger($event, function ($res) {
             return is_bool($res)? $res : false;
         });
 
@@ -308,7 +308,7 @@ class ServiceBusManager extends ServiceManager
 
         $routeEvent = new Event("route_event", $this, $argv);
 
-        $result = $this->events()->triggerUntil($routeEvent, function ($res) {
+        $result = $this->events()->trigger($routeEvent, function ($res) {
             return is_bool($res)? $res : false;
         });
 
@@ -402,7 +402,7 @@ class ServiceBusManager extends ServiceManager
 
         $event = new Event(__FUNCTION__ . ".pre", $this, $argv);
 
-        $result = $this->events()->triggerUntil($event, function ($res) {
+        $result = $this->events()->trigger($event, function ($res) {
             return $res instanceof CommandBusInterface;
         });
 
@@ -458,7 +458,7 @@ class ServiceBusManager extends ServiceManager
 
         $event = new Event(__FUNCTION__ . ".pre", $this, $argv);
 
-        $result = $this->events()->triggerUntil($event, function ($res) {
+        $result = $this->events()->trigger($event, function ($res) {
             return $res instanceof EventBusInterface;
         });
 

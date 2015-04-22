@@ -36,7 +36,7 @@ class CommandFactory implements CommandFactoryInterface
      */
     public function fromMessage(MessageInterface $aMessage)
     {
-        $result = $this->getLifeCycleEvents()->triggerUntil(
+        $result = $this->getLifeCycleEvents()->trigger(
             __FUNCTION__,
             $this,
             array('message' => $aMessage),

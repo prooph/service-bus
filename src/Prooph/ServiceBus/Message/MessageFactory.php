@@ -47,7 +47,7 @@ class MessageFactory implements MessageFactoryInterface
             );
         }
 
-        $result = $this->getLifeCycleEvents()->triggerUntil(
+        $result = $this->getLifeCycleEvents()->trigger(
             __FUNCTION__,
             $this,
             array('command' => $aCommand, 'sender' => $aSenderName),
@@ -87,7 +87,7 @@ class MessageFactory implements MessageFactoryInterface
             );
         }
 
-        $result = $this->getLifeCycleEvents()->triggerUntil(
+        $result = $this->getLifeCycleEvents()->trigger(
             __FUNCTION__,
             $this,
             array('event' => $anEvent, 'sender' => $aSenderName),
