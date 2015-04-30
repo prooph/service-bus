@@ -17,7 +17,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Zend\Stdlib\CallbackHandler;
 
 /**

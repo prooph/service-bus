@@ -11,7 +11,9 @@
 
 namespace Prooph\ServiceBusTest\Process;
 
+use Prooph\Common\Logger\ZF2\PsrZF2Logger;
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBusTest\TestCase;
 use Zend\Log\Logger;
@@ -138,10 +140,11 @@ class CommandDispatchTest extends TestCase
 
     /**
      * @test
+     * @expectedException RuntimeException
      */
-    public function it_has_always_a_logger_available()
+    public function it_throws_exception_if_no_is_logger_available()
     {
-        $this->assertInstanceOf('Zend\Log\LoggerInterface', $this->getNewCommandDispatch()->getLogger());
+        $this->getNewCommandDispatch()->getLogger();
     }
 
     /**
@@ -153,7 +156,7 @@ class CommandDispatchTest extends TestCase
 
         $this->assertFalse($commandDispatch->isLoggingEnabled());
 
-        $commandDispatch->useLogger(new Logger());
+        $commandDispatch->useLogger(new PsrZF2Logger(new Logger()));
 
         $this->assertTrue($commandDispatch->isLoggingEnabled());
     }

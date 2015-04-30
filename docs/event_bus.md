@@ -17,14 +17,14 @@ dispatching as well as asynchronous/remote event dispatching by using suitable p
 class EventBus implements \Zend\EventManager\EventManagerAwareInterface
 {
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Zend\Log\LoggerInterface $plugin
+     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
     public function utilize($plugin);
 
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Zend\Log\LoggerInterface $plugin
+     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
@@ -111,7 +111,7 @@ your event message listeners with the event message. Mix and match the plugins p
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
 Zend\EventManager\ListenerAggregateInterface (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
-Zend\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
+Psr\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on an EventDispatch is:
 
 ```php
@@ -123,9 +123,7 @@ own plugins. It is really straight forward.
 
 # Logging
 
-If you add a Zend\Log\LoggerInterface as a plugin, it is passed to the EventDispatch and available during the dispatch so the
-plugins can log their activities. If no logger is provided the EventDispatch uses a /dev/null logger. Thus plugins can
-invoke the logger without the need to consider if it is really available or not.
-
+If you add a Psr\Log\LoggerInterface as a plugin, it is passed to the EventDispatch and available during the dispatch so the
+plugins can log their activities.
 
 

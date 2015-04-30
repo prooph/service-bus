@@ -21,14 +21,14 @@ external system in your test environment with a connection to a mocked command h
 class CommandBus extends MessageBus
 {
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Zend\Log\LoggerInterface $plugin
+     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
     public function utilize($plugin);
 
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Zend\Log\LoggerInterface $plugin
+     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
@@ -107,7 +107,7 @@ your command handlers with the command. Mix and match the plugins provided by PS
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
 Zend\EventManager\ListenerAggregateInterface (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
-Zend\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
+Psr\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on a CommandDispatch event is:
 
 ```php
@@ -119,9 +119,8 @@ own plugins. It is really straight forward.
 
 # Logging
 
-If you add a Zend\Log\LoggerInterface as a plugin it is passed to the CommandDispatch and available during the dispatch so the
-listener plugins can log their activities. If no logger is provided the CommandDispatch uses a /dev/null logger. Thus plugins can
-invoke the logger without the need to consider if it is really available or not.
+If you add a Psr\Log\LoggerInterface as a plugin it is passed to the CommandDispatch and available during the dispatch so the
+listener plugins can log their activities.
 
 
 

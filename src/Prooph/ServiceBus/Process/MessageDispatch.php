@@ -12,8 +12,9 @@
 namespace Prooph\ServiceBus\Process;
 
 use Assert\Assertion;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Zend\EventManager\Event as ProcessEvent;
-use Zend\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Zend\Log\Logger;
 
 /**
@@ -78,13 +79,13 @@ class MessageDispatch extends ProcessEvent
     }
 
     /**
+     * @throws \Prooph\ServiceBus\Exception\RuntimeException
      * @return LoggerInterface
      */
     public function getLogger()
     {
         if (is_null($this->logger)) {
-            $this->logger = new Logger();
-            $this->logger->addWriter('null');
+            throw new RuntimeException('No logger available');
         }
 
         return $this->logger;
@@ -117,7 +118,7 @@ class MessageDispatch extends ProcessEvent
     }
 
     /**
-     * @return null|Exception
+     * @return null|\Exception
      */
     public function getException()
     {
