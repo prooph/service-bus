@@ -86,21 +86,5 @@ class CommandBus extends MessageBus
 
         $this->triggerFinalize($commandDispatch);
     }
-
-    /**
-     * Inject an EventManager instance
-     *
-     * @param  EventManagerInterface $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventDispatcher(EventManagerInterface $actionEventDispatcher)
-    {
-        $actionEventDispatcher->addIdentifiers(array(
-            'command_bus',
-            __CLASS__
-        ));
-
-        parent::setActionEventDispatcher($actionEventDispatcher);
-    }
 }
  
