@@ -1,7 +1,7 @@
 PSB - ProophServiceBus
 ======================
 
-PHP Enterprise Service Bus Facade supporting CQRS
+PHP 5.5+ Enterprise Service Bus Facade supporting CQRS
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
