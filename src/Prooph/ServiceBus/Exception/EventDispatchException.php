@@ -31,7 +31,7 @@ class EventDispatchException extends RuntimeException
             sprintf(
                 "Event dispatch failed during %s phase.%s",
                 $eventDispatch->getName(),
-                (is_null($previousException))? '' : ' See previous exception for details.'
+                (is_null($previousException))? '' : ' Error: ' . $previousException->getMessage()
             ),
             422,
             $previousException
