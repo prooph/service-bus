@@ -12,7 +12,6 @@
 namespace Prooph\ServiceBus\InvokeStrategy;
 
 use Prooph\ServiceBus\Command;
-use Prooph\ServiceBus\Message\MessageNameProvider;
 
 /**
  * Class HandleCommandStrategy
@@ -34,9 +33,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
             return false;
         }
 
-        $handleMethod = 'handle' . $this->determineCommandName($aCommandOrEvent);
-
-        return method_exists($aHandler, $handleMethod);
+        return method_exists($aHandler, 'handle');
     }
 
     /**
@@ -45,19 +42,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      */
     public function invoke($aHandler, $aCommandOrEvent)
     {
-        $handleMethod = 'handle' . $this->determineCommandName($aCommandOrEvent);
-
-        $aHandler->{$handleMethod}($aCommandOrEvent);
-    }
-
-    /**
-     * @param mixed $aCommand
-     * @return string
-     */
-    protected function determineCommandName($aCommand)
-    {
-        $commandName = ($aCommand instanceof MessageNameProvider)? $aCommand->getMessageName() : get_class($aCommand);
-        return join('', array_slice(explode('\\', $commandName), -1));
+        $aHandler->handle($aCommandOrEvent);
     }
 }
  
