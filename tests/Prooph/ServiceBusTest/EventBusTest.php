@@ -11,6 +11,7 @@
 
 namespace Prooph\ServiceBusTest;
 
+use Prooph\Common\ServiceLocator\ZF2\Zf2ServiceManagerProxy;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\InvokeStrategy\ForwardToMessageDispatcherStrategy;
@@ -18,7 +19,7 @@ use Prooph\ServiceBus\Message\FromMessageTranslator;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\ToMessageTranslator;
 use Prooph\ServiceBus\Router\EventRouter;
-use Prooph\ServiceBus\ServiceLocator\Zf2ServiceLocatorProxy;
+use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\Mock\SomethingDoneInvokeStrategy;
 use Prooph\ServiceBusTest\Mock\SomethingDoneListener;
@@ -78,11 +79,11 @@ class EventBusTest extends TestCase
         //Set up a ZF2 ServiceLocator to locate the event listener
         //In this scenario it would be easier to route the event directly to the listener instance
         //but we want to test the full stack
-        $serviceLocator = new ServiceManager();
+        $sm = new ServiceManager();
 
-        $serviceLocator->setService('something_done_listener', $this->somethingDoneListener);
+        $sm->setService('something_done_listener', $this->somethingDoneListener);
 
-        $eventBus->utilize(new Zf2ServiceLocatorProxy($serviceLocator));
+        $eventBus->utilize(new ServiceLocatorProxy(Zf2ServiceManagerProxy::proxy($sm)));
 
         //Register appropriate invoke strategy
         $eventBus->utilize(new SomethingDoneInvokeStrategy());

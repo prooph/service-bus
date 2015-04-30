@@ -11,31 +11,31 @@
 
 namespace Prooph\ServiceBus\ServiceLocator;
 
+use Prooph\Common\ServiceLocator\ServiceLocator;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class Zf2ServiceLocatorProxy
+ * Class ServiceLocatorProxy
  *
  * @package Prooph\ServiceBus\ServiceLocator
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class Zf2ServiceLocatorProxy extends AbstractListenerAggregate
+class ServiceLocatorProxy extends AbstractListenerAggregate
 {
     /**
-     * @var ServiceLocatorInterface
+     * @var ServiceLocator
      */
-    protected $zf2ServiceLocator;
+    protected $serviceLocator;
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ServiceLocator $serviceLocator
      */
-    public function __construct(ServiceLocatorInterface $serviceLocator)
+    public function __construct(ServiceLocator $serviceLocator)
     {
-        $this->zf2ServiceLocator = $serviceLocator;
+        $this->serviceLocator = $serviceLocator;
     }
     /**
      * @param EventManagerInterface $events
@@ -52,8 +52,8 @@ class Zf2ServiceLocatorProxy extends AbstractListenerAggregate
     {
         $commandHandlerAlias = $commandDispatch->getCommandHandler();
 
-        if (is_string($commandHandlerAlias) && $this->zf2ServiceLocator->has($commandHandlerAlias)) {
-            $commandDispatch->setCommandHandler($this->zf2ServiceLocator->get($commandHandlerAlias));
+        if (is_string($commandHandlerAlias) && $this->serviceLocator->has($commandHandlerAlias)) {
+            $commandDispatch->setCommandHandler($this->serviceLocator->get($commandHandlerAlias));
         }
     }
 
@@ -61,8 +61,8 @@ class Zf2ServiceLocatorProxy extends AbstractListenerAggregate
     {
         $eventListenerAlias = $eventDispatch->getCurrentEventListener();
 
-        if (is_string($eventListenerAlias) && $this->zf2ServiceLocator->has($eventListenerAlias)) {
-            $eventDispatch->setCurrentEventListener($this->zf2ServiceLocator->get($eventListenerAlias));
+        if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
+            $eventDispatch->setCurrentEventListener($this->serviceLocator->get($eventListenerAlias));
         }
     }
 }

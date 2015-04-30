@@ -11,6 +11,7 @@
 
 namespace Prooph\ServiceBusTest;
 
+use Prooph\Common\ServiceLocator\ZF2\Zf2ServiceManagerProxy;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\InvokeStrategy\ForwardToMessageDispatcherStrategy;
@@ -18,7 +19,7 @@ use Prooph\ServiceBus\Message\FromMessageTranslator;
 use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
 use Prooph\ServiceBus\Message\ToMessageTranslator;
 use Prooph\ServiceBus\Router\CommandRouter;
-use Prooph\ServiceBus\ServiceLocator\Zf2ServiceLocatorProxy;
+use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\DoSomethingHandler;
 use Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy;
@@ -78,11 +79,11 @@ class CommandBusTest extends TestCase
         //Set up a ZF2 ServiceLocator to locate the command handler
         //In this scenario it would be easier to route the command directly to the handler instance
         //but we want to test the full stack
-        $serviceLocator = new ServiceManager();
+        $sm = new ServiceManager();
 
-        $serviceLocator->setService('do_something_handler', $this->doSomethingHandler);
+        $sm->setService('do_something_handler', $this->doSomethingHandler);
 
-        $commandBus->utilize(new Zf2ServiceLocatorProxy($serviceLocator));
+        $commandBus->utilize(new ServiceLocatorProxy(Zf2ServiceManagerProxy::proxy($sm)));
 
         //Register appropriate invoke strategy
         $commandBus->utilize(new DoSomethingInvokeStrategy());

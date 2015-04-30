@@ -11,25 +11,26 @@
 
 namespace Prooph\ServiceBusTest\ServiceLocator;
 
+use Prooph\Common\ServiceLocator\ZF2\Zf2ServiceManagerProxy;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
-use Prooph\ServiceBus\ServiceLocator\Zf2ServiceLocatorProxy;
+use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
 use Prooph\ServiceBusTest\TestCase;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 
 /**
- * Class Zf2ServiceLocatorProxyTest
+ * Class ServiceLocatorProxyTest
  *
  * @package Prooph\ServiceBusTest\ServiceLocator
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class Zf2ServiceLocatorProxyTest extends TestCase
+class ServiceLocatorProxyTest extends TestCase
 {
     /**
-     * @var Zf2ServiceLocatorProxy
+     * @var ServiceLocatorProxy
      */
-    protected $zf2ServiceLocatorProxy;
+    protected $serviceLocatorProxy;
 
     protected function setUp()
     {
@@ -42,7 +43,7 @@ class Zf2ServiceLocatorProxyTest extends TestCase
 
         $sm = new ServiceManager($config);
 
-        $this->zf2ServiceLocatorProxy = new Zf2ServiceLocatorProxy($sm);
+        $this->serviceLocatorProxy = new ServiceLocatorProxy(Zf2ServiceManagerProxy::proxy($sm));
     }
 
     /**
@@ -56,7 +57,7 @@ class Zf2ServiceLocatorProxyTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::LOCATE_HANDLER);
 
-        $this->zf2ServiceLocatorProxy->onLocateCommandHandler($commandDispatch);
+        $this->serviceLocatorProxy->onLocateCommandHandler($commandDispatch);
 
         $this->assertInstanceOf('Prooph\ServiceBusTest\Mock\DoSomethingHandler', $commandDispatch->getCommandHandler());
     }
@@ -72,7 +73,7 @@ class Zf2ServiceLocatorProxyTest extends TestCase
 
         $eventDispatch->setName(EventDispatch::LOCATE_LISTENER);
 
-        $this->zf2ServiceLocatorProxy->onLocateEventListener($eventDispatch);
+        $this->serviceLocatorProxy->onLocateEventListener($eventDispatch);
 
         $this->assertInstanceOf('Prooph\ServiceBusTest\Mock\SomethingDoneListener', $eventDispatch->getCurrentEventListener());
     }

@@ -94,9 +94,8 @@ by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/InvokeStrateg
 ## Available Strategies
 
 - `CallbackStrategy`: Is responsible for invoking callable message handlers, can be used together with a CommandBus and EventBus
-- `HandleCommandStrategy`: Determines the short class name of a command `My\Command\PayOrder becomes PayOrder` and prefix the short class name with
-a `handle`. A method called this way needs to exist on a command handler: `OrderHandler::handlePayOrder`
-- `OnEventStrategy`: Behave similar to the HandleCommandStrategy but prefixes the short class name of an event with `on`. A listener should
+- `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a message handler. Forces the rule that a command handler should only be responsible for handling one specific command.
+- `OnEventStrategy`: Prefixes the short class name of an event with `on`. A listener should
 have a public method named this way: OrderCartUpdater::onArticleWasBought.
 - `ForwardToMessageDispatcherStrategy`: This is a special invoke strategy that is capable of translating a command or event to
 a [StandardMessage](../src/Prooph/ServiceBus/Message/StandardMessage.php) and invoke a [MessageDispatcher](message_dispatcher.md).
@@ -126,12 +125,14 @@ message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInte
 *Note: If the message name is an existing class it is used instead of the default implementation.
        But the constructor of the class should accept the same arguments as the default implementation does, otherwise you need to use your own message translator.
 
-# Zf2ServiceLocatorProxy
+# ServiceLocatorProxy
 
-PSB ships with out-of-the-box support for [Zend\ServiceManager](http://framework.zend.com/manual/2.0/en/modules/zend.service-manager.intro.html). You can use the
-[Zf2ServiceLocatorProxy](../src/Prooph/ServiceBus/ServiceLocator/Zf2ServiceLocatorProxy.php) to delegate the localization of a message handler instance to a ServiceManager instance.
+This plugin uses a Prooph\Common\ServiceLocator implementation to lazy instantiate command handlers and event listeners.
+The following example uses a ZF2 ServiceManager as a DIC and illustrates how it can be used together with a command bus:
 
 ```php
+use Zend\ServiceManager\ServiceManager;
+use Prooph\Common\ServiceLocator\ZF2\ZF2ServiceManagerProxy;
 
 //We tell the ServiceMaanger that it should provide an instance of My\Command\DoSomethingHandler
 //when we request it with the alias My.Command.DoSomethingHandler
@@ -142,7 +143,8 @@ $serviceManager = new ServiceManager(new Config([
     ]
 ]));
 
-$commandBus->utilize(new Zf2ServiceLocatorProxy($serviceManager));
+//The ZF2ServiceManagerProxy implements Prooph\Common\ServiceLocator
+$commandBus->utilize(new ServiceLocatorProxy(ZF2ServiceManagerProxy::proxy($serviceManager)));
 
 $router = new CommandRouter();
 
@@ -154,5 +156,4 @@ $commandBus->utilize($router);
 
 With this technique you can configure the routing for all your messages without the need to create all the message handlers
 on every request. Only the responsible command handler or all interested event listeners (when dealing with event messages)
-are lazy loaded by the ServiceManager. If you prefer to use another DIC then write your own proxy for it. Simply copy the
-Zf2ServiceLocatorProxy and adapt it to handle your DIC.
+are lazy loaded by the ServiceManager. If you prefer to use another DIC then write your own proxy which implements Prooph\Common\ServiceLocator.
