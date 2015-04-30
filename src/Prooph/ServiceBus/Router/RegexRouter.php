@@ -12,12 +12,13 @@
 namespace Prooph\ServiceBus\Router;
 
 use Assert\Assertion;
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
 use Prooph\ServiceBus\Process\MessageDispatch;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class RegexRouter
@@ -25,8 +26,10 @@ use Zend\EventManager\EventManagerInterface;
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class RegexRouter extends AbstractListenerAggregate
+class RegexRouter implements ActionEventListenerAggregate
 {
+    use DetachAggregateHandlers;
+
     const ALL = '/.*/';
 
     /**
@@ -57,15 +60,13 @@ class RegexRouter extends AbstractListenerAggregate
     }
 
     /**
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
+     * @param ActionEventDispatcher $events
      *
      * @return void
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(ActionEventDispatcher $events)
     {
-        $this->listeners[] = $events->attach(MessageDispatch::ROUTE, [$this, 'onRoute'], 100);
+        $this->trackHandler($events->attachListener(MessageDispatch::ROUTE, [$this, 'onRoute'], 100));
     }
 
     /**

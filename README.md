@@ -5,28 +5,21 @@ PHP Enterprise Service Bus Facade supporting CQRS
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
-# The Heart Of Prooph Link
-
-Prooph software GmbH is maintaining the open source software [prooph link](https://github.com/prooph/link),
-a data linking and workflow processing application based on PHP 5.5+ and some great libraries from the PHP universe.
-Four of these libraries are developed and maintained directly by us. ProophServiceBus is one of them. The others are
-[ProophEventSourcing](https://github.com/prooph/event-sourcing), [ProophEventStore](https://github.com/prooph/event-store) and [prooph processing](https://github.com/prooph/processing).
-
 Why another CQRS/Messaging library?
 -----------------------------------
 
-The goal of ProophServiceBus is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or [RESTful Messaging API](https://github.com/prooph/psb-http-dispatcher).
-It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins for additional functionality. You can easily hook into the process and adjust it to meet your needs.
+The goal of prooph/service-bus (PSB) is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or [RESTful Messaging API](https://github.com/prooph/psb-http-dispatcher).
+It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins for additional functionality.
 
 Installation
 ------------
 
-You can install ProophServiceBus via composer by adding `"prooph/service-bus": "~1.0"` as requirement to your composer.json.
+You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~3.0"` as requirement to your composer.json.
 
 Quick Start
 -----------
 
-The simplest way to get started is to set up a command or event bus with the default components provided by ProophServiceBus.
+The simplest way to get started is to set up a command or event bus with the default components provided by prooph/service-bus.
 
 ```php
 <?php

@@ -5,8 +5,8 @@ The EventBus
 
 # Usage
 
-When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) you need a way to inform the outside
-about events that happened in your write model be it read model generators or other systems that rely on the information.
+When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) you need a way to inform the outside world
+about events that happened in your write model be it your read model generators or other systems that rely on the information.
 An EventBus is responsible for dispatching event messages to all interested listeners. If a listener is part of another system
 the event may need to be send to a remote interface. The Prooph\ServiceBus\EventBus is capable to handle synchronous event
 dispatching as well as asynchronous/remote event dispatching by using suitable plugins.
@@ -14,17 +14,17 @@ dispatching as well as asynchronous/remote event dispatching by using suitable p
 # API
 
 ```php
-class EventBus implements \Zend\EventManager\EventManagerAwareInterface
+class EventBus extends MessageBus
 {
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
+     * @param \Prooph\Common\Event\ActionEventListenerAggregate|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
     public function utilize($plugin);
 
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
+     * @param \Prooph\Common\Event\ActionEventListenerAggregate|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
@@ -58,27 +58,27 @@ one triggers the dispatch process of the given event.
 ** Note: Only `dispatch` is implemented by the EventBus the four other public methods are provided by the basic MessageBus implementation.
 
 ** Note: For the event-driven dispatch process the term `event` is used, too.  For example the first argument of the
-method `on` is called "eventName" or plugins should implement the Zend\EventManager\ListenerAggregateInterface. But these
+method `EventBus::on` is called "eventName" or plugins should implement the \Prooph\Common\Event\ActionEventListenerAggregate. But these
 namings have nothing to do with the event messages dispatched by the EventBus. The same wording is used to describe something that happens
-now (the dispatch process) and something that happened in the past (the event message).
+now (triggering an action event) and something that happened in the past (the event message).
 
 # Event-Driven Dispatch
 
-The event dispatch is an event-driven process provided by [Zend\EventManager](http://framework.zend.com/manual/2.0/en/modules/zend.event-manager.event-manager.html).
-When an event is passed to the EventBus via `EventBus::dispatch` a new [EventDispatch](../src/Prooph/ServiceBus/Process/EventDispatch.php) process is created by the EventBus and populated with the given event message.
-Then the EventBus triggers a chain of process events. Listeners can listen on the process events. They always get the EventDispatch as the only argument and they can
-modify it to help the EventBus finish the process. An EventBus without any registered plugins is useless and will throw an exception cause
+The event dispatch is an event-driven process provided by a Prooph\Common\Event\ActionEventDispatcher.
+When an event message is passed to the EventBus via `EventBus::dispatch` a new [EventDispatch](../src/Prooph/ServiceBus/Process/EventDispatch.php) process is created by the EventBus and populated with the given event message.
+Then the EventBus triggers a chain of action events. Plugins can listen on the action events. They always get the EventDispatch as the only argument and they can
+modify it to help the EventBus finish the process. An EventBus without any registered plugins is useless and will throw an exception because
 it does not know which event message listener is interested in the event message.
-Following process events are triggered in the listed order:
+Following action events are triggered in the listed order:
 
-- `initialize`: This process event is triggered right after EventBus::dispatch($event) is invoked. At this time the EventDispatch only contains the event message.
+- `initialize`: This action event is triggered right after EventBus::dispatch($event) is invoked. At this time the EventDispatch only contains the event message.
 
 - `detect-message-name` (optional): Before an event message listener can be located, the EventBus needs to know how the event message is named. Their are two
 possibilities to provide the information. The event message can implement the [Prooph\ServiceBus\Message\MessageNameProvider](../src/Prooph/ServiceBus/Message/MessageNameProvider.php) interface.
-In this case the EventBus picks the message name directly from the event message and inject it manually in the EventDispatch. The `detect-message-name` event is not triggered. If the event message
-does not implement the interface the `detect-message-name` process event is triggered and a plugin needs to inject the name using `EventDispatch::setEventName`.
+In this case the EventBus picks the message name directly from the event message and inject it manually in the EventDispatch. The `detect-message-name` action event is not triggered. If the event message
+does not implement the interface the `detect-message-name` action event is triggered and a plugin needs to inject the name using `EventDispatch::setEventName`.
 
-- `route`: During the `route` event one or more plugins should provide a list of interested event message listeners either in form of ready to use objects or callables or as strings
+- `route`: During the `route` action event one or more plugins should provide a list of interested event message listeners either in form of ready to use objects or callables or as strings
 representing aliases of the event message listeners that can be used by a DIC to locate the listener instances. The plugins should provide and modify the list by using
 `EventDispatch::setEventListeners` and `EventDispatch::addEventListener`.
 
@@ -87,16 +87,16 @@ if the event message listener was provided as a string. If so it triggers a
 `locate-listener` process event. This is the latest time to provide an object or callable as event message listener. The listener alias can be requested from the EventDispatch by
 calling the method `EventDispatch::getCurrentEventListener` and the event message listener instance can be set via method `EventDispatch::setCurrentEventListener` If no plugin was able to provide an instance the EventBus throws an exception.
 
-- `invoke-listener`: Within the listener list loop the EventBus triggers the `invoke-listener` process event. The EventBus always triggers the event. It performs no default action even if the
-event message listener is a callable. Plugins can access the currently active listener from the list by requesting it from the `EventDispatch::getCurrentEventListener` method.
+- `invoke-listener`: Foreach event message listener the EventBus triggers the `invoke-listener` action event. The EventBus always triggers the action event. It performs no default even if the
+event message listener is a callable. Plugins can access the currently active event message listener by requesting it from the `EventDispatch::getCurrentEventListener` method.
 
-- `handle-error`: If at any time a plugin or the EventBus itself throws an exception it is caught and passed to the EventDispatch. The normal process event chain breaks and a
-`handle-error` event is triggered instead. Plugins can access the exception by calling `EventDispatch::getException`.
-A `handle-error` listener or a `finalize` listener can unset the exception by calling `CommandDispatch::setException(null)`.
-When all listeners are informed about the error and no one has unset the exception
+- `handle-error`: If at any time a plugin or the EventBus itself throws an exception it is caught and passed to the EventDispatch. The normal action event chain breaks and a
+`handle-error` action event is triggered instead. Plugins can access the exception by calling `EventDispatch::getException`.
+A `handle-error` plugin or a `finalize` plugin can unset the exception by calling `EventDispatch::setException(null)`.
+When all plugins are informed about the error and no one has unset the exception
 the EventBus throws a Prooph\ServiceBus\Exception\EventDispatchException to inform the outside world about the error.
 
-- `finalize`: This process event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
+- `finalize`: This action event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
 
 # Event Messages
@@ -110,7 +110,7 @@ your event message listeners with the event message. Mix and match the plugins p
 # Plugins
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
-Zend\EventManager\ListenerAggregateInterface (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
+\Prooph\Common\Event\ActionEventListenerAggregate (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
 Psr\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on an EventDispatch is:
 

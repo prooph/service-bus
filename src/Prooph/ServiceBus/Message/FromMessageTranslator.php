@@ -11,9 +11,10 @@
 
 namespace Prooph\ServiceBus\Message;
 
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Process\MessageDispatch;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class FromMessageTranslator
@@ -28,8 +29,10 @@ use Zend\EventManager\EventManagerInterface;
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class FromMessageTranslator extends AbstractListenerAggregate
+class FromMessageTranslator implements ActionEventListenerAggregate
 {
+    use DetachAggregateHandlers;
+
     /**
      * Plugin listens on MessageDispatch::INITIALIZE with priority 100
      *
@@ -47,13 +50,13 @@ class FromMessageTranslator extends AbstractListenerAggregate
     }
 
     /**
-     * @param EventManagerInterface $events
+     * @param ActionEventDispatcher $events
      *
      * @return void
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(ActionEventDispatcher $events)
     {
-        $events->attach(MessageDispatch::INITIALIZE, $this, 100);
+        $this->trackHandler($events->attachListener(MessageDispatch::INITIALIZE, $this, 100));
     }
 
     /**
@@ -62,39 +65,12 @@ class FromMessageTranslator extends AbstractListenerAggregate
      */
     public function translateFromMessage(MessageInterface $aMessage)
     {
-        if ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND) {
-            return $this->fromMessageToCommand($aMessage);
-        } else {
-            return $this->fromMessageToEvent($aMessage);
-        }
-    }
+        $defaultCommandOrEventClass = ($aMessage->header()->type() === MessageHeader::TYPE_COMMAND)?
+            'Prooph\ServiceBus\Command' : 'Prooph\ServiceBus\Event';
 
-    /**
-     * @param MessageInterface $aMessage
-     * @return \Prooph\ServiceBus\Command
-     */
-    protected function fromMessageToCommand(MessageInterface $aMessage)
-    {
-        $commandClass = (class_exists($aMessage->name()))? $aMessage->name() : 'Prooph\ServiceBus\Command';
+        $messageClass = (class_exists($aMessage->name()))? $aMessage->name() : $defaultCommandOrEventClass;
 
-        return new $commandClass(
-            $aMessage->name(),
-            $aMessage->payload(),
-            $aMessage->header()->version(),
-            $aMessage->header()->uuid(),
-            $aMessage->header()->createdOn()
-        );
-    }
-
-    /**
-     * @param MessageInterface $aMessage
-     * @return Event
-     */
-    protected function fromMessageToEvent(MessageInterface $aMessage)
-    {
-        $eventClass = (class_exists($aMessage->name()))? $aMessage->name() : 'Prooph\ServiceBus\Event';
-
-        return new $eventClass(
+        return new $messageClass(
             $aMessage->name(),
             $aMessage->payload(),
             $aMessage->header()->version(),

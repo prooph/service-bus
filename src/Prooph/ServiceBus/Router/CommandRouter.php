@@ -11,10 +11,11 @@
 
 namespace Prooph\ServiceBus\Router;
 
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class CommandRouter
@@ -22,8 +23,10 @@ use Zend\EventManager\EventManagerInterface;
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandRouter extends AbstractListenerAggregate
+class CommandRouter implements ActionEventListenerAggregate
 {
+    use DetachAggregateHandlers;
+
     /**
      * @var array[commandName => commandHandler]
      */
@@ -47,18 +50,13 @@ class CommandRouter extends AbstractListenerAggregate
     }
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
+     * @param ActionEventDispatcher $events
      *
      * @return void
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(ActionEventDispatcher $events)
     {
-        $this->listeners[] = $events->attach(CommandDispatch::ROUTE, array($this, "onRouteCommand"));
+        $this->trackHandler($events->attachListener(CommandDispatch::ROUTE, array($this, "onRouteCommand")));
     }
 
     /**

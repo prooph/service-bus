@@ -11,12 +11,12 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
 
 /**
  * Class AbstractInvokeStrategy
@@ -24,8 +24,10 @@ use Zend\EventManager\ListenerAggregateInterface;
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-abstract class AbstractInvokeStrategy extends AbstractListenerAggregate
+abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 {
+    use DetachAggregateHandlers;
+
     protected $priority = 0;
 
     /**
@@ -44,23 +46,20 @@ abstract class AbstractInvokeStrategy extends AbstractListenerAggregate
     /**
      * Attach one or more listeners
      *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
+     * @param ActionEventDispatcher $events
      *
      * @return void
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(ActionEventDispatcher $events)
     {
-        $events->attach(CommandDispatch::INVOKE_HANDLER, array($this, 'onInvoke'), $this->priority);
-        $events->attach(EventDispatch::INVOKE_LISTENER, array($this, 'onInvoke'), $this->priority);
+        $this->trackHandler($events->attachListener(CommandDispatch::INVOKE_HANDLER, array($this, 'onInvoke'), $this->priority));
+        $this->trackHandler($events->attachListener(EventDispatch::INVOKE_LISTENER, array($this, 'onInvoke'), $this->priority));
     }
 
     /**
-     * @param Event $e
+     * @param ActionEvent $e
      */
-    public function onInvoke(Event $e)
+    public function onInvoke(ActionEvent $e)
     {
         $message = null;
         $handler = null;

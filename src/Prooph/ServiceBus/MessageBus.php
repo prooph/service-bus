@@ -11,14 +11,13 @@
 
 namespace Prooph\ServiceBus;
 
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\ListenerHandler;
+use Prooph\Common\Event\ZF2\Zf2ActionEventDispatcher;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\MessageDispatch;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
 use Psr\Log\LoggerInterface;
-use Zend\Stdlib\CallbackHandler;
 
 /**
  * Class MessageBus
@@ -28,7 +27,7 @@ use Zend\Stdlib\CallbackHandler;
  * @package Prooph\ServiceBus
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-abstract class MessageBus implements EventManagerAwareInterface
+abstract class MessageBus
 {
     /**
      * @var LoggerInterface
@@ -36,7 +35,7 @@ abstract class MessageBus implements EventManagerAwareInterface
     protected $logger;
 
     /**
-     * @var EventManagerInterface
+     * @var ActionEventDispatcher
      */
     protected $events;
 
@@ -47,14 +46,14 @@ abstract class MessageBus implements EventManagerAwareInterface
     abstract public function dispatch($message);
 
     /**
-     * @param ListenerAggregateInterface|LoggerInterface $plugin
+     * @param ActionEventListenerAggregate|LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
     public function utilize($plugin)
     {
-        if ($plugin instanceof ListenerAggregateInterface) {
-            $plugin->attach($this->getEventManager());
+        if ($plugin instanceof ActionEventListenerAggregate) {
+            $plugin->attach($this->getActionEventDispatcher());
         } else if ($plugin instanceof LoggerInterface) {
             $this->logger = $plugin;
         } else {
@@ -71,14 +70,14 @@ abstract class MessageBus implements EventManagerAwareInterface
     }
 
     /**
-     * @param ListenerAggregateInterface|LoggerInterface $plugin
+     * @param ActionEventListenerAggregate|LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
     public function deactivate($plugin)
     {
-        if ($plugin instanceof ListenerAggregateInterface) {
-            $plugin->detach($this->getEventManager());
+        if ($plugin instanceof ActionEventListenerAggregate) {
+            $plugin->detach($this->getActionEventDispatcher());
         } else if ($plugin instanceof LoggerInterface) {
             $this->logger = null;
         } else {
@@ -98,20 +97,20 @@ abstract class MessageBus implements EventManagerAwareInterface
      * @param string $eventName
      * @param callable $listener
      * @param int $priority
-     * @return \Zend\Stdlib\CallbackHandler
+     * @return ListenerHandler
      */
     public function on($eventName, $listener, $priority = 1)
     {
-        return $this->getEventManager()->attach($eventName, $listener, $priority);
+        return $this->getActionEventDispatcher()->attachListener($eventName, $listener, $priority);
     }
 
     /**
-     * @param CallbackHandler $callbackHandler
+     * @param ListenerHandler $listenerHandler
      * @return bool
      */
-    public function off(CallbackHandler $callbackHandler)
+    public function off(ListenerHandler $listenerHandler)
     {
-        return $this->getEventManager()->detach($callbackHandler);
+        return $this->getActionEventDispatcher()->detachListener($listenerHandler);
     }
 
     /**
@@ -120,9 +119,9 @@ abstract class MessageBus implements EventManagerAwareInterface
      */
     protected function trigger(MessageDispatch $messageDispatch)
     {
-        $result = $this->getEventManager()->trigger($messageDispatch);
+        $this->getActionEventDispatcher()->dispatch($messageDispatch);
 
-        if ($result->stopped()) {
+        if ($messageDispatch->propagationIsStopped()) {
             throw new RuntimeException("Dispatch has stopped unexpectedly.");
         }
     }
@@ -134,7 +133,7 @@ abstract class MessageBus implements EventManagerAwareInterface
     {
         $messageDispatch->setName(MessageDispatch::HANDLE_ERROR);
 
-        $this->getEventManager()->trigger($messageDispatch);
+        $this->getActionEventDispatcher()->dispatch($messageDispatch);
     }
 
     /**
@@ -144,37 +143,32 @@ abstract class MessageBus implements EventManagerAwareInterface
     {
         $messageDispatch->setName(MessageDispatch::FINALIZE);
 
-        $this->getEventManager()->trigger($messageDispatch);
+        $this->getActionEventDispatcher()->dispatch($messageDispatch);
     }
 
 
     /**
-     * Inject an EventManager instance
+     * Inject an ActionEventDispatcher instance
      *
-     * @param  EventManagerInterface $eventManager
+     * @param  ActionEventDispatcher $actionEventDispatcher
      * @return void
      */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setActionEventDispatcher(ActionEventDispatcher $actionEventDispatcher)
     {
-        $eventManager->addIdentifiers(array(
-            'message_bus',
-            __CLASS__
-        ));
-
-        $this->events = $eventManager;
+        $this->events = $actionEventDispatcher;
     }
 
     /**
-     * Retrieve the event manager
+     * Retrieve the action event dispatcher
      *
-     * Lazy-loads an EventManager instance if none registered.
+     * Lazy-loads a dispatcher using a ZF2 EventManager if none is registered.
      *
-     * @return EventManagerInterface
+     * @return ActionEventDispatcher
      */
-    public function getEventManager()
+    public function getActionEventDispatcher()
     {
         if (is_null($this->events)) {
-            $this->setEventManager(new EventManager());
+            $this->setActionEventDispatcher(new Zf2ActionEventDispatcher());
         }
 
         return $this->events;

@@ -94,7 +94,7 @@ by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/InvokeStrateg
 ## Available Strategies
 
 - `CallbackStrategy`: Is responsible for invoking callable message handlers, can be used together with a CommandBus and EventBus
-- `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a message handler. Forces the rule that a command handler should only be responsible for handling one specific command.
+- `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a command handler. Forces the rule that a command handler should only be responsible for handling one specific command.
 - `OnEventStrategy`: Prefixes the short class name of an event with `on`. A listener should
 have a public method named this way: OrderCartUpdater::onArticleWasBought.
 - `ForwardToMessageDispatcherStrategy`: This is a special invoke strategy that is capable of translating a command or event to
@@ -117,10 +117,10 @@ $eventBus->dispatch(new SomethingDone());
 # FromMessageTranslator
 
 The [FromMessageTranslator](../src/Prooph/ServiceBus/Message/FromMessageTranslator.php) plugin does the opposite of the `ForwardToMessageDispatcherStrategy`.
-It listens on the `initialize` dispatch process event of a CommandBus or EventBus and if it detects an incoming [message](../src/Prooph/ServiceBus/Message/MessageInterface.php)
+It listens on the `initialize` dispatch action event of a CommandBus or EventBus and if it detects an incoming [message](../src/Prooph/ServiceBus/Message/MessageInterface.php)
 it translates the message to a [Command](../src/Prooph/ServiceBus/Command.php) or [Event](../src/Prooph/ServiceBus/Event.php) depending on the type
 provided in the [MessageHeader](../src/Prooph/ServiceBus/Message/MessageHeaderInterface.php). A receiver of an asynchronous dispatched message, for example a worker of a
-message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInterface.php) from the queue and forward it to a appropriate configured EventBus without additional work.
+message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInterface.php) from the queue and forward it to a appropriate configured CommandBus or EventBus without additional work.
 
 *Note: If the message name is an existing class it is used instead of the default implementation.
        But the constructor of the class should accept the same arguments as the default implementation does, otherwise you need to use your own message translator.
@@ -134,9 +134,8 @@ The following example uses a ZF2 ServiceManager as a DIC and illustrates how it 
 use Zend\ServiceManager\ServiceManager;
 use Prooph\Common\ServiceLocator\ZF2\ZF2ServiceManagerProxy;
 
-//We tell the ServiceMaanger that it should provide an instance of My\Command\DoSomethingHandler
+//We tell the ServiceManager that it should provide an instance of My\Command\DoSomethingHandler
 //when we request it with the alias My.Command.DoSomethingHandler
-//The ServiceManager can create a new instance without further dependencies
 $serviceManager = new ServiceManager(new Config([
     'invokables' => [
         'My.Command.DoSomethingHandler' => 'My\Command\DoSomethingHandler'

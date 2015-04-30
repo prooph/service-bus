@@ -21,14 +21,14 @@ external system in your test environment with a connection to a mocked command h
 class CommandBus extends MessageBus
 {
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
+     * @param \Prooph\Common\Event\ActionEventListenerAggregate|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
     public function utilize($plugin);
 
     /**
-     * @param \Zend\EventManager\ListenerAggregateInterface|\Psr\Log\LoggerInterface $plugin
+     * @param \Prooph\Common\Event\ActionEventListenerAggregate|\Psr\Log\LoggerInterface $plugin
      * @return $this
      * @throws Exception\RuntimeException
      */
@@ -63,21 +63,21 @@ one triggers the dispatch process of the given command.
 
 # Event-Driven Dispatch
 
-The command dispatch is an event-driven process provided by [Zend\EventManager](http://framework.zend.com/manual/2.0/en/modules/zend.event-manager.event-manager.html).
+The command dispatch is an event-driven process provided by a Prooph\Common\Event\ActionEventDispatcher.
 When a command is passed to the CommandBus via `CommandBus::dispatch` a new [CommandDispatch](../src/Prooph/ServiceBus/Process/CommandDispatch.php) process is created by the CommandBus and populated with the given command.
-Then the CommandBus triggers a chain of events. Listeners can listen on the events. They always get the CommandDispatch as the only argument and they can
-modify it to help the CommandBus finish the process. A CommandBus without any registered plugins is useless and will throw an exception cause
+Then the CommandBus triggers a chain of action events. Plugins can listen on the action events. They always get the CommandDispatch as the only argument and they can
+modify it to help the CommandBus finish the process. A CommandBus without any registered plugins is useless and will throw an exception because
 it does not know which command handler is responsible for the command.
-Following events are triggered in the listed order:
+Following action events are triggered in the listed order:
 
-- `initialize`: This event is triggered right after CommandBus::dispatch($command) is invoked. At this time the CommandDispatch only contains the command.
+- `initialize`: This action event is triggered right after CommandBus::dispatch($command) is invoked. At this time the CommandDispatch only contains the command.
 
 - `detect-message-name` (optional): Before a command handler can be located, the CommandBus needs to know how the command is named. Their are two
 possibilities to provide the information. The command can implement the [Prooph\ServiceBus\Message\MessageNameProvider](../src/Prooph/ServiceBus/Message/MessageNameProvider.php) interface.
 In this case the CommandBus picks the command name directly from the command and inject it manually in the CommandDispatch. The `detect-message-name` event is not triggered. If the command
 does not implement the interface the `detect-message-name` event is triggered and a plugin needs to inject the name using `CommandDispatch::setCommandName`.
 
-- `route`: During the `route` event a plugin should provide the responsible command handler either in form of a ready to use object or callable or as a string
+- `route`: During the `route` action event a plugin should provide the responsible command handler either in form of a ready to use object or callable or as a string
 representing an alias of the command handler that can be used by a DIC to locate an instance. The plugin should provide the handler by using
 `CommandDispatch::setCommandHandler`.
 
@@ -87,12 +87,12 @@ representing an alias of the command handler that can be used by a DIC to locate
 - `invoke-handler`: Having the command handler in place it's time to invoke it with the command. The CommandBus always triggers the event. It performs no default action even if the
 command handler is a callable.
 
-- `handle-error`: If at any time a plugin or the CommandBus itself throws an exception it is caught and passed to the CommandDispatch. The normal event chain breaks and a
-`handle-error` event is triggered instead. Listeners can access the exception by calling `CommandDispatch::getException`.
-A `handle-error` listener or a `finalize` listener can unset the exception by calling `CommandDispatch::setException(null)`.
-When all listeners are informed about the error and no one has unset the exception the CommandBus throws a Prooph\ServiceBus\Exception\CommandDispatchException to inform the outside world about the error.
+- `handle-error`: If at any time a plugin or the CommandBus itself throws an exception it is caught and passed to the CommandDispatch. The normal action event chain breaks and a
+`handle-error` event is triggered instead. Plugins can access the exception by calling `CommandDispatch::getException`.
+A `handle-error` plugin or a `finalize` plugin can unset the exception by calling `CommandDispatch::setException(null)`.
+When all plugins are informed about the error and no one has unset the exception the CommandBus throws a Prooph\ServiceBus\Exception\CommandDispatchException to inform the outside world about the error.
 
-- `finalize`: This event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
+- `finalize`: This action event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
 
 # Commands
@@ -106,7 +106,7 @@ your command handlers with the command. Mix and match the plugins provided by PS
 # Plugins
 
 Plugins can be simple callables (use the methods `on` and `off` to attach/detach them), implementations of the
-Zend\EventManager\ListenerAggregateInterface (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
+\Prooph\Common\Event\ActionEventListenerAggregate (use the methods `utilize` and `deactivate` to attach/detach them) or an instance of
 Psr\Log\LoggerInterface (also use methods `utilize` and `deactivate` to attach/detach it).
 The signature of a plugin method/callable that listens on a CommandDispatch event is:
 

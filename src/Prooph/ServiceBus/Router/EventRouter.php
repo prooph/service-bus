@@ -11,10 +11,11 @@
 
 namespace Prooph\ServiceBus\Router;
 
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\EventDispatch;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class EventRouter
@@ -22,8 +23,10 @@ use Zend\EventManager\EventManagerInterface;
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class EventRouter extends AbstractListenerAggregate
+class EventRouter implements ActionEventListenerAggregate
 {
+    use DetachAggregateHandlers;
+
     /**
      * @var array[eventName => eventListener]
      */
@@ -56,13 +59,13 @@ class EventRouter extends AbstractListenerAggregate
     }
 
     /**
-     * @param EventManagerInterface $events
+     * @param ActionEventDispatcher $events
      *
      * @return void
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(ActionEventDispatcher $events)
     {
-        $this->listeners[] = $events->attach(EventDispatch::ROUTE, array($this, "onRouteEvent"));
+        $this->trackHandler($events->attachListener(EventDispatch::ROUTE, array($this, "onRouteEvent")));
     }
 
     /**
@@ -80,8 +83,8 @@ class EventRouter extends AbstractListenerAggregate
 
         $this->tmpEventName = $eventName;
 
-        if (! isset($this->listeners[$this->tmpEventName])) {
-            $this->listeners[$this->tmpEventName] = [];
+        if (! isset($this->eventMap[$this->tmpEventName])) {
+            $this->eventMap[$this->tmpEventName] = [];
         }
 
         return $this;

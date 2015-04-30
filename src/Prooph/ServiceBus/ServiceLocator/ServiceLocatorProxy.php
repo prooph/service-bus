@@ -11,11 +11,12 @@
 
 namespace Prooph\ServiceBus\ServiceLocator;
 
+use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\Common\ServiceLocator\ServiceLocator;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class ServiceLocatorProxy
@@ -23,8 +24,10 @@ use Zend\EventManager\EventManagerInterface;
  * @package Prooph\ServiceBus\ServiceLocator
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class ServiceLocatorProxy extends AbstractListenerAggregate
+class ServiceLocatorProxy implements ActionEventListenerAggregate
 {
+    use DetachAggregateHandlers;
+
     /**
      * @var ServiceLocator
      */
@@ -38,14 +41,14 @@ class ServiceLocatorProxy extends AbstractListenerAggregate
         $this->serviceLocator = $serviceLocator;
     }
     /**
-     * @param EventManagerInterface $events
+     * @param ActionEventDispatcher $events
      *
      * @return void
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(ActionEventDispatcher $events)
     {
-        $events->attach(CommandDispatch::LOCATE_HANDLER, array($this, 'onLocateCommandHandler'));
-        $events->attach(EventDispatch::LOCATE_LISTENER, array($this, 'onLocateEventListener'));
+        $this->trackHandler($events->attachListener(CommandDispatch::LOCATE_HANDLER, array($this, 'onLocateCommandHandler')));
+        $this->trackHandler($events->attachListener(EventDispatch::LOCATE_LISTENER, array($this, 'onLocateEventListener')));
     }
 
     public function onLocateCommandHandler(CommandDispatch $commandDispatch)

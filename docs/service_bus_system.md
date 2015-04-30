@@ -3,7 +3,7 @@ PSB Overview
 
 [Back to documentation](../README.md#documentation)
 
-ProophServiceBus ships with two bus implementations namely a CommandBus and an EventBus. Both buses behave very similar but have
+prooph/service-bus ships with two bus implementations namely a CommandBus and an EventBus. Both buses behave very similar but have
 an important difference. The CommandBus is designed to dispatch a message to only one handler. The EventBus on the other site
 is able to dispatch a message to multiple handlers. Both buses provide an event-driven dispatch process to give plugins
 the possibility to hook into this process and manipulate it.
@@ -21,7 +21,7 @@ response when it triggers the dispatch except an error occurs during the dispatc
 
 PSB provides both possibilities behind a unified interface.
 Remember the statement "Messaging means fire and forget".
-The message sender never knows if the message will be processed synchronous or asynchronous. It depends on the bus
+The message sender never knows if the message is processed synchronous or asynchronous. It depends on the bus
 configuration and/or the used plugins. A message can directly be routed to it's handler. In this case we talk about synchronous
 message processing. If the receiver of the message is a [Prooph\ServiceBus\Message\MessageDispatcherInterface](message_dispatcher.md)
 the message is normally processed asynchronously.

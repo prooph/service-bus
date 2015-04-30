@@ -12,10 +12,9 @@
 namespace Prooph\ServiceBus\Process;
 
 use Assert\Assertion;
+use Prooph\Common\Event\ZF2\Zf2ActionEvent;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Zend\EventManager\Event as ProcessEvent;
 use Psr\Log\LoggerInterface;
-use Zend\Log\Logger;
 
 /**
  * Class MessageDispatch
@@ -25,7 +24,7 @@ use Zend\Log\Logger;
  * @package Prooph\ServiceBus\Process
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class MessageDispatch extends ProcessEvent
+class MessageDispatch extends Zf2ActionEvent
 {
     const INITIALIZE          = "initialize";
     const DETECT_MESSAGE_NAME = "detect-message-name";
