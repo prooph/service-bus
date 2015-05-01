@@ -63,6 +63,12 @@ Documentation
 - [Plugins](docs/plugins.md)
 - [Asynchronous MessageDispatcher](docs/message_dispatcher.md)
 
+# ZF2 Integration
+
+[prooph/proophessor](https://github.com/prooph/proophessor) seamlessly integrates ProophServiceBus with a ZF2 application.
+ 
+
+
 Support
 -------
 
