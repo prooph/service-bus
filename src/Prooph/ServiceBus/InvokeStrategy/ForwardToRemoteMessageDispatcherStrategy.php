@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,29 +11,31 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Message\MessageDispatcherInterface;
-use Prooph\ServiceBus\Message\MessageInterface;
-use Prooph\ServiceBus\Message\ToMessageTranslator;
-use Prooph\ServiceBus\Message\ToMessageTranslatorInterface;
+use Prooph\ServiceBus\Message\RemoteMessageDispatcher;
+use Prooph\ServiceBus\Message\ProophDomainMessageToRemoteMessageTranslator;
 
 /**
- * Class ForwardToMessageDispatcherStrategy
+ * Class ForwardToRemoteMessageDispatcherStrategy
+ *
+ * This invoke strategy comes into play when a domain message should be dispatched to a
+ * RemoteMessageDispatcher. The strategy translates the domain message to a Prooph\Common\Messaging\RemoteMessage
+ * with the help of a ToRemoteMessageTranslator and forwards the RemoteMessage to the RemoteMessageDispatcher.
  *
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
+class ForwardToRemoteMessageDispatcherStrategy extends AbstractInvokeStrategy
 {
     /**
-     * @var ToMessageTranslatorInterface
+     * @var ToRemoteMessageTranslator
      */
     protected $messageTranslator;
 
     /**
-     * @param ToMessageTranslatorInterface $messageTranslator
+     * @param ToRemoteMessageTranslator $messageTranslator
      */
     public function __construct(
-        ToMessageTranslatorInterface $messageTranslator = null
+        ProophDomainMessageToRemoteMessageTranslator $messageTranslator = null
     )
     {
         $this->messageTranslator = $messageTranslator;
@@ -46,9 +48,9 @@ class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
      */
     protected function canInvoke($aHandler, $aCommandOrEvent)
     {
-        if ($aHandler instanceof MessageDispatcherInterface) {
+        if ($aHandler instanceof RemoteMessageDispatcher) {
             if ($aCommandOrEvent instanceof MessageInterface
-                || $this->getMessageTranslator()->canTranslateToMessage($aCommandOrEvent)) {
+                || $this->getMessageTranslator()->canTranslateToRemoteMessage($aCommandOrEvent)) {
                 return true;
             }
         }
@@ -65,19 +67,19 @@ class ForwardToMessageDispatcherStrategy extends AbstractInvokeStrategy
         $message = $aCommandOrEvent;
 
         if (! $message instanceof MessageInterface) {
-            $message = $this->getMessageTranslator()->translateToMessage($aCommandOrEvent);
+            $message = $this->getMessageTranslator()->translateToRemoteMessage($aCommandOrEvent);
         }
 
         $aHandler->dispatch($message);
     }
 
     /**
-     * @return ToMessageTranslatorInterface
+     * @return ToRemoteMessageTranslator
      */
     protected function getMessageTranslator()
     {
         if (is_null($this->messageTranslator)) {
-            $this->messageTranslator = new ToMessageTranslator();
+            $this->messageTranslator = new ProophDomainMessageToRemoteMessageTranslator();
         }
 
         return $this->messageTranslator;

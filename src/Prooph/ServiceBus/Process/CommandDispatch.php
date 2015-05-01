@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,10 +11,10 @@
 
 namespace Prooph\ServiceBus\Process;
 
+use Prooph\Common\Messaging\HasMessageName;
+use Prooph\Common\Messaging\MessageHeader;
+use Prooph\Common\Messaging\RemoteMessage;
 use Prooph\ServiceBus\CommandBus;
-use Prooph\ServiceBus\Message\MessageHeader;
-use Prooph\ServiceBus\Message\MessageInterface;
-use Prooph\ServiceBus\Message\MessageNameProvider;
 
 /**
  * Class CommandDispatch
@@ -37,11 +37,11 @@ class CommandDispatch extends MessageDispatch
     {
         $instance = new self(self::INITIALIZE, $commandBus, array('message' => $command));
 
-        if ($command instanceof MessageNameProvider) {
-            $instance->setMessageName($command->getMessageName());
+        if ($command instanceof HasMessageName) {
+            $instance->setMessageName($command->messageName());
         }
 
-        if ($command instanceof MessageInterface) {
+        if ($command instanceof RemoteMessage) {
             if ($command->header()->type() !== MessageHeader::TYPE_COMMAND) {
                 throw new \InvalidArgumentException(
                     sprintf("Message %s cannot be handled. Message is not of type command.", $command->name())

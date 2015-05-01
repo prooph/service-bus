@@ -45,8 +45,8 @@ $commandBus->utilize($router);
 //Expand command bus with the callback invoke strategy
 $commandBus->utilize(new CallbackStrategy());
 
-//Create a new Command
-$echoText = EchoText::fromPayload('It works');
+//We create a new Command
+$echoText = EchoText::fromString('It works');
 
 //... and dispatch it
 $commandBus->dispatch($echoText);

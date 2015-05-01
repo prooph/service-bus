@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is part of the prooph/php-service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * This file is part of the prooph/service-bus.
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,17 +11,19 @@
 
 namespace Prooph\ServiceBus\Message;
 
+use Prooph\Common\Messaging\RemoteMessage;
+
 /**
- * Interface MessageDispatcherInterface
+ * Interface RemoteMessageDispatcher
  *
  * @package Prooph\ServiceBus\Message
  * @author Alexander Miertsch <contact@prooph.de>
  */
-interface MessageDispatcherInterface
+interface RemoteMessageDispatcher
 {
     /**
-     * @param MessageInterface $message
+     * @param RemoteMessage $message
      * @return void
      */
-    public function dispatch(MessageInterface $message);
+    public function dispatch(RemoteMessage $message);
 }

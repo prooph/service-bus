@@ -11,7 +11,8 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\ServiceBus\Command;
+use Prooph\Common\Messaging\Command;
+
 
 /**
  * Class DoSomething

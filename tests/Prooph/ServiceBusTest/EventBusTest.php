@@ -14,10 +14,10 @@ namespace Prooph\ServiceBusTest;
 use Prooph\Common\ServiceLocator\ZF2\Zf2ServiceManagerProxy;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\InvokeStrategy\ForwardToMessageDispatcherStrategy;
-use Prooph\ServiceBus\Message\FromMessageTranslator;
-use Prooph\ServiceBus\Message\InMemoryMessageDispatcher;
-use Prooph\ServiceBus\Message\ToMessageTranslator;
+use Prooph\ServiceBus\InvokeStrategy\ForwardToRemoteMessageDispatcherStrategy;
+use Prooph\ServiceBus\Message\FromRemoteMessageTranslator;
+use Prooph\ServiceBus\Message\InMemoryRemoteMessageDispatcher;
+use Prooph\ServiceBus\Message\ProophDomainMessageToRemoteMessageTranslator;
 use Prooph\ServiceBus\Router\EventRouter;
 use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
@@ -57,18 +57,18 @@ class EventBusTest extends TestCase
         $this->eventBus->utilize($router);
 
         //Register message forwarder which translates event to message and forward it to the message dispatcher
-        $this->eventBus->utilize(new ForwardToMessageDispatcherStrategy(new ToMessageTranslator()));
+        $this->eventBus->utilize(new ForwardToRemoteMessageDispatcherStrategy(new ProophDomainMessageToRemoteMessageTranslator()));
     }
 
     /**
-     * @return InMemoryMessageDispatcher
+     * @return InMemoryRemoteMessageDispatcher
      */
     protected function setUpMessageDispatcher()
     {
         $eventBus = new EventBus();
 
         //Translate message back to event
-        $eventBus->utilize(new FromMessageTranslator());
+        $eventBus->utilize(new FromRemoteMessageTranslator());
 
         $router = new EventRouter();
 
@@ -89,7 +89,7 @@ class EventBusTest extends TestCase
         $eventBus->utilize(new SomethingDoneInvokeStrategy());
 
         //Set up message dispatcher with a prepared command bus that can dispatch the message to command handler
-        $messageDispatcher = new InMemoryMessageDispatcher(new CommandBus(), $eventBus);
+        $messageDispatcher = new InMemoryRemoteMessageDispatcher(new CommandBus(), $eventBus);
 
         return $messageDispatcher;
     }

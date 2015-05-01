@@ -10,7 +10,8 @@
  */
 
 namespace Prooph\ServiceBusTest\Mock;
-use Prooph\ServiceBus\Event;
+
+use Prooph\Common\Messaging\DomainEvent;
 use Prooph\ServiceBus\InvokeStrategy\AbstractInvokeStrategy;
 
 /**
@@ -28,7 +29,7 @@ class SomethingDoneInvokeStrategy extends AbstractInvokeStrategy
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        return $aHandler instanceof SomethingDoneListener && $aCommandOrEvent instanceof Event;
+        return $aHandler instanceof SomethingDoneListener && $aCommandOrEvent instanceof DomainEvent;
     }
 
     /**

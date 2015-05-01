@@ -74,7 +74,7 @@ Following action events are triggered in the listed order:
 - `initialize`: This action event is triggered right after EventBus::dispatch($event) is invoked. At this time the EventDispatch only contains the event message.
 
 - `detect-message-name` (optional): Before an event message listener can be located, the EventBus needs to know how the event message is named. Their are two
-possibilities to provide the information. The event message can implement the [Prooph\ServiceBus\Message\MessageNameProvider](../src/Prooph/ServiceBus/Message/MessageNameProvider.php) interface.
+possibilities to provide the information. The event message can implement the [Prooph\Common\Messaging\HasMessageName](https://github.com/prooph/common/blob/master/src/Messaging/HasMessageName.php) interface.
 In this case the EventBus picks the message name directly from the event message and inject it manually in the EventDispatch. The `detect-message-name` action event is not triggered. If the event message
 does not implement the interface the `detect-message-name` action event is triggered and a plugin needs to inject the name using `EventDispatch::setEventName`.
 
@@ -102,8 +102,8 @@ attach a monitoring plugin.
 # Event Messages
 
 An event message can nearly be everything. PSB tries to get out of your way as much as it can. You are ask to use your own event message implementation or you use the
-default [Event](../src/Prooph/ServiceBus/Event.php) class provided by PSB. It is a very good base class and PSB ships with translator plugins to translate an event message into a Prooph\ServiceBus\Message\StandardMessage
-that can be send to a remote interface. Check the [Asynchronous Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
+default [DomainEvent](https://github.com/prooph/common/blob/master/src/Messaging/DomainEvent.php) class provided by prooph/common. It is a very good base class and PSB ships with translator plugins to translate an event message into a remote message
+that can be send to a remote interface. Check the [Remote Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
 your own message translator plugin, a plugin that is capable of detecting the name of the event message and an invoke strategy that knows how to invoke
 your event message listeners with the event message. Mix and match the plugins provided by PSB with your own ones to decouple your implementation from the PSB infrastructure.
 

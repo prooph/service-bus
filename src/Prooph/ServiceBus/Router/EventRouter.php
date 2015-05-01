@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -132,7 +132,7 @@ class EventRouter implements ActionEventListenerAggregate
      */
     public function onRouteEvent(EventDispatch $eventDispatch)
     {
-        if (is_null($eventDispatch->getEventName())) {
+        if (is_null($eventDispatch->getEventName()) && $eventDispatch->isLoggingEnabled()) {
             $eventDispatch->getLogger()->notice(
                 sprintf("%s: EventDispatch contains no event name", get_called_class())
             );

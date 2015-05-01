@@ -14,10 +14,19 @@ namespace {
 
 namespace Prooph\ServiceBus\Example\Command {
 
-    use Prooph\ServiceBus\Command;
+    use Prooph\Common\Messaging\Command;
 
     class EchoText extends Command
     {
+        /**
+         * @param string $text
+         * @return EchoText
+         */
+        public static function fromString($text)
+        {
+            return new self(__CLASS__, $text);
+        }
+
         protected function convertPayload($textOrPayload)
         {
             if (is_string($textOrPayload)) {
@@ -57,7 +66,7 @@ namespace {
     $commandBus->utilize(new CallbackStrategy());
 
     //We create a new Command
-    $echoText = EchoText::fromPayload('It works');
+    $echoText = EchoText::fromString('It works');
 
     //... and dispatch it
     $commandBus->dispatch($echoText);

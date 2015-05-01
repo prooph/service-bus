@@ -97,13 +97,13 @@ by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/InvokeStrateg
 - `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a command handler. Forces the rule that a command handler should only be responsible for handling one specific command.
 - `OnEventStrategy`: Prefixes the short class name of an event with `on`. A listener should
 have a public method named this way: OrderCartUpdater::onArticleWasBought.
-- `ForwardToMessageDispatcherStrategy`: This is a special invoke strategy that is capable of translating a command or event to
-a [StandardMessage](../src/Prooph/ServiceBus/Message/StandardMessage.php) and invoke a [MessageDispatcher](message_dispatcher.md).
-Add this strategy to a bus together with a [ToMessageTranslator](../src/Prooph/ServiceBus/Message/ToMessageTranslatorInterface.php) and
-route a command or event to a MessageDispatcher to process the message async:
+- `ForwardToRemoteMessageDispatcherStrategy`: This is a special invoke strategy that is capable of translating a command or event to
+a [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php) and invoke a [RemoteMessageDispatcher](message_dispatcher.md).
+Add this strategy to a bus together with a [ToRemoteMessageTranslator](../src/Prooph/ServiceBus/Message/ToRemoteMessageTranslator.php) and
+route a command or event to a RemoteMessageDispatcher to process the message async:
 
 ```php
-$eventBus->utilize(new ForwardToMessageDispatcherStrategy(new ToMessageTranslator()));
+$eventBus->utilize(new ForwardToRemoteMessageDispatcherStrategy(new ProophDomainMessageToRemoteMessageTranslator()));
 
 $router = new EventRouter();
 
@@ -114,16 +114,16 @@ $eventBus->utilize($router);
 $eventBus->dispatch(new SomethingDone());
 ```
 
-# FromMessageTranslator
+# FromRemoteMessageTranslator
 
-The [FromMessageTranslator](../src/Prooph/ServiceBus/Message/FromMessageTranslator.php) plugin does the opposite of the `ForwardToMessageDispatcherStrategy`.
-It listens on the `initialize` dispatch action event of a CommandBus or EventBus and if it detects an incoming [message](../src/Prooph/ServiceBus/Message/MessageInterface.php)
-it translates the message to a [Command](../src/Prooph/ServiceBus/Command.php) or [Event](../src/Prooph/ServiceBus/Event.php) depending on the type
-provided in the [MessageHeader](../src/Prooph/ServiceBus/Message/MessageHeaderInterface.php). A receiver of an asynchronous dispatched message, for example a worker of a
-message queue, can pull a [message](../src/Prooph/ServiceBus/Message/MessageInterface.php) from the queue and forward it to a appropriate configured CommandBus or EventBus without additional work.
+The [FromRemoteMessageTranslator](../src/Prooph/ServiceBus/Message/FromRemoteMessageTranslator.php) plugin does the opposite of the `ForwardToRemoteMessageDispatcherStrategy`.
+It listens on the `initialize` dispatch action event of a CommandBus or EventBus and if it detects an incoming [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php)
+it translates the message to a [Command](https://github.com/prooph/common/blob/master/src/Messaging/Command.php) or [DomainEvent](https://github.com/prooph/common/blob/master/src/Messaging/DomainEvent.php) depending on the type
+provided in the [MessageHeader](https://github.com/prooph/common/blob/master/src/Messaging/MessageHeader.php). A receiver of an asynchronous dispatched message, for example a worker of a
+message queue, can pull a [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php) from the queue and forward it to a appropriate configured CommandBus or EventBus without additional work.
 
 *Note: If the message name is an existing class it is used instead of the default implementation.
-       But the constructor of the class should accept the same arguments as the default implementation does, otherwise you need to use your own message translator.
+       But the custom message class MUST provide a static `fromRemoteMessage` factory method, otherwise the translator will break!
 
 # ServiceLocatorProxy
 

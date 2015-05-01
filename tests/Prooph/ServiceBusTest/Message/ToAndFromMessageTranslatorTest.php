@@ -11,8 +11,10 @@
 
 namespace Prooph\ServiceBusTest\Message;
 
-use Prooph\ServiceBus\Message\FromMessageTranslator;
-use Prooph\ServiceBus\Message\ToMessageTranslator;
+use Prooph\Common\Messaging\Command;
+use Prooph\Common\Messaging\DomainEvent;
+use Prooph\ServiceBus\Message\FromRemoteMessageTranslator;
+use Prooph\ServiceBus\Message\ProophDomainMessageToRemoteMessageTranslator;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\TestCase;
@@ -30,26 +32,26 @@ class ToAndFromMessageTranslatorTest extends TestCase
      */
     public function it_translates_command_to_and_from_message()
     {
-        $toMessageTranslator = new ToMessageTranslator();
+        $toMessageTranslator = new ProophDomainMessageToRemoteMessageTranslator();
 
         $doSomething = DoSomething::fromData('test command');
 
-        $this->assertTrue($toMessageTranslator->canTranslateToMessage($doSomething));
+        $this->assertTrue($toMessageTranslator->canTranslateToRemoteMessage($doSomething));
 
-        $message = $toMessageTranslator->translateToMessage($doSomething);
+        $message = $toMessageTranslator->translateToRemoteMessage($doSomething);
 
         $this->assertEquals(array('data' => 'test command'), $message->payload());
 
-        $fromMessageTranslator = new FromMessageTranslator();
+        $fromMessageTranslator = new FromRemoteMessageTranslator();
 
-        $command = $fromMessageTranslator->translateFromMessage($message);
+        $command = $fromMessageTranslator->translateFromRemoteMessage($message);
 
-        $this->assertInstanceOf('Prooph\ServiceBus\Command', $command);
-        $this->assertEquals($doSomething->getMessageName(), $command->getMessageName());
+        $this->assertInstanceOf(Command::class, $command);
+        $this->assertEquals($doSomething->messageName(), $command->messageName());
         $this->assertEquals($doSomething->payload(), $command->payload());
         $this->assertEquals($doSomething->uuid()->toString(), $command->uuid()->toString());
         $this->assertEquals($doSomething->version(), $command->version());
-        $this->assertEquals($doSomething->createdOn()->format(\DateTime::ISO8601), $command->createdOn()->format(\DateTime::ISO8601));
+        $this->assertEquals($doSomething->createdAt()->format(\DateTime::ISO8601), $command->createdAt()->format(\DateTime::ISO8601));
     }
 
     /**
@@ -57,26 +59,26 @@ class ToAndFromMessageTranslatorTest extends TestCase
      */
     public function it_translates_event_to_and_from_message()
     {
-        $toMessageTranslator = new ToMessageTranslator();
+        $toMessageTranslator = new ProophDomainMessageToRemoteMessageTranslator();
 
         $somethingDone = SomethingDone::fromData('test event');
 
-        $this->assertTrue($toMessageTranslator->canTranslateToMessage($somethingDone));
+        $this->assertTrue($toMessageTranslator->canTranslateToRemoteMessage($somethingDone));
 
-        $message = $toMessageTranslator->translateToMessage($somethingDone);
+        $message = $toMessageTranslator->translateToRemoteMessage($somethingDone);
 
         $this->assertEquals(array('data' => 'test event'), $message->payload());
 
-        $fromMessageTranslator = new FromMessageTranslator();
+        $fromMessageTranslator = new FromRemoteMessageTranslator();
 
-        $event = $fromMessageTranslator->translateFromMessage($message);
+        $event = $fromMessageTranslator->translateFromRemoteMessage($message);
 
-        $this->assertInstanceOf('Prooph\ServiceBus\Event', $event);
-        $this->assertEquals($somethingDone->getMessageName(), $event->getMessageName());
+        $this->assertInstanceOf(DomainEvent::class, $event);
+        $this->assertEquals($somethingDone->messageName(), $event->messageName());
         $this->assertEquals($somethingDone->payload(), $event->payload());
         $this->assertEquals($somethingDone->uuid()->toString(), $event->uuid()->toString());
         $this->assertEquals($somethingDone->version(), $event->version());
-        $this->assertEquals($somethingDone->occurredOn()->format(\DateTime::ISO8601), $event->occurredOn()->format(\DateTime::ISO8601));
+        $this->assertEquals($somethingDone->createdAt()->format(\DateTime::ISO8601), $event->createdAt()->format(\DateTime::ISO8601));
     }
 }
  

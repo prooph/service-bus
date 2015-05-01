@@ -73,7 +73,7 @@ Following action events are triggered in the listed order:
 - `initialize`: This action event is triggered right after CommandBus::dispatch($command) is invoked. At this time the CommandDispatch only contains the command.
 
 - `detect-message-name` (optional): Before a command handler can be located, the CommandBus needs to know how the command is named. Their are two
-possibilities to provide the information. The command can implement the [Prooph\ServiceBus\Message\MessageNameProvider](../src/Prooph/ServiceBus/Message/MessageNameProvider.php) interface.
+possibilities to provide the information. The command can implement the [Prooph\Common\Messaging\HasMessageName](https://github.com/prooph/common/blob/master/src/Messaging/HasMessageName.php) interface.
 In this case the CommandBus picks the command name directly from the command and inject it manually in the CommandDispatch. The `detect-message-name` event is not triggered. If the command
 does not implement the interface the `detect-message-name` event is triggered and a plugin needs to inject the name using `CommandDispatch::setCommandName`.
 
@@ -98,8 +98,8 @@ attach a monitoring plugin.
 # Commands
 
 A command can nearly be everything. PSB tries to get out of your way as much as it can. You are ask to use your own command implementation or you use the
-default [Command](../src/Prooph/ServiceBus/Command.php) class provided by PSB. It is a very good base class and PSB ships with translator plugins to translate a Command into a message
-that can be send to a remote interface. Check the [Asynchronous Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
+default [Command](https://github.com/prooph/common/blob/master/src/Messaging/Command.php) class provided by prooph/common. It is a very good base class and PSB ships with translator plugins to translate a Command into a remote message
+that can be send to a remote interface. Check the [Remote Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
 your own message translator plugin, a plugin that is capable of detecting the name of the command and an invoke strategy that knows how to invoke
 your command handlers with the command. Mix and match the plugins provided by PSB with your own ones to decouple your implementation from the PSB infrastructure.
 

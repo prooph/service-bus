@@ -37,7 +37,7 @@ class RegexRouterTest extends TestCase
 
         $regexRouter->route('/^'.preg_quote('Prooph\ServiceBusTest\Mock\Do').'.*/')->to("DoSomethingHandler");
 
-        $commandDispatch = CommandDispatch::initializeWith(DoSomething::getNew(), new CommandBus());
+        $commandDispatch = CommandDispatch::initializeWith(DoSomething::fromData([]), new CommandBus());
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
@@ -58,7 +58,7 @@ class RegexRouterTest extends TestCase
 
         $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
-        $commandDispatch = CommandDispatch::initializeWith(DoSomething::getNew(), new CommandBus());
+        $commandDispatch = CommandDispatch::initializeWith(DoSomething::fromData([]), new CommandBus());
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
@@ -75,7 +75,7 @@ class RegexRouterTest extends TestCase
         $regexRouter->route('/^'.preg_quote('Prooph\ServiceBusTest\Mock\\').'.*Done$/')->to("SomethingDoneListener1");
         $regexRouter->route('/^'.preg_quote('Prooph\ServiceBusTest\Mock\\').'.*Done$/')->to("SomethingDoneListener2");
 
-        $eventDispatch = EventDispatch::initializeWith(SomethingDone::getNew(), new EventBus());
+        $eventDispatch = EventDispatch::initializeWith(SomethingDone::fromData([]), new EventBus());
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 
@@ -121,7 +121,7 @@ class RegexRouterTest extends TestCase
 
         ));
 
-        $commandDispatch = CommandDispatch::initializeWith(DoSomething::getNew(), new CommandBus());
+        $commandDispatch = CommandDispatch::initializeWith(DoSomething::fromData([]), new CommandBus());
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
@@ -129,7 +129,7 @@ class RegexRouterTest extends TestCase
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
 
-        $eventDispatch = EventDispatch::initializeWith(SomethingDone::getNew(), new EventBus());
+        $eventDispatch = EventDispatch::initializeWith(SomethingDone::fromData([]), new EventBus());
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 

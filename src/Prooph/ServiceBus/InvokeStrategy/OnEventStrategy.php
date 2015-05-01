@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is part of the prooph/php-service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * This file is part of the prooph/service-bus.
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,9 +10,8 @@
  */
 
 namespace Prooph\ServiceBus\InvokeStrategy;
-
-use Prooph\ServiceBus\Event;
-use Prooph\ServiceBus\Message\MessageNameProvider;
+use Prooph\Common\Messaging\DomainEvent;
+use Prooph\Common\Messaging\HasMessageName;
 
 /**
  * Class OnEventStrategy
@@ -29,7 +28,7 @@ class OnEventStrategy extends AbstractInvokeStrategy
      */
     public function canInvoke($aHandler, $aCommandOrEvent)
     {
-        if (! $aCommandOrEvent instanceof Event) {
+        if (! $aCommandOrEvent instanceof DomainEvent) {
             return false;
         }
 
@@ -55,7 +54,7 @@ class OnEventStrategy extends AbstractInvokeStrategy
      */
     protected function determineEventName($anEvent)
     {
-        $eventName = ($anEvent instanceof MessageNameProvider)? $anEvent->getMessageName() : get_class($anEvent);
+        $eventName = ($anEvent instanceof HasMessageName)? $anEvent->messageName() : get_class($anEvent);
         return join('', array_slice(explode('\\', $eventName), -1));
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,11 @@
 
 namespace Prooph\ServiceBus\Process;
 
+use Prooph\Common\Messaging\HasMessageName;
+use Prooph\Common\Messaging\MessageHeader;
+use Prooph\Common\Messaging\RemoteMessage;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Message\MessageHeader;
-use Prooph\ServiceBus\Message\MessageInterface;
-use Prooph\ServiceBus\Message\MessageNameProvider;
 
 /**
  * Class EventDispatch
@@ -38,11 +38,11 @@ class EventDispatch extends MessageDispatch
     {
         $instance = new self(self::INITIALIZE, $eventBus, array('message' => $event));
 
-        if ($event instanceof MessageNameProvider) {
-            $instance->setMessageName($event->getMessageName());
+        if ($event instanceof HasMessageName) {
+            $instance->setMessageName($event->messageName());
         }
 
-        if ($event instanceof MessageInterface) {
+        if ($event instanceof RemoteMessage) {
             if ($event->header()->type() !== MessageHeader::TYPE_EVENT) {
                 throw new \InvalidArgumentException(
                     sprintf("Message %s cannot be handled. Message is not of type event.", $event->name())

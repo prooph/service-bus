@@ -11,8 +11,6 @@
 
 namespace Prooph\ServiceBusTest\Mock;
 
-use Prooph\ServiceBus\Event\EventInterface;
-
 /**
  * Class OnEventHandler
  *

@@ -34,7 +34,7 @@ class EventRouterTest extends TestCase
 
         $router->route('Prooph\ServiceBusTest\Mock\SomethingDone')->to("SomethingDoneListener");
 
-        $eventDispatch = EventDispatch::initializeWith(SomethingDone::getNew(), new EventBus());
+        $eventDispatch = EventDispatch::initializeWith(SomethingDone::fromData([]), new EventBus());
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 
@@ -93,7 +93,7 @@ class EventRouterTest extends TestCase
             'Prooph\ServiceBusTest\Mock\SomethingDone' => 'SomethingDoneListener'
         ));
 
-        $eventDispatch = EventDispatch::initializeWith(SomethingDone::getNew(), new EventBus());
+        $eventDispatch = EventDispatch::initializeWith(SomethingDone::fromData([]), new EventBus());
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 
@@ -111,7 +111,7 @@ class EventRouterTest extends TestCase
             'Prooph\ServiceBusTest\Mock\SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
         ));
 
-        $eventDispatch = EventDispatch::initializeWith(SomethingDone::getNew(), new EventBus());
+        $eventDispatch = EventDispatch::initializeWith(SomethingDone::fromData([]), new EventBus());
 
         $eventDispatch->setName(EventDispatch::ROUTE);
 

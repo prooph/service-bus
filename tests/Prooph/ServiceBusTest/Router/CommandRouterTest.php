@@ -33,7 +33,7 @@ class CommandRouterTest extends TestCase
 
         $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to("DoSomethingHandler");
 
-        $commandDispatch = CommandDispatch::initializeWith(DoSomething::getNew(), new CommandBus());
+        $commandDispatch = CommandDispatch::initializeWith(DoSomething::fromData([]), new CommandBus());
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
@@ -77,7 +77,7 @@ class CommandRouterTest extends TestCase
             'Prooph\ServiceBusTest\Mock\DoSomething' => 'DoSomethingHandler'
         ));
 
-        $commandDispatch = CommandDispatch::initializeWith(DoSomething::getNew(), new CommandBus());
+        $commandDispatch = CommandDispatch::initializeWith(DoSomething::fromData([]), new CommandBus());
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 

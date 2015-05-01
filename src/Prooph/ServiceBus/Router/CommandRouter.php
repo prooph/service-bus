@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) Alexander Miertsch <contact@prooph.de>
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -111,7 +111,7 @@ class CommandRouter implements ActionEventListenerAggregate
      */
     public function onRouteCommand(CommandDispatch $commandDispatch)
     {
-        if (is_null($commandDispatch->getCommandName())) {
+        if (is_null($commandDispatch->getCommandName()) && $commandDispatch->isLoggingEnabled()) {
             $commandDispatch->getLogger()->notice(
                 sprintf("%s: CommandDispatch contains no command name", get_called_class())
             );

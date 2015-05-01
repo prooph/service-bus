@@ -1,4 +1,4 @@
-Asynchronous MessageDispatcher
+RemoteMessageDispatcher
 ==============================
 
 [Back to documentation](../README.md#documentation)
@@ -9,7 +9,7 @@ Messaging becomes really interesting when you process your messages asynchronous
 set up a cron job to periodically check the queue for new messages and process them. The bus implementations of PSB can
 hide such an asynchronous workflow behind a unified interface. You can start with synchronous message dispatching by
 routing your messages directly to message handlers and if you later want to improve response times you can switch to
-async processing on message basis by routing the appropriate messages to a [MessageDispatcher](../src/Prooph/ServiceBus/Message/MessageDispatcherInterface.php).
+async processing on message basis by routing the appropriate messages to a [RemoteMessageDispatcher](../src/Prooph/ServiceBus/Message/RemoteMessageDispatcher.php).
 
 ## Synchronous Dispatch
 ```php
@@ -43,31 +43,31 @@ $router->route('SomethingDone')->to(new My\Async\MessageDispatcher());
 
 $eventBus->utilize($router);
 
-//The event needs to be translated to a Prooph\ServiceBus\Message\MessageInterface
-//The ForwardToMessageDispatcherStrategy checks if the listener of the event
-//is an instance of Prooph\ServiceBus\Message\MessageDispatcherInterface
-//and translates the event with the help of a Prooph\ServiceBus\Message\ToMessageTranslatorInterface
-$eventBus->utilize(new ForwardToMessageDispatcherStrategy(new ToMessageTranslator()));
+//The domain event needs to be translated to a Prooph\Common\Messaging\RemoteMessage
+//The ForwardToRemoteMessageDispatcherStrategy checks if the listener of the event
+//is an instance of Prooph\ServiceBus\Message\RemoteMessageDispatcher
+//and translates the event with the help of a Prooph\ServiceBus\Message\ToRemoteMessageTranslator
+$eventBus->utilize(new ForwardToRemoteMessageDispatcherStrategy(new ProophDomainMessageToRemoteMessageTranslator()));
 
 
-//Now the event is dispatched to a MessageDispatcher instead of a listener
+//Now the event is dispatched to a RemoteMessageDispatcher instead of a listener
 $eventBus->dispatch(new SomethingDone());
 
-//Behind the scenes the message is translated to an array and pushed on a message queue
+//Behind the scenes the remote message is translated to an array and pushed on a message queue
 //There are various messaging tools available. We try to support the most important ones and
 //continue to add more. Check the list below for available adapters. If your favorite adapter is
 //not on the list you can easily implement it
-//by implementing the Prooph\ServiceBus\Message\MessageDispatcherInterface
+//by implementing the Prooph\ServiceBus\Message\RemoteMessageDispatcher interface
 //
 //Now imagine that a worker has pulled the message array from the queue and want to process it
-//It can simply create a message object from the array ...
-$message = \Prooph\ServiceBus\Message\StandardMessage::fromArray($messageArr);
+//It can simply create a remote message object from the array ...
+$message = \Prooph\Common\Messaging\RemoteMessage::fromArray($messageArr);
 
-//... set up another EventBus with a Prooph\ServiceBus\Message\FromMessageTranslator
-//to translate the incoming message back to an event ...
+//... set up another EventBus with a Prooph\ServiceBus\Message\FromRemoteMessageTranslator
+//to translate the incoming message back to a domain event ...
 $eventBus = new EventBus();
 
-$eventBus->utilize(new FromMessageTranslator());
+$eventBus->utilize(new FromRemoteMessageTranslator());
 
 $router = new EventRouter();
 
@@ -81,9 +81,9 @@ $eventBus->utilize(new OnInvokeStrategy());
 $eventBus->dispatch($message);
 ```
 
-# Available MessageDispatchers
+# Available RemoteMessageDispatchers
 
-- [InMemoryMessageDispatcher](../src/Prooph/ServiceBus/Message/InMemoryMessageDispatcher.php): useful for tests, 
+- [InMemoryRemoteMessageDispatcher](../src/Prooph/ServiceBus/Message/InMemoryRemoteMessageDispatcher.php): useful for tests,
   you can replace your async dispatcher with this one 
 - [PhpResqueMessageDispatcher](https://github.com/prooph/psb-php-resque-dispatcher): Perfect choice for async 
   command processing using a ultra fast redis queue

@@ -23,5 +23,5 @@ PSB provides both possibilities behind a unified interface.
 Remember the statement "Messaging means fire and forget".
 The message sender never knows if the message is processed synchronous or asynchronous. It depends on the bus
 configuration and/or the used plugins. A message can directly be routed to it's handler. In this case we talk about synchronous
-message processing. If the receiver of the message is a [Prooph\ServiceBus\Message\MessageDispatcherInterface](message_dispatcher.md)
+message processing. If the receiver of the message is a [Prooph\ServiceBus\Message\RemoteMessageDispatcher](message_dispatcher.md)
 the message is normally processed asynchronously.

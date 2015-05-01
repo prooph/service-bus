@@ -25,15 +25,11 @@
     "require": {
         "php": ">=5.5",
         "beberlei/assert": "~2.0",
-        "prooph/common" : "~1.4",
-        "rhumsaa/uuid" : "~2.5"
+        "prooph/common" : "~1.5"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
-        "chrisboulton/php-resque": "~1.2",
-        "prooph/event-store": "~1.0",
-        "prooph/event-sourcing": "~1.0",
-        "zendframework/zend-servicemanager": "~2.3"
+        "satooshi/php-coveralls": "dev-master"
     },
     "suggest": {
         "prooph/event-store": "Use ProophEventStore and let the EventBus dispatch persisted DomainEvents",

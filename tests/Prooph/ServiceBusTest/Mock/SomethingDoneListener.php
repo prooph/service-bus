@@ -10,8 +10,7 @@
  */
 
 namespace Prooph\ServiceBusTest\Mock;
-
-use Prooph\ServiceBus\Event;
+use Prooph\Common\Messaging\DomainEvent;
 
 /**
  * Class SomethingDoneListener
@@ -27,15 +26,15 @@ class SomethingDoneListener
     private $lastEvent;
 
     /**
-     * @param Event $event
+     * @param DomainEvent $event
      */
-    public function somethingDone(Event $event)
+    public function somethingDone(DomainEvent $event)
     {
         $this->lastEvent = $event;
     }
 
     /**
-     * @return Event
+     * @return DomainEvent
      */
     public function lastEvent()
     {
