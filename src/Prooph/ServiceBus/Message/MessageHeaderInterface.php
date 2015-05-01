@@ -16,6 +16,7 @@ use Rhumsaa\Uuid\Uuid;
 /**
  * Interface MessageHeaderInterface
  *
+ * @deprecated This class will be removed in v4.0, use the one provided by prooph/common instead
  * @package Prooph\ServiceBus\Command
  * @author Alexander Miertsch <contact@prooph.de>
  */

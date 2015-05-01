@@ -14,6 +14,7 @@ namespace Prooph\ServiceBus\Message;
 /**
  * Interface PayloadInterface
  *
+ * @deprecated This class will be removed in v4.0, use the one provided by prooph/common instead
  * @package Prooph\ServiceBus\Payload
  * @author Alexander Miertsch <contact@prooph.de>
  */
