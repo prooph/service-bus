@@ -11,8 +11,10 @@
 
 namespace Prooph\ServiceBus\InvokeStrategy;
 
-use Prooph\ServiceBus\Message\RemoteMessageDispatcher;
+use Prooph\Common\Messaging\RemoteMessage;
 use Prooph\ServiceBus\Message\ProophDomainMessageToRemoteMessageTranslator;
+use Prooph\ServiceBus\Message\RemoteMessageDispatcher;
+use Prooph\ServiceBus\Message\ToRemoteMessageTranslator;
 
 /**
  * Class ForwardToRemoteMessageDispatcherStrategy
@@ -34,9 +36,7 @@ class ForwardToRemoteMessageDispatcherStrategy extends AbstractInvokeStrategy
     /**
      * @param ToRemoteMessageTranslator $messageTranslator
      */
-    public function __construct(
-        ProophDomainMessageToRemoteMessageTranslator $messageTranslator = null
-    )
+    public function __construct(ToRemoteMessageTranslator $messageTranslator = null)
     {
         $this->messageTranslator = $messageTranslator;
     }
@@ -49,7 +49,7 @@ class ForwardToRemoteMessageDispatcherStrategy extends AbstractInvokeStrategy
     protected function canInvoke($aHandler, $aCommandOrEvent)
     {
         if ($aHandler instanceof RemoteMessageDispatcher) {
-            if ($aCommandOrEvent instanceof MessageInterface
+            if ($aCommandOrEvent instanceof RemoteMessage
                 || $this->getMessageTranslator()->canTranslateToRemoteMessage($aCommandOrEvent)) {
                 return true;
             }
@@ -66,7 +66,7 @@ class ForwardToRemoteMessageDispatcherStrategy extends AbstractInvokeStrategy
     {
         $message = $aCommandOrEvent;
 
-        if (! $message instanceof MessageInterface) {
+        if (! $message instanceof RemoteMessage) {
             $message = $this->getMessageTranslator()->translateToRemoteMessage($aCommandOrEvent);
         }
 
