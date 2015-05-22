@@ -14,6 +14,7 @@ namespace Prooph\ServiceBus;
 use Prooph\Common\Event\ActionEventDispatcher;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\ListenerHandler;
+use Prooph\Common\Event\ProophActionEventDispatcher;
 use Prooph\Common\Event\ZF2\Zf2ActionEventDispatcher;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\MessageDispatch;
@@ -161,14 +162,14 @@ abstract class MessageBus
     /**
      * Retrieve the action event dispatcher
      *
-     * Lazy-loads a dispatcher using a ZF2 EventManager if none is registered.
+     * Lazy-loads a dispatcher if none is registered.
      *
      * @return ActionEventDispatcher
      */
     public function getActionEventDispatcher()
     {
         if (is_null($this->events)) {
-            $this->setActionEventDispatcher(new Zf2ActionEventDispatcher());
+            $this->setActionEventDispatcher(new ProophActionEventDispatcher());
         }
 
         return $this->events;
