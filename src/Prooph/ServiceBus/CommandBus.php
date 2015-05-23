@@ -14,7 +14,6 @@ namespace Prooph\ServiceBus;
 use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class CommandBus
@@ -26,6 +25,7 @@ class CommandBus extends MessageBus
 {
     /**
      * @param mixed $command
+     * @return void
      * @throws Exception\CommandDispatchException
      */
     public function dispatch($command)

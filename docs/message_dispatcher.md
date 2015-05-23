@@ -10,6 +10,7 @@ set up a cron job to periodically check the queue for new messages and process t
 hide such an asynchronous workflow behind a unified interface. You can start with synchronous message dispatching by
 routing your messages directly to message handlers and if you later want to improve response times you can switch to
 async processing on message basis by routing the appropriate messages to a [RemoteMessageDispatcher](../src/Prooph/ServiceBus/Message/RemoteMessageDispatcher.php).
+Queries require a special remote message dispatcher implementation namely a [RemoteQueryDispatcher](../src/Prooph/ServiceBus/Message/RemoteQueryDispatcher.php).
 
 ## Synchronous Dispatch
 ```php
@@ -38,7 +39,7 @@ your controller or service logic can continue to work without any adaptions.
 $router = new EventRouter();
 
 //We route the event to an async message dispatcher
-//which implements Prooph\ServiceBus\Message\MessageDispatcherInterface
+//which implements Prooph\ServiceBus\Message\RemoteMessageDispatcher
 $router->route('SomethingDone')->to(new My\Async\MessageDispatcher());
 
 $eventBus->utilize($router);
@@ -91,3 +92,10 @@ $eventBus->dispatch($message);
   drivers like Doctrine DBAL and Predis (see http://bernardphp.com for a complete list of drivers)
 - [GuzzleHttpMessageDispatcher](https://github.com/prooph/psb-http-dispatcher): Send messages to a remote system using
   HTTP
+
+# RemoteQueryDispatcher
+
+A remote query dispatcher implementation needs to provide a response by resolving the handed over deferred.
+In a messaging system based on RabbitMQ for example you can make use of a callback queue feature.
+HTTP APIs provide responses naturally.
+So these are both good candidates to use for remote querying.
