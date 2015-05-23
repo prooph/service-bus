@@ -5,15 +5,11 @@ The CommandBus
 
 # Usage
 
-When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) you can use
-the CommandBus as a thin layer between your application controllers and your write model.
+When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) the command bus is your best friend.
+It takes an incoming command message and route it the responsible command handler.
 The advantage of using a CommandBus instead of calling command handlers directly is, that you can change your model without effecting
 the application logic. You can work with command versions to dispatch a newer version to a new command handler and older
 versions to old command handlers. Your model can support different versions at the same time which makes migrations a lot easier.
-The CommandBus can also act as a facade for remote systems. If you want to
-trigger an action in an external system you can configure the CommandBus to forward the command to that system. Your controller knows
-nothing about the other. With that in mind you can easily test your application logic. Simply replace the connection to the
-external system in your test environment with a connection to a mocked command handler simulating the behaviour.
 
 # API
 
@@ -56,7 +52,7 @@ class CommandBus extends MessageBus
 }
 ```
 
-The public api of the CommandBus is very simple. Four of the five methods deal with adding or removing plugins and the last
+The public API of the CommandBus is very simple. Four of the five methods deal with adding or removing plugins and the last
 one triggers the dispatch process of the given command.
 
 ** Note: Only `dispatch` is implemented by the CommandBus the four other public methods are provided by the basic MessageBus implementation.
@@ -65,7 +61,7 @@ one triggers the dispatch process of the given command.
 
 The command dispatch is an event-driven process provided by a Prooph\Common\Event\ActionEventDispatcher.
 When a command is passed to the CommandBus via `CommandBus::dispatch` a new [CommandDispatch](../src/Prooph/ServiceBus/Process/CommandDispatch.php) process is created by the CommandBus and populated with the given command.
-Then the CommandBus triggers a chain of action events. Plugins can listen on the action events. They always get the CommandDispatch as the only argument and they can
+Then the CommandBus triggers a chain of action events. Plugins can listen on these action events. They always get the CommandDispatch as the only argument and they can
 modify it to help the CommandBus finish the process. A CommandBus without any registered plugins is useless and will throw an exception because
 it does not know which command handler is responsible for the command.
 Following action events are triggered in the listed order:
@@ -98,10 +94,9 @@ attach a monitoring plugin.
 # Commands
 
 A command can nearly be everything. PSB tries to get out of your way as much as it can. You are ask to use your own command implementation or you use the
-default [Command](https://github.com/prooph/common/blob/master/src/Messaging/Command.php) class provided by prooph/common. It is a very good base class and PSB ships with translator plugins to translate a Command into a remote message
-that can be send to a remote interface. Check the [Remote Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
-your own message translator plugin, a plugin that is capable of detecting the name of the command and an invoke strategy that knows how to invoke
-your command handlers with the command. Mix and match the plugins provided by PSB with your own ones to decouple your implementation from the PSB infrastructure.
+default [Command](https://github.com/prooph/common/blob/master/src/Messaging/Command.php) class provided by prooph/common. It is a very good base class
+and PSB ships with translator plugins to translate a Command into a remote message
+that can be send to a remote interface. Check the [Remote Message Dispatcher](message_dispatcher.md) for more details.
 
 # Plugins
 

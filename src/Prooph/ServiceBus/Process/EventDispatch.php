@@ -36,7 +36,7 @@ class EventDispatch extends MessageDispatch
      */
     public static function initializeWith($event, EventBus $eventBus)
     {
-        $instance = new self(self::INITIALIZE, $eventBus, array('message' => $event));
+        $instance = new static(static::INITIALIZE, $eventBus, array('message' => $event));
 
         if ($event instanceof HasMessageName) {
             $instance->setMessageName($event->messageName());

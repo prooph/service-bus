@@ -17,12 +17,12 @@ use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\TestCase;
 
 /**
- * Class CommandRouterTest
+ * Class SingleHandlerRouterTest
  *
  * @package Prooph\ServiceBusTest\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandRouterTest extends TestCase
+class SingleHandlerRouterTest extends TestCase
 {
     /**
      * @test
@@ -37,7 +37,7 @@ class CommandRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $router->onRouteCommand($commandDispatch);
+        $router->onRouteMessage($commandDispatch);
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
     }
@@ -81,7 +81,7 @@ class CommandRouterTest extends TestCase
 
         $commandDispatch->setName(CommandDispatch::ROUTE);
 
-        $router->onRouteCommand($commandDispatch);
+        $router->onRouteMessage($commandDispatch);
 
         $this->assertEquals("DoSomethingHandler", $commandDispatch->getCommandHandler());
     }

@@ -19,6 +19,7 @@ use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
 use Prooph\ServiceBus\Process\MessageDispatch;
+use Prooph\ServiceBus\Process\QueryDispatch;
 
 /**
  * Class RegexRouter
@@ -122,19 +123,19 @@ class RegexRouter implements ActionEventListenerAggregate
      */
     public function onRoute(MessageDispatch $messageDispatch)
     {
-        if ($messageDispatch instanceof CommandDispatch) $this->onRouteCommand($messageDispatch);
+        if ($messageDispatch instanceof CommandDispatch || $messageDispatch instanceof QueryDispatch) $this->onRouteToSingleHandler($messageDispatch);
         else $this->onRouteEvent($messageDispatch);
     }
 
     /**
-     * @param CommandDispatch $commandDispatch
+     * @param MessageDispatch $messageDispatch
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      */
-    private function onRouteCommand(CommandDispatch $commandDispatch)
+    private function onRouteToSingleHandler(MessageDispatch $messageDispatch)
     {
-        if (is_null($commandDispatch->getCommandName()) && $commandDispatch->isLoggingEnabled()) {
-            $commandDispatch->getLogger()->notice(
-                sprintf("%s: CommandDispatch contains no command name", get_called_class())
+        if (is_null($messageDispatch->getMessageName()) && $messageDispatch->isLoggingEnabled()) {
+            $messageDispatch->getLogger()->notice(
+                sprintf("%s: MessageDispatch contains no message name", get_called_class())
             );
             return;
         }
@@ -143,17 +144,24 @@ class RegexRouter implements ActionEventListenerAggregate
 
         foreach($this->patternMap as $map) {
             list($pattern, $handler) = each($map);
-            if (preg_match($pattern, $commandDispatch->getCommandName())) {
+            if (preg_match($pattern, $messageDispatch->getMessageName())) {
 
                 if ($alreadyMatched) {
                     throw new RuntimeException(sprintf(
-                        "Multiple handlers detected for command %s. The patterns %s and %s matches both",
-                        $commandDispatch->getCommandName(),
+                        "Multiple handlers detected for message %s. The patterns %s and %s matches both",
+                        $messageDispatch->getMessageName(),
                         $alreadyMatched,
                         $pattern
                     ));
                 } else {
-                    $commandDispatch->setCommandHandler($handler);
+                    if ($messageDispatch instanceof CommandDispatch) {
+                        $messageDispatch->setCommandHandler($handler);
+                    } elseif ($messageDispatch instanceof QueryDispatch) {
+                        $messageDispatch->setFinder($handler);
+                    } else {
+                        $messageDispatch->setParam('message-handler', $handler);
+                    }
+
                     $alreadyMatched = $pattern;
                 }
             }

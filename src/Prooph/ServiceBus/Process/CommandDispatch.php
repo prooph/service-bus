@@ -35,7 +35,7 @@ class CommandDispatch extends MessageDispatch
      */
     public static function initializeWith($command, CommandBus $commandBus)
     {
-        $instance = new self(self::INITIALIZE, $commandBus, array('message' => $command));
+        $instance = new static(static::INITIALIZE, $commandBus, array('message' => $command));
 
         if ($command instanceof HasMessageName) {
             $instance->setMessageName($command->messageName());

@@ -17,6 +17,7 @@ use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\Common\Messaging\Command;
 use Prooph\Common\Messaging\DomainEvent;
 use Prooph\Common\Messaging\MessageHeader;
+use Prooph\Common\Messaging\Query;
 use Prooph\Common\Messaging\RemoteMessage;
 use Prooph\ServiceBus\Process\MessageDispatch;
 
@@ -69,10 +70,12 @@ class FromRemoteMessageTranslator implements ActionEventListenerAggregate
      */
     public function translateFromRemoteMessage(RemoteMessage $remoteMessage)
     {
-        $defaultCommandOrEventClass = ($remoteMessage->header()->type() === MessageHeader::TYPE_COMMAND)?
-            Command::class : DomainEvent::class;
+        $defaultMessageClass = ($remoteMessage->header()->type() === MessageHeader::TYPE_COMMAND)
+            ? Command::class :
+            ($remoteMessage->header()->type() === MessageHeader::TYPE_QUERY)
+                ? Query::class : DomainEvent::class;
 
-        $messageClass = (class_exists($remoteMessage->name()))? $remoteMessage->name() : $defaultCommandOrEventClass;
+        $messageClass = (class_exists($remoteMessage->name()))? $remoteMessage->name() : $defaultMessageClass;
 
         return $messageClass::fromRemoteMessage($remoteMessage);
     }

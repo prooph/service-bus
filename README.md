@@ -1,15 +1,29 @@
 PSB - ProophServiceBus
 ======================
 
-PHP 5.5+ Enterprise Service Bus Facade supporting CQRS
+PHP 5.5+ Lightweight Service Bus Facade supporting CQRS and Microservices
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
-Why another CQRS/Messaging library?
------------------------------------
+Message API
+-----------
 
-The goal of prooph/service-bus (PSB) is to provide a powerful CQRS layer on top of different messaging/worker tools like [PhpResque](https://github.com/chrisboulton/php-resque), [RabbitMQ](https://www.rabbitmq.com/), [Pheanstalk](https://github.com/pda/pheanstalk) or [RESTful Messaging API](https://github.com/prooph/psb-http-dispatcher).
-It is designed with flexibility in mind. An event-driven system provides the possibility to add plugins for additional functionality.
+prooph/service-bus is a lightweight messaging facade sitting in front of your model. The idea is that the API of your model
+is defined through messages.
+
+1. Command messages describe the actions your model can handle.
+2. Event messages describe things that happened while your model handled a command.
+3. Query messages describe available information that can be fetched from your model.
+
+prooph/service-bus shields your model. Data input and output ports become irrelevant and no longer influence the business logic.
+I'm looking at you Hexagonal Architecture.
+
+prooph/service-bus decouples your model from any framework except prooph/service-bus of course :-). You can use a
+web framework like Zend, Symfony, Laravel and co. to handle http requests and pass them via prooph/service-bus to your model
+but you can also receive the same messages via CLI or from a messaging infrastructure like RabbitMQ or Beanstalkd.
+
+![psb_architecture](https://github.com/prooph/service-bus/blob/master/docs/img/psb_architecture.png)
+
 
 Installation
 ------------
@@ -19,7 +33,7 @@ You can install prooph/service-bus via composer by adding `"prooph/service-bus":
 Quick Start
 -----------
 
-The simplest way to get started is to set up a command or event bus with the default components provided by prooph/service-bus.
+The simplest way to get started is to set up one of the message buses provided by prooph/service-bus.
 
 ```php
 <?php
@@ -60,14 +74,14 @@ Documentation
 - [Overview](docs/service_bus_system.md)
 - [CommandBus](docs/command_bus.md)
 - [EventBus](docs/event_bus.md)
+- [QueryBus](docs/query_bus.md)
 - [Plugins](docs/plugins.md)
 - [Asynchronous MessageDispatcher](docs/message_dispatcher.md)
 
 # ZF2 Integration
 
-[prooph/proophessor](https://github.com/prooph/proophessor) seamlessly integrates ProophServiceBus with a ZF2 application.
+[prooph/proophessor](https://github.com/prooph/proophessor) seamlessly integrates prooph/service-bus with a ZF2 application.
  
-
 
 Support
 -------
