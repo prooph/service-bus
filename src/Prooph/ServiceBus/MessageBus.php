@@ -42,7 +42,7 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
-     * @return void
+     * @return mixed|void depends on the bus type
      */
     abstract public function dispatch($message);
 

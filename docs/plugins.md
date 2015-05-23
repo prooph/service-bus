@@ -33,6 +33,13 @@ $router->route('My.Command.PayOrder')->to("payment_processor");
 $commandBus->utilize($router);
 ```
 
+## Prooph\ServiceBus\Router\QueryRouter
+
+Use the QueryRouter to provide a list of queries (identified by their names) and their responsible finders.
+
+The QueryRouter share the same base class with the CommandRouter so its interface looks exactly the same.
+
+
 ## Prooph\ServiceBus\Router\EventRouter
 
 Use the EventRouter to provide a list of event messages (identified by their names) and all interested listeners per event message.
@@ -53,8 +60,8 @@ $eventBus->utilize($router);
 
 ## Prooph\ServiceBus\Router\RegexRouter
 
-The RegexRouter works with regular expressions to determine handlers for messages. It can be used together with a CommandBus and
-an EventBus but behaves different for both. When routing a command the RegexRouter makes sure that only one pattern matches.
+The RegexRouter works with regular expressions to determine handlers for messages. It can be used together with a CommandBus, a QueryBus and
+an EventBus but for the latter it behaves a bit different. When routing a command or query the RegexRouter makes sure that only one pattern matches.
 If more than one pattern matches it throws a `Prooph\ServiceBus\Exception\RuntimeException`. On the other hand when routing
 an event each time a pattern matches the corresponding listener is added to the list of listeners.
 
@@ -97,6 +104,8 @@ by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/InvokeStrateg
 - `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a command handler. Forces the rule that a command handler should only be responsible for handling one specific command.
 - `OnEventStrategy`: Prefixes the short class name of an event with `on`. A listener should
 have a public method named this way: OrderCartUpdater::onArticleWasBought.
+- `FinderInvokeStrategy`: This strategy is responsible for invoking finders. It either looks for a finder method named like the short class name of the query or it
+checks if the finder is callable (implements the magic __invoke method f.e.).
 - `ForwardToRemoteMessageDispatcherStrategy`: This is a special invoke strategy that is capable of translating a command or event to
 a [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php) and invoke a [RemoteMessageDispatcher](message_dispatcher.md).
 Add this strategy to a bus together with a [ToRemoteMessageTranslator](../src/Prooph/ServiceBus/Message/ToRemoteMessageTranslator.php) and
@@ -114,16 +123,20 @@ $eventBus->utilize($router);
 $eventBus->dispatch(new SomethingDone());
 ```
 
+- `ForwardToRemoteQueryDispatcherStrategy`: Like the `ForwardToRemoteMessageDispatcherStrategy` this invoke strategy translates a
+query to a [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php) but it invokes a [RemoteQueryDispatcher](message_dispatcher.md#RemoteQueryDispatcher) instead.
+
+
 # FromRemoteMessageTranslator
 
 The [FromRemoteMessageTranslator](../src/Prooph/ServiceBus/Message/FromRemoteMessageTranslator.php) plugin does the opposite of the `ForwardToRemoteMessageDispatcherStrategy`.
-It listens on the `initialize` dispatch action event of a CommandBus or EventBus and if it detects an incoming [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php)
-it translates the message to a [Command](https://github.com/prooph/common/blob/master/src/Messaging/Command.php) or [DomainEvent](https://github.com/prooph/common/blob/master/src/Messaging/DomainEvent.php) depending on the type
+It listens on the `initialize` dispatch action event of a CommandBus, QueryBus or EventBus and if it detects an incoming [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php)
+it translates the message to a [Command](https://github.com/prooph/common/blob/master/src/Messaging/Command.php), [Query](https://github.com/prooph/common/blob/master/src/Messaging/Query.php)  or [DomainEvent](https://github.com/prooph/common/blob/master/src/Messaging/DomainEvent.php) depending on the type
 provided in the [MessageHeader](https://github.com/prooph/common/blob/master/src/Messaging/MessageHeader.php). A receiver of an asynchronous dispatched message, for example a worker of a
 message queue, can pull a [RemoteMessage](https://github.com/prooph/common/blob/master/src/Messaging/RemoteMessage.php) from the queue and forward it to a appropriate configured CommandBus or EventBus without additional work.
 
 *Note: If the message name is an existing class it is used instead of the default implementation.
-       But the custom message class MUST provide a static `fromRemoteMessage` factory method, otherwise the translator will break!
+       But the custom message class MUST provide a static `fromRemoteMessage` factory method, otherwise the translator will break with a fatal error!
 
 # ServiceLocatorProxy
 

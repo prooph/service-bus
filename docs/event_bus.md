@@ -6,7 +6,7 @@ The EventBus
 # Usage
 
 When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) you need a way to inform the outside world
-about events that happened in your write model be it your read model generators or other systems that rely on the information.
+about events that happened in your write model be it your read model projectors or other systems that rely on the information.
 An EventBus is responsible for dispatching event messages to all interested listeners. If a listener is part of another system
 the event may need to be send to a remote interface. The Prooph\ServiceBus\EventBus is capable to handle synchronous event
 dispatching as well as asynchronous/remote event dispatching by using suitable plugins.
@@ -102,10 +102,9 @@ attach a monitoring plugin.
 # Event Messages
 
 An event message can nearly be everything. PSB tries to get out of your way as much as it can. You are ask to use your own event message implementation or you use the
-default [DomainEvent](https://github.com/prooph/common/blob/master/src/Messaging/DomainEvent.php) class provided by prooph/common. It is a very good base class and PSB ships with translator plugins to translate an event message into a remote message
-that can be send to a remote interface. Check the [Remote Message Dispatcher](message_dispatcher.md) for more details. However, you can provide
-your own message translator plugin, a plugin that is capable of detecting the name of the event message and an invoke strategy that knows how to invoke
-your event message listeners with the event message. Mix and match the plugins provided by PSB with your own ones to decouple your implementation from the PSB infrastructure.
+default [DomainEvent](https://github.com/prooph/common/blob/master/src/Messaging/DomainEvent.php) class provided by prooph/common. It is a very good base class
+and PSB ships with translator plugins to translate an event message into a remote message
+that can be send to a remote interface. Check the [Remote Message Dispatcher](message_dispatcher.md) for more details.
 
 # Plugins
 

@@ -25,7 +25,8 @@
     "require": {
         "php": ">=5.5",
         "beberlei/assert": "~2.0",
-        "prooph/common" : "~2.1"
+        "prooph/common" : "~2.2",
+        "react/promise" : "~2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
