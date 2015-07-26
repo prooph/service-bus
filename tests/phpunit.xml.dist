@@ -3,7 +3,7 @@
 <phpunit bootstrap="bootstrap.php">
     <testsuites>
         <testsuite name="ServiceBusTest">
-            <directory>./Prooph/ServiceBusTest</directory>
+            <directory>.</directory>
         </testsuite>
     </testsuites>
 </phpunit>
