@@ -19,7 +19,7 @@ use Prooph\ServiceBus\Message\FromRemoteMessageTranslator;
 use Prooph\ServiceBus\Message\InMemoryRemoteMessageDispatcher;
 use Prooph\ServiceBus\Message\ProophDomainMessageToRemoteMessageTranslator;
 use Prooph\ServiceBus\Router\CommandRouter;
-use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
+use Prooph\ServiceBus\ServiceLocator\ServiceLocatorPlugin;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\DoSomethingHandler;
 use Prooph\ServiceBusTest\Mock\DoSomethingInvokeStrategy;
@@ -83,7 +83,7 @@ class CommandBusTest extends TestCase
 
         $sm->setService('do_something_handler', $this->doSomethingHandler);
 
-        $commandBus->utilize(new ServiceLocatorProxy(Zf2ServiceManagerProxy::proxy($sm)));
+        $commandBus->utilize(new ServiceLocatorPlugin(Zf2ServiceManagerProxy::proxy($sm)));
 
         //Register appropriate invoke strategy
         $commandBus->utilize(new DoSomethingInvokeStrategy());

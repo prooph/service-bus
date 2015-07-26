@@ -9,17 +9,18 @@
  * Date: 30.10.14 - 22:29
  */
 
-namespace Prooph\ServiceBus\Router;
+namespace Prooph\ServiceBus\Plugin\Router;
 
 use Assert\Assertion;
-use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Process\CommandDispatch;
-use Prooph\ServiceBus\Process\EventDispatch;
-use Prooph\ServiceBus\Process\MessageDispatch;
-use Prooph\ServiceBus\Process\QueryDispatch;
+use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\QueryBus;
 
 /**
  * Class RegexRouter
@@ -61,13 +62,13 @@ class RegexRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param ActionEventDispatcher $events
+     * @param ActionEventEmitter $events
      *
      * @return void
      */
-    public function attach(ActionEventDispatcher $events)
+    public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageDispatch::ROUTE, [$this, 'onRoute'], 100));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRoute'], 100));
     }
 
     /**
@@ -119,24 +120,23 @@ class RegexRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param MessageDispatch $messageDispatch
+     * @param ActionEvent $actionEvent
      */
-    public function onRoute(MessageDispatch $messageDispatch)
+    public function onRoute(ActionEvent $actionEvent)
     {
-        if ($messageDispatch instanceof CommandDispatch || $messageDispatch instanceof QueryDispatch) $this->onRouteToSingleHandler($messageDispatch);
-        else $this->onRouteEvent($messageDispatch);
+        if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) $this->onRouteToSingleHandler($actionEvent);
+        else $this->onRouteEvent($actionEvent);
     }
 
     /**
-     * @param MessageDispatch $messageDispatch
+     * @param ActionEvent $actionEvent
      * @throws \Prooph\ServiceBus\Exception\RuntimeException
      */
-    private function onRouteToSingleHandler(MessageDispatch $messageDispatch)
+    private function onRouteToSingleHandler(ActionEvent $actionEvent)
     {
-        if (is_null($messageDispatch->getMessageName()) && $messageDispatch->isLoggingEnabled()) {
-            $messageDispatch->getLogger()->notice(
-                sprintf("%s: MessageDispatch contains no message name", get_called_class())
-            );
+        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
+        if (empty($messageName)) {
             return;
         }
 
@@ -144,22 +144,22 @@ class RegexRouter implements ActionEventListenerAggregate
 
         foreach($this->patternMap as $map) {
             list($pattern, $handler) = each($map);
-            if (preg_match($pattern, $messageDispatch->getMessageName())) {
+            if (preg_match($pattern, $messageName)) {
 
                 if ($alreadyMatched) {
                     throw new RuntimeException(sprintf(
                         "Multiple handlers detected for message %s. The patterns %s and %s matches both",
-                        $messageDispatch->getMessageName(),
+                        $messageName,
                         $alreadyMatched,
                         $pattern
                     ));
                 } else {
-                    if ($messageDispatch instanceof CommandDispatch) {
-                        $messageDispatch->setCommandHandler($handler);
-                    } elseif ($messageDispatch instanceof QueryDispatch) {
-                        $messageDispatch->setFinder($handler);
+                    if ($actionEvent->getTarget() instanceof CommandBus) {
+                        $actionEvent->setParam(CommandBus::EVENT_PARAM_COMMAND_HANDLER, $handler);
+                    } elseif ($actionEvent->getTarget() instanceof QueryBus) {
+                        $actionEvent->setParam(QueryBus::EVENT_PARAM_FINDER, $handler);
                     } else {
-                        $messageDispatch->setParam('message-handler', $handler);
+                        $actionEvent->setParam('message-handler', $handler);
                     }
 
                     $alreadyMatched = $pattern;
@@ -169,21 +169,22 @@ class RegexRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param EventDispatch $eventDispatch
+     * @param ActionEvent $actionEvent
      */
-    private function onRouteEvent(EventDispatch $eventDispatch)
+    private function onRouteEvent(ActionEvent $actionEvent)
     {
-        if (is_null($eventDispatch->getEventName()) && $eventDispatch->isLoggingEnabled()) {
-            $eventDispatch->getLogger()->notice(
-                sprintf("%s: EventDispatch contains no event name", get_called_class())
-            );
+        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
+        if (empty($messageName)) {
             return;
         }
 
         foreach($this->patternMap as $map) {
             list($pattern, $handler) = each($map);
-            if (preg_match($pattern, $eventDispatch->getEventName())) {
-                $eventDispatch->addEventListener($handler);
+            if (preg_match($pattern, $messageName)) {
+                $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
+                $listeners[] = $handler;
+                $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
             }
         }
     }

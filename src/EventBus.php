@@ -11,70 +11,64 @@
 
 namespace Prooph\ServiceBus;
 
-use Prooph\ServiceBus\Exception\EventDispatchException;
-use Prooph\ServiceBus\Process\EventDispatch;
-use Zend\EventManager\EventManagerInterface;
-
+/**
+ * Class EventBus
+ *
+ * An event bus is capable of dispatching a message to multiple listeners.
+ *
+ * @package Prooph\ServiceBus
+ * @author Alexander Miertsch <kontakt@codeliner.ws>
+ */
 class EventBus extends MessageBus
 {
+    const EVENT_LOCATE_LISTENER     = 'locate-listener';
+    const EVENT_INVOKE_LISTENER     = 'invoke-listener';
+
+    const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
+    const EVENT_PARAM_CURRENT_EVENT_LISTENER = 'current-event-listener';
+
     /**
      * @param mixed $event
-     * @throws Exception\EventDispatchException
+     * @return void
      */
     public function dispatch($event)
     {
-        $eventDispatch = EventDispatch::initializeWith($event, $this);
+        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 
-        if (! is_null($this->logger)) {
-            $eventDispatch->useLogger($this->logger);
-        }
+        $actionEvent->setTarget($this);
 
         try {
-            $this->trigger($eventDispatch);
+            $this->initialize($event, $actionEvent);
 
-            if (is_null($eventDispatch->getEventName())) {
-                $eventDispatch->setName(EventDispatch::DETECT_MESSAGE_NAME);
+            $actionEvent->setName(self::EVENT_ROUTE);
 
-                $this->trigger($eventDispatch);
-            }
+            $this->trigger($actionEvent);
 
-            $eventDispatch->setName(EventDispatch::ROUTE);
+            foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
 
-            $this->trigger($eventDispatch);
-
-            foreach ($eventDispatch->getEventListeners() as $eventListener) {
-
-                $eventDispatch->setCurrentEventListener($eventListener);
+                $actionEvent->setParam(self::EVENT_PARAM_CURRENT_EVENT_LISTENER, $eventListener);
 
                 if (is_string($eventListener)) {
-                    $eventDispatch->setName(EventDispatch::LOCATE_LISTENER);
+                    $actionEvent->setName(self::EVENT_LOCATE_LISTENER);
 
-                    $this->trigger($eventDispatch);
+                    $this->trigger($actionEvent);
                 }
 
-                $eventDispatch->setName(EventDispatch::INVOKE_LISTENER);
+                $eventListener = $actionEvent->getParam(self::EVENT_PARAM_CURRENT_EVENT_LISTENER);
 
-                $this->trigger($eventDispatch);
+                if (is_callable($eventListener)) {
+                    $eventListener($event);
+                } else {
+                    $actionEvent->setName(self::EVENT_INVOKE_LISTENER);
+
+                    $this->trigger($actionEvent);
+                }
             }
 
+            $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {
-            $failedPhase = $eventDispatch->getName();
-            $eventDispatch->setException($ex);
-
-            $this->triggerError($eventDispatch);
-            $this->triggerFinalize($eventDispatch);
-
-            //Check if a listener has removed the exception to indicate that it was able to handle it
-            if ($ex = $eventDispatch->getException()) {
-                $eventDispatch->setName($failedPhase);
-                throw EventDispatchException::failed($eventDispatch, $ex);
-            }
-
-            return;
-
+            $this->handleException($actionEvent, $ex);
         }
-
-        $this->triggerFinalize($eventDispatch);
     }
 }
  

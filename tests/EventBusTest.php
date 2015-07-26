@@ -19,7 +19,7 @@ use Prooph\ServiceBus\Message\FromRemoteMessageTranslator;
 use Prooph\ServiceBus\Message\InMemoryRemoteMessageDispatcher;
 use Prooph\ServiceBus\Message\ProophDomainMessageToRemoteMessageTranslator;
 use Prooph\ServiceBus\Router\EventRouter;
-use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
+use Prooph\ServiceBus\ServiceLocator\ServiceLocatorPlugin;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 use Prooph\ServiceBusTest\Mock\SomethingDoneInvokeStrategy;
 use Prooph\ServiceBusTest\Mock\SomethingDoneListener;
@@ -83,7 +83,7 @@ class EventBusTest extends TestCase
 
         $sm->setService('something_done_listener', $this->somethingDoneListener);
 
-        $eventBus->utilize(new ServiceLocatorProxy(Zf2ServiceManagerProxy::proxy($sm)));
+        $eventBus->utilize(new ServiceLocatorPlugin(Zf2ServiceManagerProxy::proxy($sm)));
 
         //Register appropriate invoke strategy
         $eventBus->utilize(new SomethingDoneInvokeStrategy());

@@ -9,8 +9,7 @@
  * Date: 09.03.14 - 21:41
  */
 
-namespace Prooph\ServiceBus\InvokeStrategy;
-use Prooph\Common\Messaging\Command;
+namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 /**
  * Class HandleCommandStrategy
@@ -22,26 +21,22 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
 {
 
     /**
-     * @param mixed $aHandler
-     * @param mixed $aCommandOrEvent
+     * @param mixed $handler
+     * @param mixed $message
      * @return bool
      */
-    public function canInvoke($aHandler, $aCommandOrEvent)
+    public function canInvoke($handler, $message)
     {
-        if (! $aCommandOrEvent instanceof Command) {
-            return false;
-        }
-
-        return method_exists($aHandler, 'handle');
+        return method_exists($handler, 'handle');
     }
 
     /**
-     * @param mixed $aHandler
-     * @param mixed $aCommandOrEvent
+     * @param mixed $handler
+     * @param mixed $message
      */
-    public function invoke($aHandler, $aCommandOrEvent)
+    public function invoke($handler, $message)
     {
-        $aHandler->handle($aCommandOrEvent);
+        $handler->handle($message);
     }
 }
  

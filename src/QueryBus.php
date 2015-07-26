@@ -10,9 +10,8 @@
  */
 namespace Prooph\ServiceBus;
 
-use Prooph\ServiceBus\Exception\QueryDispatchException;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Process\QueryDispatch;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 
@@ -29,67 +28,71 @@ use React\Promise\Promise;
  */
 class QueryBus extends MessageBus
 {
+    const EVENT_LOCATE_FINDER      = 'locate-finder';
+    const EVENT_INVOKE_FINDER      = 'invoke-finder';
+
+    const EVENT_PARAM_FINDER = 'query-finder';
+    const EVENT_PARAM_DEFERRED = 'query-deferred';
+
     /**
-     * @param mixed $message
-     * @throws QueryDispatchException
+     * @param mixed $query
      * @return Promise
      */
-    public function dispatch($message)
+    public function dispatch($query)
     {
         $deferred = new Deferred();
 
         $promise = $deferred->promise();
 
-        $queryDispatch = QueryDispatch::initializeWith($message, $this, $deferred);
+        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 
-        if (! is_null($this->logger)) {
-            $queryDispatch->useLogger($this->logger);
-        }
+        $actionEvent->setTarget($this);
+
+        $actionEvent->setParam(self::EVENT_PARAM_DEFERRED, $deferred);
 
         try {
-            $this->trigger($queryDispatch);
+            $this->initialize($query, $actionEvent);
 
-            if (is_null($queryDispatch->getQueryName())) {
-                $queryDispatch->setName(QueryDispatch::DETECT_MESSAGE_NAME);
-
-                $this->trigger($queryDispatch);
+            if ($actionEvent->getParam(self::EVENT_PARAM_FINDER) === null) {
+                $actionEvent->setName(self::EVENT_ROUTE);
+                $this->trigger($actionEvent);
             }
 
-            if (is_null($queryDispatch->getFinder())) {
-                $queryDispatch->setName(QueryDispatch::ROUTE);
-
-                $this->trigger($queryDispatch);
-            }
-
-            if (is_null($queryDispatch->getFinder())) {
+            if ($actionEvent->getParam(self::EVENT_PARAM_FINDER) === null) {
                 throw new RuntimeException(sprintf(
                     "QueryBus was not able to identify a Finder for query %s",
-                    (is_object($message))? get_class($message) : json_encode($message)
+                    $this->getMessageType($query)
                 ));
             }
 
-            if (is_string($queryDispatch->getFinder())) {
-                $queryDispatch->setName(QueryDispatch::LOCATE_FINDER);
+            if (is_string($actionEvent->getParam(self::EVENT_PARAM_FINDER))) {
+                $actionEvent->setName(self::EVENT_LOCATE_FINDER);
 
-                $this->trigger($queryDispatch);
+                $this->trigger($actionEvent);
             }
 
-            $queryDispatch->setName(QueryDispatch::INVOKE_FINDER);
+            $finder = $actionEvent->getParam(self::EVENT_PARAM_FINDER);
 
-            $this->trigger($queryDispatch);
+            if (is_callable($finder)) {
+                $finder($query, $deferred);
+            } else {
+                $actionEvent->setName(self::EVENT_INVOKE_FINDER);
+                $this->trigger($actionEvent);
+            }
 
-            $this->triggerFinalize($queryDispatch);
+            $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {
-            $failedPhase = $queryDispatch->getName();
+            $failedPhase = $actionEvent->getName();
 
-            $queryDispatch->setException($ex);
-            $this->triggerError($queryDispatch);
-            $this->triggerFinalize($queryDispatch);
+            $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);
+
+            $this->triggerError($actionEvent);
+            $this->triggerFinalize($actionEvent);
 
             //Check if a listener has removed the exception to indicate that it was able to handle it
-            if ($ex = $queryDispatch->getException()) {
-                $queryDispatch->setName($failedPhase);
-                $queryDispatch->getDeferred()->reject(QueryDispatchException::failed($queryDispatch, $ex));
+            if ($ex = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
+                $actionEvent->setName($failedPhase);
+                $deferred->reject(MessageDispatchException::failed($actionEvent, $ex));
             }
         }
 

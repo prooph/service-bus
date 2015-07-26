@@ -8,15 +8,17 @@
  * 
  * Date: 5/23/15 - 6:22 PM
  */
-namespace Prooph\ServiceBus\Router;
+namespace Prooph\ServiceBus\Plugin\Router;
 
-use Prooph\Common\Event\ActionEventDispatcher;
+use Assert\Assertion;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Process\CommandDispatch;
-use Prooph\ServiceBus\Process\MessageDispatch;
-use Prooph\ServiceBus\Process\QueryDispatch;
+use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\QueryBus;
 
 /**
  * Class SingleHandlerRouter
@@ -51,13 +53,13 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param ActionEventDispatcher $events
+     * @param ActionEventEmitter $events
      *
      * @return void
      */
-    public function attach(ActionEventDispatcher $events)
+    public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageDispatch::ROUTE, array($this, "onRouteMessage")));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, array($this, "onRouteMessage")));
     }
 
     /**
@@ -67,7 +69,8 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
      */
     public function route($messageName)
     {
-        \Assert\that($messageName)->notEmpty()->string();
+        Assertion::string($messageName);
+        Assertion::notEmpty($messageName);
 
         if (! is_null($this->tmpMessageName)) {
             throw new RuntimeException(sprintf("Message %s is not mapped to a handler.", $this->tmpMessageName));
@@ -108,38 +111,28 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param MessageDispatch $messageDispatch
+     * @param ActionEvent $actionEvent
      */
-    public function onRouteMessage(MessageDispatch $messageDispatch)
+    public function onRouteMessage(ActionEvent $actionEvent)
     {
-        if (is_null($messageDispatch->getMessageName()) && $messageDispatch->isLoggingEnabled()) {
-            $messageDispatch->getLogger()->notice(
-                sprintf("%s: MessageDispatch contains no message name", get_called_class())
-            );
+        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
+        if (empty($messageName)) {
             return;
         }
 
-        if (!isset($this->messageMap[$messageDispatch->getMessageName()])) {
-            if ($messageDispatch->isLoggingEnabled()) {
-                $messageDispatch->getLogger()->debug(
-                    sprintf(
-                        "%s: Cannot route %s to a handler. No handler registered for message.",
-                        get_called_class(),
-                        $messageDispatch->getMessageName()
-                    )
-                );
-            }
+        if (!isset($this->messageMap[$messageName])) {
             return;
         }
 
-        $handler = $this->messageMap[$messageDispatch->getMessageName()];
+        $handler = $this->messageMap[$messageName];
 
-        if ($messageDispatch instanceof CommandDispatch) {
-            $messageDispatch->setCommandHandler($handler);
-        } elseif ($messageDispatch instanceof QueryDispatch) {
-            $messageDispatch->setFinder($handler);
+        if ($actionEvent->getTarget() instanceof CommandBus) {
+            $actionEvent->setParam(CommandBus::EVENT_PARAM_COMMAND_HANDLER, $handler);
+        } elseif ($actionEvent->getTarget() instanceof QueryBus) {
+            $actionEvent->setParam(QueryBus::EVENT_PARAM_FINDER, $handler);
         } else {
-            $messageDispatch->setParam('message-handler', $handler);
+            $actionEvent->setParam('message-handler', $handler);
         }
     }
 } 

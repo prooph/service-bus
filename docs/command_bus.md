@@ -46,7 +46,7 @@ class CommandBus extends MessageBus
 
     /**
      * @param mixed $command
-     * @throws Exception\CommandDispatchException
+     * @throws Exception\MessageDispatchException
      */
     public function dispatch($command);
 }
@@ -86,7 +86,7 @@ command handler is a callable.
 - `handle-error`: If at any time a plugin or the CommandBus itself throws an exception it is caught and passed to the CommandDispatch. The normal action event chain breaks and a
 `handle-error` event is triggered instead. Plugins can access the exception by calling `CommandDispatch::getException`.
 A `handle-error` plugin or a `finalize` plugin can unset the exception by calling `CommandDispatch::setException(null)`.
-When all plugins are informed about the error and no one has unset the exception the CommandBus throws a Prooph\ServiceBus\Exception\CommandDispatchException to inform the outside world about the error.
+When all plugins are informed about the error and no one has unset the exception the CommandBus throws a Prooph\ServiceBus\Exception\MessageDispatchException to inform the outside world about the error.
 
 - `finalize`: This action event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.

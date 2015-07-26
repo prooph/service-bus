@@ -9,13 +9,16 @@
  * Date: 23.09.14 - 20:20
  */
 
-namespace Prooph\ServiceBus\Router;
+namespace Prooph\ServiceBus\Plugin\Router;
 
-use Prooph\Common\Event\ActionEventDispatcher;
+use Assert\Assertion;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
+use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Process\EventDispatch;
+use Prooph\ServiceBus\MessageBus;
 
 /**
  * Class EventRouter
@@ -59,13 +62,13 @@ class EventRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param ActionEventDispatcher $events
+     * @param ActionEventEmitter $events
      *
      * @return void
      */
-    public function attach(ActionEventDispatcher $events)
+    public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(EventDispatch::ROUTE, array($this, "onRouteEvent")));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, array($this, "onRouteEvent")));
     }
 
     /**
@@ -75,7 +78,8 @@ class EventRouter implements ActionEventListenerAggregate
      */
     public function route($eventName)
     {
-        \Assert\that($eventName)->notEmpty()->string();
+        Assertion::string($eventName);
+        Assertion::notEmpty($eventName);
 
         if (! is_null($this->tmpEventName) && empty($this->eventMap[$this->tmpEventName])) {
             throw new RuntimeException(sprintf("event %s is not mapped to a listener.", $this->tmpEventName));
@@ -128,31 +132,25 @@ class EventRouter implements ActionEventListenerAggregate
     }
 
     /**
-     * @param EventDispatch $eventDispatch
+     * @param ActionEvent $actionEvent
      */
-    public function onRouteEvent(EventDispatch $eventDispatch)
+    public function onRouteEvent(ActionEvent $actionEvent)
     {
-        if (is_null($eventDispatch->getEventName()) && $eventDispatch->isLoggingEnabled()) {
-            $eventDispatch->getLogger()->notice(
-                sprintf("%s: EventDispatch contains no event name", get_called_class())
-            );
+        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
+        if (empty($messageName)) {
             return;
         }
 
-        if (!isset($this->eventMap[$eventDispatch->getEventName()])) {
-            if ($eventDispatch->isLoggingEnabled()) {
-                $eventDispatch->getLogger()->debug(
-                    sprintf(
-                        "%s: Cannot route %s to a listener. No listener registered for event.",
-                        get_called_class(),
-                        $eventDispatch->getEventName()
-                    )
-                );
-            }
+        if (!isset($this->eventMap[$messageName])) {
             return;
         }
 
-        $eventDispatch->setEventListeners($this->eventMap[$eventDispatch->getEventName()]);
+        $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
+
+        $listeners = array_merge($listeners, $this->eventMap[$messageName]);
+
+        $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
     }
 }
  

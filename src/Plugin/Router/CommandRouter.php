@@ -1,21 +1,23 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) 2014-2015 prooph software GmbH <contact@prooph.de>
+ * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 5/23/15 - 6:49 PM
+ * Date: 14.09.14 - 23:05
  */
-namespace Prooph\ServiceBus\Router;
+
+namespace Prooph\ServiceBus\Plugin\Router;
 
 /**
- * Class QueryRouter
+ * Class CommandRouter
  *
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class QueryRouter extends SingleHandlerRouter
+class CommandRouter extends SingleHandlerRouter
 {
-} 
+}
+ 

@@ -14,7 +14,7 @@ namespace Prooph\ServiceBusTest\ServiceLocator;
 use Prooph\Common\ServiceLocator\ZF2\Zf2ServiceManagerProxy;
 use Prooph\ServiceBus\Process\CommandDispatch;
 use Prooph\ServiceBus\Process\EventDispatch;
-use Prooph\ServiceBus\ServiceLocator\ServiceLocatorProxy;
+use Prooph\ServiceBus\ServiceLocator\ServiceLocatorPlugin;
 use Prooph\ServiceBusTest\TestCase;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
@@ -28,7 +28,7 @@ use Zend\ServiceManager\ServiceManager;
 class ServiceLocatorProxyTest extends TestCase
 {
     /**
-     * @var ServiceLocatorProxy
+     * @var ServiceLocatorPlugin
      */
     protected $serviceLocatorProxy;
 
@@ -43,7 +43,7 @@ class ServiceLocatorProxyTest extends TestCase
 
         $sm = new ServiceManager($config);
 
-        $this->serviceLocatorProxy = new ServiceLocatorProxy(Zf2ServiceManagerProxy::proxy($sm));
+        $this->serviceLocatorProxy = new ServiceLocatorPlugin(Zf2ServiceManagerProxy::proxy($sm));
     }
 
     /**

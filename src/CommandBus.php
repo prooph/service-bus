@@ -11,80 +11,70 @@
 
 namespace Prooph\ServiceBus;
 
-use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Process\CommandDispatch;
 
 /**
  * Class CommandBus
+ *
+ * A command bus is capable of dispatching a message to a command handler.
+ * Only one handler per message is allowed!
  *
  * @package Prooph\ServiceBus
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class CommandBus extends MessageBus
 {
+    const EVENT_LOCATE_HANDLER      = 'locate-handler';
+    const EVENT_INVOKE_HANDLER      = 'invoke-handler';
+
+    const EVENT_PARAM_COMMAND_HANDLER = 'command-handler';
+
     /**
      * @param mixed $command
      * @return void
-     * @throws Exception\CommandDispatchException
+     * @throws Exception\MessageDispatchException
      */
     public function dispatch($command)
     {
-        $commandDispatch = CommandDispatch::initializeWith($command, $this);
+        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 
-        if (! is_null($this->logger)) {
-            $commandDispatch->useLogger($this->logger);
-        }
+        $actionEvent->setTarget($this);
 
         try {
-            $this->trigger($commandDispatch);
+            $this->initialize($command, $actionEvent);
 
-            if (is_null($commandDispatch->getCommandName())) {
-                $commandDispatch->setName(CommandDispatch::DETECT_MESSAGE_NAME);
+            if ($actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER) === null) {
+                $actionEvent->setName(self::EVENT_ROUTE);
 
-                $this->trigger($commandDispatch);
+                $this->trigger($actionEvent);
             }
 
-            if (is_null($commandDispatch->getCommandHandler())) {
-                $commandDispatch->setName(CommandDispatch::ROUTE);
-
-                $this->trigger($commandDispatch);
-            }
-
-            if (is_null($commandDispatch->getCommandHandler())) {
+            if ($actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER) === null) {
                 throw new RuntimeException(sprintf(
                     "CommandBus was not able to identify a CommandHandler for command %s",
-                    (is_object($command))? get_class($command) : json_encode($command)
+                    $this->getMessageType($command)
                 ));
             }
 
-            if (is_string($commandDispatch->getCommandHandler())) {
-                $commandDispatch->setName(CommandDispatch::LOCATE_HANDLER);
+            if (is_string($actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER))) {
+                $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
-                $this->trigger($commandDispatch);
+                $this->trigger($actionEvent);
             }
 
-            $commandDispatch->setName(CommandDispatch::INVOKE_HANDLER);
+            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER);
 
-            $this->trigger($commandDispatch);
+            if (is_callable($commandHandler)) {
+                $commandHandler($command);
+            } else {
+                $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
+                $this->trigger($actionEvent);
+            }
 
+            $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {
-            $failedPhase = $commandDispatch->getName();
-
-            $commandDispatch->setException($ex);
-            $this->triggerError($commandDispatch);
-            $this->triggerFinalize($commandDispatch);
-
-            //Check if a listener has removed the exception to indicate that it was able to handle it
-            if ($ex = $commandDispatch->getException()) {
-                $commandDispatch->setName($failedPhase);
-                throw CommandDispatchException::failed($commandDispatch, $ex);
-            }
-
-            return;
+            $this->handleException($actionEvent, $ex);
         }
-
-        $this->triggerFinalize($commandDispatch);
     }
 }
  

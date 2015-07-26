@@ -8,13 +8,14 @@
  * 
  * Date: 5/23/15 - 4:48 PM
  */
-namespace Prooph\ServiceBus\InvokeStrategy;
+namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
-use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\Common\Messaging\HasMessageName;
-use Prooph\ServiceBus\Process\QueryDispatch;
+use Prooph\ServiceBus\QueryBus;
 
 /**
  * Class FinderInvokeStrategy
@@ -32,31 +33,31 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
     use DetachAggregateHandlers;
 
     /**
-     * @param ActionEventDispatcher $dispatcher
+     * @param ActionEventEmitter $dispatcher
      */
-    public function attach(ActionEventDispatcher $dispatcher)
+    public function attach(ActionEventEmitter $dispatcher)
     {
-        $this->trackHandler($dispatcher->attachListener(QueryDispatch::INVOKE_FINDER, [$this, 'onInvokeFinder']));
+        $this->trackHandler($dispatcher->attachListener(QueryBus::EVENT_INVOKE_FINDER, $this));
     }
 
     /**
-     * @param QueryDispatch $queryDispatch
+     * @param ActionEvent $actionEvent
      */
-    public function onInvokeFinder(QueryDispatch $queryDispatch)
+    public function __invoke(ActionEvent $actionEvent)
     {
-        $finder = $queryDispatch->getFinder();
+        $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_FINDER);
+
+        $query = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE);
+
+        $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
 
         if (is_object($finder)) {
-            $queryName = $this->determineQueryName($queryDispatch->getQuery());
+            $queryName = $this->determineQueryName($query);
 
             if (method_exists($finder, $queryName)) {
-                $finder->{$queryName}($queryDispatch->getQuery(), $queryDispatch->getDeferred());
+                $finder->{$queryName}($query, $deferred);
                 return;
             }
-        }
-
-        if (is_callable($finder)) {
-            $finder($queryDispatch->getQuery(), $queryDispatch->getDeferred());
         }
     }
 
@@ -64,9 +65,9 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
      * @param mixed $query
      * @return string
      */
-    protected function determineQueryName($query)
+    private function determineQueryName($query)
     {
-        $queryName = ($query instanceof HasMessageName)? $query->messageName() : get_class($query);
+        $queryName = ($query instanceof HasMessageName)? $query->messageName() : is_object($query)? get_class($query) : gettype($query);
         return join('', array_slice(explode('\\', $queryName), -1));
     }
 }

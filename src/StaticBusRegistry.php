@@ -14,7 +14,7 @@ namespace Prooph\ServiceBus;
 /**
  * Class StaticBusRegistry
  *
- * The StaticBusRegistry can be used to set up globally available command and event bus.
+ * The StaticBusRegistry can be used to set up globally available message buses.
  *
  * @package Prooph\ServiceBus
  * @author Alexander Miertsch <kontakt@codeliner.ws>
@@ -30,6 +30,11 @@ class StaticBusRegistry
      * @var EventBus
      */
     private static $eventBus;
+
+    /**
+     * @var QueryBus
+     */
+    private static $queryBus;
 
     /**
      * @param \Prooph\ServiceBus\CommandBus $commandBus
@@ -50,6 +55,27 @@ class StaticBusRegistry
         }
 
         return self::$commandBus;
+    }
+
+    /**
+     * @param QueryBus $queryBus
+     */
+    public static function setQueryBus(QueryBus $queryBus)
+    {
+        self::$queryBus = $queryBus;
+    }
+
+    /**
+     * @throws \RuntimeException
+     * @return \Prooph\ServiceBus\QueryBus
+     */
+    public static function getQueryBus()
+    {
+        if (is_null(self::$queryBus)) {
+            throw new \RuntimeException("Global query bus is not available. No instance registered!");
+        }
+
+        return self::$queryBus;
     }
 
     /**
@@ -77,6 +103,7 @@ class StaticBusRegistry
     {
         self::$commandBus = null;
         self::$eventBus   = null;
+        self::$queryBus   = null;
     }
 }
  

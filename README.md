@@ -8,8 +8,8 @@ PHP 5.5+ Lightweight Service Bus Facade supporting CQRS and Microservices
 Message API
 -----------
 
-prooph/service-bus is a lightweight messaging facade sitting in front of your model. The idea is that the API of your model
-is defined through messages.
+prooph/service-bus is a lightweight messaging facade.
+Define the API of your model with the help of messages.
 
 1. Command messages describe the actions your model can handle.
 2. Event messages describe things that happened while your model handled a command.
@@ -18,9 +18,9 @@ is defined through messages.
 prooph/service-bus shields your model. Data input and output ports become irrelevant and no longer influence the business logic.
 I'm looking at you Hexagonal Architecture.
 
-prooph/service-bus decouples your model from any framework except prooph/service-bus of course :-). You can use a
+prooph/service-bus decouples your model from any framework. You can use a
 web framework like Zend, Symfony, Laravel and co. to handle http requests and pass them via prooph/service-bus to your model
-but you can also receive the same messages via CLI or from a messaging infrastructure like RabbitMQ or Beanstalkd.
+but you can also receive the same messages via CLI or from a message queue system like RabbitMQ or Beanstalkd.
 
 ![psb_architecture](docs/img/psb_architecture.png)
 
@@ -33,15 +33,12 @@ You can install prooph/service-bus via composer by adding `"prooph/service-bus":
 Quick Start
 -----------
 
-The simplest way to get started is to set up one of the message buses provided by prooph/service-bus.
-
 ```php
 <?php
 
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Example\Command\EchoText;
-use Prooph\ServiceBus\InvokeStrategy\CallbackStrategy;
-use Prooph\ServiceBus\Router\CommandRouter;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 
 $commandBus = new CommandBus();
 
@@ -55,9 +52,6 @@ $router->route('Prooph\ServiceBus\Example\Command\EchoText')
 
 //Expand command bus with the router plugin
 $commandBus->utilize($router);
-
-//Expand command bus with the callback invoke strategy
-$commandBus->utilize(new CallbackStrategy());
 
 //We create a new Command
 $echoText = EchoText::fromString('It works');

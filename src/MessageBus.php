@@ -11,32 +11,36 @@
 
 namespace Prooph\ServiceBus;
 
-use Prooph\Common\Event\ActionEventDispatcher;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\ListenerHandler;
-use Prooph\Common\Event\ProophActionEventDispatcher;
-use Prooph\Common\Event\ZF2\Zf2ActionEventDispatcher;
+use Prooph\Common\Event\ProophActionEventEmitter;
+use Prooph\Common\Messaging\HasMessageName;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
-use Prooph\ServiceBus\Process\MessageDispatch;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class MessageBus
  *
- * Base class for command and event bus implementations
+ * Base class for a message bus implementation
  *
  * @package Prooph\ServiceBus
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 abstract class MessageBus
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    const EVENT_INITIALIZE          = "initialize";
+    const EVENT_DETECT_MESSAGE_NAME = "detect-message-name";
+    const EVENT_ROUTE               = "route";
+    const EVENT_HANDLE_ERROR        = "handle-error";
+    const EVENT_FINALIZE            = "finalize";
+
+    const EVENT_PARAM_MESSAGE      = 'message';
+    const EVENT_PARAM_MESSAGE_NAME = 'message-name';
+    const EVENT_PARAM_EXCEPTION    = 'exception';
 
     /**
-     * @var ActionEventDispatcher
+     * @var ActionEventEmitter
      */
     protected $events;
 
@@ -47,114 +51,109 @@ abstract class MessageBus
     abstract public function dispatch($message);
 
     /**
-     * @param ActionEventListenerAggregate|LoggerInterface $plugin
-     * @return $this
-     * @throws Exception\RuntimeException
+     * @param ActionEventListenerAggregate $plugin
      */
-    public function utilize($plugin)
+    public function utilize(ActionEventListenerAggregate $plugin)
     {
-        if ($plugin instanceof ActionEventListenerAggregate) {
-            $plugin->attach($this->getActionEventDispatcher());
-        } else if ($plugin instanceof LoggerInterface) {
-            $this->logger = $plugin;
-        } else {
-            throw new RuntimeException(
-                sprintf(
-                    "%s cannot use plugin of type %s.",
-                    get_called_class(),
-                    (is_object($plugin))? get_class($plugin) : gettype($plugin)
-                )
-            );
+        $plugin->attach($this->getActionEventEmitter());
+    }
+
+    /**
+     * @param ActionEventListenerAggregate $plugin
+     */
+    public function deactivate(ActionEventListenerAggregate $plugin)
+    {
+        $plugin->detach($this->getActionEventEmitter());
+    }
+
+    /**
+     * @param mixed $message
+     * @param ActionEvent $actionEvent
+     */
+    protected function initialize($message, ActionEvent $actionEvent)
+    {
+        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
+
+        if ($message instanceof HasMessageName) {
+            $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());
         }
 
-        return $this;
-    }
+        $actionEvent->setName(self::EVENT_INITIALIZE);
 
-    /**
-     * @param ActionEventListenerAggregate|LoggerInterface $plugin
-     * @return $this
-     * @throws Exception\RuntimeException
-     */
-    public function deactivate($plugin)
-    {
-        if ($plugin instanceof ActionEventListenerAggregate) {
-            $plugin->detach($this->getActionEventDispatcher());
-        } else if ($plugin instanceof LoggerInterface) {
-            $this->logger = null;
-        } else {
-            throw new RuntimeException(
-                sprintf(
-                    "%s cannot detach plugin of type %s.",
-                    get_called_class(),
-                    (is_object($plugin))? get_class($plugin) : gettype($plugin)
-                )
-            );
+        $this->trigger($actionEvent);
+
+        if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
+            $actionEvent->setName(self::EVENT_DETECT_MESSAGE_NAME);
+
+            $this->trigger($actionEvent);
+
+            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageType($message));
+            }
         }
-
-        return $this;
     }
 
     /**
-     * @param string $eventName
-     * @param callable $listener
-     * @param int $priority
-     * @return ListenerHandler
+     * @param ActionEvent $actionEvent
+     * @param \Exception $ex
+     * @throws Exception\MessageDispatchException
      */
-    public function on($eventName, $listener, $priority = 1)
+    protected function handleException(ActionEvent $actionEvent, \Exception $ex)
     {
-        return $this->getActionEventDispatcher()->attachListener($eventName, $listener, $priority);
+        $failedPhase = $actionEvent->getName();
+
+        $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);
+        $this->triggerError($actionEvent);
+        $this->triggerFinalize($actionEvent);
+
+        //Check if a listener has removed the exception to indicate that it was able to handle it
+        if ($ex = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
+            $actionEvent->setName($failedPhase);
+            throw MessageDispatchException::failed($actionEvent, $ex);
+        }
     }
 
     /**
-     * @param ListenerHandler $listenerHandler
-     * @return bool
-     */
-    public function off(ListenerHandler $listenerHandler)
-    {
-        return $this->getActionEventDispatcher()->detachListener($listenerHandler);
-    }
-
-    /**
-     * @param MessageDispatch $messageDispatch
+     * @param ActionEvent $actionEvent
      * @throws Exception\RuntimeException
      */
-    protected function trigger(MessageDispatch $messageDispatch)
+    protected function trigger(ActionEvent $actionEvent)
     {
-        $this->getActionEventDispatcher()->dispatch($messageDispatch);
+        $this->getActionEventEmitter()->dispatch($actionEvent);
 
-        if ($messageDispatch->propagationIsStopped()) {
+        if ($actionEvent->propagationIsStopped()) {
             throw new RuntimeException("Dispatch has stopped unexpectedly.");
         }
     }
 
     /**
-     * @param MessageDispatch $messageDispatch
+     * @param ActionEvent $actionEvent
      */
-    protected function triggerError(MessageDispatch $messageDispatch)
+    protected function triggerError(ActionEvent $actionEvent)
     {
-        $messageDispatch->setName(MessageDispatch::HANDLE_ERROR);
+        $actionEvent->setName(self::EVENT_HANDLE_ERROR);
 
-        $this->getActionEventDispatcher()->dispatch($messageDispatch);
+        $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
     /**
-     * @param MessageDispatch $messageDispatch
+     * @param ActionEvent $actionEvent
      */
-    protected function triggerFinalize(MessageDispatch $messageDispatch)
+    protected function triggerFinalize(ActionEvent $actionEvent)
     {
-        $messageDispatch->setName(MessageDispatch::FINALIZE);
+        $actionEvent->setName(self::EVENT_FINALIZE);
 
-        $this->getActionEventDispatcher()->dispatch($messageDispatch);
+        $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
 
     /**
      * Inject an ActionEventDispatcher instance
      *
-     * @param  ActionEventDispatcher $actionEventDispatcher
+     * @param  ActionEventEmitter $actionEventDispatcher
      * @return void
      */
-    public function setActionEventDispatcher(ActionEventDispatcher $actionEventDispatcher)
+    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
     {
         $this->events = $actionEventDispatcher;
     }
@@ -164,15 +163,24 @@ abstract class MessageBus
      *
      * Lazy-loads a dispatcher if none is registered.
      *
-     * @return ActionEventDispatcher
+     * @return ActionEventEmitter
      */
-    public function getActionEventDispatcher()
+    public function getActionEventEmitter()
     {
         if (is_null($this->events)) {
-            $this->setActionEventDispatcher(new ProophActionEventDispatcher());
+            $this->setActionEventDispatcher(new ProophActionEventEmitter());
         }
 
         return $this->events;
+    }
+
+    /**
+     * @param mixed $message
+     * @return string
+     */
+    protected function getMessageType($message)
+    {
+        return is_object($message)? get_class($message) : gettype($message);
     }
 }
  

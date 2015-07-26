@@ -11,54 +11,54 @@
 
 namespace Prooph\ServiceBus\Exception;
 
-use Prooph\ServiceBus\Process\CommandDispatch;
+use Prooph\Common\Event\ActionEvent;
 
 /**
- * Class CommandDispatchException
+ * Class MessageDispatchException
  *
  * @package Prooph\ServiceBus\Exception
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class CommandDispatchException extends RuntimeException
+class MessageDispatchException extends RuntimeException
 {
     /**
-     * @var CommandDispatch
+     * @var ActionEvent
      */
-    protected $commandDispatch;
+    protected $actionEvent;
 
     /**
-     * @param CommandDispatch $commandDispatch
+     * @param ActionEvent $actionEvent
      * @param \Exception $previousException
-     * @return CommandDispatchException
+     * @return MessageDispatchException
      */
-    public static function failed(CommandDispatch $commandDispatch, \Exception $previousException = null)
+    public static function failed(ActionEvent $actionEvent, \Exception $previousException = null)
     {
         $ex = new self(
             sprintf(
-                "Command dispatch failed during %s phase.%s",
-                $commandDispatch->getName(),
+                "Message dispatch failed during %s phase.%s",
+                $actionEvent->getName(),
                 (is_null($previousException))? '' : ' Error: ' . $previousException->getMessage()
             ),
             422,
             $previousException
         );
 
-        $ex->setFailedDispatch($commandDispatch);
+        $ex->setFailedDispatch($actionEvent);
 
         return $ex;
     }
 
     /**
-     * @return CommandDispatch
+     * @return ActionEvent
      */
-    public function getFailedCommandDispatch()
+    public function getFailedDispatchEvent()
     {
-        return $this->commandDispatch;
+        return $this->actionEvent;
     }
 
-    protected function setFailedDispatch(CommandDispatch $commandDispatch)
+    protected function setFailedDispatch(ActionEvent $actionEvent)
     {
-        $this->commandDispatch = $commandDispatch;
+        $this->actionEvent = $actionEvent;
     }
 }
  

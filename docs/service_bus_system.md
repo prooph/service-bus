@@ -27,7 +27,13 @@ In this case the message bus throws an exception.
 
 When dispatching a query the message producer gets a promise back from the QueryBus. He also doesn't know if the
 query is dispatched synchronous or asynchronous but he can attach to the `promise::then` method to receive the response
-of query.
+of the query.
+
+## Message Objects
+
+You are free to use your own message objects (or even primitive types if you want). All message buses are smart enough to handle them.
+If you need custom logic to handle your messages check out the list of available [plugins](plugins.md) or write your own bus plugin.
+It is pretty straight forward.
 
 # Synchronous Versus Asynchronous Processing
 
@@ -35,5 +41,5 @@ PSB provides both possibilities behind a unified interface.
 Remember the statement "Messaging means fire and forget".
 The message producer never knows if the message is processed synchronous or asynchronous. It depends on the bus
 configuration and/or the used plugins. A message can directly be routed to it's handler. In this case we talk about synchronous
-message processing. If the receiver of the message is a [Prooph\ServiceBus\Message\RemoteMessageDispatcher](message_dispatcher.md)
+message processing. If the handler of the message is a [queue producer](queue_producer.md)
 the message is normally processed asynchronously.
