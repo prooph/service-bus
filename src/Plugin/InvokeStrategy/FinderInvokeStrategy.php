@@ -23,7 +23,7 @@ use Prooph\ServiceBus\QueryBus;
  * This is a special invoke strategy for finders handling a query message and providing a response by resolving the
  * deferred of the query dispatch.
  *
- * The invoke strategy can handle callable finders and finders which have a method named like the short name of the query.
+ * The invoke strategy can handle finders which have a method named like the short name of the query.
  *
  * @package Prooph\ServiceBus\InvokeStrategy
  * @author Alexander Miertsch <kontakt@codeliner.ws>

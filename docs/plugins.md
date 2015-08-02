@@ -3,11 +3,7 @@ PSB Plugins
 
 [Back to documentation](../README.md#documentation)
 
-Plugins expand a message bus with additional functionality. The basic task of a message bus, be it a [CommandBus](command_bus.md) or [EventBus](event_bus.md),
-is to dispatch a message. To achieve this goal the bus needs to collect some information about the message and perform
-actions to ensure that a responsible message handler is invoked. Detailed information about the process can be found on the appropriate bus documentation pages.
-Plugins hook into the dispatch process and provide the required information like the name of the message or a routing map and they also
-prepare the message for invocation, locate the message handlers and invoke them.
+Plugins expand a message bus with additional functionality.
 PSB ships with a list of useful plugins that can be mixed and matched with your own implementations:
 
 # Routers
@@ -109,7 +105,7 @@ Note: When a message bus detects that the message handler is callable invoke str
 
 # ServiceLocatorPlugin
 
-This plugin uses a Interop\Container\ContainerInterface implementation to lazy instantiate command handlers and event listeners.
+This plugin uses a Interop\Container\ContainerInterface implementation to message handlers.
 The following example uses a ZF2 ServiceManager as a service locator and illustrates how it can be used together with a command bus:
 
 ```php
@@ -135,5 +131,4 @@ $commandBus->utilize($router);
 ```
 
 With this technique you can configure the routing for all your messages without the need to create all the message handlers
-on every request. Only the responsible message handler (listeners in case of event dispatch)
-are lazy loaded by the service locator plugin.
+on every request. Only the responsible message handler are lazy loaded by the service locator plugin.

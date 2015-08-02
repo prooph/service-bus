@@ -86,28 +86,40 @@ Finally if no `message-name` was set by a listener the message bus uses the FQCN
 
 ### route
 
-During the `route` action event a plugin should provide the responsible message handler either in form of a ready to use object or callable or as a string
-representing an alias of the message handler that can be used by a DIC to locate an instance.
-At this stage of the dispatch process the behaviour starts to differ for the three bus types:
-- The `CommandBus` requires a `command-handler` parameter to be set in the action event.
-- The `QueryBus` requires a `query-finder` parameter to be set in the action event.
-- The `EventBus` requires a `event-listeners` parameter to be set in the action event.
+During the `route` action event a plugin (typically a [router](plugins.md#routers)) should provide the responsible message handler either in form of a ready to use `callable`, a object or just a string.
+The latter should be a service id that can be passed to a service locator to get an instance of the handler.
+The message handler should be set as action event param `message-handler` (for CommandBus and QueryBus) or `event-listeners` (for EventBus).
 
 As you can see command and query bus work with a single message handler whereby the event bus works with multiple listeners.
 This is one of the most important differences. Only the event bus allows multiple message handlers per message and therefor uses
 a slightly different dispatch process.
 
-### locate-handler (optional): After routing the command, the CommandBus checks if the command handler was provided as a string. If so it triggers the
-`locate-handler` event. This is the latest time to provide an object or callable as command handler. If no plugin was able to provide one the CommandBus throws an exception.
+### locate-handler (optional)
 
-- `invoke-handler`: Having the command handler in place it's time to invoke it with the command. The CommandBus always triggers the event. It performs no default action even if the
-command handler is a callable.
+After routing the message, the message bus checks if the handler was provided as a string. If so it triggers the
+`locate-handler` action event. This is the latest time to provide an object or callable as message handler. If no plugin was able to provide one the message bus throws an exception.
 
-- `handle-error`: If at any time a plugin or the CommandBus itself throws an exception it is caught and passed to the CommandDispatch. The normal action event chain breaks and a
-`handle-error` event is triggered instead. Plugins can access the exception by calling `CommandDispatch::getException`.
-A `handle-error` plugin or a `finalize` plugin can unset the exception by calling `CommandDispatch::setException(null)`.
-When all plugins are informed about the error and no one has unset the exception the CommandBus throws a Prooph\ServiceBus\Exception\MessageDispatchException to inform the outside world about the error.
+### invoke-handler / invoke-finder (optional)
 
-- `finalize`: This action event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
+Having the message handler in place it's time to invoke it with the message. If the `message-handler` is a `callable` the `invoke-handler` action event is not triggered but instead
+the handler is invoked by the message bus (true for all three bus types).
+At this stage all three bus types behave a bit different.
+
+- CommandBus: invokes the handler with the command message, or triggers the invoke-handler action event if the handler is not a callable.
+- QueryBus: much the same as the command bus but the message handler is invoked with the query message and a [deferred](https://github.com/reactphp/promise/blob/master/src/Deferred.php)
+that needs to be resolved by the message handler aka finder. If the finder is not a callable the query bus triggers a `invoke-finder` action event to indicate
+that a finder should be invoked and not a normal message handler.
+- EventBus: loops over all `event-listeners` and triggers the `locate-handler` and `invoke-handler` action events for each message listener.
+
+### handle-error
+
+If at any time a plugin or the message bus itself throws an exception it is caught and passed as param `exception` to the action event. The normal action event chain breaks and a
+`handle-error` event is triggered instead. Plugins can then access the exception by getting it from the action event.
+A `handle-error` plugin or a `finalize` plugin can unset the exception by calling `ActionEvent::setParam("exception", null)`.
+When all plugins are informed about the error and no one has unset the exception the message bus throws a Prooph\ServiceBus\Exception\MessageDispatchException to inform the outside world about the error.
+
+### finalize
+
+This action event is always triggered at the end of the process no matter if the process was successful or an exception was thrown. It is the ideal place to
 attach a monitoring plugin.
 

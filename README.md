@@ -5,8 +5,8 @@ PHP 5.5+ Lightweight Service Bus Facade supporting CQRS and Micro Services
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
-Message API
------------
+Messaging API
+-------------
 
 prooph/service-bus is a lightweight messaging facade.
 It allows you to define the API of your model with the help of messages.
@@ -66,14 +66,14 @@ Documentation
 -------------
 
 - [Overview](docs/service_bus_system.md)
-- [Message Buses](docs/message_buses.md)
+- [Message Bus API](docs/message_bus.md)
 - [Plugins](docs/plugins.md)
 - [Message Queue Producers](docs/queue_producer.md)
 
 # ZF2 Integration
 
 [prooph/proophessor](https://github.com/prooph/proophessor) seamlessly integrates prooph/service-bus with a ZF2 application.
- 
+Note: Currently proophessor only supports prooph/service-bus 3.x. Support for 4.x is coming soon.
 
 Support
 -------

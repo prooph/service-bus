@@ -22,12 +22,12 @@ dispatch process on a message bus. The bus is responsible for delivering the mes
 part of an external system that can only be accessed via a remote interface.
 
 For commands and events that means fire and forget. The producer gets no
-response when it triggers the dispatch except an error occurs during the dispatch process.
+response when it triggers the dispatch except an error occurs during the dispatch process itself.
 In this case the message bus throws an exception.
 
 When dispatching a query the message producer gets a promise back from the QueryBus. He also doesn't know if the
 query is dispatched synchronous or asynchronous but he can attach to the `promise::then` method to receive the response
-of the query.
+of the query when it becomes available.
 
 ## Message Objects
 
@@ -43,3 +43,5 @@ The message producer never knows if the message is processed synchronous or asyn
 configuration and/or the used plugins. A message can directly be routed to it's handler. In this case we talk about synchronous
 message processing. If the handler of the message is a [queue producer](queue_producer.md)
 the message is normally processed asynchronously.
+
+Check out the [Message Bus API](message_bus.md) for details.
