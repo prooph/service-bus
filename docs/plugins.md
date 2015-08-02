@@ -105,7 +105,7 @@ Note: When a message bus detects that the message handler is callable invoke str
 
 # ServiceLocatorPlugin
 
-This plugin uses a Interop\Container\ContainerInterface implementation to message handlers.
+This plugin uses a `Interop\Container\ContainerInterface` implementation to lazy-load message handlers.
 The following example uses a ZF2 ServiceManager as a service locator and illustrates how it can be used together with a command bus:
 
 ```php
@@ -130,5 +130,5 @@ $router->route('My.Command.DoSomething')->to('My.Command.DoSomethingHandler');
 $commandBus->utilize($router);
 ```
 
-With this technique you can configure the routing for all your messages without the need to create all the message handlers
-on every request. Only the responsible message handler are lazy loaded by the service locator plugin.
+With this technique you can configure the routing for all your messages without the need to create all message handlers
+on every request. Only the responsible message handlers are lazy loaded by the service locator plugin.
