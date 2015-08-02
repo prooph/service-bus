@@ -9,7 +9,7 @@
  * Date: 15.03.14 - 22:34
  */
 namespace {
-    require_once '../vendor/autoload.php';
+    require_once __DIR__ . '/../vendor/autoload.php';
 }
 
 namespace Prooph\ServiceBus\Example\Command {
@@ -19,26 +19,39 @@ namespace Prooph\ServiceBus\Example\Command {
     class EchoText extends Command
     {
         /**
-         * @param string $text
-         * @return EchoText
+         * @var string
          */
-        public static function fromString($text)
-        {
-            return new self(__CLASS__, $text);
-        }
+        private $text;
 
-        protected function convertPayload($textOrPayload)
+        public function __construct($text)
         {
-            if (is_string($textOrPayload)) {
-                $textOrPayload = array('text' => $textOrPayload);
-            }
-
-            return $textOrPayload;
+            $this->text = $text;
         }
 
         public function getText()
         {
-            return $this->payload['text'];
+            return $this->text;
+        }
+
+        /**
+         * Return message payload as array
+         *
+         * @return array
+         */
+        public function payload()
+        {
+            return ['text' => $this->text];
+        }
+
+        /**
+         * This method is called when message is instantiated named constructor fromArray
+         *
+         * @param array $payload
+         * @return void
+         */
+        protected function setPayload(array $payload)
+        {
+            $this->text = $payload['text'];
         }
     }
 }
@@ -46,8 +59,7 @@ namespace Prooph\ServiceBus\Example\Command {
 namespace {
     use Prooph\ServiceBus\CommandBus;
     use Prooph\ServiceBus\Example\Command\EchoText;
-    use Prooph\ServiceBus\InvokeStrategy\CallbackStrategy;
-    use Prooph\ServiceBus\Router\CommandRouter;
+    use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 
     $commandBus = new CommandBus();
 
@@ -62,11 +74,8 @@ namespace {
     //Expand command bus with the router plugin
     $commandBus->utilize($router);
 
-    //Expand command bus with the callback invoke strategy
-    $commandBus->utilize(new CallbackStrategy());
-
     //We create a new Command
-    $echoText = EchoText::fromString('It works');
+    $echoText = new EchoText('It works');
 
     //... and dispatch it
     $commandBus->dispatch($echoText);

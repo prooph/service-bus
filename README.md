@@ -54,7 +54,7 @@ $router->route('Prooph\ServiceBus\Example\Command\EchoText')
 $commandBus->utilize($router);
 
 //We create a new Command
-$echoText = EchoText::fromString('It works');
+$echoText = new EchoText('It works');
 
 //... and dispatch it
 $commandBus->dispatch($echoText);
