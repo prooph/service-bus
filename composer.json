@@ -15,9 +15,7 @@
         "prooph",
         "Messaging",
         "CQRS",
-        "DDD",
-        "domain-driven design",
-        "ZF2"
+        "DDD"
     ],
     "require": {
         "php": ">=5.5",
@@ -31,7 +29,7 @@
         "satooshi/php-coveralls": "dev-master"
     },
     "suggest": {
-        "prooph/event-store": "Use ProophEventStore and let the EventBus dispatch persisted DomainEvents",
+        "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zf2 ServiceManager to lazy load your handlers and listeners"
     },
     "autoload": {
