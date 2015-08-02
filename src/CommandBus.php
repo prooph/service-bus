@@ -24,11 +24,6 @@ use Prooph\ServiceBus\Exception\RuntimeException;
  */
 class CommandBus extends MessageBus
 {
-    const EVENT_LOCATE_HANDLER      = 'locate-handler';
-    const EVENT_INVOKE_HANDLER      = 'invoke-handler';
-
-    const EVENT_PARAM_COMMAND_HANDLER = 'command-handler';
-
     /**
      * @param mixed $command
      * @return void
@@ -43,26 +38,26 @@ class CommandBus extends MessageBus
         try {
             $this->initialize($command, $actionEvent);
 
-            if ($actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER) === null) {
+            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 $actionEvent->setName(self::EVENT_ROUTE);
 
                 $this->trigger($actionEvent);
             }
 
-            if ($actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER) === null) {
+            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 throw new RuntimeException(sprintf(
                     "CommandBus was not able to identify a CommandHandler for command %s",
                     $this->getMessageType($command)
                 ));
             }
 
-            if (is_string($actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER))) {
+            if (is_string($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER))) {
                 $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);
             }
 
-            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_COMMAND_HANDLER);
+            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
             if (is_callable($commandHandler)) {
                 $commandHandler($command);

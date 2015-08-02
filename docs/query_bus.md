@@ -5,12 +5,6 @@ The QueryBus
 
 # Usage
 
-When you want to build a system based on [Microservices](http://martinfowler.com/articles/microservices.html) you need a lightweight communication channel.
-The two protocols used most commonly are HTTP request-response with resource API's and lightweight messaging. The latter is supported by prooph/service-bus
-out-of-the-box but HTTP API's can be integrated too.
-The QueryBus is responsible for routing a query message to a so called finder. The query indicates that the producer expects a response.
-The finder's responsibility is to fetch data from a data source using the query parameters defined in the query message. It is up to the finder if the data is fetched synchronous
-or asynchronous, so the QueryBus returns a [promise](https://github.com/reactphp/promise) to the query producer which gets resolved by the finder.
 
 # API
 

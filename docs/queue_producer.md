@@ -9,7 +9,7 @@ Messaging becomes really interesting when you process your messages asynchronous
 set up a cron job to periodically check the queue for new messages and process them. The bus implementations of PSB can
 hide such an asynchronous workflow behind a unified interface. You can start with synchronous message dispatching by
 routing your messages directly to message handlers and if you later want to improve response times you can switch to
-async processing on a message basis by routing the appropriate messages to a queue producer listed below.
+async processing on a per message basis by routing the appropriate messages to a queue producer listed below.
 
 # Available QueueProducer
 

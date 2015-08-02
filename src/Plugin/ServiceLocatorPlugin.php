@@ -16,9 +16,7 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
-use Prooph\ServiceBus\CommandBus;
-use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\QueryBus;
+use Prooph\ServiceBus\MessageBus;
 
 /**
  * Class ServiceLocatorPlugin
@@ -53,35 +51,15 @@ class ServiceLocatorPlugin implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(CommandBus::EVENT_LOCATE_HANDLER, array($this, 'onLocateCommandHandler')));
-        $this->trackHandler($events->attachListener(EventBus::EVENT_LOCATE_LISTENER, array($this, 'onLocateEventListener')));
-        $this->trackHandler($events->attachListener(QueryBus::EVENT_LOCATE_FINDER, array($this, 'onLocateFinder')));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_LOCATE_HANDLER, array($this, 'onLocateMessageHandler')));
     }
 
-    public function onLocateCommandHandler(ActionEvent $actionEvent)
+    public function onLocateMessageHandler(ActionEvent $actionEvent)
     {
-        $commandHandlerAlias = $actionEvent->getParam(CommandBus::EVENT_PARAM_COMMAND_HANDLER);
+        $messageHandlerAlias = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
 
-        if (is_string($commandHandlerAlias) && $this->serviceLocator->has($commandHandlerAlias)) {
-            $actionEvent->setParam(CommandBus::EVENT_PARAM_COMMAND_HANDLER, $this->serviceLocator->get($commandHandlerAlias));
-        }
-    }
-
-    public function onLocateEventListener(ActionEvent $actionEvent)
-    {
-        $eventListenerAlias = $actionEvent->getParam(EventBus::EVENT_PARAM_CURRENT_EVENT_LISTENER);
-
-        if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
-            $actionEvent->setParam(EventBus::EVENT_PARAM_CURRENT_EVENT_LISTENER, $this->serviceLocator->get($eventListenerAlias));
-        }
-    }
-
-    public function onLocateFinder(ActionEvent $actionEvent)
-    {
-        $finderAlias = $actionEvent->getParam(QueryBus::EVENT_PARAM_FINDER);
-
-        if (is_string($finderAlias) && $this->serviceLocator->has($finderAlias)) {
-            $actionEvent->setParam(QueryBus::EVENT_PARAM_FINDER, $this->serviceLocator->get($finderAlias));
+        if (is_string($messageHandlerAlias) && $this->serviceLocator->has($messageHandlerAlias)) {
+            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->serviceLocator->get($messageHandlerAlias));
         }
     }
 }

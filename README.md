@@ -1,7 +1,7 @@
 PSB - ProophServiceBus
 ======================
 
-PHP 5.5+ Lightweight Service Bus Facade supporting CQRS and Microservices
+PHP 5.5+ Lightweight Service Bus Facade supporting CQRS and Micro Services
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 
@@ -9,7 +9,7 @@ Message API
 -----------
 
 prooph/service-bus is a lightweight messaging facade.
-Define the API of your model with the help of messages.
+It allows you to define the API of your model with the help of messages.
 
 1. Command messages describe the actions your model can handle.
 2. Event messages describe things that happened while your model handled a command.
@@ -28,7 +28,7 @@ but you can also receive the same messages via CLI or from a message queue syste
 Installation
 ------------
 
-You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~3.0"` as requirement to your composer.json.
+You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~4.0"` as requirement to your composer.json.
 
 Quick Start
 -----------
@@ -66,11 +66,9 @@ Documentation
 -------------
 
 - [Overview](docs/service_bus_system.md)
-- [CommandBus](docs/command_bus.md)
-- [EventBus](docs/event_bus.md)
-- [QueryBus](docs/query_bus.md)
+- [Message Buses](docs/message_buses.md)
 - [Plugins](docs/plugins.md)
-- [Asynchronous MessageDispatcher](docs/message_dispatcher.md)
+- [Message Queue Producers](docs/queue_producer.md)
 
 # ZF2 Integration
 

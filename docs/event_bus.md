@@ -5,11 +5,7 @@ The EventBus
 
 # Usage
 
-When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) you need a way to inform the outside world
-about events that happened in your write model be it your read model projectors or other systems that rely on the information.
-An EventBus is responsible for dispatching event messages to all interested listeners. If a listener is part of another system
-the event may need to be send to a remote interface. The Prooph\ServiceBus\EventBus is capable to handle synchronous event
-dispatching as well as asynchronous/remote event dispatching by using suitable plugins.
+
 
 # API
 

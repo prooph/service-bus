@@ -15,8 +15,6 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
-use Prooph\ServiceBus\CommandBus;
-use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -53,8 +51,7 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(CommandBus::EVENT_INVOKE_HANDLER, $this, $this->priority));
-        $this->trackHandler($events->attachListener(EventBus::EVENT_INVOKE_LISTENER, $this, $this->priority));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_INVOKE_HANDLER, $this, $this->priority));
     }
 
     /**
@@ -63,15 +60,7 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
     public function __invoke(ActionEvent $e)
     {
         $message = $e->getParam(MessageBus::EVENT_PARAM_MESSAGE);
-        $handler = null;
-
-        if ($e->getTarget() instanceof CommandBus) {
-            $handler = $e->getParam(CommandBus::EVENT_PARAM_COMMAND_HANDLER);
-        }else if ($e->getTarget() instanceof EventBus) {
-            $handler = $e->getParam(EventBus::EVENT_PARAM_CURRENT_EVENT_LISTENER);
-        } else {
-            return;
-        }
+        $handler = $e->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
 
         if ($this->canInvoke($handler, $message)) {
             $this->invoke($handler, $message);

@@ -28,10 +28,8 @@ use React\Promise\Promise;
  */
 class QueryBus extends MessageBus
 {
-    const EVENT_LOCATE_FINDER      = 'locate-finder';
     const EVENT_INVOKE_FINDER      = 'invoke-finder';
 
-    const EVENT_PARAM_FINDER = 'query-finder';
     const EVENT_PARAM_DEFERRED = 'query-deferred';
 
     /**
@@ -53,25 +51,25 @@ class QueryBus extends MessageBus
         try {
             $this->initialize($query, $actionEvent);
 
-            if ($actionEvent->getParam(self::EVENT_PARAM_FINDER) === null) {
+            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 $actionEvent->setName(self::EVENT_ROUTE);
                 $this->trigger($actionEvent);
             }
 
-            if ($actionEvent->getParam(self::EVENT_PARAM_FINDER) === null) {
+            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 throw new RuntimeException(sprintf(
                     "QueryBus was not able to identify a Finder for query %s",
                     $this->getMessageType($query)
                 ));
             }
 
-            if (is_string($actionEvent->getParam(self::EVENT_PARAM_FINDER))) {
-                $actionEvent->setName(self::EVENT_LOCATE_FINDER);
+            if (is_string($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER))) {
+                $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);
             }
 
-            $finder = $actionEvent->getParam(self::EVENT_PARAM_FINDER);
+            $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
             if (is_callable($finder)) {
                 $finder($query, $deferred);

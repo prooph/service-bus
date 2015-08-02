@@ -154,15 +154,9 @@ class RegexRouter implements ActionEventListenerAggregate
                         $pattern
                     ));
                 } else {
-                    if ($actionEvent->getTarget() instanceof CommandBus) {
-                        $actionEvent->setParam(CommandBus::EVENT_PARAM_COMMAND_HANDLER, $handler);
-                    } elseif ($actionEvent->getTarget() instanceof QueryBus) {
-                        $actionEvent->setParam(QueryBus::EVENT_PARAM_FINDER, $handler);
-                    } else {
-                        $actionEvent->setParam('message-handler', $handler);
-                    }
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
 
-                    $alreadyMatched = $pattern;
+                    $alreadyMatched = true;
                 }
             }
         }

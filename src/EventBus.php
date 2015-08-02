@@ -21,11 +21,7 @@ namespace Prooph\ServiceBus;
  */
 class EventBus extends MessageBus
 {
-    const EVENT_LOCATE_LISTENER     = 'locate-listener';
-    const EVENT_INVOKE_LISTENER     = 'invoke-listener';
-
     const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
-    const EVENT_PARAM_CURRENT_EVENT_LISTENER = 'current-event-listener';
 
     /**
      * @param mixed $event
@@ -46,20 +42,20 @@ class EventBus extends MessageBus
 
             foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
 
-                $actionEvent->setParam(self::EVENT_PARAM_CURRENT_EVENT_LISTENER, $eventListener);
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLER, $eventListener);
 
                 if (is_string($eventListener)) {
-                    $actionEvent->setName(self::EVENT_LOCATE_LISTENER);
+                    $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                     $this->trigger($actionEvent);
                 }
 
-                $eventListener = $actionEvent->getParam(self::EVENT_PARAM_CURRENT_EVENT_LISTENER);
+                $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
                 if (is_callable($eventListener)) {
                     $eventListener($event);
                 } else {
-                    $actionEvent->setName(self::EVENT_INVOKE_LISTENER);
+                    $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
 
                     $this->trigger($actionEvent);
                 }

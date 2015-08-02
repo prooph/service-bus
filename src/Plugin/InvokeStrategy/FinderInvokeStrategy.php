@@ -45,7 +45,7 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
      */
     public function __invoke(ActionEvent $actionEvent)
     {
-        $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_FINDER);
+        $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER);
 
         $query = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE);
 

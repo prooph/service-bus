@@ -32,12 +32,15 @@ abstract class MessageBus
     const EVENT_INITIALIZE          = "initialize";
     const EVENT_DETECT_MESSAGE_NAME = "detect-message-name";
     const EVENT_ROUTE               = "route";
+    const EVENT_LOCATE_HANDLER      = "locate-handler";
+    const EVENT_INVOKE_HANDLER      = "invoke-handler";
     const EVENT_HANDLE_ERROR        = "handle-error";
     const EVENT_FINALIZE            = "finalize";
 
-    const EVENT_PARAM_MESSAGE      = 'message';
-    const EVENT_PARAM_MESSAGE_NAME = 'message-name';
-    const EVENT_PARAM_EXCEPTION    = 'exception';
+    const EVENT_PARAM_MESSAGE         = 'message';
+    const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
+    const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
+    const EVENT_PARAM_EXCEPTION       = 'exception';
 
     /**
      * @var ActionEventEmitter
