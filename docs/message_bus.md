@@ -5,7 +5,7 @@
 ## Commanding
 
 When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) the command bus is your best friend.
-It takes an incoming command message and route it the responsible command handler.
+It takes an incoming command message and route it to the responsible command handler.
 The advantage of using a CommandBus instead of calling command handlers directly is, that you can change your model without effecting
 the application logic. You can work with command versions to dispatch a newer version to a new command handler and older
 versions to old command handlers. Your model can support different versions at the same time which makes migrations a lot easier.
