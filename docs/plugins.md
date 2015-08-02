@@ -99,7 +99,7 @@ by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/Plugin/Invoke
 - `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a command handler. Forces the rule that a command handler should only be responsible for handling one specific command.
 - `OnEventStrategy`: Prefixes the short class name of an event with `on`. A listener should
 have a public method named this way: OrderCartUpdater::onArticleWasBought.
-- `FinderInvokeStrategy`: This strategy is responsible for invoking finders. It either looks for a finder method named like the short class name of the query.
+- `FinderInvokeStrategy`: This strategy is responsible for invoking finders. It looks for a finder method named like the short class name of the query.
 
 Note: When a message bus detects that the message handler is callable invoke strategies are skipped and the message handler is directly invoked by the message bus.
 
