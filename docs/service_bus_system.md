@@ -11,7 +11,7 @@ important differences.
 - The QueryBus also dispatches a message to only one finder but it returns a [promise](https://github.com/reactphp/promise).
 
 All buses provide an event-driven dispatch process to give plugins
-the possibility to hook into the process and manipulate it.
+the possibility to hook into the process.
 
 # Messaging
 
