@@ -72,11 +72,6 @@ Documentation
 - [Plugins](docs/plugins.md)
 - [Message Queue Producers](docs/queue_producer.md)
 
-# ZF2 Integration
-
-[prooph/proophessor](https://github.com/prooph/proophessor) seamlessly integrates prooph/service-bus with a ZF2 application.
-Note: Currently proophessor only supports prooph/service-bus 3.x. Support for 4.x is coming soon.
-
 Support
 -------
 
