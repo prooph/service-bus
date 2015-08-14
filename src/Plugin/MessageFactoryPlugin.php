@@ -24,7 +24,7 @@ use Prooph\ServiceBus\MessageBus;
  * It checks if the message of the action event is given as an array and
  * if the array contains a key "message_name".
  * If both conditions are met the plugin uses the injected Prooph\Common\Messaging\MessageFactory
- * to translate the message array into a Prooph\Common\Messaging\DomainMessage
+ * to translate the message array into a Prooph\Common\Messaging\Message
  *
  * @package Prooph\ServiceBus\Plugin
  * @author Alexander Miertsch <kontakt@codeliner.ws>
