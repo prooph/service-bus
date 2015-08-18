@@ -5,11 +5,10 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 8/2/15 - 10:31 PM
  */
 namespace Prooph\ServiceBusTest;
-
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Messaging\MessageFactory;
@@ -24,7 +23,7 @@ final class MessageFactoryPluginTest extends TestCase
     /**
      * @test
      */
-    function it_turns_a_message_given_as_array_into_a_message_object_using_a_factory()
+    public function it_turns_a_message_given_as_array_into_a_message_object_using_a_factory()
     {
         $messageFactory = $this->prophesize(MessageFactory::class);
 
@@ -52,4 +51,4 @@ final class MessageFactoryPluginTest extends TestCase
         $this->assertInstanceOf(DoSomething::class, $message);
         $this->assertEquals(["some data"], $message->payload());
     }
-} 
+}

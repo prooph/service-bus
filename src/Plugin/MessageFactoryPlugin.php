@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 7/26/15 - 10:12 PM
  */
 namespace Prooph\ServiceBus\Plugin;
@@ -61,9 +61,13 @@ final class MessageFactoryPlugin implements ActionEventListenerAggregate
     {
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
-        if (! is_array($message)) return;
+        if (! is_array($message)) {
+            return;
+        }
 
-        if (! array_key_exists('message_name', $message)) return;
+        if (! array_key_exists('message_name', $message)) {
+            return;
+        }
 
         $messageName = $message['message_name'];
         unset($message['message_name']);

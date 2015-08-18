@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 30.10.14 - 22:29
  */
 
@@ -37,7 +37,7 @@ class RegexRouter implements ActionEventListenerAggregate
     /**
      * @var array[array[pattern => handler], ...]
      */
-    protected $patternMap = array();
+    protected $patternMap = [];
 
     /**
      * @var string
@@ -52,11 +52,12 @@ class RegexRouter implements ActionEventListenerAggregate
         if (! is_null($patternMap)) {
             foreach ($patternMap as $pattern => $handler) {
                 if (is_array($handler)) {
-                    foreach($handler as $singleHandler) $this->route($pattern)->to($singleHandler);
+                    foreach ($handler as $singleHandler) {
+                        $this->route($pattern)->to($singleHandler);
+                    }
                 } else {
                     $this->route($pattern)->to($handler);
                 }
-
             }
         }
     }
@@ -124,8 +125,11 @@ class RegexRouter implements ActionEventListenerAggregate
      */
     public function onRoute(ActionEvent $actionEvent)
     {
-        if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) $this->onRouteToSingleHandler($actionEvent);
-        else $this->onRouteEvent($actionEvent);
+        if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) {
+            $this->onRouteToSingleHandler($actionEvent);
+        } else {
+            $this->onRouteEvent($actionEvent);
+        }
     }
 
     /**
@@ -142,10 +146,9 @@ class RegexRouter implements ActionEventListenerAggregate
 
         $alreadyMatched = false;
 
-        foreach($this->patternMap as $map) {
+        foreach ($this->patternMap as $map) {
             list($pattern, $handler) = each($map);
             if (preg_match($pattern, $messageName)) {
-
                 if ($alreadyMatched) {
                     throw new RuntimeException(sprintf(
                         "Multiple handlers detected for message %s. The patterns %s and %s matches both",
@@ -173,7 +176,7 @@ class RegexRouter implements ActionEventListenerAggregate
             return;
         }
 
-        foreach($this->patternMap as $map) {
+        foreach ($this->patternMap as $map) {
             list($pattern, $handler) = each($map);
             if (preg_match($pattern, $messageName)) {
                 $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
@@ -183,4 +186,3 @@ class RegexRouter implements ActionEventListenerAggregate
         }
     }
 }
- 

@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 23.09.14 - 20:37
  */
 
@@ -90,9 +90,9 @@ class EventRouterTest extends TestCase
      */
     public function it_takes_a_routing_definition_with_a_single_listener_on_instantiation()
     {
-        $router = new EventRouter(array(
+        $router = new EventRouter([
             'SomethingDone' => 'SomethingDoneListener'
-        ));
+        ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
@@ -108,9 +108,9 @@ class EventRouterTest extends TestCase
      */
     public function it_takes_a_routing_definition_with_a_multiple_listeners_on_instantiation()
     {
-        $router = new EventRouter(array(
+        $router = new EventRouter([
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
-        ));
+        ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
@@ -122,4 +122,3 @@ class EventRouterTest extends TestCase
         $this->assertEquals("SomethingDoneListener2", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
     }
 }
- 

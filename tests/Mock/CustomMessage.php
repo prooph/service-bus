@@ -5,13 +5,12 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 8/2/15 - 8:35 PM
  */
 namespace Prooph\ServiceBusTest\Mock;
 
-
-final class CustomMessage 
+final class CustomMessage
 {
     private $text;
 
@@ -24,4 +23,4 @@ final class CustomMessage
     {
         return $this->text;
     }
-} 
+}

@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 5/23/15 - 4:48 PM
  */
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
@@ -68,6 +68,6 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
     private function determineQueryName($query)
     {
         $queryName = ($query instanceof HasMessageName)? $query->messageName() : is_object($query)? get_class($query) : gettype($query);
-        return join('', array_slice(explode('\\', $queryName), -1));
+        return implode('', array_slice(explode('\\', $queryName), -1));
     }
 }

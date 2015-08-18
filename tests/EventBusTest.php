@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 8/2/15 - 8:17 PM
  */
 namespace Prooph\ServiceBusTest;
@@ -32,7 +32,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    function it_dispatches_a_message_using_the_default_process()
+    public function it_dispatches_a_message_using_the_default_process()
     {
         $somethingDone = new SomethingDone(['done' => 'bought milk']);
 
@@ -52,7 +52,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    function it_triggers_all_defined_action_events()
+    public function it_triggers_all_defined_action_events()
     {
         $initializeIsTriggered = false;
         $detectMessageNameIsTriggered = false;
@@ -151,7 +151,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    function it_uses_the_fqcn_of_the_message_if_message_name_was_not_provided_and_message_does_not_implement_has_message_name()
+    public function it_uses_the_fqcn_of_the_message_if_message_name_was_not_provided_and_message_does_not_implement_has_message_name()
     {
         $handler = new MessageHandler();
 
@@ -172,7 +172,7 @@ final class EventBusTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\ServiceBusException
      */
-    function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin()
+    public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin()
     {
         $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
             throw new \Exception("ka boom");
@@ -184,7 +184,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    function it_invokes_all_listeners()
+    public function it_invokes_all_listeners()
     {
         $handler = new MessageHandler();
 
@@ -201,4 +201,4 @@ final class EventBusTest extends TestCase
         $this->assertSame($customMessage, $handler->getLastMessage());
         $this->assertEquals(2, $handler->getInvokeCounter());
     }
-} 
+}

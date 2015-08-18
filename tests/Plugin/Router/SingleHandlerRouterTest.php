@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 14.09.14 - 23:51
  */
 
@@ -15,7 +15,6 @@ use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
-use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\TestCase;
 
 /**
@@ -75,9 +74,9 @@ class SingleHandlerRouterTest extends TestCase
      */
     public function it_takes_a_routing_definition_on_instantiation()
     {
-        $router = new CommandRouter(array(
+        $router = new CommandRouter([
             'Prooph\ServiceBusTest\Mock\DoSomething' => 'DoSomethingHandler'
-        ));
+        ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'Prooph\ServiceBusTest\Mock\DoSomething',
@@ -88,4 +87,3 @@ class SingleHandlerRouterTest extends TestCase
         $this->assertEquals("DoSomethingHandler", $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }
 }
- 

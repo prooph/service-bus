@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 23.09.14 - 20:20
  */
 
@@ -33,7 +33,7 @@ class EventRouter implements ActionEventListenerAggregate
     /**
      * @var array[eventName => eventListener]
      */
-    protected $eventMap = array();
+    protected $eventMap = [];
 
     /**
      * @var string
@@ -47,7 +47,6 @@ class EventRouter implements ActionEventListenerAggregate
     {
         if (! is_null($eventMap)) {
             foreach ($eventMap as $eventName => $listeners) {
-
                 if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
                     $listeners = [$listeners];
                 }
@@ -68,7 +67,7 @@ class EventRouter implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, array($this, "onRouteEvent")));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteEvent"]));
     }
 
     /**
@@ -153,4 +152,3 @@ class EventRouter implements ActionEventListenerAggregate
         $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
     }
 }
- 
