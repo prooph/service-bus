@@ -71,6 +71,7 @@ Documentation
 - [Message Bus API](docs/message_bus.md)
 - [Plugins](docs/plugins.md)
 - [Message Queue Producers](docs/queue_producer.md)
+- [Framework Integration](docs/factories.md)
 
 Support
 -------
