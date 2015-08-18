@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 5/23/15 - 6:07 PM
  */
 namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;
@@ -49,7 +49,7 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    function it_invokes_a_finder_which_has_method_named_like_the_query()
+    public function it_invokes_a_finder_which_has_method_named_like_the_query()
     {
         $finder = new Finder();
 
@@ -62,4 +62,4 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE), $finder->getLastMessage());
         $this->assertSame($this->actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED), $finder->getLastDeferred());
     }
-} 
+}

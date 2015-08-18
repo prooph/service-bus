@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 15.03.14 - 22:34
  */
 namespace {
@@ -82,4 +82,3 @@ namespace {
 
     //Output should be: It works
 }
-

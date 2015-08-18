@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 30.10.14 - 22:47
  */
 
@@ -113,11 +113,11 @@ class RegexRouterTest extends TestCase
      */
     public function it_takes_a_routing_definition_on_instantiation()
     {
-        $router = new RegexRouter(array(
+        $router = new RegexRouter([
             '/^'.preg_quote('Prooph\ServiceBusTest\Mock\Do').'.*/' => 'DoSomethingHandler',
             '/^'.preg_quote('Prooph\ServiceBusTest\Mock\\').'.*Done$/' => ["SomethingDoneListener1", "SomethingDoneListener2"]
 
-        ));
+        ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'Prooph\ServiceBusTest\Mock\DoSomething',
@@ -136,4 +136,3 @@ class RegexRouterTest extends TestCase
         $this->assertEquals(["SomethingDoneListener1", "SomethingDoneListener2"], $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS));
     }
 }
- 

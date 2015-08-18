@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 5/23/15 - 6:22 PM
  */
 namespace Prooph\ServiceBus\Plugin\Router;
@@ -15,10 +15,8 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
-use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
-use Prooph\ServiceBus\QueryBus;
 
 /**
  * Class SingleHandlerRouter
@@ -33,7 +31,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
     /**
      * @var array[messageName => messageHandler]
      */
-    protected $messageMap = array();
+    protected $messageMap = [];
 
     /**
      * @var string
@@ -59,7 +57,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, array($this, "onRouteMessage")));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
     /**
@@ -129,4 +127,4 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
 
         $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
     }
-} 
+}

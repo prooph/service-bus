@@ -5,13 +5,12 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 8/2/15 - 9:31 PM
  */
 namespace Prooph\ServiceBusTest\Mock;
 
-
-final class Finder 
+final class Finder
 {
     private $message;
 
@@ -32,4 +31,4 @@ final class Finder
     {
         return $this->deferred;
     }
-} 
+}

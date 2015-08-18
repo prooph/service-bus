@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 8/2/15 - 10:27 PM
  */
 namespace Prooph\ServiceBusTest\Plugin;
@@ -23,7 +23,7 @@ final class ServiceLocatorPluginTest extends TestCase
     /**
      * @test
      */
-    function it_locates_a_service_using_the_message_handler_param_of_the_action_event()
+    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event()
     {
         $handler = new MessageHandler();
 
@@ -43,4 +43,4 @@ final class ServiceLocatorPluginTest extends TestCase
 
         $this->assertSame($handler, $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }
-} 
+}

@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 23.09.14 - 20:56
  */
 
@@ -51,7 +51,7 @@ class ServiceLocatorPlugin implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_LOCATE_HANDLER, array($this, 'onLocateMessageHandler')));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_LOCATE_HANDLER, [$this, 'onLocateMessageHandler']));
     }
 
     public function onLocateMessageHandler(ActionEvent $actionEvent)
@@ -63,4 +63,3 @@ class ServiceLocatorPlugin implements ActionEventListenerAggregate
         }
     }
 }
- 

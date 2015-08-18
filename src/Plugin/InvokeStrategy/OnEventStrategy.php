@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 11.03.14 - 21:40
  */
 
@@ -51,7 +51,6 @@ class OnEventStrategy extends AbstractInvokeStrategy
     protected function determineEventName($event)
     {
         $eventName = ($event instanceof HasMessageName)? $event->messageName() : is_object($event)? get_class($event) : gettype($event);
-        return join('', array_slice(explode('\\', $eventName), -1));
+        return implode('', array_slice(explode('\\', $eventName), -1));
     }
 }
- 

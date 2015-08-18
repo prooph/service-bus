@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 16.09.14 - 21:33
  */
 
@@ -41,7 +41,6 @@ class EventBus extends MessageBus
             $this->trigger($actionEvent);
 
             foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
-
                 $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLER, $eventListener);
 
                 if (is_string($eventListener)) {
@@ -67,4 +66,3 @@ class EventBus extends MessageBus
         }
     }
 }
- 

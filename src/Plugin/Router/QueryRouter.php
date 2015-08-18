@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 5/23/15 - 6:49 PM
  */
 namespace Prooph\ServiceBus\Plugin\Router;
@@ -18,4 +18,4 @@ namespace Prooph\ServiceBus\Plugin\Router;
  */
 class QueryRouter extends SingleHandlerRouter
 {
-} 
+}

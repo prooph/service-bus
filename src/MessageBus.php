@@ -5,7 +5,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Date: 13.01.15 - 14:59
  */
 
@@ -186,4 +186,3 @@ abstract class MessageBus
         return is_object($message)? get_class($message) : gettype($message);
     }
 }
- 
