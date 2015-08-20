@@ -59,10 +59,12 @@ return [
                 //Map of message routes where the message name being the key and the query handler being the value.
                 //To lazy-load query handlers you can provide a service id instead.
                 //In this case the handler is pulled from the container using the provided handler service id
-                'routes' => [],
-                //Router defaults to Prooph\ServiceBus\Plugin\Router\QueryRouter
-                //Comment out the next line to use the RegexRouter instead
-                //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
+                'router' => [
+                    'routes' => [],
+                    //Router defaults to Prooph\ServiceBus\Plugin\Router\QueryRouter
+                    //Comment out the next line to use the RegexRouter instead
+                    //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
+                ]
             ],
         ], //EO service_bus
     ], //EO prooph
