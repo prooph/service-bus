@@ -11,7 +11,7 @@
 /**
  * This file contains default configuration for prooph/service-bus
  * It is meant to be used together with at least one of the container-aware factories
- * shipped with this package. Please refer to src/Factory for the factories and
+ * shipped with this package. Please refer to src/Container for the factories and
  * register them in your Interop\Container\ContainerInterface of choice
  * Then make this config available as service id `config` within your container
  * (possibly merged into your application configuration)
@@ -21,7 +21,7 @@ return [
     'prooph' => [
         //component key to avoid merge conflicts with other prooph components when merged into application config
         'service_bus' => [
-            //This section will be used by Prooph\ServiceBus\Factory\CommandBusFactory
+            //This section will be used by Prooph\ServiceBus\Container\CommandBusFactory
             'command_bus' => [
                 //You can add a list of container service ids
                 //The factory will use these to get the plugins from the container
@@ -36,7 +36,7 @@ return [
                     //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
                 ]
             ],
-            //This section will be used by Prooph\ServiceBus\Factory\EventBusFactory
+            //This section will be used by Prooph\ServiceBus\Container\EventBusFactory
             'event_bus' => [
                 //You can add a list of container service ids
                 //The factory will use these to get the plugins from the container
@@ -51,7 +51,7 @@ return [
                     //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
                 ]
             ],
-            //This section will be used by Prooph\ServiceBus\Factory\QueryBusFactory
+            //This section will be used by Prooph\ServiceBus\Container\QueryBusFactory
             'query_bus' => [
                 //You can add a list of container service ids
                 //The factory will use these to get the plugins from the container

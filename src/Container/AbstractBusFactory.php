@@ -9,7 +9,7 @@
  * Date: 30.10.14 - 12:57
  */
 
-namespace Prooph\ServiceBus\Factory;
+namespace Prooph\ServiceBus\Container;
 
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Messaging\MessageFactory;
@@ -21,7 +21,7 @@ use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 /**
  * Class AbstractBusFactory
  *
- * @package Prooph\ServiceBus\Factory
+ * @package Prooph\ServiceBus\Container
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 abstract class AbstractBusFactory

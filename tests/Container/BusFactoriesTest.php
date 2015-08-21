@@ -17,9 +17,9 @@ use Prooph\Common\Messaging\Message;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\Factory\CommandBusFactory;
-use Prooph\ServiceBus\Factory\EventBusFactory;
-use Prooph\ServiceBus\Factory\QueryBusFactory;
+use Prooph\ServiceBus\Container\CommandBusFactory;
+use Prooph\ServiceBus\Container\EventBusFactory;
+use Prooph\ServiceBus\Container\QueryBusFactory;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use Prooph\ServiceBusTest\TestCase;
@@ -28,7 +28,7 @@ use Prophecy\Argument;
 /**
  * Class BusFactoriesTest
  *
- * @package Prooph\ServiceBusTest\Factory
+ * @package Prooph\ServiceBusTest\Container
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 final class BusFactoriesTest extends TestCase
