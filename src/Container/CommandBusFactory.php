@@ -6,21 +6,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 30.10.14 - 18:10
+ * Date: 30.10.14 - 16:07
  */
 
-namespace Prooph\ServiceBus\Factory;
+namespace Prooph\ServiceBus\Container;
 
-use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\Plugin\Router\EventRouter;
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 
 /**
- * Class EventBusFactory
+ * Class CommandBusFactory
  *
- * @package Prooph\ServiceBus\Factory
+ * @package Prooph\ServiceBus\Container
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class EventBusFactory extends AbstractBusFactory
+class CommandBusFactory extends AbstractBusFactory
 {
 
     /**
@@ -28,7 +28,7 @@ class EventBusFactory extends AbstractBusFactory
      */
     protected function getBusClass()
     {
-        return EventBus::class;
+        return CommandBus::class;
     }
 
     /**
@@ -36,7 +36,7 @@ class EventBusFactory extends AbstractBusFactory
      */
     protected function getBusConfigKey()
     {
-        return 'event_bus';
+        return 'command_bus';
     }
 
     /**
@@ -44,6 +44,6 @@ class EventBusFactory extends AbstractBusFactory
      */
     protected function getDefaultRouterClass()
     {
-        return EventRouter::class;
+        return CommandRouter::class;
     }
 }

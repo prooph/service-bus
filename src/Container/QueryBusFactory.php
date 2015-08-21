@@ -6,29 +6,27 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 30.10.14 - 16:07
+ * Date: 8/14/15 - 11:34 PM
  */
+namespace Prooph\ServiceBus\Container;
 
-namespace Prooph\ServiceBus\Factory;
-
-use Prooph\ServiceBus\CommandBus;
-use Prooph\ServiceBus\Plugin\Router\CommandRouter;
+use Prooph\ServiceBus\Plugin\Router\QueryRouter;
+use Prooph\ServiceBus\QueryBus;
 
 /**
- * Class CommandBusFactory
+ * Class QueryBusFactory
  *
- * @package Prooph\ServiceBus\Factory
- * @author Alexander Miertsch <kontakt@codeliner.ws>
+ * @package Prooph\ServiceBus\Container
+ * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-class CommandBusFactory extends AbstractBusFactory
+class QueryBusFactory extends AbstractBusFactory
 {
-
     /**
      * @inheritdoc
      */
     protected function getBusClass()
     {
-        return CommandBus::class;
+        return QueryBus::class;
     }
 
     /**
@@ -36,7 +34,7 @@ class CommandBusFactory extends AbstractBusFactory
      */
     protected function getBusConfigKey()
     {
-        return 'command_bus';
+        return 'query_bus';
     }
 
     /**
@@ -44,6 +42,6 @@ class CommandBusFactory extends AbstractBusFactory
      */
     protected function getDefaultRouterClass()
     {
-        return CommandRouter::class;
+        return QueryRouter::class;
     }
 }
