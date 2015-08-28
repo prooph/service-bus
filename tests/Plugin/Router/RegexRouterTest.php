@@ -121,14 +121,13 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
+     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished()
     {
         $router = new RegexRouter();
 
         $router->route('Prooph\ServiceBusTest\Mock\DoSomething');
-
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
         $router->route('/.*/');
     }

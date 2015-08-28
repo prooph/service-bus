@@ -45,6 +45,53 @@ class SingleHandlerRouterTest extends TestCase
 
     /**
      * @test
+     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     */
+    public function it_fails_when_routing_to_invalid_handler()
+    {
+        $router = new CommandRouter();
+
+        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to(null);
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_early_when_message_name_is_empty()
+    {
+        $router = new CommandRouter();
+
+        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to("DoSomethingHandler");
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
+        ]);
+
+        $router->onRouteMessage($actionEvent);
+
+        $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_early_when_message_name_is_not_in_event_map()
+    {
+        $router = new CommandRouter();
+
+        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to("DoSomethingHandler");
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
+            '' => 'Prooph\ServiceBusTest\Mock\DoSomething',
+        ]);
+
+        $router->onRouteMessage($actionEvent);
+
+        $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+    }
+
+    /**
+     * @test
      */
     public function it_fails_on_routing_a_second_command_before_first_definition_is_finished()
     {
