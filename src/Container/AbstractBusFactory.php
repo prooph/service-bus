@@ -75,7 +75,8 @@ abstract class AbstractBusFactory
         }
 
         $messageFactoryServiceId = isset($busConfig['message_factory'])
-            ? (string)$busConfig['message_factory'] : MessageFactory::class;
+            ? $busConfig['message_factory']
+            : MessageFactory::class;
 
         if ($container->has($messageFactoryServiceId)) {
             $bus->utilize(new MessageFactoryPlugin($container->get($messageFactoryServiceId)));

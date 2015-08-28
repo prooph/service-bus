@@ -215,6 +215,48 @@ final class BusFactoriesTest extends TestCase
      * @test
      * @dataProvider provideBuses
      */
+    public function it_creates_a_bus_and_attaches_the_message_factory_defined_via_configuration($busClass, $busConfigKey, $busFactory)
+    {
+        $container = $this->prophesize(ContainerInterface::class);
+        $message = $this->prophesize(Message::class);
+        $messageFactory = $this->prophesize(MessageFactory::class);
+
+        $message->messageName()->willReturn('test_message');
+        $handlerWasCalled = false;
+
+        $container->has('config')->willReturn(true);
+        $container->get('config')->willReturn([
+            'prooph' => [
+                'service_bus' => [
+                    $busConfigKey => [
+                        'router' => [
+                            'type' => RegexRouter::class,
+                            'routes' => [
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                    $handlerWasCalled = true;
+                                }
+                            ]
+                        ],
+                        'message_factory' => 'custom_message_factory'
+                    ]
+                ]
+            ]
+        ]);
+
+        $container->has('custom_message_factory')->willReturn(true);
+        $container->get('custom_message_factory')->willReturn($messageFactory);
+
+        $bus = $busFactory($container->reveal());
+
+        $bus->dispatch($message->reveal());
+
+        $this->assertTrue($handlerWasCalled);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideBuses
+     */
     public function it_enables_handler_location_by_default($busClass, $busConfigKey, $busFactory)
     {
         $container = $this->prophesize(ContainerInterface::class);
