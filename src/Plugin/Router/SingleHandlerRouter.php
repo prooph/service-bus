@@ -16,7 +16,7 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
-use Prooph\ServiceBus\Exception\RuntimeException;
+use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -64,7 +64,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
     /**
      * @param string $messageName
      * @return $this
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
+     * @throws Exception\RuntimeException
      */
     public function route($messageName)
     {
@@ -72,7 +72,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
         Assertion::notEmpty($messageName);
 
         if (! is_null($this->tmpMessageName)) {
-            throw new RuntimeException(sprintf("Message %s is not mapped to a handler.", $this->tmpMessageName));
+            throw new Exception\RuntimeException(sprintf("Message %s is not mapped to a handler.", $this->tmpMessageName));
         }
 
         $this->tmpMessageName = $messageName;
@@ -83,20 +83,20 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
     /**
      * @param string|object|callable $messageHandler
      * @return $this
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws Exception\RuntimeException
+     * @throws Exception\InvalidArgumentException
      */
     public function to($messageHandler)
     {
         if (! is_string($messageHandler) && ! is_object($messageHandler) && ! is_callable($messageHandler)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new Exception\InvalidArgumentException(sprintf(
                 "Invalid message handler provided. Expected type is string, object or callable but type of %s given.",
                 gettype($messageHandler)
             ));
         }
 
         if (is_null($this->tmpMessageName)) {
-            throw new RuntimeException(sprintf(
+            throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a message. Please use method route before calling method to",
                 (is_object($messageHandler))? get_class($messageHandler) : (is_string($messageHandler))? $messageHandler : gettype($messageHandler)
             ));
