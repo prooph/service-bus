@@ -140,7 +140,7 @@ class EventRouter implements ActionEventListenerAggregate
         if (empty($messageName)) {
             return;
         }
-        
+
         if (!isset($this->eventMap[$messageName])) {
             return;
         }

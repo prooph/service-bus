@@ -47,6 +47,24 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
+    public function it_returns_early_when_message_name_is_empty()
+    {
+        $regexRouter = new RegexRouter();
+
+        $regexRouter->route('/^'.preg_quote('Prooph\ServiceBusTest\Mock\Do').'.*/')->to("DoSomethingHandler");
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
+            '' => 'Prooph\ServiceBusTest\Mock\DoSomething',
+        ]);
+
+        $regexRouter->onRoute($actionEvent);
+
+        $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+    }
+
+    /**
+     * @test
+     */
     public function it_does_not_allow_that_two_pattern_matches_with_same_command_name()
     {
         $regexRouter = new RegexRouter();
@@ -85,6 +103,25 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
+    public function it_returns_early_when_message_name_is_empty_on_multiple_listeners()
+    {
+        $regexRouter = new RegexRouter();
+
+        $regexRouter->route('/^'.preg_quote('Prooph\ServiceBusTest\Mock\\').'.*Done$/')->to("SomethingDoneListener1");
+        $regexRouter->route('/^'.preg_quote('Prooph\ServiceBusTest\Mock\\').'.*Done$/')->to("SomethingDoneListener2");
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
+            '' => 'Prooph\ServiceBusTest\Mock\SomethingDone',
+        ]);
+
+        $regexRouter->onRoute($actionEvent);
+
+        $this->assertEmpty($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS));
+    }
+
+    /**
+     * @test
+     */
     public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished()
     {
         $router = new RegexRouter();
@@ -98,14 +135,24 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
+     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_setting_a_handler_before_a_pattern_is_set()
     {
         $router = new RegexRouter();
 
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
-
         $router->to('DoSomethingHandler');
+    }
+
+    /**
+     * @test
+     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     */
+    public function it_fails_when_routing_to_invalid_handler()
+    {
+        $router = new RegexRouter();
+
+        $router->to(null);
     }
 
     /**
