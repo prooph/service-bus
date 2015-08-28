@@ -17,7 +17,7 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\Exception\RuntimeException;
+use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -73,7 +73,7 @@ class EventRouter implements ActionEventListenerAggregate
     /**
      * @param string $eventName
      * @return $this
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
+     * @throws Exception\RuntimeException
      */
     public function route($eventName)
     {
@@ -81,7 +81,7 @@ class EventRouter implements ActionEventListenerAggregate
         Assertion::notEmpty($eventName);
 
         if (! is_null($this->tmpEventName) && empty($this->eventMap[$this->tmpEventName])) {
-            throw new RuntimeException(sprintf("event %s is not mapped to a listener.", $this->tmpEventName));
+            throw new Exception\RuntimeException(sprintf("event %s is not mapped to a listener.", $this->tmpEventName));
         }
 
         $this->tmpEventName = $eventName;
@@ -96,20 +96,20 @@ class EventRouter implements ActionEventListenerAggregate
     /**
      * @param string|object|callable $eventListener
      * @return $this
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws Exception\RuntimeException
+     * @throws Exception\InvalidArgumentException
      */
     public function to($eventListener)
     {
         if (! is_string($eventListener) && ! is_object($eventListener) && ! is_callable($eventListener)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new Exception\InvalidArgumentException(sprintf(
                 "Invalid event listener provided. Expected type is string, object or callable but type of %s given.",
                 gettype($eventListener)
             ));
         }
 
         if (is_null($this->tmpEventName)) {
-            throw new RuntimeException(sprintf(
+            throw new Exception\RuntimeException(sprintf(
                 "Cannot map listener %s to an event. Please use method route before calling method to",
                 (is_object($eventListener))? get_class($eventListener) : (is_string($eventListener))? $eventListener : gettype($eventListener)
             ));
@@ -140,7 +140,7 @@ class EventRouter implements ActionEventListenerAggregate
         if (empty($messageName)) {
             return;
         }
-
+        
         if (!isset($this->eventMap[$messageName])) {
             return;
         }

@@ -32,7 +32,7 @@ class EventRouterTest extends TestCase
     {
         $router = new EventRouter();
 
-        $router->route('SomethingDone')->to("SomethingDoneListener");
+        $router->route('SomethingDone')->to("SomethingDoneListener1")->andTo('SomethingDoneListener2');
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
@@ -41,7 +41,11 @@ class EventRouterTest extends TestCase
 
         $router->onRouteEvent($actionEvent);
 
-        $this->assertEquals("SomethingDoneListener", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
+        $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
+
+        $this->assertCount(2, $listeners);
+        $this->assertEquals("SomethingDoneListener1", $listeners[0]);
+        $this->assertEquals("SomethingDoneListener2", $listeners[1]);
     }
 
     /**
@@ -87,6 +91,16 @@ class EventRouterTest extends TestCase
 
     /**
      * @test
+     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     */
+    public function it_fails_on_setting_an_invalid_listener()
+    {
+        $router = new EventRouter();
+        $router->to(null);
+    }
+
+    /**
+     * @test
      */
     public function it_takes_a_routing_definition_with_a_single_listener_on_instantiation()
     {
@@ -120,5 +134,43 @@ class EventRouterTest extends TestCase
 
         $this->assertEquals("SomethingDoneListener1", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
         $this->assertEquals("SomethingDoneListener2", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_early_on_route_event_when_message_name_is_empty()
+    {
+        $router = new EventRouter([
+            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
+        ]);
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
+            '' => 'SomethingDone',
+        ]);
+
+        $router->onRouteEvent($actionEvent);
+
+        $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
+        $this->assertEmpty($listeners);
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_early_on_route_event_when_message_name_is_not_in_event_map()
+    {
+        $router = new EventRouter([
+            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
+        ]);
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
+        ]);
+
+        $router->onRouteEvent($actionEvent);
+
+        $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
+        $this->assertEmpty($listeners);
     }
 }
