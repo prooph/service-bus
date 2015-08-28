@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 23.09.14 - 20:56
+ * Date: 09/23/14 - 20:56
  */
 
 namespace Prooph\ServiceBus\Plugin;

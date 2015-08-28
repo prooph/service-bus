@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 7/26/15 - 10:12 PM
+ * Date: 07/26/15 - 10:12 PM
  */
+
 namespace Prooph\ServiceBus\Plugin;
 
 use Prooph\Common\Event\ActionEvent;

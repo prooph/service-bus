@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 22.05.15 - 22:16
+ * Date: 05/22/15 - 22:16
  */
+
 namespace Prooph\ServiceBus;
 
 use Prooph\ServiceBus\Exception\MessageDispatchException;

@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/16/15 - 9:34 PM
+ * Date: 08/16/15 - 9:34 PM
  */
+
 namespace Prooph\ServiceBusTest\Factory;
 
 use Interop\Container\ContainerInterface;

@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/2/15 - 8:17 PM
+ * Date: 08/02/15 - 8:17 PM
  */
+
 namespace Prooph\ServiceBusTest;
 
 use Prooph\Common\Event\ActionEvent;
@@ -22,6 +23,10 @@ use Prooph\ServiceBusTest\Mock\Finder;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 
+/**
+ * Class QueryBusTest
+ * @package Prooph\ServiceBusTest
+ */
 final class QueryBusTest extends TestCase
 {
     /**

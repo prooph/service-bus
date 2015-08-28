@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 30.10.14 - 22:47
+ * Date: 10/30/14 - 22:47
  */
 
 namespace Prooph\ServiceBusTest\Plugin\Router;

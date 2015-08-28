@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/14/15 - 11:34 PM
+ * Date: 14/08/15 - 11:34 PM
  */
+
 namespace Prooph\ServiceBus\Container;
 
 use Prooph\ServiceBus\Plugin\Router\QueryRouter;

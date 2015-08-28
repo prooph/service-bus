@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/2/15 - 10:27 PM
+ * Date: 08/02/15 - 10:27 PM
  */
 namespace Prooph\ServiceBusTest\Plugin;
 
@@ -18,6 +18,10 @@ use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use Prooph\ServiceBusTest\Mock\MessageHandler;
 use Prooph\ServiceBusTest\TestCase;
 
+/**
+ * Class ServiceLocatorPluginTest
+ * @package Prooph\ServiceBusTest\Plugin
+ */
 final class ServiceLocatorPluginTest extends TestCase
 {
     /**
