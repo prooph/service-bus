@@ -18,7 +18,7 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\Exception\RuntimeException;
+use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
 
@@ -75,7 +75,7 @@ class RegexRouter implements ActionEventListenerAggregate
     /**
      * @param string $pattern
      * @return $this
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
+     * @throws Exception\RuntimeException
      */
     public function route($pattern)
     {
@@ -83,7 +83,7 @@ class RegexRouter implements ActionEventListenerAggregate
         Assertion::notEmpty($pattern);
 
         if (! is_null($this->tmpPattern)) {
-            throw new RuntimeException(sprintf("pattern %s is not mapped to a handler.", $this->tmpPattern));
+            throw new Exception\RuntimeException(sprintf("pattern %s is not mapped to a handler.", $this->tmpPattern));
         }
 
         $this->tmpPattern = $pattern;
@@ -94,20 +94,20 @@ class RegexRouter implements ActionEventListenerAggregate
     /**
      * @param string|object|callable $handler
      * @return $this
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws Exception\RuntimeException
+     * @throws Exception\InvalidArgumentException
      */
     public function to($handler)
     {
         if (! is_string($handler) && ! is_object($handler) && ! is_callable($handler)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new Exception\InvalidArgumentException(sprintf(
                 "Invalid handler provided. Expected type is string, object or callable but type of %s given.",
                 gettype($handler)
             ));
         }
 
         if (is_null($this->tmpPattern)) {
-            throw new RuntimeException(sprintf(
+            throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a pattern. Please use method route before calling method to",
                 (is_object($handler))? get_class($handler) : (is_string($handler))? $handler : gettype($handler)
             ));
@@ -134,7 +134,7 @@ class RegexRouter implements ActionEventListenerAggregate
 
     /**
      * @param ActionEvent $actionEvent
-     * @throws \Prooph\ServiceBus\Exception\RuntimeException
+     * @throws Exception\RuntimeException
      */
     private function onRouteToSingleHandler(ActionEvent $actionEvent)
     {
@@ -150,7 +150,7 @@ class RegexRouter implements ActionEventListenerAggregate
             list($pattern, $handler) = each($map);
             if (preg_match($pattern, $messageName)) {
                 if ($alreadyMatched) {
-                    throw new RuntimeException(sprintf(
+                    throw new Exception\RuntimeException(sprintf(
                         "Multiple handlers detected for message %s. The patterns %s and %s matches both",
                         $messageName,
                         $alreadyMatched,
