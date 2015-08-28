@@ -12,6 +12,8 @@
 namespace Prooph\ServiceBusTest;
 
 use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\DefaultActionEvent;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\ServiceBusException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
@@ -202,6 +204,7 @@ final class QueryBusTest extends TestCase
             $exception = $ex;
         });
 
-        $this->assertInstanceOf(ServiceBusException::class, $exception);
+        $this->assertInstanceOf(MessageDispatchException::class, $exception);
+        $this->assertInstanceOf(DefaultActionEvent::class, $exception->getFailedDispatchEvent());
     }
 }
