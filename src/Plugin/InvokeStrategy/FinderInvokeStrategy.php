@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 5/23/15 - 4:48 PM
+ * Date: 23/05/15 - 4:48 PM
  */
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Event\ActionEvent;

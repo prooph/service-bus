@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 11.03.14 - 21:51
+ * Date: 03/11/14 - 21:51
  */
 
 namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;

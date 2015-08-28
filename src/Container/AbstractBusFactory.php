@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 30.10.14 - 12:57
+ * Date: 10/30/14 - 12:57
  */
 
 namespace Prooph\ServiceBus\Container;
@@ -75,7 +75,8 @@ abstract class AbstractBusFactory
         }
 
         $messageFactoryServiceId = isset($busConfig['message_factory'])
-            ? (string)$busConfig['message_factory'] : MessageFactory::class;
+            ? $busConfig['message_factory']
+            : MessageFactory::class;
 
         if ($container->has($messageFactoryServiceId)) {
             $bus->utilize(new MessageFactoryPlugin($container->get($messageFactoryServiceId)));

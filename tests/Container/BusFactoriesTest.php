@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/16/15 - 9:34 PM
+ * Date: 08/16/15 - 9:34 PM
  */
+
 namespace Prooph\ServiceBusTest\Factory;
 
 use Interop\Container\ContainerInterface;
@@ -202,6 +203,48 @@ final class BusFactoriesTest extends TestCase
         ]);
 
         $container->has(MessageFactory::class)->willReturn(false);
+
+        $bus = $busFactory($container->reveal());
+
+        $bus->dispatch($message->reveal());
+
+        $this->assertTrue($handlerWasCalled);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideBuses
+     */
+    public function it_creates_a_bus_and_attaches_the_message_factory_defined_via_configuration($busClass, $busConfigKey, $busFactory)
+    {
+        $container = $this->prophesize(ContainerInterface::class);
+        $message = $this->prophesize(Message::class);
+        $messageFactory = $this->prophesize(MessageFactory::class);
+
+        $message->messageName()->willReturn('test_message');
+        $handlerWasCalled = false;
+
+        $container->has('config')->willReturn(true);
+        $container->get('config')->willReturn([
+            'prooph' => [
+                'service_bus' => [
+                    $busConfigKey => [
+                        'router' => [
+                            'type' => RegexRouter::class,
+                            'routes' => [
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                    $handlerWasCalled = true;
+                                }
+                            ]
+                        ],
+                        'message_factory' => 'custom_message_factory'
+                    ]
+                ]
+            ]
+        ]);
+
+        $container->has('custom_message_factory')->willReturn(true);
+        $container->get('custom_message_factory')->willReturn($messageFactory);
 
         $bus = $busFactory($container->reveal());
 

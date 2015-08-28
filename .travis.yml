@@ -9,7 +9,7 @@ before_script:
   - composer --dev install
 
 script:
-  - php ./vendor/bin/phpunit --coverage-text --coverage-clover ./../build/logs/clover.xml -c ./tests/.
+  - php ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml
   - ./vendor/bin/php-cs-fixer fix -v --diff --dry-run
 
 after_script:

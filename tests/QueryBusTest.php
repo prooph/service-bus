@@ -6,12 +6,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/2/15 - 8:17 PM
+ * Date: 08/02/15 - 8:17 PM
  */
+
 namespace Prooph\ServiceBusTest;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\ServiceBus\Exception\ServiceBusException;
+use Prooph\Common\Event\DefaultActionEvent;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
@@ -22,6 +24,10 @@ use Prooph\ServiceBusTest\Mock\Finder;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 
+/**
+ * Class QueryBusTest
+ * @package Prooph\ServiceBusTest
+ */
 final class QueryBusTest extends TestCase
 {
     /**
@@ -197,6 +203,7 @@ final class QueryBusTest extends TestCase
             $exception = $ex;
         });
 
-        $this->assertInstanceOf(ServiceBusException::class, $exception);
+        $this->assertInstanceOf(MessageDispatchException::class, $exception);
+        $this->assertInstanceOf(DefaultActionEvent::class, $exception->getFailedDispatchEvent());
     }
 }

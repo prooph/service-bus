@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 5/23/15 - 6:22 PM
+ * Date: 05/23/15 - 6:22 PM
  */
+
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Assert\Assertion;

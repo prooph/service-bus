@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 14.09.14 - 22:25
+ * Date: 09/14/14 - 22:25
  */
 
 namespace Prooph\ServiceBus\Exception;

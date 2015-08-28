@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 13.01.15 - 14:59
+ * Date: 01/13/15 - 14:59
  */
 
 namespace Prooph\ServiceBus;

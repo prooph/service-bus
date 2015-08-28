@@ -6,8 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/2/15 - 10:31 PM
+ * Date: 08/02/15 - 10:31 PM
  */
+
 namespace Prooph\ServiceBusTest;
 
 use Prooph\Common\Event\DefaultActionEvent;
@@ -18,6 +19,10 @@ use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prophecy\Argument;
 
+/**
+ * Class MessageFactoryPluginTest
+ * @package Prooph\ServiceBusTest
+ */
 final class MessageFactoryPluginTest extends TestCase
 {
     /**

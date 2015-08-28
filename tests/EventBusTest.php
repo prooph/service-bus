@@ -6,18 +6,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 8/2/15 - 8:17 PM
+ * Date: 08/02/15 - 8:17 PM
  */
+
 namespace Prooph\ServiceBusTest;
 
 use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBusTest\Mock\CustomMessage;
 use Prooph\ServiceBusTest\Mock\ErrorProducer;
 use Prooph\ServiceBusTest\Mock\MessageHandler;
 use Prooph\ServiceBusTest\Mock\SomethingDone;
 
+/**
+ * Class EventBusTest
+ * @package Prooph\ServiceBusTest
+ */
 final class EventBusTest extends TestCase
 {
     /**
@@ -170,15 +177,21 @@ final class EventBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\ServiceBusException
+     * @expectedException Prooph\ServiceBus\Exception\MessageDispatchException
      */
     public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin()
     {
-        $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
-            throw new \Exception("ka boom");
-        });
+        try {
+            $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
+                throw new \Exception("ka boom");
+            });
 
-        $this->eventBus->dispatch("throw it");
+            $this->eventBus->dispatch("throw it");
+        } catch (MessageDispatchException $e) {
+            $this->assertInstanceOf(DefaultActionEvent::class, $e->getFailedDispatchEvent());
+
+            throw $e;
+        }
     }
 
     /**
