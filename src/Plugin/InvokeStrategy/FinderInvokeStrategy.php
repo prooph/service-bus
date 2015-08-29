@@ -57,7 +57,6 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
 
             if (method_exists($finder, $queryName)) {
                 $finder->{$queryName}($query, $deferred);
-                return;
             }
         }
     }
