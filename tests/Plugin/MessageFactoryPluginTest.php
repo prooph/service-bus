@@ -9,8 +9,10 @@
  * Date: 08/02/15 - 10:31 PM
  */
 
-namespace Prooph\ServiceBusTest;
+namespace Prooph\ServiceBusTest\Plugin;
 
+use PHPUnit_Framework_TestCase as TestCase;
+use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\CommandBus;
@@ -55,5 +57,26 @@ final class MessageFactoryPluginTest extends TestCase
 
         $this->assertInstanceOf(DoSomething::class, $message);
         $this->assertEquals(["some data"], $message->payload());
+    }
+
+    /**
+     * @test
+     */
+    public function it_will_return_eary_if_message_name_not_present_in_message()
+    {
+        $messageFactoryMock = $this->getMockForAbstractClass(MessageFactory::class);
+        $messageFactoryMock
+            ->expects($this->never())
+            ->method('createMessageFromArray');
+
+        $actionEventMock = $this->getMockForAbstractClass(ActionEvent::class);
+        $actionEventMock
+            ->expects($this->once())
+            ->method('getParam')
+            ->with(MessageBus::EVENT_PARAM_MESSAGE)
+            ->will($this->returnValue([]));
+
+        $messagePlugin = new MessageFactoryPlugin($messageFactoryMock);
+        $messagePlugin($actionEventMock);
     }
 }
