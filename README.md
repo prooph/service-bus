@@ -70,7 +70,7 @@ Documentation
 - [Overview](docs/service_bus_system.md)
 - [Message Bus API](docs/message_bus.md)
 - [Plugins](docs/plugins.md)
-- [Message Queue Producers](docs/queue_producer.md)
+- [Async Message Producers](docs/async_message_producer.md)
 - [Framework Integration](docs/factories.md)
 
 Support
@@ -78,10 +78,19 @@ Support
 
 - Ask questions on [prooph-users](https://groups.google.com/forum/?hl=de#!forum/prooph) google group.
 - File issues at [https://github.com/prooph/service-bus/issues](https://github.com/prooph/service-bus/issues).
-
+- Say hello in the [prooph gitter](https://gitter.im/prooph/improoph) chat.
 
 Contribute
 ----------
 
 Please feel free to fork and extend existing or add new features and send a pull request with your changes!
 To establish a consistent code quality, please provide unit tests for all your changes and may adapt the documentation.
+
+# Dependencies
+
+Please refer to the project [composer.json](composer.json) for the list of dependencies.
+
+License
+-------
+
+Released under the [New BSD License](LICENSE).
