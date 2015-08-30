@@ -16,6 +16,6 @@ namespace Prooph\ServiceBus\Exception;
  *
  * @package Prooph\ServiceBus\Exception
  */
-class InvalidArgumentException extends \RuntimeException implements ServiceBusException
+class InvalidArgumentException extends \InvalidArgumentException implements ServiceBusException
 {
 }
