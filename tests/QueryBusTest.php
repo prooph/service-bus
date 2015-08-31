@@ -14,6 +14,7 @@ namespace Prooph\ServiceBusTest;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
@@ -205,5 +206,77 @@ final class QueryBusTest extends TestCase
 
         $this->assertInstanceOf(MessageDispatchException::class, $exception);
         $this->assertInstanceOf(DefaultActionEvent::class, $exception->getFailedDispatchEvent());
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_if_event_has_no_handler_after_it_has_been_set_and_event_was_triggered()
+    {
+        $exception = null;
+
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
+                $e->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, null);
+            }
+        );
+
+        $promise = $this->queryBus->dispatch("throw it");
+
+        $promise->otherwise(function ($ex) use (&$exception) {
+            $exception = $ex;
+        });
+
+        $this->assertInstanceOf(RuntimeException::class, $exception);
+        $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query string', $exception->getMessage());
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_if_event_has_stopped_propagation()
+    {
+        $exception = null;
+
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
+                $e->stopPropagation(true);
+            }
+        );
+
+        $promise = $this->queryBus->dispatch("throw it");
+
+        $promise->otherwise(function ($ex) use (&$exception) {
+            $exception = $ex;
+        });
+
+        $this->assertInstanceOf(RuntimeException::class, $exception);
+        $this->assertEquals('Message dispatch failed during initialize phase. Error: Dispatch has stopped unexpectedly.', $exception->getMessage());
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_deactive_an_action_event_listener_aggregate()
+    {
+        $handler = new Finder();
+
+        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $e) use ($handler) {
+            if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
+            }
+        });
+
+        $plugin = new FinderInvokeStrategy();
+        $this->queryBus->utilize($plugin);
+        $this->queryBus->deactivate($plugin);
+
+        $customMessage = new CustomMessage("foo");
+
+        $promise = $this->queryBus->dispatch($customMessage);
+
+        $this->assertNull($handler->getLastMessage());
+        $this->assertInstanceOf(Promise::class, $promise);
+        $this->assertNull($handler->getLastDeferred());
     }
 }
