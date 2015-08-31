@@ -234,6 +234,29 @@ final class QueryBusTest extends TestCase
     /**
      * @test
      */
+    public function it_throws_exception_if_event_has_stopped_propagation()
+    {
+        $exception = null;
+
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
+                $e->stopPropagation(true);
+            }
+        );
+
+        $promise = $this->queryBus->dispatch("throw it");
+
+        $promise->otherwise(function ($ex) use (&$exception) {
+            $exception = $ex;
+        });
+
+        $this->assertInstanceOf(RuntimeException::class, $exception);
+        $this->assertEquals('Message dispatch failed during initialize phase. Error: Dispatch has stopped unexpectedly.', $exception->getMessage());
+    }
+
+    /**
+     * @test
+     */
     public function it_can_deactive_an_action_event_listener_aggregate()
     {
         $handler = new Finder();
