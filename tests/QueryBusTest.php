@@ -230,4 +230,30 @@ final class QueryBusTest extends TestCase
         $this->assertInstanceOf(RuntimeException::class, $exception);
         $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query string', $exception->getMessage());
     }
+
+    /**
+     * @test
+     */
+    public function it_can_deactive_an_action_event_listener_aggregate()
+    {
+        $handler = new Finder();
+
+        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $e) use ($handler) {
+            if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
+            }
+        });
+
+        $plugin = new FinderInvokeStrategy();
+        $this->queryBus->utilize($plugin);
+        $this->queryBus->deactivate($plugin);
+
+        $customMessage = new CustomMessage("foo");
+
+        $promise = $this->queryBus->dispatch($customMessage);
+
+        $this->assertNull($handler->getLastMessage());
+        $this->assertInstanceOf(Promise::class, $promise);
+        $this->assertNull($handler->getLastDeferred());
+    }
 }
