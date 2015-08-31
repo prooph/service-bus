@@ -16,6 +16,7 @@ use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\QueryBus;
 use Prooph\ServiceBusTest\Mock\CustomMessage;
 use Prooph\ServiceBusTest\Mock\DoSomething;
 use Prooph\ServiceBusTest\Mock\ErrorProducer;
@@ -192,5 +193,20 @@ final class CommandBusTest extends TestCase
 
             throw $e;
         }
+    }
+
+    /**
+     * @test
+     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     */
+    public function it_throws_exception_if_event_has_no_handler_after_it_has_been_set_and_event_was_triggered()
+    {
+        $this->commandBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
+                $e->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, null);
+            }
+        );
+
+        $this->commandBus->dispatch("throw it");
     }
 }
