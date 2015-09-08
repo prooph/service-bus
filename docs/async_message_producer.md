@@ -13,8 +13,6 @@ async processing on a per message basis by routing the appropriate messages to a
 
 # Available MessageProducer
 
-- [PhpResqueProducer](https://github.com/prooph/psb-php-resque-producer): Perfect choice for async
-  command processing using a ultra fast redis queue
 - [BernardProducer](https://github.com/prooph/psb-bernard-producer): Queue multi-backend providing different
   drivers like Doctrine DBAL and Predis (see http://bernardphp.com for a complete list of drivers)
 - [GuzzleHttpProducer](https://github.com/prooph/psb-http-producer): Send messages to a remote system using
