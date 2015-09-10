@@ -24,7 +24,7 @@ prooph/service-bus decouples your model from any framework. You can use a
 web framework like Zend, Symfony, Laravel and co. to handle http requests and pass them via prooph/service-bus to your model
 but you can also receive the same messages via CLI or from a message queue system like RabbitMQ or Beanstalkd.
 
-![psb_architecture](docs/img/psb_architecture.png)
+![prooph_architecture](https://raw.githubusercontent.com/prooph/proophessor/master/docs/book/img/prooph_overview.png)
 
 
 Installation
