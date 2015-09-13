@@ -35,7 +35,8 @@
     },
     "suggest": {
         "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
-        "zendframework/zend-servicemanager": "Use Zf2 ServiceManager to lazy load your handlers and listeners"
+        "zendframework/zend-servicemanager": "Use Zf2 ServiceManager to lazy load your handlers and listeners",
+        "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard"
     },
     "autoload": {
         "psr-4": {
