@@ -20,9 +20,9 @@ interface AuthorizationService
     /**
      * Check if the permission is granted to the current identity
      *
-     * @param string $permission
+     * @param string $messageName
      * @param mixed  $context
      * @return bool
      */
-    public function isGranted($permission, $context = null);
+    public function isGranted($messageName, $context = null);
 }
