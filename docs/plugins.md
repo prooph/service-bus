@@ -103,6 +103,19 @@ have a public method named this way: OrderCartUpdater::onArticleWasBought.
 
 Note: When a message bus detects that the message handler is callable invoke strategies are skipped and the message handler is directly invoked by the message bus.
 
+# Guards
+
+The service bus ships with a route guard and a finalize guard. You can use them to protect the command bus and the query bus.
+For the command bus the route guard is sufficient. If the [AuthorizationService](../src/Prooph/ServiceBus/Plugin/Guard/AuthorizationService.php)
+does not allow access to the command, an [UnauthorizedException](../src/Prooph/ServiceBus/Plugin/Guard/UnautorizedException.php) is thrown.
+If you want to protect the query bus, you can also use the route guard, but in some situations, you want to deny access based on the result
+of the query. In this case it's important to make checks on the query results.
+
+We also provide [service-bus-zfc-rbac-brdige](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
+You can also find some configuration examples in this repository. 
+
+Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on the query result, it is important to return true, if the given context (query result) is null. Otherwise your assertions will always fail in the route phase, because the result is not yet known.
+
 # ServiceLocatorPlugin
 
 This plugin uses a `Interop\Container\ContainerInterface` implementation to lazy-load message handlers.

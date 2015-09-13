@@ -20,7 +20,8 @@ always bootstrap a message bus by hand. Just look at the factories for inspirati
 
 ## Customizing via Configuration
 
-In the `config` folder you will find a [configuration skeleton](../config/prooph_service_bus.config.php).
+In the `config` folder you will find a [configuration skeleton](../config/prooph_service_bus.config.php)
+and a [another configuration skeleton](../config/services.config.php) which contain the factories for the message guards.
 The configuration is a simple PHP array flavored with some comments to help you understand the structure.
 
 Now follow the simple steps below to integrate prooph/service-bus in your framework and/or application.
@@ -36,9 +37,3 @@ If you use such an IoC container you are lucky. In this case you can use the pro
 We recommend using `Prooph\ServiceBus\<CommandBus/EventBus/QueryBus::class` as service id.
 
 *Note: If you're still unsure how to do it you might have a look at the [BusFactoriesTest](../tests/Container/BusFactoriesTest.php)*.
-
-
-
-
-
-

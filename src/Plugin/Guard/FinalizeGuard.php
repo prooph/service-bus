@@ -50,7 +50,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
                     throw new UnauthorizedException();
                 }
             });
-        } else if (!$this->authorizationService->isGranted($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME))) {
+        } elseif (!$this->authorizationService->isGranted($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME))) {
             $actionEvent->stopPropagation(true);
 
             throw new UnauthorizedException();
