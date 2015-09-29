@@ -10,6 +10,7 @@
  */
 
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
+
 use Prooph\Common\Messaging\HasMessageName;
 
 /**
