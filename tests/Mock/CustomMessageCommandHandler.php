@@ -12,14 +12,14 @@
 namespace Prooph\ServiceBusTest\Mock;
 
 /**
- * Class FallbackCommandHandler
+ * Class CustomMessageCommandHandler
  * @package Prooph\ServiceBusTest\Mock
  */
-final class FallbackCommandHandler
+final class CustomMessageCommandHandler
 {
     private $lastMessage;
 
-    public function handle($message)
+    public function handleCustomMessage($message)
     {
         $this->lastMessage = $message;
     }

@@ -13,7 +13,7 @@ namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;
 
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
 use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\FallbackCommandHandler;
+use Prooph\ServiceBusTest\Mock\CustomMessageCommandHandler;
 use Prooph\ServiceBusTest\Mock\MessageHandler;
 use Prooph\ServiceBusTest\TestCase;
 
@@ -52,7 +52,7 @@ class HandleCommandStrategyTest extends TestCase
 
         $doSomething = new CustomMessage("I am a command");
 
-        $handleCommandHandler = new FallbackCommandHandler();
+        $handleCommandHandler = new CustomMessageCommandHandler();
 
         $this->assertTrue($handleCommandStrategy->canInvoke($handleCommandHandler, $doSomething));
 

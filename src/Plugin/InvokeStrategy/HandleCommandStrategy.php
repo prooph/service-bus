@@ -29,7 +29,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      */
     public function canInvoke($handler, $message)
     {
-        $handleMethod = 'on' . $this->determineCommandName($message);
+        $handleMethod = 'handle' . $this->determineCommandName($message);
 
         return method_exists($handler, $handleMethod) || method_exists($handler, 'handle');
     }
@@ -40,7 +40,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      */
     public function invoke($handler, $message)
     {
-        $handleMethod = 'on' . $this->determineCommandName($message);
+        $handleMethod = 'handle' . $this->determineCommandName($message);
 
         if (method_exists($handler, $handleMethod)) {
             $handler->{$handleMethod}($message);
