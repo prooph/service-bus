@@ -96,7 +96,8 @@ by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/Plugin/Invoke
 
 ## Available Strategies
 
-- `HandleCommandStrategy`: Is responsible for invoking a `handle` method of a command handler. Forces the rule that a command handler should only be responsible for handling one specific command.
+- `HandleCommandStrategy`: Prefixes the short class name of a command with `handle`.  A command handler should
+have a public method named this way: AddProductHandler::handleAddProductToCart. If you prefer to have one command handler per command (recommended) then you don't need to attach the strategy but instead implement `CommandHandler::__invoke`. If you don't like `__invoke` you can also work with `CommandHandler::handle`. The `HandleCommandStrategy` checks if the handler has a single `handle` method if it cannot find an appropriate prefixed method name.
 - `OnEventStrategy`: Prefixes the short class name of an event with `on`. A listener should
 have a public method named this way: OrderCartUpdater::onArticleWasBought.
 - `FinderInvokeStrategy`: This strategy is responsible for invoking finders. It looks for a finder method named like the short class name of the query.
