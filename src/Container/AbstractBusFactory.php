@@ -133,7 +133,7 @@ abstract class AbstractBusFactory
         foreach ($utils as $index => $util) {
             if (! is_string($util) || ! $container->has($util)) {
                 throw new RuntimeException(sprintf(
-                    'Wrong message bus utility configured at %. Either it is not a string or unknown by the container.',
+                    'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',
                     'prooph.service_bus.' . $this->getBusConfigKey() . '.' . $index
                 ));
             }
