@@ -150,8 +150,8 @@ on every request. Only the responsible message handlers are lazy loaded by the s
 # MessageProducerPlugin
 
 If you want to route all messages to an [async message producer](async_message_producer.md) you can attach
-this plugin to message bus. If it is attached to a command or query bus all messages will only be routed to
-the message producer which with the plugin was set up. If it is attached to an event bus the message producer
+this plugin to a message bus. If it is attached to a command or query bus all messages will only be routed to
+the message producer. If it is attached to an event bus the message producer
 will be added to the list of event listeners.
 
 ```php
@@ -164,7 +164,7 @@ $messageProducerPlugin = new \Prooph\ServiceBus\Plugin\MessageProducerPlugin($ze
 
 $eventBus = new \Prooph\ServiceBus\EvenBus();
 
-$eventBus->utilize($zeromqProducerPlugin);
+$eventBus->utilize($messageProducerPlugin);
 
 //Each event will now be routed to the async message producer
 $eventBus->dispatch($domainEvent);
