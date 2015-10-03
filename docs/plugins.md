@@ -146,3 +146,26 @@ $commandBus->utilize($router);
 
 With this technique you can configure the routing for all your messages without the need to create all message handlers
 on every request. Only the responsible message handlers are lazy loaded by the service locator plugin.
+
+# MessageProducerPlugin
+
+If you want to route all messages to an [async message producer](async_message_producer.md) you can attach
+this plugin to message bus. If it is attached to a command or query bus all messages will only be routed to
+the message producer which with the plugin was set up. If it is attached to an event bus the message producer
+will be added to the list of event listeners.
+
+```php
+//Let's say the zeromq message producer is available as a service in a container
+/** @var \Prooph\ServiceBus\Async\MessageProducer $zeromqProducer */
+$zeromqProducer = $container->get('async_event_producer');
+
+//We now only need to set up a message producer plugin and let the message bus use it.
+$messageProducerPlugin = new \Prooph\ServiceBus\Plugin\MessageProducerPlugin($zeromqProducer);
+
+$eventBus = new \Prooph\ServiceBus\EvenBus();
+
+$eventBus->utilize($zeromqProducerPlugin);
+
+//Each event will now be routed to the async message producer
+$eventBus->dispatch($domainEvent);
+```

@@ -3,7 +3,7 @@ Async Message Producer
 
 [Back to documentation](../README.md#documentation)
 
-# Usage
+# Async Messaging
 
 Messaging becomes really interesting when you process your messages asynchronous. For example push your messages on a database queue,
 set up a cron job to periodically check the queue for new messages and process them. The bus implementations of PSB can
@@ -17,10 +17,22 @@ async processing on a per message basis by routing the appropriate messages to a
   drivers like Doctrine DBAL and Predis (see http://bernardphp.com for a complete list of drivers)
 - [GuzzleHttpProducer](https://github.com/prooph/psb-http-producer): Send messages to a remote system using
   HTTP
+- [ZeromqProducer](https://github.com/prooph/psb-zeromq-producer): Async message handling using super fast and simple to
+set up ZeroMQ
+
+# Usage
+
+If you want to set up a bus that handles all messages async you can do so by attaching a [MessageProducerPlugin](plugins.md#messageproducerplugin)
+initialized with your message producer of choice to a message bus.
+
+If you want to decide on a per message basis if the message should be handled async you can use a normal [message router](plugins.md#routers)
+and configure your message producer of choice as message handler for the appropriate messages.
+
+*Note: The [RegexRouter](plugins.md#proophservicebuspluginrouterregexrouter) is a good choice if you want to handle all messages of a specific namespace async.*
 
 # QueryBus
 
 A async message producer for the QueryBus needs to provide a response by resolving the handed over deferred.
-In a messaging system based on RabbitMQ for example you can make use of a callback queue feature.
+In a messaging system based on ZeroMQ for example you can make use of request/response mode.
 HTTP APIs provide responses naturally.
 So these are both good candidates to use for remote querying.
