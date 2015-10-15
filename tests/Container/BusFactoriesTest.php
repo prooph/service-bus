@@ -365,58 +365,6 @@ final class BusFactoriesTest extends TestCase
         $this->assertInstanceOf($busClass, $bus);
     }
 
-    /**
-     * @test
-     * @dataProvider provideBuses
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
-     */
-    public function it_throws_an_exception_if_application_config_is_neither_array_nor_array_access($busClass, $busConfigKey, $busFactory)
-    {
-        $container = $this->prophesize(ContainerInterface::class);
-
-        $configObject = new \stdClass();
-
-        $configObject->prooph = [
-            'service_bus' => [
-                $busConfigKey => [
-                    'plugins' => [
-                        'first_plugin_service_id',
-                    ]
-                ]
-            ]
-        ];
-
-        $container->has('config')->willReturn(true);
-        $container->get('config')->willReturn($configObject);
-
-        $bus =  $busFactory($container->reveal());
-    }
-
-    /**
-     * @test
-     * @dataProvider provideBuses
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
-     */
-    public function it_throws_an_exception_if_bus_config_is_neither_array_nor_array_access($busClass, $busConfigKey, $busFactory)
-    {
-        $container = $this->prophesize(ContainerInterface::class);
-
-        $busConfig = new \stdClass();
-
-        $busConfig->plugins = [];
-
-        $container->has('config')->willReturn(true);
-        $container->get('config')->willReturn(new \ArrayObject([
-            'prooph' => [
-                'service_bus' => [
-                    $busConfigKey => $busConfig
-                ]
-            ]
-        ]));
-
-        $bus =  $busFactory($container->reveal());
-    }
-
 
     public function provideBuses()
     {
