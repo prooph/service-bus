@@ -9,18 +9,18 @@
  * Date: 09/23/14 - 20:37
  */
 
-namespace Prooph\ServiceBusTest\Plugin\Router;
+namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\TestCase;
 
 /**
  * Class EventRouterTest
  *
- * @package Prooph\ServiceBusTest\Router
+ * @package ProophTest\ServiceBus\Plugin\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class EventRouterTest extends TestCase

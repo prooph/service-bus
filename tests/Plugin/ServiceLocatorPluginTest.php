@@ -8,19 +8,19 @@
  *
  * Date: 08/02/15 - 10:27 PM
  */
-namespace Prooph\ServiceBusTest\Plugin;
+namespace ProophTest\ServiceBus\Plugin;
 
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
-use Prooph\ServiceBusTest\Mock\MessageHandler;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\Mock\MessageHandler;
+use ProophTest\ServiceBus\TestCase;
 
 /**
  * Class ServiceLocatorPluginTest
- * @package Prooph\ServiceBusTest\Plugin
+ * @package ProophTest\ServiceBus\Plugin
  */
 final class ServiceLocatorPluginTest extends TestCase
 {

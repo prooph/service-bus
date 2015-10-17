@@ -9,17 +9,17 @@
  * Date: 03/11/14 - 21:51
  */
 
-namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;
+namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\ServiceBus\Plugin\InvokeStrategy\OnEventStrategy;
-use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\MessageHandler;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\Mock\CustomMessage;
+use ProophTest\ServiceBus\Mock\MessageHandler;
+use ProophTest\ServiceBus\TestCase;
 
 /**
  * Class OnEventStrategyTest
  *
- * @package Prooph\ServiceBusTest\InvokeStrategy
+ * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
 class OnEventStrategyTest extends TestCase

@@ -9,19 +9,18 @@
  * Date: 08/29/15 - 13:59
  */
 
-namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;
+namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ListenerHandler;
-use Prooph\Common\Messaging\Message;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\AbstractInvokeStrategy;
 
 /**
  * Class AbstractInvokeStrategyTest
- * @package Prooph\ServiceBusTest\Plugin\InvokeStrategy
+ * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
  */
 final class AbstractInvokeStrategyTest extends TestCase
 {

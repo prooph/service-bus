@@ -9,11 +9,11 @@
  * Date: 08/02/15 - 8:35 PM
  */
 
-namespace Prooph\ServiceBusTest\Mock;
+namespace ProophTest\ServiceBus\Mock;
 
 /**
  * Class CustomMessage
- * @package Prooph\ServiceBusTest\Mock
+ * @package ProophTest\ServiceBus\Mock
  */
 final class CustomMessage
 {
