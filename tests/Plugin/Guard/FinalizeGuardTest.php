@@ -1,6 +1,6 @@
 <?php
 
-namespace Prooph\ServiceBusTest\Plugin\Guard;
+namespace ProophTest\ServiceBus\Plugin\Guard;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prooph\Common\Event\ActionEvent;
@@ -13,7 +13,7 @@ use React\Promise\Deferred;
 
 /**
  * Class FinalizeGuardTest
- * @package Prooph\ServiceBusTest\Plugin\Guard
+ * @package ProophTest\ServiceBus\Plugin\Guard
  */
 final class FinalizeGuardTest extends TestCase
 {

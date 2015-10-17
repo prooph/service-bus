@@ -9,7 +9,7 @@
  * Date: 08/02/15 - 9:46 PM
  */
 
-namespace Prooph\ServiceBusTest\Mock;
+namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\DomainEvent;
 use Prooph\Common\Messaging\PayloadConstructable;
@@ -17,7 +17,7 @@ use Prooph\Common\Messaging\PayloadTrait;
 
 /**
  * Class SomethingDone
- * @package Prooph\ServiceBusTest\Mock
+ * @package ProophTest\ServiceBus\Mock
  */
 final class SomethingDone extends DomainEvent implements PayloadConstructable
 {

@@ -9,7 +9,7 @@
  * Date: 08/16/15 - 9:34 PM
  */
 
-namespace Prooph\ServiceBusTest\Factory;
+namespace ProophTest\ServiceBus\Factory;
 
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEventEmitter;
@@ -23,13 +23,13 @@ use Prooph\ServiceBus\Container\EventBusFactory;
 use Prooph\ServiceBus\Container\QueryBusFactory;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\TestCase;
 use Prophecy\Argument;
 
 /**
  * Class BusFactoriesTest
  *
- * @package Prooph\ServiceBusTest\Container
+ * @package ProophTest\ServiceBus\Container
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 final class BusFactoriesTest extends TestCase

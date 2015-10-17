@@ -9,19 +9,19 @@
  * Date: 05/23/15 - 6:07 PM
  */
 
-namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;
+namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
-use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\Finder;
+use ProophTest\ServiceBus\Mock\CustomMessage;
+use ProophTest\ServiceBus\Mock\Finder;
 use React\Promise\Deferred;
 
 /**
  * Class FinderInvokeStrategyTest
  *
- * @package Prooph\ServiceBusTest\InvokeStrategy
+ * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase

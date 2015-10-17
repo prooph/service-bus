@@ -9,7 +9,7 @@
  * Date: 08/02/15 - 10:31 PM
  */
 
-namespace Prooph\ServiceBusTest\Plugin;
+namespace ProophTest\ServiceBus\Plugin;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prooph\Common\Event\ActionEvent;
@@ -18,12 +18,12 @@ use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
-use Prooph\ServiceBusTest\Mock\DoSomething;
+use ProophTest\ServiceBus\Mock\DoSomething;
 use Prophecy\Argument;
 
 /**
  * Class MessageFactoryPluginTest
- * @package Prooph\ServiceBusTest
+ * @package ProophTest\ServiceBus\Plugin
  */
 final class MessageFactoryPluginTest extends TestCase
 {

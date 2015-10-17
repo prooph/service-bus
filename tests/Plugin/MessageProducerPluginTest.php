@@ -8,7 +8,7 @@
  *
  * Date: 10/3/15 - 9:17 PM
  */
-namespace Prooph\ServiceBusTest\Plugin;
+namespace ProophTest\ServiceBus\Plugin;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
@@ -18,12 +18,12 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageProducerPlugin;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\TestCase;
 
 /**
  * Class MessageProducerPluginTest
  *
- * @package Prooph\ServiceBusTest\Plugin
+ * @package ProophTest\ServiceBus\Plugin
  */
 final class MessageProducerPluginTest extends TestCase
 {

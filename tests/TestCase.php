@@ -9,12 +9,12 @@
  * Date: 08/03/14 - 15:48
  */
 
-namespace Prooph\ServiceBusTest;
+namespace ProophTest\ServiceBus;
 
 /**
  * Class TestCase
  *
- * @package Prooph\ServiceBusTest
+ * @package ProophTest\ServiceBus
  * @author Alexander Miertsch <contact@prooph.de>
  */
 class TestCase extends \PHPUnit_Framework_TestCase

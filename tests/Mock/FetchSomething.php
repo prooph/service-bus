@@ -9,7 +9,7 @@
  * Date: 08/02/15 - 9:55 PM
  */
 
-namespace Prooph\ServiceBusTest\Mock;
+namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
@@ -17,7 +17,7 @@ use Prooph\Common\Messaging\Query;
 
 /**
  * Class FetchSomething
- * @package Prooph\ServiceBusTest\Mock
+ * @package ProophTest\ServiceBus\Mock
  */
 final class FetchSomething extends Query implements PayloadConstructable
 {

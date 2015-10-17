@@ -9,7 +9,7 @@
  * Date: 09/13/15 -7:47 PM
  */
 
-namespace Prooph\ServiceBusTest\Container\Plugin\Guard;
+namespace ProophTest\ServiceBus\Container\Plugin\Guard;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit_Framework_TestCase as TestCase;
@@ -19,7 +19,7 @@ use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 
 /**
  * Class FinalizeGuardFactoryTest
- * @package Prooph\ServiceBusTest\Container\Plugin\Guard
+ * @package ProophTest\ServiceBus\Container\Plugin\Guard
  */
 final class FinalizeGuardFactoryTest extends TestCase
 {

@@ -9,21 +9,21 @@
  * Date: 08/02/15 - 8:17 PM
  */
 
-namespace Prooph\ServiceBusTest;
+namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
-use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\ErrorProducer;
-use Prooph\ServiceBusTest\Mock\MessageHandler;
-use Prooph\ServiceBusTest\Mock\SomethingDone;
+use ProophTest\ServiceBus\Mock\CustomMessage;
+use ProophTest\ServiceBus\Mock\ErrorProducer;
+use ProophTest\ServiceBus\Mock\MessageHandler;
+use ProophTest\ServiceBus\Mock\SomethingDone;
 
 /**
  * Class EventBusTest
- * @package Prooph\ServiceBusTest
+ * @package ProophTest\ServiceBus
  */
 final class EventBusTest extends TestCase
 {

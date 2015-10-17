@@ -1,6 +1,6 @@
 <?php
 
-namespace Prooph\ServiceBusTest\Plugin\Guard;
+namespace ProophTest\ServiceBus\Plugin\Guard;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Prooph\Common\Event\ActionEvent;
@@ -12,7 +12,7 @@ use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 
 /**
  * Class RouteGuardTest
- * @package Prooph\ServiceBusTest\Plugin\Guard
+ * @package ProophTest\ServiceBus\Plugin\Guard
  */
 final class RouteGuardTest extends TestCase
 {

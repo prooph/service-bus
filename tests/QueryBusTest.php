@@ -9,7 +9,7 @@
  * Date: 08/02/15 - 8:17 PM
  */
 
-namespace Prooph\ServiceBusTest;
+namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\DefaultActionEvent;
@@ -18,16 +18,16 @@ use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
-use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\ErrorProducer;
-use Prooph\ServiceBusTest\Mock\FetchSomething;
-use Prooph\ServiceBusTest\Mock\Finder;
+use ProophTest\ServiceBus\Mock\CustomMessage;
+use ProophTest\ServiceBus\Mock\ErrorProducer;
+use ProophTest\ServiceBus\Mock\FetchSomething;
+use ProophTest\ServiceBus\Mock\Finder;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 
 /**
  * Class QueryBusTest
- * @package Prooph\ServiceBusTest
+ * @package ProophTest\ServiceBus
  */
 final class QueryBusTest extends TestCase
 {

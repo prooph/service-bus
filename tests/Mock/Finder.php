@@ -9,11 +9,11 @@
  * Date: 08/02/15 - 9:31 PM
  */
 
-namespace Prooph\ServiceBusTest\Mock;
+namespace ProophTest\ServiceBus\Mock;
 
 /**
  * Class Finder
- * @package Prooph\ServiceBusTest\Mock
+ * @package ProophTest\ServiceBus\Mock
  */
 final class Finder
 {

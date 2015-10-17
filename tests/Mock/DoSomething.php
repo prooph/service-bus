@@ -9,7 +9,7 @@
  * Date: 08/02/15 - 8:19 PM
  */
 
-namespace Prooph\ServiceBusTest\Mock;
+namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\Command;
 use Prooph\Common\Messaging\PayloadConstructable;
@@ -17,7 +17,7 @@ use Prooph\Common\Messaging\PayloadTrait;
 
 /**
  * Class DoSomething
- * @package Prooph\ServiceBusTest\Mock
+ * @package ProophTest\ServiceBus\Mock
  */
 final class DoSomething extends Command implements PayloadConstructable
 {

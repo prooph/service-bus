@@ -9,7 +9,7 @@
  * Date: 08/02/15 - 8:17 PM
  */
 
-namespace Prooph\ServiceBusTest;
+namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\DefaultActionEvent;
@@ -17,14 +17,14 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
-use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\DoSomething;
-use Prooph\ServiceBusTest\Mock\ErrorProducer;
-use Prooph\ServiceBusTest\Mock\MessageHandler;
+use ProophTest\ServiceBus\Mock\CustomMessage;
+use ProophTest\ServiceBus\Mock\DoSomething;
+use ProophTest\ServiceBus\Mock\ErrorProducer;
+use ProophTest\ServiceBus\Mock\MessageHandler;
 
 /**
  * Class CommandBusTest
- * @package Prooph\ServiceBusTest
+ * @package ProophTest\ServiceBus
  */
 final class CommandBusTest extends TestCase
 {

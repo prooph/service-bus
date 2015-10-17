@@ -9,18 +9,18 @@
  * Date: 09/14/14 - 23:51
  */
 
-namespace Prooph\ServiceBusTest\Plugin\Router;
+namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\TestCase;
 
 /**
  * Class SingleHandlerRouterTest
  *
- * @package Prooph\ServiceBusTest\Router
+ * @package ProophTest\ServiceBus\Plugin\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class SingleHandlerRouterTest extends TestCase
@@ -32,10 +32,10 @@ class SingleHandlerRouterTest extends TestCase
     {
         $router = new CommandRouter();
 
-        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to("DoSomethingHandler");
+        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'Prooph\ServiceBusTest\Mock\DoSomething',
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
         $router->onRouteMessage($actionEvent);
@@ -51,7 +51,7 @@ class SingleHandlerRouterTest extends TestCase
     {
         $router = new CommandRouter();
 
-        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to(null);
+        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to(null);
     }
 
     /**
@@ -61,7 +61,7 @@ class SingleHandlerRouterTest extends TestCase
     {
         $router = new CommandRouter();
 
-        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to("DoSomethingHandler");
+        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
@@ -79,10 +79,10 @@ class SingleHandlerRouterTest extends TestCase
     {
         $router = new CommandRouter();
 
-        $router->route('Prooph\ServiceBusTest\Mock\DoSomething')->to("DoSomethingHandler");
+        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            '' => 'Prooph\ServiceBusTest\Mock\DoSomething',
+            '' => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
         $router->onRouteMessage($actionEvent);
@@ -97,7 +97,7 @@ class SingleHandlerRouterTest extends TestCase
     {
         $router = new CommandRouter();
 
-        $router->route('Prooph\ServiceBusTest\Mock\DoSomething');
+        $router->route('ProophTest\ServiceBus\Mock\DoSomething');
 
         $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
@@ -122,11 +122,11 @@ class SingleHandlerRouterTest extends TestCase
     public function it_takes_a_routing_definition_on_instantiation()
     {
         $router = new CommandRouter([
-            'Prooph\ServiceBusTest\Mock\DoSomething' => 'DoSomethingHandler'
+            'ProophTest\ServiceBus\Mock\DoSomething' => 'DoSomethingHandler'
         ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'Prooph\ServiceBusTest\Mock\DoSomething',
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
         $router->onRouteMessage($actionEvent);

@@ -9,18 +9,18 @@
  * Date: 03/09/14 - 21:45
  */
 
-namespace Prooph\ServiceBusTest\Plugin\InvokeStrategy;
+namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
-use Prooph\ServiceBusTest\Mock\CustomMessage;
-use Prooph\ServiceBusTest\Mock\CustomMessageCommandHandler;
-use Prooph\ServiceBusTest\Mock\MessageHandler;
-use Prooph\ServiceBusTest\TestCase;
+use ProophTest\ServiceBus\Mock\CustomMessage;
+use ProophTest\ServiceBus\Mock\CustomMessageCommandHandler;
+use ProophTest\ServiceBus\Mock\MessageHandler;
+use ProophTest\ServiceBus\TestCase;
 
 /**
  * Class HandleCommandStrategyTest
  *
- * @package Prooph\ServiceBusTest\InvokeStrategy
+ * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
  * @author Alexander Miertsch <contact@prooph.de>
  */
 class HandleCommandStrategyTest extends TestCase
