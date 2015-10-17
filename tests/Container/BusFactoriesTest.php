@@ -30,7 +30,6 @@ use Prophecy\Argument;
  * Class BusFactoriesTest
  *
  * @package ProophTest\ServiceBus\Container
- * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 final class BusFactoriesTest extends TestCase
 {
