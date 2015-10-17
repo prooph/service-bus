@@ -18,7 +18,6 @@ use Prooph\ServiceBus\QueryBus;
  * Class QueryBusFactory
  *
  * @package Prooph\ServiceBus\Container
- * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 class QueryBusFactory extends AbstractBusFactory
 {

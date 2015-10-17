@@ -22,7 +22,6 @@ use React\Promise\Deferred;
  * Class FinderInvokeStrategyTest
  *
  * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
- * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
 {
