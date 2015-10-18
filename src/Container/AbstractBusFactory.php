@@ -13,8 +13,8 @@
 namespace Prooph\ServiceBus\Container;
 
 use Interop\Config\ConfigurationTrait;
-use Interop\Config\HasContainerId;
-use Interop\Config\HasDefaultOptions;
+use Interop\Config\RequiresContainerId;
+use Interop\Config\ProvidesDefaultOptions;
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\Exception\RuntimeException;
@@ -28,7 +28,7 @@ use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
  * @package Prooph\ServiceBus\Container
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-abstract class AbstractBusFactory implements HasContainerId, HasDefaultOptions
+abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaultOptions
 {
     use ConfigurationTrait;
 
@@ -82,17 +82,13 @@ abstract class AbstractBusFactory implements HasContainerId, HasDefaultOptions
      */
     public function __invoke(ContainerInterface $container)
     {
+        $config = [];
+
         if ($container->has('config')) {
             $config = $container->get('config');
-
-            if ($this->canRetrieveOptions($config)) {
-                $busConfig = $this->options($config);
-            }
         }
 
-        if (empty($busConfig)) {
-            $busConfig = $this->defaultOptions();
-        }
+        $busConfig = $this->optionsWithFallback($config);
 
         $busClass = $this->getBusClass();
 
