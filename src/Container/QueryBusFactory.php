@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the prooph/service-bus.
  * (c) 2014-2015 prooph software GmbH <contact@prooph.de>
@@ -24,17 +25,17 @@ class QueryBusFactory extends AbstractBusFactory
     /**
      * @inheritdoc
      */
-    protected function getBusClass()
+    public function containerId()
     {
-        return QueryBus::class;
+        return 'query_bus';
     }
 
     /**
      * @inheritdoc
      */
-    protected function getBusConfigKey()
+    protected function getBusClass()
     {
-        return 'query_bus';
+        return QueryBus::class;
     }
 
     /**

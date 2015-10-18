@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the prooph/service-bus.
  * (c) 2014-2015 prooph software GmbH <contact@prooph.de>
@@ -22,6 +23,13 @@ use Prooph\ServiceBus\Plugin\Router\CommandRouter;
  */
 class CommandBusFactory extends AbstractBusFactory
 {
+    /**
+     * @inheritdoc
+     */
+    public function containerId()
+    {
+        return 'command_bus';
+    }
 
     /**
      * @inheritdoc
@@ -29,14 +37,6 @@ class CommandBusFactory extends AbstractBusFactory
     protected function getBusClass()
     {
         return CommandBus::class;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getBusConfigKey()
-    {
-        return 'command_bus';
     }
 
     /**

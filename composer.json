@@ -25,18 +25,21 @@
         "php": ">=5.5",
         "beberlei/assert": "^2.0",
         "prooph/common" : "^3.3",
-        "react/promise" : "^2.2",
-        "container-interop/container-interop" : "^1.1"
+        "react/promise" : "^2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
         "fabpot/php-cs-fixer": "1.7.*",
-        "satooshi/php-coveralls": "dev-master"
+        "satooshi/php-coveralls": "dev-master",
+        "container-interop/container-interop" : "^1.1",
+        "sandrokeil/interop-config": "^0.3"
     },
     "suggest": {
         "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zf2 ServiceManager to lazy load your handlers and listeners",
-        "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard"
+        "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard",
+        "container-interop/container-interop": "For usage of provided factories",
+        "sandrokeil/interop-config": "For usage of provided factories"
     },
     "autoload": {
         "psr-4": {
