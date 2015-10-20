@@ -112,6 +112,8 @@ does not allow access to the command, an [UnauthorizedException](../src/Prooph/S
 If you want to protect the query bus, you can also use the route guard, but in some situations, you want to deny access based on the result
 of the query. In this case it's important to make checks on the query results.
 
+The route guard passes the message to the [AuthorizationService](../src/Prooph/ServiceBus/Plugin/Guard/AuthorizationService.php) as context, so you can make assertions on it.
+
 We also provide [service-bus-zfc-rbac-brdige](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
 You can also find some configuration examples in this repository. 
 
