@@ -43,7 +43,10 @@ final class RouteGuard implements ActionEventListenerAggregate
      */
     public function onRoute(ActionEvent $actionEvent)
     {
-        if ($this->authorizationService->isGranted($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME))) {
+        if ($this->authorizationService->isGranted(
+            $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME),
+            $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)
+        )) {
             return;
         }
 

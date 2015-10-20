@@ -41,10 +41,11 @@ final class RouteGuardTest extends TestCase
     public function it_allows_when_authorization_service_grants_access()
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event')->willReturn(true);
+        $authorizationService->isGranted('test_event', new \stdClass())->willReturn(true);
 
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
+        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
 
         $routeGuard = new RouteGuard($authorizationService->reveal());
 
@@ -58,10 +59,11 @@ final class RouteGuardTest extends TestCase
     public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access()
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event')->willReturn(false);
+        $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);
 
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
+        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
         $actionEvent->stopPropagation(true)->willReturn(null);
 
         $routeGuard = new RouteGuard($authorizationService->reveal());
