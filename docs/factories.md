@@ -1,27 +1,28 @@
-# Interop\Container + Factories
+# Interop + Factories
 
 [Back to documentation](../README.md#documentation)
 
 Instead of providing a module, a bundle, a bridge or similar framework integration prooph/service-bus ships with
-`container-aware factories`.
+`interop factories`.
 
 ## Factory-Driven Message Bus Creation
 
 The concept behind these factories is simple but powerful. It allows us to provide you with bootstrapping logic for
-the message buses without the need to rely on a specific framework. However, the factories have two requirements.
+the message buses without the need to rely on a specific framework. However, the factories have three requirements.
 
 ### Requirements
 
 1. Your Inversion of Control container must implement the [interop-container interface](https://github.com/container-interop/container-interop).
-2. The application configuration should be registered with the service id `config` in the container.
+2. [interop-config](https://github.com/sandrokeil/interop-config) must be installed 
+3. The application configuration should be registered with the service id `config` in the container.
 
 *Note: Don't worry, if your environment doesn't provide the requirements. You can
 always bootstrap a message bus by hand. Just look at the factories for inspiration in this case.*
 
 ## Customizing via Configuration
 
-In the `config` folder you will find a [configuration skeleton](../config/prooph_service_bus.config.php)
-and a [another configuration skeleton](../config/services.config.php) which contain the factories for the message guards.
+In the `config` folder you will find a [package configuration skeleton](../config/prooph_service_bus.config.php)
+and a [services configuration skeleton](../config/services.config.php) which contain the factories for the message guards.
 The configuration is a simple PHP array flavored with some comments to help you understand the structure.
 
 Now follow the simple steps below to integrate prooph/service-bus in your framework and/or application.

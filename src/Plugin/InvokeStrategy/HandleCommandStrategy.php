@@ -21,7 +21,6 @@ use Prooph\Common\Messaging\HasMessageName;
  */
 class HandleCommandStrategy extends AbstractInvokeStrategy
 {
-
     /**
      * @param mixed $handler
      * @param mixed $message

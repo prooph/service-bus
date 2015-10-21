@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the prooph/service-bus.
  * (c) 2014-2015 prooph software GmbH <contact@prooph.de>
@@ -22,6 +23,13 @@ use Prooph\ServiceBus\Plugin\Router\EventRouter;
  */
 class EventBusFactory extends AbstractBusFactory
 {
+    /**
+     * @inheritdoc
+     */
+    public function containerId()
+    {
+        return 'event_bus';
+    }
 
     /**
      * @inheritdoc
@@ -29,14 +37,6 @@ class EventBusFactory extends AbstractBusFactory
     protected function getBusClass()
     {
         return EventBus::class;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getBusConfigKey()
-    {
-        return 'event_bus';
     }
 
     /**
