@@ -171,3 +171,12 @@ $eventBus->utilize($messageProducerPlugin);
 //Each event will now be routed to the async message producer
 $eventBus->dispatch($domainEvent);
 ```
+
+# StringMessageInitializerPlugin
+
+When you dispatch a string message you likely want to use it also as `message name`. This plugin does exactly that, just utilize the plugin and it will work.
+
+```
+$bus->utilize(new StringMessageInitializerPlugin);
+$bus->dispatch('my.dispatch.message');
+```
