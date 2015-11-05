@@ -3,7 +3,7 @@
     "description": "PHP Enterprise Service Bus Implementation supporting CQRS and DDD",
     "type": "library",
     "license": "BSD-3-Clause",
-    "homepage": "https://github.com/prooph/service-bus/",
+    "homepage": "http://getprooph.org/",
     "authors": [
         {
             "name": "Alexander Miertsch",
@@ -22,7 +22,7 @@
         "DDD"
     ],
     "require": {
-        "php": ">=5.5",
+        "php": "~5.5|~7.0",
         "beberlei/assert": "^2.0",
         "prooph/common" : "^3.3",
         "react/promise" : "^2.2"
