@@ -22,7 +22,7 @@
         "DDD"
     ],
     "require": {
-        "php": ">=5.5",
+        "php": "~5.5|~7.0",
         "beberlei/assert": "^2.0",
         "prooph/common" : "^3.3",
         "react/promise" : "^2.2"
