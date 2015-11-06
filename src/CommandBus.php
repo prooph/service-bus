@@ -34,7 +34,7 @@ class CommandBus extends MessageBus
      */
     public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function(ActionEvent $actionEvent) {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
             $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
             if (is_callable($commandHandler)) {

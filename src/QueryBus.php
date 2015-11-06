@@ -43,7 +43,7 @@ class QueryBus extends MessageBus
      */
     public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function(ActionEvent $actionEvent) {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function (ActionEvent $actionEvent) {
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
             if (is_callable($finder)) {

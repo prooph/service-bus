@@ -170,7 +170,7 @@ abstract class MessageBus
      */
     public function getActionEventEmitter()
     {
-        if (is_null($this->events)) {
+        if (null === $this->events) {
             $this->setActionEventDispatcher(new ProophActionEventEmitter());
         }
 
