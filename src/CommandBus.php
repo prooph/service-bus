@@ -11,6 +11,8 @@
 
 namespace Prooph\ServiceBus;
 
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
@@ -24,6 +26,26 @@ use Prooph\ServiceBus\Exception\RuntimeException;
  */
 class CommandBus extends MessageBus
 {
+    /**
+     * Inject an ActionEventDispatcher instance
+     *
+     * @param  ActionEventEmitter $actionEventDispatcher
+     * @return void
+     */
+    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function(ActionEvent $actionEvent) {
+            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+
+            if (is_callable($commandHandler)) {
+                $command        = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                $commandHandler($command);
+            }
+        });
+
+        $this->events = $actionEventDispatcher;
+    }
+
     /**
      * @param mixed $command
      * @return void
@@ -51,20 +73,16 @@ class CommandBus extends MessageBus
                 ));
             }
 
-            if (is_string($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER))) {
+            $handler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+
+            if (is_string($handler) && ! is_callable($handler)) {
                 $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);
             }
 
-            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-
-            if (is_callable($commandHandler)) {
-                $commandHandler($command);
-            } else {
-                $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-                $this->trigger($actionEvent);
-            }
+            $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
+            $this->trigger($actionEvent);
 
             $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {
