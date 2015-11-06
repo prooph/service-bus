@@ -37,7 +37,7 @@ class MessageDispatchException extends RuntimeException
             sprintf(
                 "Message dispatch failed during %s phase.%s",
                 $actionEvent->getName(),
-                (is_null($previousException))? '' : ' Error: ' . $previousException->getMessage()
+                (null === $previousException) ? '' : ' Error: ' . $previousException->getMessage()
             ),
             422,
             $previousException

@@ -49,7 +49,7 @@ class RegexRouter implements ActionEventListenerAggregate
      */
     public function __construct(array $patternMap = null)
     {
-        if (! is_null($patternMap)) {
+        if (null !== $patternMap) {
             foreach ($patternMap as $pattern => $handler) {
                 if (is_array($handler)) {
                     foreach ($handler as $singleHandler) {
@@ -82,7 +82,7 @@ class RegexRouter implements ActionEventListenerAggregate
         Assertion::string($pattern);
         Assertion::notEmpty($pattern);
 
-        if (! is_null($this->tmpPattern)) {
+        if (null !== $this->tmpPattern) {
             throw new Exception\RuntimeException(sprintf("pattern %s is not mapped to a handler.", $this->tmpPattern));
         }
 
@@ -106,7 +106,7 @@ class RegexRouter implements ActionEventListenerAggregate
             ));
         }
 
-        if (is_null($this->tmpPattern)) {
+        if (null === $this->tmpPattern) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a pattern. Please use method route before calling method to",
                 (is_object($handler))? get_class($handler) : (is_string($handler))? $handler : gettype($handler)

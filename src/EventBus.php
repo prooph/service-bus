@@ -10,6 +10,7 @@
  */
 
 namespace Prooph\ServiceBus;
+
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 
@@ -31,9 +32,9 @@ class EventBus extends MessageBus
      * @param  ActionEventEmitter $actionEventDispatcher
      * @return void
      */
-    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function(ActionEvent $actionEvent) {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
             $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
             if (is_callable($eventListener)) {
                 $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
