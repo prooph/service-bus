@@ -156,7 +156,7 @@ abstract class MessageBus
      * @param  ActionEventEmitter $actionEventDispatcher
      * @return void
      */
-    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
     {
         $this->events = $actionEventDispatcher;
     }
@@ -171,7 +171,7 @@ abstract class MessageBus
     public function getActionEventEmitter()
     {
         if (null === $this->events) {
-            $this->setActionEventDispatcher(new ProophActionEventEmitter());
+            $this->setActionEventEmitter(new ProophActionEventEmitter());
         }
 
         return $this->events;

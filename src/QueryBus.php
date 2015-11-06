@@ -41,7 +41,7 @@ class QueryBus extends MessageBus
      * @param  ActionEventEmitter $actionEventDispatcher
      * @return void
      */
-    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function (ActionEvent $actionEvent) {
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -96,14 +96,8 @@ class QueryBus extends MessageBus
                 $this->trigger($actionEvent);
             }
 
-            $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-
-            if (is_callable($finder)) {
-                $finder($query, $deferred);
-            } else {
-                $actionEvent->setName(self::EVENT_INVOKE_FINDER);
-                $this->trigger($actionEvent);
-            }
+            $actionEvent->setName(self::EVENT_INVOKE_FINDER);
+            $this->trigger($actionEvent);
 
             $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {
