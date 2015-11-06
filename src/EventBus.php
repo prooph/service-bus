@@ -10,6 +10,8 @@
  */
 
 namespace Prooph\ServiceBus;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 
 /**
  * Class EventBus
@@ -22,6 +24,25 @@ namespace Prooph\ServiceBus;
 class EventBus extends MessageBus
 {
     const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
+
+    /**
+     * Inject an ActionEventDispatcher instance
+     *
+     * @param  ActionEventEmitter $actionEventDispatcher
+     * @return void
+     */
+    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function(ActionEvent $actionEvent) {
+            $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+            if (is_callable($eventListener)) {
+                $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                $eventListener($event);
+            }
+        });
+
+        $this->events = $actionEventDispatcher;
+    }
 
     /**
      * @param mixed $event
@@ -43,21 +64,13 @@ class EventBus extends MessageBus
             foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
                 $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLER, $eventListener);
 
-                if (is_string($eventListener)) {
+                if (is_string($eventListener) && ! is_callable($eventListener)) {
                     $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-
                     $this->trigger($actionEvent);
                 }
 
-                $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-
-                if (is_callable($eventListener)) {
-                    $eventListener($event);
-                } else {
-                    $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-
-                    $this->trigger($actionEvent);
-                }
+                $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
+                $this->trigger($actionEvent);
             }
 
             $this->triggerFinalize($actionEvent);

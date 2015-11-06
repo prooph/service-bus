@@ -11,6 +11,8 @@
 
 namespace Prooph\ServiceBus;
 
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use React\Promise\Deferred;
@@ -32,6 +34,28 @@ class QueryBus extends MessageBus
     const EVENT_INVOKE_FINDER      = 'invoke-finder';
 
     const EVENT_PARAM_DEFERRED = 'query-deferred';
+
+    /**
+     * Inject an ActionEventDispatcher instance
+     *
+     * @param  ActionEventEmitter $actionEventDispatcher
+     * @return void
+     */
+    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function(ActionEvent $actionEvent) {
+            $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+
+            if (is_callable($finder)) {
+                $query  = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
+
+                $finder($query, $deferred);
+            }
+        });
+
+        $this->events = $actionEventDispatcher;
+    }
 
     /**
      * @param mixed $query
@@ -64,7 +88,9 @@ class QueryBus extends MessageBus
                 ));
             }
 
-            if (is_string($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER))) {
+            $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+
+            if (is_string($finder) && !is_callable($finder)) {
                 $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);
