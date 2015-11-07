@@ -49,8 +49,8 @@ class QueryBus extends MessageBus
             if (is_callable($finder)) {
                 $query  = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                 $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
-
                 $finder($query, $deferred);
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
             }
         });
 
@@ -98,6 +98,10 @@ class QueryBus extends MessageBus
 
             $actionEvent->setName(self::EVENT_INVOKE_FINDER);
             $this->trigger($actionEvent);
+
+            if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
+                throw new RuntimeException(sprintf('Query %s was not handled', $this->getMessageName($query)));
+            }
 
             $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {

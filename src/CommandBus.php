@@ -40,6 +40,7 @@ class CommandBus extends MessageBus
             if (is_callable($commandHandler)) {
                 $command        = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                 $commandHandler($command);
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
             }
         });
 
@@ -83,6 +84,10 @@ class CommandBus extends MessageBus
 
             $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
             $this->trigger($actionEvent);
+
+            if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
+                throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
+            }
 
             $this->triggerFinalize($actionEvent);
         } catch (\Exception $ex) {
