@@ -84,7 +84,7 @@ class QueryBus extends MessageBus
             if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 throw new RuntimeException(sprintf(
                     "QueryBus was not able to identify a Finder for query %s",
-                    $this->getMessageType($query)
+                    $this->getMessageName($query)
                 ));
             }
 

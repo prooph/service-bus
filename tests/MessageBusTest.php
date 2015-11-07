@@ -12,6 +12,7 @@
 namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\Mock\CustomMessageBus;
 
 /**
@@ -32,5 +33,38 @@ final class MessageBusTest extends TestCase
         $messageBus->setActionEventEmitter($mock);
 
         $this->assertSame($mock, $messageBus->getActionEventEmitter());
+    }
+
+    /**
+     * @test
+     */
+    public function it_uses_message_class_as_name_if_no_one_was_set()
+    {
+        $messageBus = new CustomMessageBus();
+        $messageBus->dispatch(new \stdClass());
+
+        $this->assertSame(\stdClass::class, $messageBus->getActionEvent()->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME));
+    }
+
+    /**
+     * @test
+     */
+    public function it_uses_message_as_message_name_if_message_is_a_string()
+    {
+        $messageBus = new CustomMessageBus();
+        $messageBus->dispatch('message and a message name');
+
+        $this->assertSame('message and a message name', $messageBus->getActionEvent()->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME));
+    }
+
+    /**
+     * @test
+     */
+    public function it_uses_type_of_message_as_message_name_if_message_is_neither_object_nor_string()
+    {
+        $messageBus = new CustomMessageBus();
+        $messageBus->dispatch([]);
+
+        $this->assertSame('array', $messageBus->getActionEvent()->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME));
     }
 }

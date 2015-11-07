@@ -69,7 +69,7 @@ class CommandBus extends MessageBus
             if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 throw new RuntimeException(sprintf(
                     "CommandBus was not able to identify a CommandHandler for command %s",
-                    $this->getMessageType($command)
+                    $this->getMessageName($command)
                 ));
             }
 

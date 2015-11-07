@@ -82,7 +82,10 @@ Before a message handler can be located, the message bus needs to know how the m
 possibilities to provide the information. The message can implement the [Prooph\Common\Messaging\HasMessageName](https://github.com/prooph/common/blob/master/src/Messaging/HasMessageName.php) interface.
 In this case the message bus picks the name directly from the message and set it as param `message-name` in the action event for later use. The `detect-message-name` event is not triggered. If the message
 does not implement the interface the `detect-message-name` event is triggered and a plugin needs to inject the name using `ActionEvent::setParam('message-name', $messageName)`.
-Finally if no `message-name` was set by a listener the message bus uses the FQCN of message if it is an object or the type of message in all other cases.
+If no `message-name` was set by a listener the message bus uses a fallback:
+- FQCN of message in case of object
+- message => message-name in case of string
+- `gettype($message)` in all other cases
 
 ### route
 

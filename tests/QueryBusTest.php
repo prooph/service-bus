@@ -228,7 +228,7 @@ final class QueryBusTest extends TestCase
         });
 
         $this->assertInstanceOf(RuntimeException::class, $exception);
-        $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query string', $exception->getMessage());
+        $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query throw it', $exception->getMessage());
     }
 
     /**
