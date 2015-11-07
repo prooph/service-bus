@@ -11,6 +11,7 @@
 
 namespace ProophTest\ServiceBus\Mock;
 
+use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -19,11 +20,27 @@ use Prooph\ServiceBus\MessageBus;
  */
 final class CustomMessageBus extends MessageBus
 {
+    private $actionEvent;
+
     /**
      * @param mixed $message
      */
     public function dispatch($message)
     {
-        // do nothing
+        $this->initialize($message, $this->getActionEvent());
+    }
+
+    public function setActionEvent(ActionEvent $event)
+    {
+        $this->actionEvent = $event;
+    }
+
+    public function getActionEvent()
+    {
+        if (null === $this->actionEvent) {
+            $this->actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
+        }
+
+        return $this->actionEvent;
     }
 }

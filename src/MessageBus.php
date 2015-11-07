@@ -91,7 +91,7 @@ abstract class MessageBus
             $this->trigger($actionEvent);
 
             if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageType($message));
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageName($message));
             }
         }
     }
@@ -181,8 +181,16 @@ abstract class MessageBus
      * @param mixed $message
      * @return string
      */
-    protected function getMessageType($message)
+    protected function getMessageName($message)
     {
-        return is_object($message)? get_class($message) : gettype($message);
+        if (is_object($message)) {
+            return get_class($message);
+        }
+
+        if (is_string($message)) {
+            return $message;
+        }
+
+        return gettype($message);
     }
 }
