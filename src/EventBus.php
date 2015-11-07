@@ -39,6 +39,7 @@ class EventBus extends MessageBus
             if (is_callable($eventListener)) {
                 $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                 $eventListener($event);
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
             }
         });
 

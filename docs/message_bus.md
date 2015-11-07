@@ -104,15 +104,17 @@ After routing the message, the message bus checks if the handler was provided as
 
 ### invoke-handler / invoke-finder (optional)
 
-Having the message handler in place it's time to invoke it with the message. If the `message-handler` is a `callable` the `invoke-handler` action event is not triggered but instead
-the handler is invoked by the message bus (true for all three bus types).
+Having the message handler in place it's time to invoke it with the message. `callable` message handlers are invoked by the bus. However, the `invoke-handler` / `invoke-finder` events are always triggered.
 At this stage all three bus types behave a bit different.
 
-- CommandBus: invokes the handler with the command message, or triggers the invoke-handler action event if the handler is not a callable.
+- CommandBus: invokes the handler with the command message. A `invoke-handler` event is triggered.
 - QueryBus: much the same as the command bus but the message handler is invoked with the query message and a [deferred](https://github.com/reactphp/promise/blob/master/src/Deferred.php)
-that needs to be resolved by the message handler aka finder. If the finder is not a callable the query bus triggers a `invoke-finder` action event to indicate
+that needs to be resolved by the message handler aka finder. The query bus triggers a `invoke-finder` action event to indicate
 that a finder should be invoked and not a normal message handler.
 - EventBus: loops over all `event-listeners` and triggers the `locate-handler` and `invoke-handler` action events for each message listener.
+
+*Note: * The command and query bus have a mechanism to check if the command or query was handled. If not they throw an exception.
+The event bus does not have such a mechanism as having no listener for an event is a valid case.
 
 ### handle-error
 

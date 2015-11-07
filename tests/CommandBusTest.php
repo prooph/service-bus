@@ -16,7 +16,6 @@ use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
-use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use ProophTest\ServiceBus\Mock\ErrorProducer;
@@ -45,16 +44,19 @@ final class CommandBusTest extends TestCase
         $doSomething = new DoSomething(['todo' => 'buy milk']);
 
         $receivedMessage = null;
-
-        $this->commandBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage) {
+        $dispatchEvent = null;
+        $this->commandBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent) {
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, function (DoSomething $doSomething) use (&$receivedMessage) {
                 $receivedMessage = $doSomething;
             });
+
+            $dispatchEvent = $actionEvent;
         });
 
         $this->commandBus->dispatch($doSomething);
 
         $this->assertSame($doSomething, $receivedMessage);
+        $this->assertTrue($dispatchEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED));
     }
 
     /**
@@ -203,10 +205,26 @@ final class CommandBusTest extends TestCase
     {
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
-                $e->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, null);
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, null);
             }
         );
 
         $this->commandBus->dispatch("throw it");
+    }
+
+    /**
+     * @test
+     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     */
+    public function it_throws_exception_if_message_was_not_handled()
+    {
+        $this->commandBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_INITIALIZE,
+            function (ActionEvent $e) {
+                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
+            }
+        );
+
+        $this->commandBus->dispatch('throw it');
     }
 }

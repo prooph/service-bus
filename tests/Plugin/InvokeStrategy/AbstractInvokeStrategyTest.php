@@ -46,7 +46,7 @@ final class AbstractInvokeStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_fetches_message_and_handler_and_invokes_them_it_possible()
+    public function it_fetches_message_and_handler_and_invokes_them_if_possible()
     {
         $actionEventMock = $this->getMockForAbstractClass(ActionEvent::class);
         $actionEventMock
@@ -60,6 +60,10 @@ final class AbstractInvokeStrategyTest extends TestCase
             ->method('getParam')
             ->with(MessageBus::EVENT_PARAM_MESSAGE_HANDLER)
             ->will($this->returnValue('handler'));
+
+        $actionEventMock->expects($this->at(2))
+            ->method('setParam')
+            ->with(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
 
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
         $strategy

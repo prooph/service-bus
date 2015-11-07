@@ -64,6 +64,7 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 
         if ($this->canInvoke($handler, $message)) {
             $this->invoke($handler, $message);
+            $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
         }
     }
 }

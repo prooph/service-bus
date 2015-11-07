@@ -41,6 +41,7 @@ abstract class MessageBus
     const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
     const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
     const EVENT_PARAM_EXCEPTION       = 'exception';
+    const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
 
     /**
      * @var ActionEventEmitter
@@ -76,6 +77,7 @@ abstract class MessageBus
     protected function initialize($message, ActionEvent $actionEvent)
     {
         $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
+        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
 
         if ($message instanceof HasMessageName) {
             $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());

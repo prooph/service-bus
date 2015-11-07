@@ -44,16 +44,19 @@ final class EventBusTest extends TestCase
         $somethingDone = new SomethingDone(['done' => 'bought milk']);
 
         $receivedMessage = null;
-
-        $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage) {
+        $dispatchEvent = null;
+        $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent) {
             $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [function (SomethingDone $somethingDone) use (&$receivedMessage) {
                 $receivedMessage = $somethingDone;
             }]);
+
+            $dispatchEvent = $actionEvent;
         });
 
         $this->eventBus->dispatch($somethingDone);
 
         $this->assertSame($somethingDone, $receivedMessage);
+        $this->assertTrue($dispatchEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED));
     }
 
     /**
