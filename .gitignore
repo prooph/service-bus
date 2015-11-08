@@ -10,3 +10,4 @@ nbproject
 .settings
 vendor
 composer.lock
+docs/html

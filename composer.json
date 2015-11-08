@@ -32,7 +32,8 @@
         "fabpot/php-cs-fixer": "1.7.*",
         "satooshi/php-coveralls": "dev-master",
         "container-interop/container-interop" : "^1.1",
-        "sandrokeil/interop-config": "^0.3"
+        "sandrokeil/interop-config": "^0.3",
+        "tobiju/bookdown-bootswatch-templates": "1.0.x-dev"
     },
     "suggest": {
         "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
