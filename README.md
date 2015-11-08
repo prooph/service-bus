@@ -1,5 +1,4 @@
-PSB - ProophServiceBus
-======================
+# PSB - ProophServiceBus
 
 PHP 5.5+ lightweight message bus supporting CQRS and Micro Services
 
@@ -7,8 +6,7 @@ PHP 5.5+ lightweight message bus supporting CQRS and Micro Services
 [![Coverage Status](https://coveralls.io/repos/prooph/service-bus/badge.svg?branch=master&service=github)](https://coveralls.io/github/prooph/service-bus?branch=master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prooph/improoph)
 
-Messaging API
--------------
+## Messaging API
 
 prooph/service-bus is a lightweight messaging facade.
 It allows you to define the API of your model with the help of messages.
@@ -27,13 +25,11 @@ but you can also receive the same messages via CLI or from a message queue syste
 ![prooph_architecture](https://raw.githubusercontent.com/prooph/proophessor/master/docs/book/img/prooph_overview.png)
 
 
-Installation
-------------
+## Installation
 
 You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~4.0"` as requirement to your composer.json.
 
-Quick Start
------------
+## Quick Start
 
 ```php
 <?php
@@ -64,33 +60,39 @@ $commandBus->dispatch($echoText);
 //Output should be: It works
 ```
 
-Documentation
--------------
+## Documentation
 
-- [Overview](docs/service_bus_system.md)
-- [Message Bus API](docs/message_bus.md)
-- [Plugins](docs/plugins.md)
-- [Async Message Producers](docs/async_message_producer.md)
-- [Framework Integration](docs/factories.md)
+Documentation is [in the doc tree](doc/), and can be compiled using [bookdown](http://bookdown.io) and [Docker](https://www.docker.com/)
 
-Support
--------
+```console
+$ docker run -it --rm -v $(pwd):/app sandrokeil/bookdown doc/bookdown.json
+$ docker run -it --rm -p 8080:8080 -v $(pwd):/app php:5.6-cli php -S 0.0.0.0:8080 -t /app/doc/html
+```
+
+or make sure bookdown is installed globally via composer and `$HOME/.composer/vendor/bin` is on your `$PATH`.
+
+```console
+$ bookdown doc/bookdown.json
+$ php -S 0.0.0.0:8080 -t doc/html/
+```
+
+Then browse to [http://localhost:8080/](http://localhost:8080/)
+
+## Support
 
 - Ask questions on [prooph-users](https://groups.google.com/forum/?hl=de#!forum/prooph) google group.
 - File issues at [https://github.com/prooph/service-bus/issues](https://github.com/prooph/service-bus/issues).
 - Say hello in the [prooph gitter](https://gitter.im/prooph/improoph) chat.
 
-Contribute
-----------
+## Contribute
 
 Please feel free to fork and extend existing or add new features and send a pull request with your changes!
 To establish a consistent code quality, please provide unit tests for all your changes and may adapt the documentation.
 
-# Dependencies
+## Dependencies
 
 Please refer to the project [composer.json](composer.json) for the list of dependencies.
 
-License
--------
+## License
 
 Released under the [New BSD License](LICENSE).
