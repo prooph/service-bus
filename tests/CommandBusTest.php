@@ -240,7 +240,7 @@ final class CommandBusTest extends TestCase
         $this->commandBus->utilize(
             (new CommandRouter())
                 ->route(CustomMessage::class)->to($messageHandler)
-                ->route('initial message')->to(function() use ($messageHandler) {
+                ->route('initial message')->to(function () use ($messageHandler) {
                     $delayedMessage = new CustomMessage("delayed message");
 
                     $this->commandBus->dispatch($delayedMessage);
@@ -264,7 +264,7 @@ final class CommandBusTest extends TestCase
         $this->commandBus->utilize(
             (new CommandRouter())
                 ->route(CustomMessage::class)->to($messageHandler)
-                ->route('initial message')->to(function() use ($messageHandler) {
+                ->route('initial message')->to(function () use ($messageHandler) {
                     $delayedMessage = new CustomMessage("delayed message");
 
                     $this->commandBus->dispatch($delayedMessage);
