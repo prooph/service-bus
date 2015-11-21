@@ -13,6 +13,7 @@ namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
@@ -26,6 +27,16 @@ use Prooph\ServiceBus\Exception\RuntimeException;
  */
 class CommandBus extends MessageBus
 {
+    /**
+     * @var array
+     */
+    private $commandQueue = [];
+
+    /**
+     * @var bool
+     */
+    private $isDispatching = false;
+
     /**
      * Inject an ActionEventDispatcher instance
      *
@@ -49,10 +60,28 @@ class CommandBus extends MessageBus
 
     /**
      * @param mixed $command
+     * @throws \Exception
      * @return void
-     * @throws Exception\MessageDispatchException
      */
     public function dispatch($command)
+    {
+        $this->commandQueue[] = $command;
+
+        if (! $this->isDispatching) {
+            $this->isDispatching = true;
+
+            try {
+                while ($command = array_shift($this->commandQueue)) {
+                    $this->processCommand($command);
+                }
+            } catch (\Exception $e) {
+                $this->isDispatching = false;
+                throw CommandDispatchException::wrap($e, $this->commandQueue);
+            }
+        }
+    }
+
+    protected function processCommand($command)
     {
         $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 
