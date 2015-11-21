@@ -33,7 +33,7 @@
         "satooshi/php-coveralls": "dev-master",
         "container-interop/container-interop" : "^1.1",
         "sandrokeil/interop-config": "^0.3",
-        "tobiju/bookdown-bootswatch-templates": "1.0.x-dev"
+        "tobiju/bookdown-bootswatch-templates": "^0.2.0"
     },
     "suggest": {
         "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
