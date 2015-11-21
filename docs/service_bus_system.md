@@ -1,47 +1,38 @@
-PSB Overview
-============
+# PSB Overview
 
-[Back to documentation](../README.md#documentation)
+prooph/service-bus acts as a messaging facade. It operates on application layer and shields your domain model.
+In addition we also provide so called "message producers" which connect prooph/service-bus
+with messaging infrastructure on system and network level.
 
-prooph/service-bus ships with three different bus implementations namely a CommandBus, a QueryBus and an EventBus. All buses behave similar but have
-important differences.
+Three different message bus implementations are available.
 
-- The CommandBus is designed to dispatch a message to only one handler.
-- The EventBus on the other site is able to dispatch a message to multiple listeners.
-- The QueryBus also dispatches a message to only one finder but it returns a [promise](https://github.com/reactphp/promise).
+## CommandBus
 
-All buses provide an event-driven dispatch process to give plugins
-the possibility to hook into the process.
+The CommandBus is designed to dispatch a message to only one handler or message producer. It does not return a result.
+Sending a command means *fire and forget* and enforces the *Tell-Don't-Ask* principle.
 
-# Messaging
+## EventBus
 
-The goal of a message dispatch process is to locate and invoke an appropriate message handler. This is
-true for commands, queries and events (all are messages but differ in their intention). The message handler itself is hidden
-behind a bus. A message producer don't know anything about the handler. It creates a message and triggers the
-dispatch process on a message bus. The bus is responsible for delivering the message to it's handler even if the message handler is
-part of an external system that can only be accessed via a remote interface.
+The EventBus is able to dispatch a message to `n` listeners. Each listener can be a message handler or message producer.
+Like commands the EventBus doesn't return anything.
 
-For commands and events that means fire and forget. The producer gets no
-response when it triggers the dispatch except an error occurs during the dispatch process itself.
-In this case the message bus throws an exception.
+## QueryBus
 
-When dispatching a query the message producer gets a promise back from the QueryBus. He also doesn't know if the
-query is dispatched synchronous or asynchronous but he can attach to the `promise::then` method to receive the response
-of the query when it becomes available.
+The QueryBus also dispatches a message to only one finder (special query message handler)
+but it returns a `React\Promise\Promise`. The QueryBus hands over the query message to a finder but
+also a `React\Promise\Deferred` which needs to be resolved by the finder.
+We use promises to allow finders to handle queries asynchronous for example using `curl_multi_exec`.
 
 ## Message Objects
 
 You are free to use your own message objects (or even primitive types if you want). All message buses are smart enough to handle them.
-If you need custom logic to handle your messages check out the list of available [plugins](plugins.md) or write your own bus plugin.
+If you need custom logic to handle your messages check out the list of available message bus plugins or write your own bus plugin.
 It is pretty straight forward.
 
 # Synchronous Versus Asynchronous Processing
 
 PSB provides both possibilities behind a unified interface.
 Remember the statement "Messaging means fire and forget".
-The message producer never knows if the message is processed synchronous or asynchronous. It depends on the bus
-configuration and/or the used plugins. A message can directly be routed to it's handler. In this case we talk about synchronous
-message processing. If the handler of the message is a [queue producer](queue_producer.md)
-the message is normally processed asynchronously.
-
-Check out the [Message Bus API](message_bus.md) for details.
+The callee never knows if the message is processed synchronous or asynchronous.
+A message can directly be routed to it's handler. In this case we talk about synchronous
+message processing. If the message is routed to message producer it is normally processed asynchronous.
