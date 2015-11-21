@@ -14,8 +14,10 @@ namespace ProophTest\ServiceBus;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use ProophTest\ServiceBus\Mock\ErrorProducer;
@@ -226,5 +228,61 @@ final class CommandBusTest extends TestCase
         );
 
         $this->commandBus->dispatch('throw it');
+    }
+
+    /**
+     * @test
+     */
+    public function it_queues_new_commands_as_long_as_it_is_dispatching()
+    {
+        $messageHandler = new MessageHandler();
+
+        $this->commandBus->utilize(
+            (new CommandRouter())
+                ->route(CustomMessage::class)->to($messageHandler)
+                ->route('initial message')->to(function () use ($messageHandler) {
+                    $delayedMessage = new CustomMessage("delayed message");
+
+                    $this->commandBus->dispatch($delayedMessage);
+
+                    $this->assertEquals(0, $messageHandler->getInvokeCounter());
+                })
+        );
+
+        $this->commandBus->dispatch('initial message');
+
+        $this->assertEquals(1, $messageHandler->getInvokeCounter());
+    }
+
+    /**
+     * @test
+     */
+    public function it_passes_queued_commands_to_command_dispatch_exception_in_case_of_an_error()
+    {
+        $messageHandler = new MessageHandler();
+
+        $this->commandBus->utilize(
+            (new CommandRouter())
+                ->route(CustomMessage::class)->to($messageHandler)
+                ->route('initial message')->to(function () use ($messageHandler) {
+                    $delayedMessage = new CustomMessage("delayed message");
+
+                    $this->commandBus->dispatch($delayedMessage);
+
+                    throw new \Exception("Ka Boom");
+                })
+        );
+
+        $commandDispatchException = null;
+
+        try {
+            $this->commandBus->dispatch('initial message');
+        } catch (CommandDispatchException $ex) {
+            $commandDispatchException = $ex;
+        }
+
+        $this->assertInstanceOf(CommandDispatchException::class, $commandDispatchException);
+        $this->assertSame(1, count($commandDispatchException->getPendingCommands()));
+        $this->assertSame(CustomMessage::class, get_class($commandDispatchException->getPendingCommands()[0]));
     }
 }

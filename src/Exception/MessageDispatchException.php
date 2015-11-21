@@ -33,7 +33,7 @@ class MessageDispatchException extends RuntimeException
      */
     public static function failed(ActionEvent $actionEvent, \Exception $previousException = null)
     {
-        $ex = new self(
+        $ex = new static(
             sprintf(
                 "Message dispatch failed during %s phase.%s",
                 $actionEvent->getName(),
