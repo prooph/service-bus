@@ -42,7 +42,7 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
         $this->actionEvent = new DefaultActionEvent(QueryBus::EVENT_INVOKE_FINDER, new QueryBus(), [
             QueryBus::EVENT_PARAM_MESSAGE => new CustomMessage('I am a query'),
             QueryBus::EVENT_PARAM_MESSAGE_NAME => CustomMessage::class,
-            QueryBus::EVENT_PARAM_DEFERRED => new Deferred(),
+            QueryBus::EVENT_PARAM_PROMISE => new Deferred(),
         ]);
     }
 

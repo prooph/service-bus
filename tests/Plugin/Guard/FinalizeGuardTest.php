@@ -5,10 +5,12 @@ namespace ProophTest\ServiceBus\Plugin\Guard;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Event\ListenerHandler;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
+use Prooph\ServiceBus\QueryBus;
 use React\Promise\Deferred;
 
 /**
@@ -45,7 +47,7 @@ final class FinalizeGuardTest extends TestCase
         $authorizationService->isGranted('test_event')->willReturn(true);
 
         $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam('query-deferred')->willReturn(null);
+        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
@@ -64,13 +66,15 @@ final class FinalizeGuardTest extends TestCase
         $deferred = new Deferred();
         $deferred->resolve('result');
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam('query-deferred')->willReturn($deferred);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
+        $actionEvent = new DefaultActionEvent(QueryBus::EVENT_FINALIZE);
+        $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $deferred->promise());
+        $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_NAME, 'test_event');
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
 
-        $this->assertNull($routeGuard->onFinalize($actionEvent->reveal()));
+        $routeGuard->onFinalize($actionEvent);
+
+        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->done();
     }
 
     /**
@@ -83,7 +87,7 @@ final class FinalizeGuardTest extends TestCase
         $authorizationService->isGranted('test_event')->willReturn(false);
 
         $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam('query-deferred')->willReturn(null);
+        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
         $actionEvent->stopPropagation(true)->willReturn(null);
 
@@ -104,13 +108,15 @@ final class FinalizeGuardTest extends TestCase
         $deferred = new Deferred();
         $deferred->resolve('result');
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam('query-deferred')->willReturn($deferred);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent = new DefaultActionEvent(QueryBus::EVENT_FINALIZE);
+        $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $deferred->promise());
+        $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_NAME, 'test_event');
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
 
-        $routeGuard->onFinalize($actionEvent->reveal());
+        $routeGuard->onFinalize($actionEvent);
+
+        $this->assertTrue($actionEvent->propagationIsStopped());
+        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->done();
     }
 }

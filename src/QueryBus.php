@@ -33,6 +33,7 @@ class QueryBus extends MessageBus
 {
     const EVENT_INVOKE_FINDER      = 'invoke-finder';
 
+    const EVENT_PARAM_PROMISE = 'query-promise';
     const EVENT_PARAM_DEFERRED = 'query-deferred';
 
     /**
@@ -72,6 +73,7 @@ class QueryBus extends MessageBus
         $actionEvent->setTarget($this);
 
         $actionEvent->setParam(self::EVENT_PARAM_DEFERRED, $deferred);
+        $actionEvent->setParam(self::EVENT_PARAM_PROMISE, $promise);
 
         try {
             $this->initialize($query, $actionEvent);
@@ -119,6 +121,6 @@ class QueryBus extends MessageBus
             }
         }
 
-        return $promise;
+        return $actionEvent->getParam(self::EVENT_PARAM_PROMISE);
     }
 }
