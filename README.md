@@ -11,23 +11,24 @@ PHP 5.5+ lightweight message bus supporting CQRS and Micro Services
 prooph/service-bus is a lightweight messaging facade.
 It allows you to define the API of your model with the help of messages.
 
-1. Command messages describe the actions your model can handle.
-2. Event messages describe things that happened while your model handled a command.
-3. Query messages describe available information that can be fetched from your model.
+1. **Command** messages describe actions your model can handle.
+2. **Event** messages describe things that happened while your model handled a command.
+3. **Query** messages describe available information that can be fetched from your (read) model.
 
-prooph/service-bus shields your model. Data input and output ports become irrelevant and no longer influence the business logic.
-I'm looking at you Hexagonal Architecture.
+prooph/service-bus shields your model. Data input and output ports become irrelevant and no longer influence business logic.
+We're looking at you Hexagonal Architecture.
 
 prooph/service-bus decouples your model from any framework. You can use a
 web framework like Zend, Symfony, Laravel and co. to handle http requests and pass them via prooph/service-bus to your model
-but you can also receive the same messages via CLI or from a message queue system like RabbitMQ or Beanstalkd.
+but you can also receive the same messages via CLI or from a messaging system like RabbitMQ or Beanstalkd.
+
+It is also a perfect fit for microservices architecture as it provides an abstraction layer for message-based inter-service communication.
 
 ![prooph_architecture](https://raw.githubusercontent.com/prooph/proophessor/master/docs/book/img/prooph_overview.png)
 
-
 ## Installation
 
-You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~4.0"` as requirement to your composer.json.
+You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~5.0"` as requirement to your composer.json.
 
 ## Quick Start
 
@@ -82,10 +83,6 @@ Then browse to [http://localhost:8080/](http://localhost:8080/)
 Please feel free to fork and extend existing or add new features and send a pull request with your changes!
 To establish a consistent code quality, please provide unit tests for all your changes and may adapt the documentation.
 
-## Dependencies
-
-Please refer to the project [composer.json](composer.json) for the list of dependencies.
-
 ## License
 
-Released under the [New BSD License](LICENSE).
+Released under the New BSD License.

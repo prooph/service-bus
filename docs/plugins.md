@@ -1,14 +1,11 @@
-PSB Plugins
-===========
-
-[Back to documentation](../README.md#documentation)
+# PSB Plugins
 
 Plugins expand a message bus with additional functionality.
 PSB ships with a list of useful plugins that can be mixed and matched with your own implementations:
 
-# Routers
+## Routers
 
-## Prooph\ServiceBus\Plugin\Router\CommandRouter
+### Prooph\ServiceBus\Plugin\Router\CommandRouter
 
 Use the CommandRouter to provide a list of commands (identified by their names) and their responsible command handlers.
 
@@ -29,14 +26,14 @@ $router->route('My.Command.PayOrder')->to("payment_processor");
 $commandBus->utilize($router);
 ```
 
-## Prooph\ServiceBus\Plugin\Router\QueryRouter
+### Prooph\ServiceBus\Plugin\Router\QueryRouter
 
 Use the QueryRouter to provide a list of queries (identified by their names) and their responsible finders.
 
 The QueryRouter share the same base class with the CommandRouter so its interface looks exactly the same.
 
 
-## Prooph\ServiceBus\Plugin\Router\EventRouter
+### Prooph\ServiceBus\Plugin\Router\EventRouter
 
 Use the EventRouter to provide a list of event messages (identified by their names) and all interested listeners per event message.
 
@@ -54,7 +51,7 @@ $router->route('My.Event.OrderWasPayed')->to("delivery_processor");
 $eventBus->utilize($router);
 ```
 
-## Prooph\ServiceBus\Plugin\Router\RegexRouter
+### Prooph\ServiceBus\Plugin\Router\RegexRouter
 
 The RegexRouter works with regular expressions to determine handlers for messages. It can be used together with a CommandBus, a QueryBus and
 an EventBus but for the latter it behaves a bit different. When routing a command or query the RegexRouter makes sure that only one pattern matches.
@@ -86,15 +83,15 @@ $router->route('/^My\.Event\.Article.*/')->to(new InventoryUpdater());
 $eventBus->utilize($router);
 ```
 
-# Invoke Strategies
+## Invoke Strategies
 
 An invoke strategy knows how a message handler can be invoked. You can register many invoke strategies at once depending on
 how many different handler types you are using. The best way is to choose a convention and go with it. PSB ships with the invoke strategies
 listed below. If your favorite convention is not there you can easily write your own invoke strategy
-by extending the [AbstractInvokeStrategy](../src/Prooph/ServiceBus/Plugin/InvokeStrategy/AbstractInvokeStrategy.php) and implementing the
+by extending `Prooph\ServiceBus\Plugin\InvokeStrategy\AbstractInvokeStrategy` and implementing the
 `canInvoke` and `invoke` methods.
 
-## Available Strategies
+### Available Strategies
 
 - `HandleCommandStrategy`: Prefixes the short class name of a command with `handle`.  A command handler should
 have a public method named this way: AddProductHandler::handleAddProductToCart. If you prefer to have one command handler per command (recommended) then you don't need to attach the strategy but instead implement `CommandHandler::__invoke`. If you don't like `__invoke` you can also work with `CommandHandler::handle`. The `HandleCommandStrategy` checks if the handler has a single `handle` method if it cannot find an appropriate prefixed method name.
@@ -104,22 +101,24 @@ have a public method named this way: OrderCartUpdater::onArticleWasBought.
 
 Note: When a message bus detects that the message handler is callable invoke strategies are skipped and the message handler is directly invoked by the message bus.
 
-# Guards
+## Guards
 
-The service bus ships with a route guard and a finalize guard. You can use them to protect the command bus and the query bus.
-For the command bus the route guard is sufficient. If the [AuthorizationService](../src/Prooph/ServiceBus/Plugin/Guard/AuthorizationService.php)
-does not allow access to the command, an [UnauthorizedException](../src/Prooph/ServiceBus/Plugin/Guard/UnautorizedException.php) is thrown.
+The service bus ships with a `Prooph\ServiceBus\Plugin\Guard\RouteGuard` and a `Prooph\ServiceBus\Plugin\Guard\FinalizeGuard`.
+You can use them to protect the command bus and the query bus.
+For the command bus the route guard is sufficient. If the `Prooph\ServiceBus\Plugin\Guard\AuthorizationService`
+does not allow access to the command, an `Prooph\ServiceBus\Plugin\Guard\UnauthorizedException` is thrown.
+The route guard passes the message to the `Prooph\ServiceBus\Plugin\Guard\AuthorizationService` as context, so you can make assertions on it.
+
 If you want to protect the query bus, you can also use the route guard, but in some situations, you want to deny access based on the result
-of the query. In this case it's important to make checks on the query results.
-
-The route guard passes the message to the [AuthorizationService](../src/Prooph/ServiceBus/Plugin/Guard/AuthorizationService.php) as context, so you can make assertions on it.
+of the query. In this case it's important to make checks on the query results. The finalize guard hands over a query result as context to the AuthorizationService.
 
 We also provide [service-bus-zfc-rbac-brdige](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
 You can also find some configuration examples in this repository. 
 
-Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on the query result, it's important to return true, if the given context (query result) is null. Otherwise your assertions will always fail in the route phase, because the result is not yet known.
+*Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on
+the query result, you need to make sure that the AuthorizationService can distinguish between the contexts (route guard passes query, finalize guard passes result)*
 
-# ServiceLocatorPlugin
+## ServiceLocatorPlugin
 
 This plugin uses a `Interop\Container\ContainerInterface` implementation to lazy-load message handlers.
 The following example uses a ZF2 ServiceManager as a service locator and illustrates how it can be used together with a command bus:
@@ -149,9 +148,9 @@ $commandBus->utilize($router);
 With this technique you can configure the routing for all your messages without the need to create all message handlers
 on every request. Only the responsible message handlers are lazy loaded by the service locator plugin.
 
-# MessageProducerPlugin
+## MessageProducerPlugin
 
-If you want to route all messages to an [async message producer](async_message_producer.md) you can attach
+If you want to route all messages to a `Prooph\ServiceBus\Async\MessageProducer` you can attach
 this plugin to a message bus. If it is attached to a command or query bus all messages will only be routed to
 the message producer. If it is attached to an event bus the message producer
 will be added to the list of event listeners.
