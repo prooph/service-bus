@@ -48,11 +48,12 @@ final class QueryBusTest extends TestCase
         $fetchSomething = new FetchSomething(['filter' => 'todo']);
 
         $receivedMessage = null;
-
-        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage) {
+        $dispatchEvent = null;
+        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent) {
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, function (FetchSomething $fetchSomething, Deferred $deferred) use (&$receivedMessage) {
                 $deferred->resolve($fetchSomething);
             });
+            $dispatchEvent = $actionEvent;
         });
 
         $promise = $this->queryBus->dispatch($fetchSomething);
@@ -62,6 +63,7 @@ final class QueryBusTest extends TestCase
         });
 
         $this->assertSame($fetchSomething, $receivedMessage);
+        $this->assertTrue($dispatchEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED));
     }
 
     /**
@@ -228,7 +230,7 @@ final class QueryBusTest extends TestCase
         });
 
         $this->assertInstanceOf(RuntimeException::class, $exception);
-        $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query string', $exception->getMessage());
+        $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query throw it', $exception->getMessage());
     }
 
     /**
@@ -278,5 +280,23 @@ final class QueryBusTest extends TestCase
         $this->assertNull($handler->getLastMessage());
         $this->assertInstanceOf(Promise::class, $promise);
         $this->assertNull($handler->getLastDeferred());
+    }
+
+    /**
+     * @test
+     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     */
+    public function it_throws_exception_if_message_was_not_handled()
+    {
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_INITIALIZE,
+            function (ActionEvent $e) {
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
+            }
+        );
+
+        $promise = $this->queryBus->dispatch('throw it');
+
+        $promise->done();
     }
 }

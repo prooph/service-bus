@@ -12,6 +12,7 @@
 namespace ProophTest\ServiceBus\Factory;
 
 use Interop\Container\ContainerInterface;
+use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Messaging\Message;
@@ -21,6 +22,7 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Container\CommandBusFactory;
 use Prooph\ServiceBus\Container\EventBusFactory;
 use Prooph\ServiceBus\Container\QueryBusFactory;
+use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\TestCase;
@@ -325,6 +327,10 @@ final class BusFactoriesTest extends TestCase
         $container->has('handler_service_id')->shouldNotBeCalled();
 
         $bus = $busFactory($container->reveal());
+
+        $bus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INVOKE_HANDLER, function (ActionEvent $e) {
+            $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+        });
 
         $bus->dispatch($message->reveal());
     }

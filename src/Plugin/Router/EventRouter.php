@@ -45,7 +45,7 @@ class EventRouter implements ActionEventListenerAggregate
      */
     public function __construct(array $eventMap = null)
     {
-        if (! is_null($eventMap)) {
+        if (null !== $eventMap) {
             foreach ($eventMap as $eventName => $listeners) {
                 if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
                     $listeners = [$listeners];
@@ -80,7 +80,7 @@ class EventRouter implements ActionEventListenerAggregate
         Assertion::string($eventName);
         Assertion::notEmpty($eventName);
 
-        if (! is_null($this->tmpEventName) && empty($this->eventMap[$this->tmpEventName])) {
+        if (null !== $this->tmpEventName && empty($this->eventMap[$this->tmpEventName])) {
             throw new Exception\RuntimeException(sprintf("event %s is not mapped to a listener.", $this->tmpEventName));
         }
 
@@ -108,7 +108,7 @@ class EventRouter implements ActionEventListenerAggregate
             ));
         }
 
-        if (is_null($this->tmpEventName)) {
+        if (null === $this->tmpEventName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map listener %s to an event. Please use method route before calling method to",
                 (is_object($eventListener))? get_class($eventListener) : (is_string($eventListener))? $eventListener : gettype($eventListener)
