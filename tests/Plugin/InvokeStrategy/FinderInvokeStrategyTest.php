@@ -61,5 +61,6 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE), $finder->getLastMessage());
         $this->assertSame($this->actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED), $finder->getLastDeferred());
+        $this->assertTrue($this->actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED));
     }
 }

@@ -11,6 +11,9 @@
 
 namespace Prooph\ServiceBus;
 
+use Prooph\Common\Event\ActionEvent;
+use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
@@ -25,11 +28,60 @@ use Prooph\ServiceBus\Exception\RuntimeException;
 class CommandBus extends MessageBus
 {
     /**
-     * @param mixed $command
+     * @var array
+     */
+    private $commandQueue = [];
+
+    /**
+     * @var bool
+     */
+    private $isDispatching = false;
+
+    /**
+     * Inject an ActionEventDispatcher instance
+     *
+     * @param  ActionEventEmitter $actionEventDispatcher
      * @return void
-     * @throws Exception\MessageDispatchException
+     */
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    {
+        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
+            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+
+            if (is_callable($commandHandler)) {
+                $command        = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                $commandHandler($command);
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+            }
+        });
+
+        $this->events = $actionEventDispatcher;
+    }
+
+    /**
+     * @param mixed $command
+     * @throws \Exception
+     * @return void
      */
     public function dispatch($command)
+    {
+        $this->commandQueue[] = $command;
+
+        if (! $this->isDispatching) {
+            $this->isDispatching = true;
+
+            try {
+                while ($command = array_shift($this->commandQueue)) {
+                    $this->processCommand($command);
+                }
+            } catch (\Exception $e) {
+                $this->isDispatching = false;
+                throw CommandDispatchException::wrap($e, $this->commandQueue);
+            }
+        }
+    }
+
+    protected function processCommand($command)
     {
         $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 
@@ -47,23 +99,23 @@ class CommandBus extends MessageBus
             if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                 throw new RuntimeException(sprintf(
                     "CommandBus was not able to identify a CommandHandler for command %s",
-                    $this->getMessageType($command)
+                    $this->getMessageName($command)
                 ));
             }
 
-            if (is_string($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER))) {
+            $handler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+
+            if (is_string($handler) && ! is_callable($handler)) {
                 $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);
             }
 
-            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+            $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
+            $this->trigger($actionEvent);
 
-            if (is_callable($commandHandler)) {
-                $commandHandler($command);
-            } else {
-                $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-                $this->trigger($actionEvent);
+            if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
+                throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
             }
 
             $this->triggerFinalize($actionEvent);

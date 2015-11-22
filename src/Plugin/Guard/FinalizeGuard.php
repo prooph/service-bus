@@ -16,7 +16,8 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
-use React\Promise\Deferred;
+use Prooph\ServiceBus\QueryBus;
+use React\Promise\Promise;
 
 /**
  * Class FinalizeGuard
@@ -25,8 +26,6 @@ use React\Promise\Deferred;
 final class FinalizeGuard implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
-
-    const EVENT_PARAM_DEFERRED = 'query-deferred';
 
     /**
      * @var AuthorizationService
@@ -43,13 +42,14 @@ final class FinalizeGuard implements ActionEventListenerAggregate
 
     /**
      * @param ActionEvent $actionEvent
+     * @throws UnauthorizedException
      */
     public function onFinalize(ActionEvent $actionEvent)
     {
-        $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
+        $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
 
-        if ($deferred instanceof Deferred) {
-            $deferred->promise()->done(function ($result) use ($actionEvent, $deferred) {
+        if ($promise instanceof Promise) {
+            $newPromise = $promise->then(function ($result) use ($actionEvent) {
                 if (!$this->authorizationService->isGranted(
                     $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME),
                     $result)
@@ -59,6 +59,8 @@ final class FinalizeGuard implements ActionEventListenerAggregate
                     throw new UnauthorizedException();
                 }
             });
+
+            $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $newPromise);
         } elseif (!$this->authorizationService->isGranted($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME))) {
             $actionEvent->stopPropagation(true);
 

@@ -41,6 +41,7 @@ abstract class MessageBus
     const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
     const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
     const EVENT_PARAM_EXCEPTION       = 'exception';
+    const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
 
     /**
      * @var ActionEventEmitter
@@ -76,6 +77,7 @@ abstract class MessageBus
     protected function initialize($message, ActionEvent $actionEvent)
     {
         $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
+        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
 
         if ($message instanceof HasMessageName) {
             $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());
@@ -91,7 +93,7 @@ abstract class MessageBus
             $this->trigger($actionEvent);
 
             if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageType($message));
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageName($message));
             }
         }
     }
@@ -156,7 +158,7 @@ abstract class MessageBus
      * @param  ActionEventEmitter $actionEventDispatcher
      * @return void
      */
-    public function setActionEventDispatcher(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
     {
         $this->events = $actionEventDispatcher;
     }
@@ -170,8 +172,8 @@ abstract class MessageBus
      */
     public function getActionEventEmitter()
     {
-        if (is_null($this->events)) {
-            $this->setActionEventDispatcher(new ProophActionEventEmitter());
+        if (null === $this->events) {
+            $this->setActionEventEmitter(new ProophActionEventEmitter());
         }
 
         return $this->events;
@@ -181,8 +183,16 @@ abstract class MessageBus
      * @param mixed $message
      * @return string
      */
-    protected function getMessageType($message)
+    protected function getMessageName($message)
     {
-        return is_object($message)? get_class($message) : gettype($message);
+        if (is_object($message)) {
+            return get_class($message);
+        }
+
+        if (is_string($message)) {
+            return $message;
+        }
+
+        return gettype($message);
     }
 }

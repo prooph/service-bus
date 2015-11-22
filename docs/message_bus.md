@@ -1,11 +1,9 @@
 # Message Buses
 
-[Back to documentation](../README.md#documentation)
-
 ## Commanding
 
 When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) the command bus is your best friend.
-It takes an incoming command message and route it to the responsible command handler.
+It takes an incoming command message and routes it to the responsible command handler.
 The advantage of using a CommandBus instead of calling command handlers directly is, that you can change your model without effecting
 the application logic. You can work with command versions to dispatch a newer version to a new command handler and older
 versions to old command handlers. Your model can support different versions at the same time which makes migrations a lot easier.
@@ -17,8 +15,7 @@ And for distributed systems it is also interesting to push the command on a queu
 When dividing your domain logic into modules or bounded contexts you need a way to inform the outside world
 about events that happened in your model.
 An EventBus is responsible for dispatching event messages to all interested listeners. If a listener is part of another system
-the event may need to be send to a remote interface. The Prooph\ServiceBus\EventBus is capable to handle synchronous event
-dispatching as well as asynchronous/remote event dispatching by using suitable plugins.
+the event may need to be send to a remote interface.
 
 ## Querying
 
@@ -27,11 +24,11 @@ The two most used protocols are HTTP request-response with resource API's and li
 out-of-the-box but HTTP API's can be integrated too.
 The QueryBus is responsible for routing a query message to a so called finder. The query indicates that the producer expects a response.
 The finder's responsibility is to fetch data from a data source using the query parameters defined in the query message. It is up to the finder if the data is fetched synchronous
-or asynchronous, so the QueryBus returns a [promise](https://github.com/reactphp/promise) to the query producer which gets resolved by the finder.
+or asynchronous, so the QueryBus returns a `React\Promise\Promise` to the callee.
 
 ## API
 
-All three bus types extend the same base class [Prooph\ServiceBus\MessageBus](../MessageBus.php) and therefor make use of an event-driven message dispatch process.
+All three bus types extend the same base class `Prooph\ServiceBus\MessageBus` and therefor make use of an event-driven message dispatch process.
 Take a look at the CommandBus API. It is the same for EventBus and QueryBus except that the QueryBus returns a promise from `QueryBus::dispatch`.
 
 ```php
@@ -74,7 +71,7 @@ But first let's take a look at the internals of a message dispatch process and t
 
 ### initialize
 
-This action event is triggered right after MessageBus::dispatch($message) is invoked. At this time the action event only contains the `message`.
+This action event is triggered right after `MessageBus::dispatch($message)` is invoked. At this time the action event only contains the `message`.
 
 ### detect-message-name (optional)
 
@@ -82,12 +79,15 @@ Before a message handler can be located, the message bus needs to know how the m
 possibilities to provide the information. The message can implement the [Prooph\Common\Messaging\HasMessageName](https://github.com/prooph/common/blob/master/src/Messaging/HasMessageName.php) interface.
 In this case the message bus picks the name directly from the message and set it as param `message-name` in the action event for later use. The `detect-message-name` event is not triggered. If the message
 does not implement the interface the `detect-message-name` event is triggered and a plugin needs to inject the name using `ActionEvent::setParam('message-name', $messageName)`.
-Finally if no `message-name` was set by a listener the message bus uses the FQCN of message if it is an object or the type of message in all other cases.
+If no `message-name` was set by a listener the message bus uses a fallback:
+- FQCN of message in case of object
+- message => message-name in case of string
+- `gettype($message)` in all other cases
 
 ### route
 
-During the `route` action event a plugin (typically a [router](plugins.md#routers)) should provide the responsible message handler either in form of a ready to use `callable`, a object or just a string.
-The latter should be a service id that can be passed to a service locator to get an instance of the handler.
+During the `route` action event a plugin (typically a router) should provide the responsible message handler either in form of a ready to use `callable`, an object or just a string.
+The latter should be a service id that can be passed to a service locator to get an instance of the message handler.
 The message handler should be set as action event param `message-handler` (for CommandBus and QueryBus) or `event-listeners` (for EventBus).
 
 As you can see command and query bus work with a single message handler whereby the event bus works with multiple listeners.
@@ -101,15 +101,17 @@ After routing the message, the message bus checks if the handler was provided as
 
 ### invoke-handler / invoke-finder (optional)
 
-Having the message handler in place it's time to invoke it with the message. If the `message-handler` is a `callable` the `invoke-handler` action event is not triggered but instead
-the handler is invoked by the message bus (true for all three bus types).
+Having the message handler in place it's time to invoke it with the message. `callable` message handlers are invoked by the bus. However, the `invoke-handler` / `invoke-finder` events are always triggered.
 At this stage all three bus types behave a bit different.
 
-- CommandBus: invokes the handler with the command message, or triggers the invoke-handler action event if the handler is not a callable.
-- QueryBus: much the same as the command bus but the message handler is invoked with the query message and a [deferred](https://github.com/reactphp/promise/blob/master/src/Deferred.php)
-that needs to be resolved by the message handler aka finder. If the finder is not a callable the query bus triggers a `invoke-finder` action event to indicate
+- CommandBus: invokes the handler with the command message. A `invoke-handler` event is triggered.
+- QueryBus: much the same as the command bus but the message handler is invoked with the query message and a `React\Promise\Deferred`
+that needs to be resolved by the message handler aka finder. The query bus triggers a `invoke-finder` action event to indicate
 that a finder should be invoked and not a normal message handler.
 - EventBus: loops over all `event-listeners` and triggers the `locate-handler` and `invoke-handler` action events for each message listener.
+
+*Note: * The command and query bus have a mechanism to check if the command or query was handled. If not they throw an exception.
+The event bus does not have such a mechanism as having no listener for an event is a valid case.
 
 ### handle-error
 

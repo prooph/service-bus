@@ -44,7 +44,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
      */
     public function __construct(array $messageMap = null)
     {
-        if (! is_null($messageMap)) {
+        if (null !== $messageMap) {
             foreach ($messageMap as $messageName => $handler) {
                 $this->route($messageName)->to($handler);
             }
@@ -71,7 +71,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
         Assertion::string($messageName);
         Assertion::notEmpty($messageName);
 
-        if (! is_null($this->tmpMessageName)) {
+        if (null !== $this->tmpMessageName) {
             throw new Exception\RuntimeException(sprintf("Message %s is not mapped to a handler.", $this->tmpMessageName));
         }
 
@@ -95,7 +95,7 @@ class SingleHandlerRouter implements ActionEventListenerAggregate
             ));
         }
 
-        if (is_null($this->tmpMessageName)) {
+        if (null === $this->tmpMessageName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a message. Please use method route before calling method to",
                 (is_object($messageHandler))? get_class($messageHandler) : (is_string($messageHandler))? $messageHandler : gettype($messageHandler)
