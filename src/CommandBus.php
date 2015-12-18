@@ -74,6 +74,7 @@ class CommandBus extends MessageBus
                 while ($command = array_shift($this->commandQueue)) {
                     $this->processCommand($command);
                 }
+                $this->isDispatching = false;
             } catch (\Exception $e) {
                 $this->isDispatching = false;
                 throw CommandDispatchException::wrap($e, $this->commandQueue);
