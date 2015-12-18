@@ -125,7 +125,7 @@ abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaul
             if (! is_string($util) || ! $container->has($util)) {
                 throw new RuntimeException(sprintf(
                     'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',
-                    'prooph.service_bus.' . $this->containerId() . '.' . $index
+                    $this->vendorName() . '.service_bus.' . $this->containerId() . '.' . $index
                 ));
             }
 
