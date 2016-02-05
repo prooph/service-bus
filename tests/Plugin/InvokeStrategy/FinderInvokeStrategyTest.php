@@ -68,16 +68,16 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function it_determines_the_event_name_from_message_name_call_if_event_has_one()
+    public function it_determines_the_query_name_from_message_name_call_if_event_has_one()
     {
-        $onEventStrategy = new FinderInvokeStrategy();
-        $customEvent = new CustomMessageWithName("I am an event with a messageName() method");
+        $finderInvokeStrategy = new FinderInvokeStrategy();
+        $customQuery = new CustomMessageWithName("I am an event with a messageName() method");
 
-        $closure = function ($event) {
-            return $this->determineQueryName($event);
+        $closure = function ($query) {
+            return $this->determineQueryName($query);
         };
-        $determineEventName = $closure->bindTo($onEventStrategy, $onEventStrategy);
+        $determineQueryName = $closure->bindTo($finderInvokeStrategy, $finderInvokeStrategy);
 
-        $this->assertSame('CustomMessageWithSomeOtherName', $determineEventName($customEvent));
+        $this->assertSame('CustomMessageWithSomeOtherName', $determineQueryName($customQuery));
     }
 }

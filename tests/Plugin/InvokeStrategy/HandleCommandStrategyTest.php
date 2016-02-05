@@ -65,16 +65,16 @@ class HandleCommandStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_determines_the_event_name_from_message_name_call_if_event_has_one()
+    public function it_determines_the_command_name_from_message_name_call_if_event_has_one()
     {
-        $onEventStrategy = new HandleCommandStrategy();
-        $customEvent = new CustomMessageWithName("I am an event with a messageName() method");
+        $handleCommandStrategy = new HandleCommandStrategy();
+        $customCommand = new CustomMessageWithName("I am an event with a messageName() method");
 
-        $closure = function ($event) {
-            return $this->determineCommandName($event);
+        $closure = function ($command) {
+            return $this->determineCommandName($command);
         };
-        $determineEventName = $closure->bindTo($onEventStrategy, $onEventStrategy);
+        $determineCommandName = $closure->bindTo($handleCommandStrategy, $handleCommandStrategy);
 
-        $this->assertSame('CustomMessageWithSomeOtherName', $determineEventName($customEvent));
+        $this->assertSame('CustomMessageWithSomeOtherName', $determineCommandName($customCommand));
     }
 }
