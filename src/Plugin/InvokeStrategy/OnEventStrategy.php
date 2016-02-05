@@ -21,6 +21,8 @@ use Prooph\Common\Messaging\HasMessageName;
  */
 class OnEventStrategy extends AbstractInvokeStrategy
 {
+    protected $foo = 'bar';
+
     /**
      * @param mixed $handler
      * @param mixed $message
@@ -50,7 +52,7 @@ class OnEventStrategy extends AbstractInvokeStrategy
      */
     protected function determineEventName($event)
     {
-        $eventName = ($event instanceof HasMessageName)? $event->messageName() : is_object($event)? get_class($event) : gettype($event);
+        $eventName = ($event instanceof HasMessageName)? $event->messageName() : (is_object($event)? get_class($event) : gettype($event));
         return implode('', array_slice(explode('\\', $eventName), -1));
     }
 }
