@@ -69,7 +69,7 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
      */
     private function determineQueryName($query)
     {
-        $queryName = ($query instanceof HasMessageName)? $query->messageName() : is_object($query)? get_class($query) : gettype($query);
+        $queryName = ($query instanceof HasMessageName)? $query->messageName() : (is_object($query)? get_class($query) : gettype($query));
         return implode('', array_slice(explode('\\', $queryName), -1));
     }
 }

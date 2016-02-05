@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\CustomMessageCommandHandler;
+use ProophTest\ServiceBus\Mock\CustomMessageWithName;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\TestCase;
 
@@ -59,5 +60,21 @@ class HandleCommandStrategyTest extends TestCase
         $handleCommandStrategy->invoke($handleCommandHandler, $doSomething);
 
         $this->assertSame($doSomething, $handleCommandHandler->getLastMessage());
+    }
+
+    /**
+     * @test
+     */
+    public function it_determines_the_event_name_from_message_name_call_if_event_has_one()
+    {
+        $onEventStrategy = new HandleCommandStrategy();
+        $customEvent = new CustomMessageWithName("I am an event with a messageName() method");
+
+        $closure = function ($event) {
+            return $this->determineCommandName($event);
+        };
+        $determineEventName = $closure->bindTo($onEventStrategy, $onEventStrategy);
+
+        $this->assertSame('CustomMessageWithSomeOtherName', $determineEventName($customEvent));
     }
 }
