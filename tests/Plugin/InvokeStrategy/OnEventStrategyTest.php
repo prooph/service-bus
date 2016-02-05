@@ -51,11 +51,11 @@ class OnEventStrategyTest extends TestCase
         $onEventStrategy = new OnEventStrategy();
         $customEvent = new CustomMessageWithName("I am an event with a messageName() method");
 
-        $closure = function($event) {
+        $closure = function ($event) {
             return $this->determineEventName($event);
         };
         $determineEventName = $closure->bindTo($onEventStrategy, $onEventStrategy);
 
-        $this->assertSame('Result returned by messageName()', $determineEventName($customEvent));
+        $this->assertSame('CustomMessageWithSomeOtherName', $determineEventName($customEvent));
     }
 }

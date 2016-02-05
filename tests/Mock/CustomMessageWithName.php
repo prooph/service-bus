@@ -33,6 +33,6 @@ final class CustomMessageWithName implements HasMessageName
 
     public function messageName()
     {
-        return 'Result returned by messageName()';
+        return 'Prooph\Test\ServiceBus\Mock\CustomMessageWithSomeOtherName';
     }
 }
