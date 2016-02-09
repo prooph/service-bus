@@ -27,6 +27,9 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 
+    /**
+     * @var int
+     */
     protected $priority = 0;
 
     /**

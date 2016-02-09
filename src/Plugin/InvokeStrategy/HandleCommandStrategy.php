@@ -54,7 +54,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      */
     protected function determineCommandName($message)
     {
-        $eventName = ($message instanceof HasMessageName)? $message->messageName() : is_object($message)? get_class($message) : gettype($message);
+        $eventName = ($message instanceof HasMessageName)? $message->messageName() : (is_object($message)? get_class($message) : gettype($message));
         return implode('', array_slice(explode('\\', $eventName), -1));
     }
 }
