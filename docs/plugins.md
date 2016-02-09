@@ -135,7 +135,7 @@ $serviceManager = new ServiceManager(new Config([
 ]));
 
 //The ZF2\ServiceManager implements Interop\Container\ContainerInterface since v2.6
-$commandBus->utilize(new ServiceLocatorPlugin($serviceManager);
+$commandBus->utilize(new ServiceLocatorPlugin($serviceManager));
 
 $router = new CommandRouter();
 
