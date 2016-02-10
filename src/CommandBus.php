@@ -60,7 +60,7 @@ class CommandBus extends MessageBus
 
     /**
      * @param mixed $command
-     * @throws \Exception
+     * @throws CommandDispatchException
      * @return void
      */
     public function dispatch($command)
