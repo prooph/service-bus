@@ -26,9 +26,9 @@ class CommandBusFactory extends AbstractBusFactory
     /**
      * @inheritdoc
      */
-    public function containerId()
+    public function __construct($configId = 'command_bus')
     {
-        return 'command_bus';
+        parent::__construct($configId);
     }
 
     /**

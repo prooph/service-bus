@@ -22,6 +22,7 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Container\CommandBusFactory;
 use Prooph\ServiceBus\Container\EventBusFactory;
 use Prooph\ServiceBus\Container\QueryBusFactory;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
@@ -370,6 +371,41 @@ final class BusFactoriesTest extends TestCase
         $this->assertInstanceOf($busClass, $bus);
     }
 
+    /**
+     * @test
+     * @dataProvider provideBusFactoryClasses
+     */
+    public function it_creates_a_bus_from_static_call($busClass, $busFactoryClass)
+    {
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->has('config')->willReturn(true);
+        $container->has(MessageFactory::class)->willReturn(false);
+        $container->get('config')->willReturn([]);
+
+        $factory = [$busFactoryClass, 'other_config_id'];
+        self::assertInstanceOf($busClass, $factory($container->reveal()));
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_invalid_argument_exception_without_container_on_static_call()
+    {
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'The first argument must be of type Interop\Container\ContainerInterface'
+        );
+        CommandBusFactory::other_config_id();
+    }
+
+    public function provideBusFactoryClasses()
+    {
+        return [
+            [CommandBus::class, CommandBusFactory::class],
+            [EventBus::class, EventBusFactory::class],
+            [QueryBus::class, QueryBusFactory::class],
+        ];
+    }
 
     public function provideBuses()
     {
