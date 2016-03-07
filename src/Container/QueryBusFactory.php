@@ -20,7 +20,7 @@ use Prooph\ServiceBus\QueryBus;
  *
  * @package Prooph\ServiceBus\Container
  */
-class QueryBusFactory extends AbstractBusFactory
+final class QueryBusFactory extends AbstractBusFactory
 {
     /**
      * @inheritdoc
