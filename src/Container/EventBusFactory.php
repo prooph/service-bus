@@ -21,7 +21,7 @@ use Prooph\ServiceBus\Plugin\Router\EventRouter;
  * @package Prooph\ServiceBus\Container
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class EventBusFactory extends AbstractBusFactory
+final class EventBusFactory extends AbstractBusFactory
 {
     /**
      * @inheritdoc
