@@ -21,7 +21,7 @@ use Prooph\ServiceBus\Plugin\Router\CommandRouter;
  * @package Prooph\ServiceBus\Container
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class CommandBusFactory extends AbstractBusFactory
+class CommandBusFactory extends AbstractBusFactory
 {
     /**
      * @inheritdoc
