@@ -85,7 +85,8 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
      */
     public function __construct($configId)
     {
-        $this->configId = $configId;
+        // ensure BC
+        $this->configId = method_exists($this, 'containerId') ? $this->containerId() : $configId;
     }
 
     /**
