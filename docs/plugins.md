@@ -163,7 +163,7 @@ $zeromqProducer = $container->get('async_event_producer');
 //We now only need to set up a message producer plugin and let the message bus use it.
 $messageProducerPlugin = new \Prooph\ServiceBus\Plugin\MessageProducerPlugin($zeromqProducer);
 
-$eventBus = new \Prooph\ServiceBus\EvenBus();
+$eventBus = new \Prooph\ServiceBus\EventBus();
 
 $eventBus->utilize($messageProducerPlugin);
 
