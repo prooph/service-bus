@@ -28,7 +28,7 @@ or asynchronous, so the QueryBus returns a `React\Promise\Promise` to the callee
 
 ## API
 
-All three bus types extend the same base class `Prooph\ServiceBus\MessageBus` and therefor make use of an event-driven message dispatch process.
+All three bus types extend the same base class `Prooph\ServiceBus\MessageBus` and therefore make use of an event-driven message dispatch process.
 Take a look at the CommandBus API. It is the same for EventBus and QueryBus except that the QueryBus returns a promise from `QueryBus::dispatch`.
 
 ```php
