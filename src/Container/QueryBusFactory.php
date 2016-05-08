@@ -25,9 +25,9 @@ class QueryBusFactory extends AbstractBusFactory
     /**
      * @inheritdoc
      */
-    public function containerId()
+    public function __construct($configId = 'query_bus')
     {
-        return 'query_bus';
+        parent::__construct($configId);
     }
 
     /**

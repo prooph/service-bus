@@ -21,8 +21,6 @@ use Prooph\Common\Messaging\HasMessageName;
  */
 class OnEventStrategy extends AbstractInvokeStrategy
 {
-    protected $foo = 'bar';
-
     /**
      * @param mixed $handler
      * @param mixed $message
