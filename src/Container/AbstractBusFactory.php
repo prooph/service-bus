@@ -13,10 +13,11 @@
 namespace Prooph\ServiceBus\Container;
 
 use Interop\Config\ConfigurationTrait;
-use Interop\Config\RequiresContainerId;
+use Interop\Config\RequiresConfigId;
 use Interop\Config\ProvidesDefaultOptions;
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Messaging\MessageFactory;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
@@ -28,7 +29,7 @@ use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
  * @package Prooph\ServiceBus\Container
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaultOptions
+abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOptions
 {
     use ConfigurationTrait;
 
@@ -47,19 +48,53 @@ abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaul
     abstract protected function getDefaultRouterClass();
 
     /**
-     * @inheritdoc
+     * @var string
      */
-    public function vendorName()
+    private $configId;
+
+    /**
+     * Creates a new instance from a specified config, specifically meant to be used as static factory.
+     *
+     * In case you want to use another config key than provided by the factories, you can add the following factory to
+     * your config:
+     *
+     * <code>
+     * <?php
+     * return [
+     *     'prooph.service_bus.other' => [CommandBusFactory::class, 'other'],
+     * ];
+     * </code>
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public static function __callStatic($name, array $arguments)
     {
-        return 'prooph';
+        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+            throw new InvalidArgumentException(
+                sprintf('The first argument must be of type %s', ContainerInterface::class)
+            );
+        }
+        return (new static($name))->__invoke($arguments[0]);
+    }
+
+    /**
+     * @param string $configId
+     */
+    public function __construct($configId)
+    {
+        // ensure BC
+        $this->configId = method_exists($this, 'containerId') ? $this->containerId() : $configId;
     }
 
     /**
      * @inheritdoc
      */
-    public function packageName()
+    public function dimensions()
     {
-        return 'service_bus';
+        return ['prooph', 'service_bus'];
     }
 
     /**
@@ -88,7 +123,7 @@ abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaul
             $config = $container->get('config');
         }
 
-        $busConfig = $this->optionsWithFallback($config);
+        $busConfig = $this->optionsWithFallback($config, $this->configId);
 
         $busClass = $this->getBusClass();
 
@@ -119,13 +154,13 @@ abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaul
      * @param ContainerInterface $container
      * @throws RuntimeException
      */
-    private function attachPlugins(MessageBus $bus, array &$utils, ContainerInterface $container)
+    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container)
     {
         foreach ($utils as $index => $util) {
             if (! is_string($util) || ! $container->has($util)) {
                 throw new RuntimeException(sprintf(
                     'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',
-                    $this->vendorName() . '.service_bus.' . $this->containerId() . '.' . $index
+                    implode('.', $this->dimensions()) . '.' . $this->configId . '.' . $index
                 ));
             }
 
@@ -137,7 +172,7 @@ abstract class AbstractBusFactory implements RequiresContainerId, ProvidesDefaul
      * @param MessageBus $bus
      * @param array $routerConfig
      */
-    private function attachRouter(MessageBus $bus, array &$routerConfig)
+    private function attachRouter(MessageBus $bus, array $routerConfig)
     {
         $routerClass = isset($routerConfig['type']) ? (string)$routerConfig['type'] : $this->getDefaultRouterClass();
 

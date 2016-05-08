@@ -26,9 +26,9 @@ class EventBusFactory extends AbstractBusFactory
     /**
      * @inheritdoc
      */
-    public function containerId()
+    public function __construct($configId = 'event_bus')
     {
-        return 'event_bus';
+        parent::__construct($configId);
     }
 
     /**
