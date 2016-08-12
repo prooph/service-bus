@@ -121,7 +121,7 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished()
     {
@@ -134,7 +134,7 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_setting_a_handler_before_a_pattern_is_set()
     {
@@ -145,7 +145,7 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_when_routing_to_invalid_handler()
     {

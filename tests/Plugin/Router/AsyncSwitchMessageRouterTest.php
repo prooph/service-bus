@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use ProophTest\ServiceBus\TestCase;
 
@@ -23,8 +24,22 @@ use ProophTest\ServiceBus\TestCase;
  * @package ProophTest\ServiceBus\Plugin\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class SingleHandlerRouterTest extends TestCase
+class AsyncSwitchMessageRouterTest extends TestCase
 {
+    
+    
+    /*
+     * 
+     * route to async if has interface
+     * after routing does Event have marker
+     *  route to $router if no interface
+     *  route to async if meta marker not true
+     *  route to async then reroute and should go to decorated
+     */
+    
+    
+    
+    
     /**
      * @test
      */
@@ -59,7 +74,7 @@ class SingleHandlerRouterTest extends TestCase
      */
     public function it_returns_early_when_message_name_is_empty()
     {
-        $router = new CommandRouter();
+        $router = new AsyncSwitchMessageRouter();
 
         $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
 
