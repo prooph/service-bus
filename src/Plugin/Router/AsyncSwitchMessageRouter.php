@@ -15,6 +15,7 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
+use Prooph\Common\Messaging\Message;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
@@ -73,6 +74,9 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
         }
 
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+
+
+        if (is_object($message) && $message instanceof Message)
 
         $messageMetadata = $message->metadata();
 

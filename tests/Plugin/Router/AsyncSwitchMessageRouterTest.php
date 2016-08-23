@@ -12,10 +12,12 @@
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
+use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
+use Prooph\ServiceBus\Plugin\Router\SingleHandlerRouter;
 use ProophTest\ServiceBus\TestCase;
 
 /**
@@ -69,23 +71,37 @@ class AsyncSwitchMessageRouterTest extends TestCase
 //        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to(null);
 //    }
 //
-//    /**
-//     * @test
-//     */
-//    public function it_returns_early_when_message_name_is_empty()
-//    {
-//        $router = new AsyncSwitchMessageRouter();
-//
+    /**
+     * @test
+     */
+    public function it_returns_early_when_message_name_is_empty()
+    {
+        $messageProducer = $this->prophesize(MessageProducer::class);
+        
+        $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
+
 //        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
-//
-//        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-//            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
-//        ]);
-//
-//        $router->onRouteMessage($actionEvent);
-//
-//        $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
-//    }
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
+            
+            
+        ]);
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INITIALIZE, new CommandBus(), [
+            //We provide message as array containing a "message_name" key because only in this case the factory plugin
+            //gets active
+            MessageBus::EVENT_PARAM_MESSAGE => [
+                'message_name' => 'custom-message',
+                'payload' => ["some data"]
+            ]
+        ]);
+        
+
+        $router->onRouteMessage($actionEvent);
+
+        $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+    }
 //
 //    /**
 //     * @test
