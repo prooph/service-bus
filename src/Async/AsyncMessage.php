@@ -8,7 +8,7 @@
  *
  * Date: 2016-08-11T08:16:00Z
  */
-namespace Prooph\ServiceBus\Plugin\Router;
+namespace Prooph\ServiceBus\Async;
 
 /**
  * Class AsyncMessage

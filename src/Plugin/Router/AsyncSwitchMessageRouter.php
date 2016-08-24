@@ -15,7 +15,7 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
-use Prooph\Common\Messaging\Message;
+use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
@@ -66,7 +66,6 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
      */
     public function onRouteMessage(ActionEvent $actionEvent)
     {
-
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if (empty($messageName)) {
@@ -75,18 +74,18 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
 
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
+//        if (is_object($message) && $message instanceof Message)
+//           $messageMetadata = $message->metadata();
 
-        if (is_object($message) && $message instanceof Message)
-
-        $messageMetadata = $message->metadata();
 
         //if the message is marked as async, but had not yet been sent via async then send to async producer
-        if ($message instanceof AsyncMessage && !(isset($messageMetadata['handled-by-async-queue']) && $messageMetadata['handled-by-async-queue'] === true)){
+        if ($message instanceof AsyncMessage && !($message->metadata()['handled-async'] == false)){
+//            if ($message instanceof AsyncMessage && !(isset($messageMetadata['handled-by-async-queue']) && $messageMetadata['handled-by-async-queue'] === true)){
 
             //apply meta data, this is need to we can identify that the message has already been send via the async bus
-            $message = $message->withAddedMetadata('handled-by-async-queue', true);
+            $message = $message->withAddedMetadata('handled-async', true);
 
-            // update the action with the updated message.
+            // update
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->asyncMessageProducer);
 
