@@ -86,9 +86,8 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
             //apply meta data, this is need to we can identify that the message has already been send via the async bus
             $message = $message->withAddedMetadata('handled-by-async-queue', true);
 
-            // TODO: do I need to re add the message back into the ActionEvent?
-//            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
-
+            // update the action with the updated message.
+            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->asyncMessageProducer);
 
             return;
