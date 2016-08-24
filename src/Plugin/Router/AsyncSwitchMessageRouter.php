@@ -74,27 +74,20 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
 
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
-//        if (is_object($message) && $message instanceof Message)
-//           $messageMetadata = $message->metadata();
+        //if the message is marked with AsyncMessage, but had not yet been sent via async then sent to async producer
+        if ($message instanceof AsyncMessage && !(isset($messageMetadata['handled-async']) && $messageMetadata['handled-async'] === true)){
 
-
-        //if the message is marked as async, but had not yet been sent via async then send to async producer
-        if ($message instanceof AsyncMessage && !($message->metadata()['handled-async'] == false)){
-//            if ($message instanceof AsyncMessage && !(isset($messageMetadata['handled-by-async-queue']) && $messageMetadata['handled-by-async-queue'] === true)){
-
-            //apply meta data, this is need to we can identify that the message has already been send via the async bus
+            //apply meta data, this is need to we can identify that the message has already been send via the async producer
             $message = $message->withAddedMetadata('handled-async', true);
 
-            // update
+            // update ActionEvent
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->asyncMessageProducer);
 
             return;
         }
 
-
         // pass ActionEvent to decorated router
         return $this->router->onRouteMessage($actionEvent);
-
     }
 }
