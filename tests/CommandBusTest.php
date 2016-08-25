@@ -182,7 +182,7 @@ final class CommandBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\MessageDispatchException
+     * @expectedException \Prooph\ServiceBus\Exception\MessageDispatchException
      */
     public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin()
     {
@@ -201,7 +201,7 @@ final class CommandBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_throws_exception_if_event_has_no_handler_after_it_has_been_set_and_event_was_triggered()
     {
@@ -216,14 +216,14 @@ final class CommandBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_throws_exception_if_message_was_not_handled()
     {
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_INITIALIZE,
             function (ActionEvent $e) {
-                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
             }
         );
 
