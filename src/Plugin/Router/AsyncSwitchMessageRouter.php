@@ -17,7 +17,6 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
-use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -90,3 +89,4 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
         return $this->router->onRouteMessage($actionEvent);
     }
 }
+

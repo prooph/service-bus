@@ -38,7 +38,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     public function it_returns_early_when_message_name_is_empty()
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
-        
+
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INITIALIZE, new CommandBus(), [
@@ -80,7 +80,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $rtn = $router->onRouteMessage($actionEvent);
 
         $this->assertEquals('handled-by-decorated-router', $rtn);
-        
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayNotHasKey('handled-async', $updatedMessage->metadata());
     }
@@ -123,7 +122,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
 
         $message = AsyncCommand::createCommand('test-data');
         $message = $message->withAddedMetadata('handled-async', true);
-        
+
         $actionEvent = new DefaultActionEvent(
             AsyncCommand::class,
             null,
@@ -139,9 +138,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $rtn = $router->onRouteMessage($actionEvent);
 
         $this->assertEquals('handled-by-decorated-router', $rtn);
-
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
-
         $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
         $this->assertTrue($updatedMessage->metadata()['handled-async']);
     }
