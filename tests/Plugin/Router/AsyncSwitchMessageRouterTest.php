@@ -12,6 +12,10 @@
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
+use Prooph\Common\Messaging\Command;
+use Prooph\Common\Messaging\PayloadConstructable;
+use Prooph\Common\Messaging\PayloadTrait;
+use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
@@ -30,47 +34,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
 {
     
     
-    /*
-     * 
-     * route to async if has interface
-     * after routing does Event have marker
-     *  route to $router if no interface
-     *  route to async if meta marker not true
-     *  route to async then reroute and should go to decorated
-     */
-    
-    
-    
-//    
-//    /**
-//     * @test
-//     */
-//    public function it_can_handle_routing_definition_by_chaining_route_to()
-//    {
-//        $router = new CommandRouter();
-//
-//        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
-//
-//        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-//            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
-//        ]);
-//
-//        $router->onRouteMessage($actionEvent);
-//
-//        $this->assertEquals("DoSomethingHandler", $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
-//    }
-//
-//    /**
-//     * @test
-//     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
-//     */
-//    public function it_fails_when_routing_to_invalid_handler()
-//    {
-//        $router = new CommandRouter();
-//
-//        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to(null);
-//    }
-//
     /**
      * @test
      */
@@ -79,14 +42,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $messageProducer = $this->prophesize(MessageProducer::class);
         
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
-
-//        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
-
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
-            
-            
-        ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INITIALIZE, new CommandBus(), [
             //We provide message as array containing a "message_name" key because only in this case the factory plugin
@@ -102,66 +57,126 @@ class AsyncSwitchMessageRouterTest extends TestCase
 
         $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }
-//
-//    /**
-//     * @test
-//     */
-//    public function it_returns_early_when_message_name_is_not_in_event_map()
-//    {
-//        $router = new CommandRouter();
-//
-//        $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to("DoSomethingHandler");
-//
-//        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-//            '' => 'ProophTest\ServiceBus\Mock\DoSomething',
-//        ]);
-//
-//        $router->onRouteMessage($actionEvent);
-//
-//        $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
-//    }
-//
-//    /**
-//     * @test
-//     */
-//    public function it_fails_on_routing_a_second_command_before_first_definition_is_finished()
-//    {
-//        $router = new CommandRouter();
-//
-//        $router->route('ProophTest\ServiceBus\Mock\DoSomething');
-//
-//        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
-//
-//        $router->route('AnotherCommand');
-//    }
-//
-//    /**
-//     * @test
-//     */
-//    public function it_fails_on_setting_a_handler_before_a_command_is_set()
-//    {
-//        $router = new CommandRouter();
-//
-//        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
-//
-//        $router->to('DoSomethingHandler');
-//    }
-//
-//    /**
-//     * @test
-//     */
-//    public function it_takes_a_routing_definition_on_instantiation()
-//    {
-//        $router = new CommandRouter([
-//            'ProophTest\ServiceBus\Mock\DoSomething' => 'DoSomethingHandler'
-//        ]);
-//
-//        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-//            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
-//        ]);
-//
-//        $router->onRouteMessage($actionEvent);
-//
-//        $this->assertEquals("DoSomethingHandler", $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
-//    }
+
+
+    /**
+     * @test
+     */
+    public function unmarked_message_is_passed_to_decorated_router()
+    {
+        $messageProducer = $this->prophesize(MessageProducer::class);
+        $decoratedRouter = $this->prophesize(SingleHandlerRouter::class);
+
+        $message = NonAsyncCommand::createCommand('test-data');
+        
+        $actionEvent = new DefaultActionEvent(
+            AsyncCommand::class,
+            null,
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE => $message
+            ]
+        );
+
+        $decoratedRouter->onRouteMessage($actionEvent)->willReturn('handled-by-decorated-router');
+
+        $router = new AsyncSwitchMessageRouter($decoratedRouter->reveal(), $messageProducer->reveal());
+        $rtn = $router->onRouteMessage($actionEvent);
+
+        $this->assertEquals('handled-by-decorated-router', $rtn);
+        
+        $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+        $this->assertArrayNotHasKey('handled-async', $updatedMessage->metadata());
+    }
+
+    /**
+    * @test
+    */
+    public function marked_message_is_passed_to_async_producer()
+    {
+        $messageProducer = $this->prophesize(MessageProducer::class);
+
+        $message = AsyncCommand::createCommand('test-data');
+        $actionEvent = new DefaultActionEvent(
+            AsyncCommand::class,
+            null,
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE => $message
+            ]
+        );
+
+
+        $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
+        $router->onRouteMessage($actionEvent);
+
+        $this->assertEquals($messageProducer->reveal(), $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+
+        $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+        $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
+        $this->assertTrue($updatedMessage->metadata()['handled-async']);
+    }
+
+    //test marked message and already sent via async gets routed to async provider gets passed to decorated class
+    /**
+     * @test
+     */
+    public function marked_message_is_passed_to_decorated_router_as_already_handled_by_async_provider()
+    {
+        $messageProducer = $this->prophesize(MessageProducer::class);
+        $decoratedRouter = $this->prophesize(SingleHandlerRouter::class);
+
+        $message = AsyncCommand::createCommand('test-data');
+        $message = $message->withAddedMetadata('handled-async', true);
+        
+        $actionEvent = new DefaultActionEvent(
+            AsyncCommand::class,
+            null,
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE => $message
+            ]
+        );
+
+        $decoratedRouter->onRouteMessage($actionEvent)->willReturn('handled-by-decorated-router');
+
+        $router = new AsyncSwitchMessageRouter($decoratedRouter->reveal(), $messageProducer->reveal());
+        $rtn = $router->onRouteMessage($actionEvent);
+
+        $this->assertEquals('handled-by-decorated-router', $rtn);
+
+        $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+
+        $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
+        $this->assertTrue($updatedMessage->metadata()['handled-async']);
+    }
+}
+
+class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
+{
+    use PayloadTrait;
+    /**
+     * @param string $data
+     * @return AsyncCommand
+     */
+    public static function createCommand($data)
+    {
+        return new self([
+            'data' => $data
+        ]);
+    }
+}
+class NonAsyncCommand extends Command implements PayloadConstructable
+{
+    use PayloadTrait;
+    /**
+     * @param string $data
+     * @return NonAsyncCommand
+     */
+    public static function createCommand($data)
+    {
+        return new self([
+            'data' => $data
+        ]);
+    }
 }
