@@ -55,7 +55,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }
 
-
     /**
      * @test
      */
@@ -111,7 +110,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $this->assertTrue($updatedMessage->metadata()['handled-async']);
     }
 
-    //test marked message and already sent via async gets routed to async provider gets passed to decorated class
     /**
      * @test
      */
