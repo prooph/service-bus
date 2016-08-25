@@ -20,5 +20,4 @@ namespace Prooph\ServiceBus\Async;
  */
 interface AsyncMessage
 {
-
 }

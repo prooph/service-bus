@@ -20,7 +20,6 @@ use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
-use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use Prooph\ServiceBus\Plugin\Router\SingleHandlerRouter;
 use ProophTest\ServiceBus\TestCase;
 
@@ -32,7 +31,6 @@ use ProophTest\ServiceBus\TestCase;
  */
 class AsyncSwitchMessageRouterTest extends TestCase
 {
-    
     
     /**
      * @test
@@ -51,7 +49,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
                 'payload' => ["some data"]
             ]
         ]);
-        
 
         $router->onRouteMessage($actionEvent);
 
@@ -68,7 +65,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $decoratedRouter = $this->prophesize(SingleHandlerRouter::class);
 
         $message = NonAsyncCommand::createCommand('test-data');
-        
         $actionEvent = new DefaultActionEvent(
             AsyncCommand::class,
             null,
@@ -105,7 +101,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
                 MessageBus::EVENT_PARAM_MESSAGE => $message
             ]
         );
-
 
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
         $router->onRouteMessage($actionEvent);
