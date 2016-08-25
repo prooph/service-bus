@@ -89,4 +89,3 @@ class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
         return $this->router->onRouteMessage($actionEvent);
     }
 }
-

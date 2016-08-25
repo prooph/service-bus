@@ -31,7 +31,7 @@ use ProophTest\ServiceBus\TestCase;
  */
 class AsyncSwitchMessageRouterTest extends TestCase
 {
-    
+
     /**
      * @test
      */
