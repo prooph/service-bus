@@ -223,7 +223,7 @@ final class CommandBusTest extends TestCase
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_INITIALIZE,
             function (ActionEvent $e) {
-                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
             }
         );
 
