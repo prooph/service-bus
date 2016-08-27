@@ -25,7 +25,7 @@ use Prooph\ServiceBus\MessageBus;
  * @package Prooph\ServiceBus\Router
  * @author Guy Radford <guyr@crazylime.co.uk>
  */
-class AsyncSwitchMessageRouter implements ActionEventListenerAggregate
+class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 
