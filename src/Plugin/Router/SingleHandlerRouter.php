@@ -25,7 +25,7 @@ use Prooph\ServiceBus\MessageBus;
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class SingleHandlerRouter implements ActionEventListenerAggregate
+class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 
