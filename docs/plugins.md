@@ -83,6 +83,31 @@ $router->route('/^My\.Event\.Article.*/')->to(new InventoryUpdater());
 $eventBus->utilize($router);
 ```
 
+### Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter
+
+The `AsyncSwitchMessageRouter` Router allows you to easily set up a single router to handle both your async and sync messages.
+
+To send messages via the Async Provider mark them with the `Prooph\ServiceBus\Async\AsyncMessage` interface.
+
+The `AsyncSwitchMessageRouter` is a decorator that wraps your router. The first time the `AsyncSwitchMessageRouter` sees an async message it is sent via the Async Provider, after that the message is routed normally.
+
+```
+//You can define your primary router...
+$myRouter = new MyRouter();
+
+// Create async message producer...
+$asyncMessageProducer = new AsyncMessageProducerFactory();
+
+// create your AsyncSwitchMessageRouter decorating your router...
+$router = new AsyncSwitchMessageRouter(
+    $myRouter,
+    $asyncMessageProducer
+);
+        
+//Add the router to a CommandBus
+$commandBus->utilize($router);
+```
+
 ## Invoke Strategies
 
 An invoke strategy knows how a message handler can be invoked. You can register many invoke strategies at once depending on
