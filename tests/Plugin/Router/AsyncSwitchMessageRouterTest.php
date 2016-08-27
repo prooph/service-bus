@@ -11,6 +11,7 @@
 
 namespace ProophTest\ServiceBus\Plugin\Router;
 
+use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Messaging\Command;
 use Prooph\Common\Messaging\PayloadConstructable;
@@ -31,6 +32,36 @@ use ProophTest\ServiceBus\TestCase;
  */
 class AsyncSwitchMessageRouterTest extends TestCase
 {
+
+    /**
+     * @test
+     */
+    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize()
+    {
+//        $messageProducer = $this->prophesize(MessageProducer::class);
+//        $commandBus = $this->prophesize(CommandBus::class);
+//        $actionEvent = $this->prophesize(ActionEvent::class);
+        $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
+        $listenerHandler = $this->prophesize(ListenerHandler::class);
+
+        $messageProducer = $this->prophesize(MessageProducer::class);
+
+        $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
+
+        $actionEventEmitter
+            ->attachListener(MessageBus::EVENT_ROUTE, [$router, 'onRouteMessage'])
+            ->willReturn($listenerHandler->reveal())
+            ->shouldBeCalled();
+
+        $router->attach($actionEventEmitter->reveal());
+
+//        $actionEvent->getTarget()->willReturn($commandBus->reveal());
+//
+//        $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $messageProducer->reveal())->shouldBeCalled();
+//
+//        $messageProducerPlugin->onDispatchInitialize($actionEvent->reveal());
+    }
+
 
     /**
      * @test
