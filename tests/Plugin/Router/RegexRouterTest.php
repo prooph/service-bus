@@ -39,7 +39,7 @@ class RegexRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
-        $regexRouter->onRoute($actionEvent);
+        $regexRouter->onRouteMessage($actionEvent);
 
         $this->assertEquals("DoSomethingHandler", $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }
@@ -57,7 +57,7 @@ class RegexRouterTest extends TestCase
             '' => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
-        $regexRouter->onRoute($actionEvent);
+        $regexRouter->onRouteMessage($actionEvent);
 
         $this->assertEmpty($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }
@@ -78,7 +78,7 @@ class RegexRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
-        $regexRouter->onRoute($actionEvent);
+        $regexRouter->onRouteMessage($actionEvent);
     }
 
     /**
@@ -95,7 +95,7 @@ class RegexRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
         ]);
 
-        $regexRouter->onRoute($actionEvent);
+        $regexRouter->onRouteMessage($actionEvent);
 
         $this->assertEquals(["SomethingDoneListener1", "SomethingDoneListener2"], $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS));
     }
@@ -114,14 +114,14 @@ class RegexRouterTest extends TestCase
             '' => 'ProophTest\ServiceBus\Mock\SomethingDone',
         ]);
 
-        $regexRouter->onRoute($actionEvent);
+        $regexRouter->onRouteMessage($actionEvent);
 
         $this->assertEmpty($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS));
     }
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished()
     {
@@ -134,7 +134,7 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
+     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_setting_a_handler_before_a_pattern_is_set()
     {
@@ -145,7 +145,7 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_when_routing_to_invalid_handler()
     {
@@ -158,6 +158,34 @@ class RegexRouterTest extends TestCase
      * @test
      */
     public function it_takes_a_routing_definition_on_instantiation()
+    {
+        $router = new RegexRouter([
+            '/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
+            '/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ["SomethingDoneListener1", "SomethingDoneListener2"]
+
+        ]);
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
+        ]);
+
+        $router->onRouteMessage($actionEvent);
+
+        $this->assertEquals("DoSomethingHandler", $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+
+        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
+            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
+        ]);
+
+        $router->onRouteMessage($actionEvent);
+
+        $this->assertEquals(["SomethingDoneListener1", "SomethingDoneListener2"], $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS));
+    }
+
+    /**
+     * @test
+     */
+    public function it_still_works_if_deprecated_method_on_route_is_used()
     {
         $router = new RegexRouter([
             '/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',

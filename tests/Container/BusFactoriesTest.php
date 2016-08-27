@@ -156,8 +156,8 @@ final class BusFactoriesTest extends TestCase
                         'router' => [
                             'routes' => [
                                 'test_message' => function (Message $message) use (&$handlerWasCalled) {
-                                        $handlerWasCalled = true;
-                                    }
+                                    $handlerWasCalled = true;
+                                }
                             ]
                         ]
                     ]
@@ -195,8 +195,8 @@ final class BusFactoriesTest extends TestCase
                             'type' => RegexRouter::class,
                             'routes' => [
                                 '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
-                                        $handlerWasCalled = true;
-                                    }
+                                    $handlerWasCalled = true;
+                                }
                             ]
                         ]
                     ]

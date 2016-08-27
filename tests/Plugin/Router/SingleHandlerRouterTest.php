@@ -45,7 +45,7 @@ class SingleHandlerRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_when_routing_to_invalid_handler()
     {

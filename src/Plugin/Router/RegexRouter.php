@@ -28,7 +28,7 @@ use Prooph\ServiceBus\QueryBus;
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class RegexRouter implements ActionEventListenerAggregate
+class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 
@@ -69,7 +69,7 @@ class RegexRouter implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRoute'], 100));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage'], 100));
     }
 
     /**
@@ -123,13 +123,22 @@ class RegexRouter implements ActionEventListenerAggregate
     /**
      * @param ActionEvent $actionEvent
      */
-    public function onRoute(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent)
     {
         if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) {
             $this->onRouteToSingleHandler($actionEvent);
         } else {
             $this->onRouteEvent($actionEvent);
         }
+    }
+
+    /**
+     * @param ActionEvent $actionEvent
+     * @deprecated Will be removed with v6.0, use method onRouteMessage instead
+     */
+    public function onRoute(ActionEvent $actionEvent)
+    {
+        $this->onRouteMessage($actionEvent);
     }
 
     /**

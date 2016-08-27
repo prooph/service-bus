@@ -26,7 +26,7 @@ use Prooph\ServiceBus\MessageBus;
  * @package Prooph\ServiceBus\Router
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class EventRouter implements ActionEventListenerAggregate
+class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 
@@ -67,7 +67,7 @@ class EventRouter implements ActionEventListenerAggregate
      */
     public function attach(ActionEventEmitter $events)
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteEvent"]));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
     /**
@@ -133,7 +133,7 @@ class EventRouter implements ActionEventListenerAggregate
     /**
      * @param ActionEvent $actionEvent
      */
-    public function onRouteEvent(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent)
     {
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
@@ -150,5 +150,14 @@ class EventRouter implements ActionEventListenerAggregate
         $listeners = array_merge($listeners, $this->eventMap[$messageName]);
 
         $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
+    }
+
+    /**
+     * @param ActionEvent $actionEvent
+     * @deprecated Will be removed with v6.0, use method onRouteMessage instead
+     */
+    public function onRouteEvent(ActionEvent $actionEvent)
+    {
+        $this->onRouteMessage($actionEvent);
     }
 }
