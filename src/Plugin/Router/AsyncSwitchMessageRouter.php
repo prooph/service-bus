@@ -35,16 +35,16 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
     protected $router;
 
     /**
-     * @var MessageProducer
+     * @var MessageBusRouterPlugin
      */
     protected $asyncMessageProducer;
 
 
     /**
      * @param ActionEventListenerAggregate $router
-     * @param MessageProducer $asyncMessageProducer
+     * @param MessageBusRouterPlugin $asyncMessageProducer
      */
-    public function __construct(ActionEventListenerAggregate $router, MessageProducer $asyncMessageProducer)
+    public function __construct(ActionEventListenerAggregate $router, MessageBusRouterPlugin $asyncMessageProducer)
     {
         $this->router = $router;
         $this->asyncMessageProducer = $asyncMessageProducer;
