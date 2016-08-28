@@ -96,7 +96,7 @@ The `AsyncSwitchMessageRouter` is a decorator that wraps your router. The first 
 $myRouter = new MyRouter();
 
 // Create async message producer...
-$asyncMessageProducer = new AsyncMessageProducerFactory();
+$asyncMessageProducer = new AsyncMessageProducer();
 
 // create your AsyncSwitchMessageRouter decorating your router...
 $router = new AsyncSwitchMessageRouter(

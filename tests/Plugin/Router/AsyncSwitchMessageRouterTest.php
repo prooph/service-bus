@@ -14,15 +14,13 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Event\ListenerHandler;
-use Prooph\Common\Messaging\Command;
-use Prooph\Common\Messaging\PayloadConstructable;
-use Prooph\Common\Messaging\PayloadTrait;
-use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\Router\MessageBusRouterPlugin;
 use Prooph\ServiceBus\Plugin\Router\SingleHandlerRouter;
+use ProophTest\ServiceBus\Mock\AsyncCommand;
+use ProophTest\ServiceBus\Mock\NonAsyncCommand;
 use ProophTest\ServiceBus\TestCase;
 
 /**
@@ -162,34 +160,5 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
         $this->assertTrue($updatedMessage->metadata()['handled-async']);
-    }
-}
-
-class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
-{
-    use PayloadTrait;
-    /**
-     * @param string $data
-     * @return AsyncCommand
-     */
-    public static function createCommand($data)
-    {
-        return new self([
-            'data' => $data
-        ]);
-    }
-}
-class NonAsyncCommand extends Command implements PayloadConstructable
-{
-    use PayloadTrait;
-    /**
-     * @param string $data
-     * @return NonAsyncCommand
-     */
-    public static function createCommand($data)
-    {
-        return new self([
-            'data' => $data
-        ]);
     }
 }
