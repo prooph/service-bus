@@ -87,9 +87,9 @@ $eventBus->utilize($router);
 
 The `AsyncSwitchMessageRouter` Router allows you to easily set up a single router to handle both your async and sync messages.
 
-To send messages via the Async Provider mark them with the `Prooph\ServiceBus\Async\AsyncMessage` interface.
+To send messages via the Async Producer mark them with the `Prooph\ServiceBus\Async\AsyncMessage` interface.
 
-The `AsyncSwitchMessageRouter` is a decorator that wraps your router. The first time the `AsyncSwitchMessageRouter` sees an async message it is sent via the Async Provider, after that the message is routed normally.
+The `AsyncSwitchMessageRouter` is a decorator that wraps your router. The first time the `AsyncSwitchMessageRouter` sees an async message it is sent via the Async Producer, after that the message is routed normally.
 
 ```
 //You can define your primary router...
