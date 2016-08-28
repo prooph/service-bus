@@ -16,7 +16,6 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
-use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\MessageBus;
 
 /**

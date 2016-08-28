@@ -18,7 +18,6 @@ use Prooph\Common\Messaging\Command;
 use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
 use Prooph\ServiceBus\Async\AsyncMessage;
-use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
