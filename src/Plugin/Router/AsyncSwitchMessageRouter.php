@@ -16,6 +16,7 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
+use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -29,21 +30,21 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
     use DetachAggregateHandlers;
 
     /**
-     * @var ActionEventListenerAggregate
+     * @var MessageBusRouterPlugin
      */
     protected $router;
 
     /**
-     * @var MessageBusRouterPlugin
+     * @var MessageProducer
      */
     protected $asyncMessageProducer;
 
 
     /**
-     * @param ActionEventListenerAggregate $router
-     * @param MessageBusRouterPlugin $asyncMessageProducer
+     * @param MessageBusRouterPlugin $router
+     * @param MessageProducer $asyncMessageProducer
      */
-    public function __construct(ActionEventListenerAggregate $router, MessageBusRouterPlugin $asyncMessageProducer)
+    public function __construct(MessageBusRouterPlugin $router, MessageProducer $asyncMessageProducer)
     {
         $this->router = $router;
         $this->asyncMessageProducer = $asyncMessageProducer;

@@ -14,10 +14,10 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Event\ListenerHandler;
+use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
-use Prooph\ServiceBus\Plugin\Router\MessageBusRouterPlugin;
 use Prooph\ServiceBus\Plugin\Router\SingleHandlerRouter;
 use ProophTest\ServiceBus\Mock\AsyncCommand;
 use ProophTest\ServiceBus\Mock\NonAsyncCommand;
@@ -40,7 +40,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
         $listenerHandler = $this->prophesize(ListenerHandler::class);
 
-        $messageProducer = $this->prophesize(MessageBusRouterPlugin::class);
+        $messageProducer = $this->prophesize(MessageProducer::class);
 
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
 
@@ -58,7 +58,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
      */
     public function it_returns_early_when_message_name_is_empty()
     {
-        $messageProducer = $this->prophesize(MessageBusRouterPlugin::class);
+        $messageProducer = $this->prophesize(MessageProducer::class);
 
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
 
@@ -81,7 +81,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
      */
     public function unmarked_message_is_passed_to_decorated_router()
     {
-        $messageProducer = $this->prophesize(MessageBusRouterPlugin::class);
+        $messageProducer = $this->prophesize(MessageProducer::class);
         $decoratedRouter = $this->prophesize(SingleHandlerRouter::class);
 
         $message = NonAsyncCommand::createCommand('test-data');
@@ -109,7 +109,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     */
     public function marked_message_is_passed_to_async_producer()
     {
-        $messageProducer = $this->prophesize(MessageBusRouterPlugin::class);
+        $messageProducer = $this->prophesize(MessageProducer::class);
 
         $message = AsyncCommand::createCommand('test-data');
         $actionEvent = new DefaultActionEvent(
@@ -136,7 +136,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
      */
     public function marked_message_is_passed_to_decorated_router_as_already_handled_by_async_provider()
     {
-        $messageProducer = $this->prophesize(MessageBusRouterPlugin::class);
+        $messageProducer = $this->prophesize(MessageProducer::class);
         $decoratedRouter = $this->prophesize(SingleHandlerRouter::class);
 
         $message = AsyncCommand::createCommand('test-data');
