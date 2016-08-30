@@ -91,7 +91,7 @@ class EventRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\InvalidArgumentException
+     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_on_setting_an_invalid_listener()
     {
