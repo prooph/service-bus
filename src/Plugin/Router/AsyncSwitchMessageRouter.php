@@ -17,7 +17,10 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\QueryBus;
 
 /**
  * Class AsyncSwitchMessageRouter
@@ -80,7 +83,16 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
 
             // update ActionEvent
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
-            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->asyncMessageProducer);
+
+            if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) {
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->asyncMessageProducer);
+            } else {
+                //Target is an event bus so we set message producer as the only listener of the message
+                $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$this->asyncMessageProducer]);
+            }
+
+
+
 
             return;
         }

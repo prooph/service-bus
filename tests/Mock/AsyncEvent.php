@@ -6,27 +6,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Date: 08/28/16 - 8:35 PM
+ * Date: 08/30/16 - 8:35 PM
  */
-
 namespace ProophTest\ServiceBus\Mock;
 
-use Prooph\Common\Messaging\Command;
+use Prooph\Common\Messaging\DomainEvent;
 use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
 use Prooph\ServiceBus\Async\AsyncMessage;
 
-class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
+final class AsyncEvent extends DomainEvent implements PayloadConstructable, AsyncMessage
 {
     use PayloadTrait;
-    /**
-     * @param string $data
-     * @return AsyncCommand
-     */
-    public static function createCommand($data)
+
+    public static function createEvent($data)
     {
-        return new self([
-            'data' => $data
-        ]);
+        return new self(['data' => $data]);
     }
 }
