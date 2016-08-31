@@ -1,12 +1,10 @@
 <?php
 /*
  * This file is part of the prooph/service-bus.
- * (c) 2014 - 2015 prooph software GmbH <contact@prooph.de>
+ * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * Date: 03/11/14 - 21:40
  */
 
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
