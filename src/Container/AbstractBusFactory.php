@@ -21,6 +21,7 @@ use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
+use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 
 /**
@@ -134,7 +135,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         }
 
         if (isset($busConfig['router'])) {
-            $this->attachRouter($bus, $busConfig['router']);
+            $this->attachRouter($bus, $busConfig['router'], $container);
         }
 
         if ((bool) $busConfig['enable_handler_location']) {
@@ -171,14 +172,21 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
     /**
      * @param MessageBus $bus
      * @param array $routerConfig
+     * @param ContainerInterface $container
      */
-    private function attachRouter(MessageBus $bus, array $routerConfig)
+    private function attachRouter(MessageBus $bus, array $routerConfig, ContainerInterface $container)
     {
         $routerClass = isset($routerConfig['type']) ? (string)$routerConfig['type'] : $this->getDefaultRouterClass();
 
         $routes = isset($routerConfig['routes']) ? $routerConfig['routes'] : [];
 
         $router = new $routerClass($routes);
+
+        if (isset($routerConfig['async_switch'])) {
+            $asyncMessageProducer = $container->get($routerConfig['async_switch']);
+
+            $router = new AsyncSwitchMessageRouter($router, $asyncMessageProducer);
+        }
 
         $bus->utilize($router);
     }

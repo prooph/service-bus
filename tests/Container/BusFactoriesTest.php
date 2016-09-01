@@ -17,6 +17,7 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Messaging\Message;
 use Prooph\Common\Messaging\MessageFactory;
+use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Container\CommandBusFactory;
@@ -26,6 +27,7 @@ use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
+use ProophTest\ServiceBus\Mock\NoopMessageProducer;
 use ProophTest\ServiceBus\TestCase;
 use Prophecy\Argument;
 
@@ -253,6 +255,55 @@ final class BusFactoriesTest extends TestCase
         $bus->dispatch($message->reveal());
 
         $this->assertTrue($handlerWasCalled);
+    }
+
+    /**
+     * @test
+     * @dataProvider provideBuses
+     */
+    public function it_decorates_router_with_async_switch_and_pulls_async_message_producer_from_container($busClass, $busConfigKey, $busFactory)
+    {
+        $container = $this->prophesize(ContainerInterface::class);
+        $message = $this->prophesize(Message::class);
+        $message->willImplement(AsyncMessage::class);
+        $messageFactory = $this->prophesize(MessageFactory::class);
+        $messageProducer = new NoopMessageProducer();
+        $container->get('noop_message_producer')->willReturn($messageProducer);
+
+        $message->messageName()->willReturn('test_message');
+        $message->metadata()->willReturn([]);
+        $message->withAddedMetadata('handled-async', true)->willReturn($message->reveal());
+        $handlerWasCalled = false;
+
+        $container->has('config')->willReturn(true);
+        $container->get('config')->willReturn([
+            'prooph' => [
+                'service_bus' => [
+                    $busConfigKey => [
+                        'router' => [
+                            'async_switch' => 'noop_message_producer',
+                            'type' => RegexRouter::class,
+                            'routes' => [
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                    $handlerWasCalled = true;
+                                }
+                            ]
+                        ],
+                        'message_factory' => 'custom_message_factory'
+                    ]
+                ]
+            ]
+        ]);
+
+        $container->has('custom_message_factory')->willReturn(true);
+        $container->get('custom_message_factory')->willReturn($messageFactory);
+
+        $bus = $busFactory($container->reveal());
+
+        $bus->dispatch($message->reveal());
+
+        $this->assertFalse($handlerWasCalled);
+        $this->assertTrue($messageProducer->isInvoked());
     }
 
     /**

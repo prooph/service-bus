@@ -34,6 +34,12 @@ return [
                     //Router defaults to Prooph\ServiceBus\Plugin\Router\CommandRouter
                     //Comment out the next line to use the RegexRouter instead
                     //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
+
+                    //[optional] Enable the AsyncSwitchMessageRouter, see docs/plugins.md AsyncSwitchMessageRouter section for details
+                    //If "async_switch" key is present and references an Async\MessageProducer available in the container
+                    //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
+                    //using the producer AND decorating the actual configured router
+                    //'async_switch' => 'container_id_of_async_message_producer',
                 ]
             ],
             //This section will be used by Prooph\ServiceBus\Container\EventBusFactory
@@ -49,6 +55,12 @@ return [
                     //Router defaults to Prooph\ServiceBus\Plugin\Router\EventRouter
                     //Comment out the next line to use the RegexRouter instead
                     //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
+
+                    //[optional] Enable the AsyncSwitchMessageRouter, see docs/plugins.md AsyncSwitchMessageRouter section for details
+                    //If "async_switch" key is present and references an Async\MessageProducer available in the container
+                    //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
+                    //using the producer AND decorating the actual configured router
+                    //'async_switch' => 'container_id_of_async_message_producer',
                 ]
             ],
             //This section will be used by Prooph\ServiceBus\Container\QueryBusFactory
@@ -64,6 +76,12 @@ return [
                     //Router defaults to Prooph\ServiceBus\Plugin\Router\QueryRouter
                     //Comment out the next line to use the RegexRouter instead
                     //'type' => \Prooph\ServiceBus\Plugin\Router\RegexRouter::class,
+
+                    //[optional] Enable the AsyncSwitchMessageRouter, see docs/plugins.md AsyncSwitchMessageRouter section for details
+                    //If "async_switch" key is present and references an Async\MessageProducer available in the container
+                    //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
+                    //using the producer AND decorating the actual configured router
+                    //'async_switch' => 'container_id_of_async_message_producer',
                 ]
             ],
         ], //EO service_bus
