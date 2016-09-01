@@ -8,7 +8,6 @@
  *
  * Date: 08/30/16 - 8:35 PM
  */
-declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
