@@ -63,13 +63,7 @@ final class RouteGuardFactory
             );
         }
 
-        if ($name === 'exposeMessageName') {
-            $exposeEventMessageName = true;
-        } else {
-            $exposeEventMessageName = false;
-        }
-
-        return (new static($exposeEventMessageName))->__invoke($arguments[0]);
+        return (new static(true))->__invoke($arguments[0]);
     }
 
     /**

@@ -53,4 +53,13 @@ final class RouteGuardFactoryTest extends TestCase
 
         $this->assertInstanceOf(RouteGuard::class, $guard);
     }
+
+    /**
+     * @test
+     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
+     */
+    public function it_throws_invalid_argument_exception_when_call_static_is_used_without_container()
+    {
+        RouteGuardFactory::{'exposeMessageName'}();
+    }
 }
