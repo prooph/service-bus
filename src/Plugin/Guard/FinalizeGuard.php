@@ -32,11 +32,18 @@ final class FinalizeGuard implements ActionEventListenerAggregate
     private $authorizationService;
 
     /**
-     * @param AuthorizationService $authorizationService
+     * @var bool
      */
-    public function __construct(AuthorizationService $authorizationService)
+    private $exposeEventMessageName;
+
+    /**
+     * @param AuthorizationService $authorizationService
+     * @param bool $exposeEventMessageName
+     */
+    public function __construct(AuthorizationService $authorizationService, $exposeEventMessageName = false)
     {
         $this->authorizationService = $authorizationService;
+        $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
     /**
@@ -46,24 +53,30 @@ final class FinalizeGuard implements ActionEventListenerAggregate
     public function onFinalize(ActionEvent $actionEvent)
     {
         $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
+        $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if ($promise instanceof Promise) {
-            $newPromise = $promise->then(function ($result) use ($actionEvent) {
-                if (!$this->authorizationService->isGranted(
-                    $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME),
-                    $result)
-                ) {
+            $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName) {
+                if (!$this->authorizationService->isGranted($messageName, $result)) {
                     $actionEvent->stopPropagation(true);
 
-                    throw new UnauthorizedException();
+                    if (! $this->exposeEventMessageName) {
+                        $messageName = '';
+                    }
+
+                    throw new UnauthorizedException($messageName);
                 }
             });
 
             $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $newPromise);
-        } elseif (!$this->authorizationService->isGranted($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME))) {
+        } elseif (!$this->authorizationService->isGranted($messageName)) {
             $actionEvent->stopPropagation(true);
 
-            throw new UnauthorizedException();
+            if (! $this->exposeEventMessageName) {
+                $messageName = '';
+            }
+
+            throw new UnauthorizedException($messageName);
         }
     }
 

@@ -30,11 +30,18 @@ final class RouteGuard implements ActionEventListenerAggregate
     private $authorizationService;
 
     /**
-     * @param AuthorizationService $authorizationService
+     * @var bool
      */
-    public function __construct(AuthorizationService $authorizationService)
+    private $exposeEventMessageName;
+
+    /**
+     * @param AuthorizationService $authorizationService
+     * @param bool $exposeEventMessageName
+     */
+    public function __construct(AuthorizationService $authorizationService, $exposeEventMessageName = false)
     {
         $this->authorizationService = $authorizationService;
+        $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
     /**
@@ -42,8 +49,10 @@ final class RouteGuard implements ActionEventListenerAggregate
      */
     public function onRoute(ActionEvent $actionEvent)
     {
+        $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
         if ($this->authorizationService->isGranted(
-            $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME),
+            $messageName,
             $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)
         )) {
             return;
@@ -51,7 +60,11 @@ final class RouteGuard implements ActionEventListenerAggregate
 
         $actionEvent->stopPropagation(true);
 
-        throw new UnauthorizedException();
+        if (! $this->exposeEventMessageName) {
+            $messageName = '';
+        }
+
+        throw new UnauthorizedException($messageName);
     }
 
     /**
