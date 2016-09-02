@@ -38,4 +38,28 @@ final class FinalizeGuardFactoryTest extends TestCase
 
         $this->assertInstanceOf(FinalizeGuard::class, $guard);
     }
+
+    /**
+     * @test
+     */
+    public function it_creates_route_guard_with_exposing_message_name()
+    {
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->get(AuthorizationService::class)->willReturn($authorizationService->reveal());
+
+        $guard = FinalizeGuardFactory::{'exposeMessageName'}($container->reveal());
+
+        $this->assertInstanceOf(FinalizeGuard::class, $guard);
+    }
+
+    /**
+     * @test
+     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
+     */
+    public function it_throws_invalid_argument_exception_when_call_static_is_used_without_container()
+    {
+        FinalizeGuardFactory::{'exposeMessageName'}();
+    }
 }

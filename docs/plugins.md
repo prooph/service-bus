@@ -143,6 +143,8 @@ You can also find some configuration examples in this repository.
 *Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on
 the query result, you need to make sure that the AuthorizationService can distinguish between the contexts (route guard passes query, finalize guard passes result)*
 
+If you want to use the RouteGuard or FinalizeGuard with exposed message name in the exception message, configure your container accordingly, see: config/services.php:21.
+
 ## ServiceLocatorPlugin
 
 This plugin uses a `Interop\Container\ContainerInterface` implementation to lazy-load message handlers.

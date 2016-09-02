@@ -62,7 +62,8 @@ final class RouteGuardTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
+     * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
+     * @expectedExceptionMessage You are not authorized to access this resource
      */
     public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access()
     {
@@ -75,6 +76,26 @@ final class RouteGuardTest extends TestCase
         $actionEvent->stopPropagation(true)->willReturn(null);
 
         $routeGuard = new RouteGuard($authorizationService->reveal());
+
+        $routeGuard->onRoute($actionEvent->reveal());
+    }
+
+    /**
+     * @test
+     * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
+     * @expectedExceptionMessage You are not authorized to access the resource "test_event"
+     */
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_and_exposed_message_name()
+    {
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+        $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);
+
+        $actionEvent = $this->prophesize(ActionEvent::class);
+        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
+        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
+        $actionEvent->stopPropagation(true)->willReturn(null);
+
+        $routeGuard = new RouteGuard($authorizationService->reveal(), true);
 
         $routeGuard->onRoute($actionEvent->reveal());
     }
