@@ -26,10 +26,10 @@
     "require": {
         "php": "~5.5 || ~7.0",
         "beberlei/assert": "^2.4",
-        "prooph/common" : "^3.7",
-        "react/promise" : "^2.2.2"
+        "prooph/common" : "^3.7"
     },
     "require-dev": {
+        "react/promise" : "^2.2.2",
         "phpunit/phpunit": "^4.8.23",
         "fabpot/php-cs-fixer": "^1.7",
         "satooshi/php-coveralls": "^1.0",
@@ -39,6 +39,7 @@
         "malukenho/docheader": "^0.1.2"
     },
     "suggest": {
+        "react/promise": "^2.2.2 for usage with provided QueryBus",
         "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zend ServiceManager to lazy load your handlers and listeners",
         "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard",
