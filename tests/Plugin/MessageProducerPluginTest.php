@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/service-bus.
  * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
