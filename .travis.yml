@@ -31,10 +31,7 @@ before_script:
 script:
   - php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml
   - ./vendor/bin/php-cs-fixer fix -v --diff --dry-run
-  - ./vendor/bin/docheader check config/
-  - ./vendor/bin/docheader check exmaples/
-  - ./vendor/bin/docheader check src/
-  - ./vendor/bin/docheader check tests/
+  - ./vendor/bin/docheader check config/ exmaples/ src/ tests/
 
 after_success:
   - if [[ $TEST_COVERAGE == 'true' ]]; then php vendor/bin/coveralls -v; fi
