@@ -38,4 +38,19 @@ final class RouteGuardFactoryTest extends TestCase
 
         $this->assertInstanceOf(RouteGuard::class, $guard);
     }
+
+    /**
+     * @test
+     */
+    public function it_creates_route_guard_with_exposing_message_name()
+    {
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->get(AuthorizationService::class)->willReturn($authorizationService->reveal());
+
+        $guard = RouteGuardFactory::{'exposeMessageName'}($container->reveal());
+
+        $this->assertInstanceOf(RouteGuard::class, $guard);
+    }
 }

@@ -11,6 +11,7 @@
 namespace Prooph\ServiceBus\Container\Plugin\Guard;
 
 use Interop\Container\ContainerInterface;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 
@@ -21,6 +22,57 @@ use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 final class RouteGuardFactory
 {
     /**
+     * @var bool
+     */
+    private $exposeEventMessageName;
+
+    /**
+     * RouteGuardFactory constructor.
+     * @param bool $exposeEventMessageName
+     */
+    public function __construct($exposeEventMessageName = false)
+    {
+        $this->exposeEventMessageName = $exposeEventMessageName;
+    }
+
+    /**
+     * Creates a new instance with exposeMessageName flag, specifically meant to be used as static factory.
+     *
+     * Configuration example:
+     *
+     * <code>
+     * <?php
+     * return [
+     *     \Prooph\ServiceBus\Plugin\Guard\RouteGuard::class => [
+     *         \Prooph\ServiceBus\Container\Plugin\Guard\RouteGuardFactory::class,
+     *         'exposeMessageName'
+     *     ]
+     * ];
+     * </code>
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return \Prooph\ServiceBus\Plugin\Guard\RouteGuard
+     * @throws InvalidArgumentException
+     */
+    public static function __callStatic($name, array $arguments)
+    {
+        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+            throw new InvalidArgumentException(
+                sprintf('The first argument must be of type %s', ContainerInterface::class)
+            );
+        }
+
+        if ($name === 'exposeMessageName') {
+            $exposeEventMessageName = true;
+        } else {
+            $exposeEventMessageName = false;
+        }
+
+        return (new static($exposeEventMessageName))->__invoke($arguments[0]);
+    }
+
+    /**
      * @param ContainerInterface $container
      * @return RouteGuard
      */
@@ -28,6 +80,6 @@ final class RouteGuardFactory
     {
         $authorizationService = $container->get(AuthorizationService::class);
 
-        return new RouteGuard($authorizationService);
+        return new RouteGuard($authorizationService, $this->exposeEventMessageName);
     }
 }
