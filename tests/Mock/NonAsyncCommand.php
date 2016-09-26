@@ -8,12 +8,7 @@
  * file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: GuyRadford
- * Date: 28/08/2016
- * Time: 12:07
- */
+declare (strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 

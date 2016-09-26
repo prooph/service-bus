@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare (strict_types=1);
+
 /**
  * This file contains default configuration for prooph/service-bus
  * It is meant to be used together with at least one of the container-aware factories
