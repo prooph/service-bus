@@ -20,11 +20,8 @@ use Prooph\ServiceBus\Async\AsyncMessage;
 class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
 {
     use PayloadTrait;
-    /**
-     * @param string $data
-     * @return AsyncCommand
-     */
-    public static function createCommand($data)
+
+    public static function createCommand(string $data) : AsyncCommand
     {
         return new self([
             'data' => $data

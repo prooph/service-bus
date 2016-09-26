@@ -41,7 +41,7 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
     /**
      * @param null|array[messageName => messageHandler] $commandMap
      */
-    public function __construct(array $messageMap = null)
+    public function __construct(?array $messageMap)
     {
         if (null !== $messageMap) {
             foreach ($messageMap as $messageName => $handler) {
@@ -50,22 +50,12 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         }
     }
 
-    /**
-     * @param ActionEventEmitter $events
-     *
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+    public function attach(ActionEventEmitter $events) : void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
-    /**
-     * @param string $messageName
-     * @return $this
-     * @throws Exception\RuntimeException
-     */
-    public function route($messageName)
+    public function route(string $messageName) : SingleHandlerRouter
     {
         Assertion::string($messageName);
         Assertion::notEmpty($messageName);
@@ -81,11 +71,11 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
 
     /**
      * @param string|object|callable $messageHandler
-     * @return $this
+     * @return SingleHandlerRouter
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function to($messageHandler)
+    public function to($messageHandler) : SingleHandlerRouter
     {
         if (! is_string($messageHandler) && ! is_object($messageHandler) && ! is_callable($messageHandler)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -108,12 +98,9 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         return $this;
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function onRouteMessage(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent) : void
     {
-        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+        $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if (empty($messageName)) {
             return;

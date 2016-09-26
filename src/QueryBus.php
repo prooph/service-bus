@@ -32,18 +32,12 @@ use React\Promise\Promise;
  */
 class QueryBus extends MessageBus
 {
-    const EVENT_INVOKE_FINDER      = 'invoke-finder';
+    public const EVENT_INVOKE_FINDER      = 'invoke-finder';
 
-    const EVENT_PARAM_PROMISE = 'query-promise';
-    const EVENT_PARAM_DEFERRED = 'query-deferred';
+    public const EVENT_PARAM_PROMISE = 'query-promise';
+    public const EVENT_PARAM_DEFERRED = 'query-deferred';
 
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher) : void
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function (ActionEvent $actionEvent) {
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -63,7 +57,7 @@ class QueryBus extends MessageBus
      * @param mixed $query
      * @return Promise
      */
-    public function dispatch($query)
+    public function dispatch($query) : Promise
     {
         $deferred = new Deferred();
 

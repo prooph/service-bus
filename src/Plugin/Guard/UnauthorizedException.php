@@ -21,11 +21,7 @@ final class UnauthorizedException extends \RuntimeException
      */
     protected $message = 'You are not authorized to access this resource';
 
-    /**
-     * UnauthorizedException constructor.
-     * @param string $messageName
-     */
-    public function __construct($messageName = '')
+    public function __construct(string $messageName = '')
     {
         if (! empty($messageName)) {
             $this->message = 'You are not authorized to access the resource "' . $messageName . '"';

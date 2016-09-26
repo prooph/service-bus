@@ -28,7 +28,7 @@ final class AbstractInvokeStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_attached_listener_to_event_and_tracks_it()
+    public function it_attached_listener_to_event_and_tracks_it() : void
     {
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
 
@@ -47,7 +47,7 @@ final class AbstractInvokeStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_fetches_message_and_handler_and_invokes_them_if_possible()
+    public function it_fetches_message_and_handler_and_invokes_them_if_possible() : void
     {
         $actionEventMock = $this->getMockForAbstractClass(ActionEvent::class);
         $actionEventMock

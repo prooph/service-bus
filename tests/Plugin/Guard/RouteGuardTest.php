@@ -29,7 +29,7 @@ final class RouteGuardTest extends TestCase
     /**
      * @test
      */
-    public function it_attaches_to_action_event_emitter()
+    public function it_attaches_to_action_event_emitter() : void
     {
         $listenerHandler = $this->prophesize(ListenerHandler::class);
 
@@ -48,7 +48,7 @@ final class RouteGuardTest extends TestCase
     /**
      * @test
      */
-    public function it_allows_when_authorization_service_grants_access()
+    public function it_allows_when_authorization_service_grants_access() : void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', new \stdClass())->willReturn(true);
@@ -67,7 +67,7 @@ final class RouteGuardTest extends TestCase
      * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
      * @expectedExceptionMessage You are not authorized to access this resource
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access() : void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);
@@ -87,7 +87,7 @@ final class RouteGuardTest extends TestCase
      * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
      * @expectedExceptionMessage You are not authorized to access the resource "test_event"
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_and_exposed_message_name()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_and_exposed_message_name() : void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);

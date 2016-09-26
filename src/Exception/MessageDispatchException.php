@@ -27,12 +27,7 @@ class MessageDispatchException extends RuntimeException
      */
     protected $actionEvent;
 
-    /**
-     * @param ActionEvent $actionEvent
-     * @param \Exception $previousException
-     * @return MessageDispatchException
-     */
-    public static function failed(ActionEvent $actionEvent, \Exception $previousException = null)
+    public static function failed(ActionEvent $actionEvent, ?\Exception $previousException) : MessageDispatchException
     {
         $ex = new static(
             sprintf(
@@ -49,15 +44,12 @@ class MessageDispatchException extends RuntimeException
         return $ex;
     }
 
-    /**
-     * @return ActionEvent
-     */
-    public function getFailedDispatchEvent()
+    public function getFailedDispatchEvent() : ActionEvent
     {
         return $this->actionEvent;
     }
 
-    protected function setFailedDispatch(ActionEvent $actionEvent)
+    protected function setFailedDispatch(ActionEvent $actionEvent) : void
     {
         $this->actionEvent = $actionEvent;
     }

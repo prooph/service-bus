@@ -26,17 +26,17 @@ final class CustomMessageBus extends MessageBus
     /**
      * @param mixed $message
      */
-    public function dispatch($message)
+    public function dispatch($message) : void
     {
         $this->initialize($message, $this->getActionEvent());
     }
 
-    public function setActionEvent(ActionEvent $event)
+    public function setActionEvent(ActionEvent $event) : void
     {
         $this->actionEvent = $event;
     }
 
-    public function getActionEvent()
+    public function getActionEvent() : ActionEvent
     {
         if (null === $this->actionEvent) {
             $this->actionEvent = $this->getActionEventEmitter()->getNewActionEvent();

@@ -27,7 +27,7 @@ final class RouteGuardFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_route_guard()
+    public function it_creates_route_guard() : void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
 
@@ -44,7 +44,7 @@ final class RouteGuardFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_route_guard_with_exposing_message_name()
+    public function it_creates_route_guard_with_exposing_message_name() : void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
 
@@ -60,7 +60,7 @@ final class RouteGuardFactoryTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
-    public function it_throws_invalid_argument_exception_when_call_static_is_used_without_container()
+    public function it_throws_invalid_argument_exception_when_call_static_is_used_without_container() : void
     {
         RouteGuardFactory::{'exposeMessageName'}();
     }

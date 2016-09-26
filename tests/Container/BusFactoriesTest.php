@@ -441,7 +441,7 @@ final class BusFactoriesTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_invalid_argument_exception_without_container_on_static_call()
+    public function it_throws_invalid_argument_exception_without_container_on_static_call() : void
     {
         $this->setExpectedException(
             InvalidArgumentException::class,

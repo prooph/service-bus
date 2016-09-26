@@ -22,17 +22,17 @@ final class CustomMessageWithName implements HasMessageName
 {
     private $text;
 
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->text = $text;
     }
 
-    public function getText()
+    public function getText() : string
     {
         return $this->text;
     }
 
-    public function messageName()
+    public function messageName() : string
     {
         return 'Prooph\Test\ServiceBus\Mock\CustomMessageWithSomeOtherName';
     }

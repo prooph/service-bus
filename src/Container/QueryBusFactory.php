@@ -22,26 +22,17 @@ use Prooph\ServiceBus\QueryBus;
  */
 class QueryBusFactory extends AbstractBusFactory
 {
-    /**
-     * @inheritdoc
-     */
-    public function __construct($configId = 'query_bus')
+    public function __construct(string $configId = 'query_bus')
     {
         parent::__construct($configId);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getBusClass()
+    protected function getBusClass() : string
     {
         return QueryBus::class;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getDefaultRouterClass()
+    protected function getDefaultRouterClass() : string
     {
         return QueryRouter::class;
     }

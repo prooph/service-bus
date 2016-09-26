@@ -39,10 +39,11 @@ final class CommandBusTest extends TestCase
     {
         $this->commandBus = new CommandBus();
     }
+
     /**
      * @test
      */
-    public function it_dispatches_a_message_using_the_default_process()
+    public function it_dispatches_a_message_using_the_default_process() : void
     {
         $doSomething = new DoSomething(['todo' => 'buy milk']);
 
@@ -65,7 +66,7 @@ final class CommandBusTest extends TestCase
     /**
      * @test
      */
-    public function it_triggers_all_defined_action_events()
+    public function it_triggers_all_defined_action_events() : void
     {
         $initializeIsTriggered = false;
         $detectMessageNameIsTriggered = false;
@@ -164,7 +165,7 @@ final class CommandBusTest extends TestCase
     /**
      * @test
      */
-    public function it_uses_the_fqcn_of_the_message_if_message_name_was_not_provided_and_message_does_not_implement_has_message_name()
+    public function it_uses_the_fqcn_of_the_message_if_message_name_was_not_provided_and_message_does_not_implement_has_message_name() : void
     {
         $handler = new MessageHandler();
 
@@ -185,7 +186,7 @@ final class CommandBusTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\MessageDispatchException
      */
-    public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin()
+    public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin() : void
     {
         try {
             $this->commandBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
@@ -204,7 +205,7 @@ final class CommandBusTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function it_throws_exception_if_event_has_no_handler_after_it_has_been_set_and_event_was_triggered()
+    public function it_throws_exception_if_event_has_no_handler_after_it_has_been_set_and_event_was_triggered() : void
     {
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
@@ -219,7 +220,7 @@ final class CommandBusTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function it_throws_exception_if_message_was_not_handled()
+    public function it_throws_exception_if_message_was_not_handled() : void
     {
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_INITIALIZE,
@@ -234,7 +235,7 @@ final class CommandBusTest extends TestCase
     /**
      * @test
      */
-    public function it_queues_new_commands_as_long_as_it_is_dispatching()
+    public function it_queues_new_commands_as_long_as_it_is_dispatching() : void
     {
         $messageHandler = new MessageHandler();
 
@@ -258,7 +259,7 @@ final class CommandBusTest extends TestCase
     /**
      * @test
      */
-    public function it_passes_queued_commands_to_command_dispatch_exception_in_case_of_an_error()
+    public function it_passes_queued_commands_to_command_dispatch_exception_in_case_of_an_error() : void
     {
         $messageHandler = new MessageHandler();
 

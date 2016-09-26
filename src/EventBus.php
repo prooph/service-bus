@@ -25,15 +25,9 @@ use Prooph\Common\Event\ActionEventEmitter;
  */
 class EventBus extends MessageBus
 {
-    const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
+    public const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
 
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher) : void
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
             $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -51,7 +45,7 @@ class EventBus extends MessageBus
      * @param mixed $event
      * @return void
      */
-    public function dispatch($event)
+    public function dispatch($event) : void
     {
         $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 

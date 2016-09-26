@@ -41,31 +41,18 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
      */
     protected $asyncMessageProducer;
 
-
-    /**
-     * @param MessageBusRouterPlugin $router
-     * @param MessageProducer $asyncMessageProducer
-     */
     public function __construct(MessageBusRouterPlugin $router, MessageProducer $asyncMessageProducer)
     {
         $this->router = $router;
         $this->asyncMessageProducer = $asyncMessageProducer;
     }
 
-    /**
-     * @param ActionEventEmitter $events
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+    public function attach(ActionEventEmitter $events) : void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
-
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function onRouteMessage(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent) : void
     {
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
@@ -90,13 +77,10 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
                 $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$this->asyncMessageProducer]);
             }
 
-
-
-
             return;
         }
 
         // pass ActionEvent to decorated router
-        return $this->router->onRouteMessage($actionEvent);
+        $this->router->onRouteMessage($actionEvent);
     }
 }

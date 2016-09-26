@@ -28,11 +28,7 @@ final class RouteGuardFactory
      */
     private $exposeEventMessageName;
 
-    /**
-     * RouteGuardFactory constructor.
-     * @param bool $exposeEventMessageName
-     */
-    public function __construct($exposeEventMessageName = false)
+    public function __construct(bool $exposeEventMessageName = false)
     {
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
@@ -54,10 +50,10 @@ final class RouteGuardFactory
      *
      * @param string $name
      * @param array $arguments
-     * @return \Prooph\ServiceBus\Plugin\Guard\RouteGuard
+     * @return RouteGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments)
+    public static function __callStatic($name, array $arguments) : RouteGuard
     {
         if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
@@ -68,11 +64,7 @@ final class RouteGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return RouteGuard
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : RouteGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

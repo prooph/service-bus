@@ -19,11 +19,8 @@ use Prooph\Common\Messaging\PayloadTrait;
 class NonAsyncCommand extends Command implements PayloadConstructable
 {
     use PayloadTrait;
-    /**
-     * @param string $data
-     * @return NonAsyncCommand
-     */
-    public static function createCommand($data)
+
+    public static function createCommand(string $data) : NonAsyncCommand
     {
         return new self([
             'data' => $data

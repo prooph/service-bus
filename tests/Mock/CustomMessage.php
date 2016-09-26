@@ -20,12 +20,12 @@ final class CustomMessage
 {
     private $text;
 
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->text = $text;
     }
 
-    public function getText()
+    public function getText() : string
     {
         return $this->text;
     }

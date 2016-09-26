@@ -28,11 +28,7 @@ final class FinalizeGuardFactory
      */
     private $exposeEventMessageName;
 
-    /**
-     * FinalizeGuardFactory constructor.
-     * @param bool $exposeEventMessageName
-     */
-    public function __construct($exposeEventMessageName = false)
+    public function __construct(bool $exposeEventMessageName = false)
     {
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
@@ -54,10 +50,10 @@ final class FinalizeGuardFactory
      *
      * @param string $name
      * @param array $arguments
-     * @return \Prooph\ServiceBus\Plugin\Guard\FinalizeGuard
+     * @return FinalizeGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments)
+    public static function __callStatic(string $name, array $arguments) : FinalizeGuard
     {
         if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
@@ -68,11 +64,7 @@ final class FinalizeGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return FinalizeGuard
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : FinalizeGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

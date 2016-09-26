@@ -36,21 +36,13 @@ final class FinalizeGuard implements ActionEventListenerAggregate
      */
     private $exposeEventMessageName;
 
-    /**
-     * @param AuthorizationService $authorizationService
-     * @param bool $exposeEventMessageName
-     */
-    public function __construct(AuthorizationService $authorizationService, $exposeEventMessageName = false)
+    public function __construct(AuthorizationService $authorizationService, bool $exposeEventMessageName = false)
     {
         $this->authorizationService = $authorizationService;
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     * @throws UnauthorizedException
-     */
-    public function onFinalize(ActionEvent $actionEvent)
+    public function onFinalize(ActionEvent $actionEvent) : void
     {
         $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
         $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
@@ -80,12 +72,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
         }
     }
 
-    /**
-     * @param ActionEventEmitter $events
-     *
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+    public function attach(ActionEventEmitter $events) : void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_FINALIZE, [$this, "onFinalize"], -1000));
     }

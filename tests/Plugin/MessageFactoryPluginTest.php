@@ -31,7 +31,7 @@ final class MessageFactoryPluginTest extends TestCase
     /**
      * @test
      */
-    public function it_turns_a_message_given_as_array_into_a_message_object_using_a_factory()
+    public function it_turns_a_message_given_as_array_into_a_message_object_using_a_factory() : void
     {
         $messageFactory = $this->prophesize(MessageFactory::class);
 
@@ -63,7 +63,7 @@ final class MessageFactoryPluginTest extends TestCase
     /**
      * @test
      */
-    public function it_will_return_eary_if_message_name_not_present_in_message()
+    public function it_will_return_eary_if_message_name_not_present_in_message() : void
     {
         $messageFactoryMock = $this->getMockForAbstractClass(MessageFactory::class);
         $messageFactoryMock

@@ -38,26 +38,17 @@ final class MessageFactoryPlugin implements ActionEventListenerAggregate
      */
     private $messageFactory;
 
-    /**
-     * @param MessageFactory $messageFactory
-     */
     public function __construct(MessageFactory $messageFactory)
     {
         $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * @param ActionEventEmitter $dispatcher
-     */
-    public function attach(ActionEventEmitter $dispatcher)
+    public function attach(ActionEventEmitter $dispatcher) : void
     {
         $this->trackHandler($dispatcher->attachListener(MessageBus::EVENT_INITIALIZE, $this));
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function __invoke(ActionEvent $actionEvent)
+    public function __invoke(ActionEvent $actionEvent) : void
     {
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 

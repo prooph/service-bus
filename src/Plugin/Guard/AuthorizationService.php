@@ -23,5 +23,5 @@ interface AuthorizationService
      * @param mixed  $context
      * @return bool
      */
-    public function isGranted($messageName, $context = null);
+    public function isGranted($messageName, $context = null) : bool;
 }

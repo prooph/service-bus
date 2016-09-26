@@ -24,14 +24,14 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "~5.5 || ~7.0",
-        "beberlei/assert": "^2.4",
+        "php": "^7.1",
+        "beberlei/assert": "^2.6.3",
         "prooph/common" : "^3.7"
     },
     "require-dev": {
-        "react/promise" : "^2.2.2",
-        "phpunit/phpunit": "^4.8.23",
-        "fabpot/php-cs-fixer": "^1.7",
+        "react/promise" : "^2.4.1",
+        "phpunit/phpunit": "^5.5.5",
+        "friendsofphp/php-cs-fixer": "^1.12.1",
         "satooshi/php-coveralls": "^1.0",
         "container-interop/container-interop" : "^1.1",
         "sandrokeil/interop-config": "^1.0",
