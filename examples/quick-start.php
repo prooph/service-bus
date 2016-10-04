@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace {
     require_once __DIR__ . '/../vendor/autoload.php';
