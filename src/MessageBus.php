@@ -93,7 +93,7 @@ abstract class MessageBus
         }
     }
 
-    protected function handleException(ActionEvent $actionEvent, \Exception $ex) : void
+    protected function handleException(ActionEvent $actionEvent, \Throwable $ex) : void
     {
         $failedPhase = $actionEvent->getName();
 

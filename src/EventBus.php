@@ -71,7 +71,7 @@ class EventBus extends MessageBus
             }
 
             $this->triggerFinalize($actionEvent);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->handleException($actionEvent, $ex);
         }
     }

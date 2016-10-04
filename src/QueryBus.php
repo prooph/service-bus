@@ -101,7 +101,7 @@ class QueryBus extends MessageBus
             }
 
             $this->triggerFinalize($actionEvent);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $failedPhase = $actionEvent->getName();
 
             $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);
