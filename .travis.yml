@@ -12,12 +12,11 @@ matrix:
         - DEPENDENCIES="--prefer-lowest --prefer-stable"
 
 before_script:
-  - phpenv config-rm xdebug.ini
   - composer self-update
   - composer update --prefer-dist $DEPENDENCIES
 
 script:
-  - php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml
+  - php ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml
   - ./vendor/bin/php-cs-fixer fix -v --diff --dry-run
   - ./vendor/bin/docheader check config/ examples/ src/ tests/
 
