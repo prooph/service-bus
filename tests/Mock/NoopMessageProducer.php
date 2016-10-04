@@ -20,7 +20,7 @@ class NoopMessageProducer implements MessageProducer
 {
     private $invoked = false;
 
-    public function __invoke(Message $message, ?Deferred $deferred) : void
+    public function __invoke(Message $message, ?Deferred $deferred = null) : void
     {
         $this->invoked = true;
     }

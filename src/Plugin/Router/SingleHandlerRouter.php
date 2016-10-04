@@ -41,12 +41,14 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
     /**
      * @param null|array[messageName => messageHandler] $commandMap
      */
-    public function __construct(?array $messageMap)
+    public function __construct(?array $messageMap = null)
     {
-        if (null !== $messageMap) {
-            foreach ($messageMap as $messageName => $handler) {
-                $this->route($messageName)->to($handler);
-            }
+        if (null === $messageMap) {
+            return;
+        }
+
+        foreach ($messageMap as $messageName => $handler) {
+            $this->route($messageName)->to($handler);
         }
     }
 

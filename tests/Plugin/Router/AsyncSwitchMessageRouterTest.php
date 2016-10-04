@@ -98,12 +98,11 @@ class AsyncSwitchMessageRouterTest extends TestCase
             ]
         );
 
-        $decoratedRouter->onRouteMessage($actionEvent)->willReturn('handled-by-decorated-router');
+        $decoratedRouter->onRouteMessage($actionEvent)->shouldBeCalled();
 
         $router = new AsyncSwitchMessageRouter($decoratedRouter->reveal(), $messageProducer->reveal());
-        $rtn = $router->onRouteMessage($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals('handled-by-decorated-router', $rtn);
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayNotHasKey('handled-async', $updatedMessage->metadata());
     }
@@ -155,12 +154,11 @@ class AsyncSwitchMessageRouterTest extends TestCase
             ]
         );
 
-        $decoratedRouter->onRouteMessage($actionEvent)->willReturn('handled-by-decorated-router');
+        $decoratedRouter->onRouteMessage($actionEvent)->shouldBeCalled();
 
         $router = new AsyncSwitchMessageRouter($decoratedRouter->reveal(), $messageProducer->reveal());
-        $rtn = $router->onRouteMessage($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals('handled-by-decorated-router', $rtn);
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
         $this->assertTrue($updatedMessage->metadata()['handled-async']);

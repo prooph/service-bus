@@ -28,7 +28,7 @@ final class AbstractInvokeStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_attached_listener_to_event_and_tracks_it() : void
+    public function it_attaches_listener_to_event_and_tracks_it() : void
     {
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
 
@@ -65,6 +65,7 @@ final class AbstractInvokeStrategyTest extends TestCase
         $actionEventMock->expects($this->at(2))
             ->method('setParam')
             ->with(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+
 
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
         $strategy

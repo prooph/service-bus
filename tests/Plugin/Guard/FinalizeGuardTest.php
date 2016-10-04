@@ -100,7 +100,7 @@ final class FinalizeGuardTest extends TestCase
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent->stopPropagation(true)->shouldBeCalled();
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
 
@@ -145,7 +145,7 @@ final class FinalizeGuardTest extends TestCase
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent->stopPropagation(true)->shouldBeCalled();
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal(), true);
 

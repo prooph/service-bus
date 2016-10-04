@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
 use ProophTest\ServiceBus\TestCase;
@@ -54,11 +55,11 @@ class EventRouterTest extends TestCase
      */
     public function it_fails_on_routing_a_second_event_before_first_event_is_routed_at_least_to_one_listener() : void
     {
+        $this->expectException(RuntimeException::class);
+
         $router = new EventRouter();
 
         $router->route('SomethingDone');
-
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
         $router->route('AnotherEvent');
     }
@@ -83,9 +84,9 @@ class EventRouterTest extends TestCase
      */
     public function it_fails_on_setting_a_listener_before_an_event_is_set() : void
     {
-        $router = new EventRouter();
+        $this->expectException(RuntimeException::class);
 
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
+        $router = new EventRouter();
 
         $router->to('SomethingDoneListener');
     }
@@ -150,7 +151,7 @@ class EventRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
         ]);
 
-        $router->onRouteEvent($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
         $this->assertEquals("SomethingDoneListener1", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
         $this->assertEquals("SomethingDoneListener2", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);

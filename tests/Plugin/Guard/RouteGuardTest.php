@@ -75,7 +75,7 @@ final class RouteGuardTest extends TestCase
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent->stopPropagation(true)->shouldBeCalled();
 
         $routeGuard = new RouteGuard($authorizationService->reveal());
 
@@ -95,7 +95,7 @@ final class RouteGuardTest extends TestCase
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent->stopPropagation(true)->shouldBeCalled();
 
         $routeGuard = new RouteGuard($authorizationService->reveal(), true);
 

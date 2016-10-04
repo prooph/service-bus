@@ -42,19 +42,21 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
     /**
      * @param null|array[eventName => eventListener] $eventMap
      */
-    public function __construct(?array $eventMap)
+    public function __construct(?array $eventMap = null)
     {
-        if (null !== $eventMap) {
-            foreach ($eventMap as $eventName => $listeners) {
-                if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
-                    $listeners = [$listeners];
-                }
+        if (null === $eventMap) {
+            return;
+        }
 
-                $this->route($eventName);
+        foreach ($eventMap as $eventName => $listeners) {
+            if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
+                $listeners = [$listeners];
+            }
 
-                foreach ($listeners as $listener) {
-                    $this->to($listener);
-                }
+            $this->route($eventName);
+
+            foreach ($listeners as $listener) {
+                $this->to($listener);
             }
         }
     }

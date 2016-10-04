@@ -46,17 +46,19 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
     /**
      * @param null|array[pattern => handler|handler[]] $patternMap
      */
-    public function __construct(?array $patternMap)
+    public function __construct(?array $patternMap = null)
     {
-        if (null !== $patternMap) {
-            foreach ($patternMap as $pattern => $handler) {
-                if (is_array($handler)) {
-                    foreach ($handler as $singleHandler) {
-                        $this->route($pattern)->to($singleHandler);
-                    }
-                } else {
-                    $this->route($pattern)->to($handler);
+        if (null === $patternMap) {
+            return;
+        }
+
+        foreach ($patternMap as $pattern => $handler) {
+            if (is_array($handler)) {
+                foreach ($handler as $singleHandler) {
+                    $this->route($pattern)->to($singleHandler);
                 }
+            } else {
+                $this->route($pattern)->to($handler);
             }
         }
     }

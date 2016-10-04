@@ -36,5 +36,5 @@ interface MessageProducer
      *       MUST throw a Prooph\ServiceBus\Exception\RuntimeException if it cannot
      *       handle the $deferred
      */
-    public function __invoke(Message $message, ?Deferred $deferred) : void;
+    public function __invoke(Message $message, ?Deferred $deferred = null) : void;
 }
