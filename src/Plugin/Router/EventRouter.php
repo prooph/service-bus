@@ -68,7 +68,6 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     public function route(string $eventName) : EventRouter
     {
-        Assertion::string($eventName);
         Assertion::notEmpty($eventName);
 
         if (null !== $this->tmpEventName && empty($this->eventMap[$this->tmpEventName])) {

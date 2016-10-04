@@ -59,7 +59,6 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
 
     public function route(string $messageName) : SingleHandlerRouter
     {
-        Assertion::string($messageName);
         Assertion::notEmpty($messageName);
 
         if (null !== $this->tmpMessageName) {

@@ -70,7 +70,6 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     public function route(string $pattern) : RegexRouter
     {
-        Assertion::string($pattern);
         Assertion::notEmpty($pattern);
 
         if (null !== $this->tmpPattern) {
