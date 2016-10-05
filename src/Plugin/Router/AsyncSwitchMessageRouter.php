@@ -47,12 +47,12 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
         $this->asyncMessageProducer = $asyncMessageProducer;
     }
 
-    public function attach(ActionEventEmitter $events) : void
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
-    public function onRouteMessage(ActionEvent $actionEvent) : void
+    public function onRouteMessage(ActionEvent $actionEvent): void
     {
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 

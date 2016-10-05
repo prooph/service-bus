@@ -25,7 +25,7 @@ class OnEventStrategy extends AbstractInvokeStrategy
      * @param mixed $message
      * @return bool
      */
-    public function canInvoke($handler, $message) : bool
+    public function canInvoke($handler, $message): bool
     {
         $handleMethod = 'on' . $this->determineEventName($message);
 
@@ -36,7 +36,7 @@ class OnEventStrategy extends AbstractInvokeStrategy
      * @param mixed $handler
      * @param mixed $message
      */
-    public function invoke($handler, $message) : void
+    public function invoke($handler, $message): void
     {
         $handleMethod = 'on' . $this->determineEventName($message);
 
@@ -47,9 +47,9 @@ class OnEventStrategy extends AbstractInvokeStrategy
      * @param mixed $event
      * @return string
      */
-    protected function determineEventName($event) : string
+    protected function determineEventName($event): string
     {
-        $eventName = ($event instanceof HasMessageName)? $event->messageName() : (is_object($event)? get_class($event) : gettype($event));
+        $eventName = ($event instanceof HasMessageName)? $event->messageName(): (is_object($event)? get_class($event): gettype($event));
         return implode('', array_slice(explode('\\', $eventName), -1));
     }
 }

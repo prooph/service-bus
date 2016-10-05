@@ -21,7 +21,7 @@ class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
 {
     use PayloadTrait;
 
-    public static function createCommand(string $data) : AsyncCommand
+    public static function createCommand(string $data): AsyncCommand
     {
         return new self([
             'data' => $data

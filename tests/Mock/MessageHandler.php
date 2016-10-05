@@ -22,25 +22,25 @@ final class MessageHandler
 
     private $invokeCounter = 0;
 
-    public function __invoke($message) : void
+    public function __invoke($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;
     }
 
-    public function handle($message) : void
+    public function handle($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;
     }
 
-    public function onCustomMessage($message) : void
+    public function onCustomMessage($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;
     }
 
-    public function getInvokeCounter() : int
+    public function getInvokeCounter(): int
     {
         return $this->invokeCounter;
     }

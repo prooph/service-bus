@@ -27,12 +27,12 @@ class QueryBusFactory extends AbstractBusFactory
         parent::__construct($configId);
     }
 
-    protected function getBusClass() : string
+    protected function getBusClass(): string
     {
         return QueryBus::class;
     }
 
-    protected function getDefaultRouterClass() : string
+    protected function getDefaultRouterClass(): string
     {
         return QueryRouter::class;
     }

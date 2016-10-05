@@ -27,12 +27,12 @@ final class CustomMessageWithName implements HasMessageName
         $this->text = $text;
     }
 
-    public function getText() : string
+    public function getText(): string
     {
         return $this->text;
     }
 
-    public function messageName() : string
+    public function messageName(): string
     {
         return 'Prooph\Test\ServiceBus\Mock\CustomMessageWithSomeOtherName';
     }

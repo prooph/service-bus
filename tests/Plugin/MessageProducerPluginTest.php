@@ -32,7 +32,7 @@ final class MessageProducerPluginTest extends TestCase
     /**
      * @test
      */
-    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize() : void
+    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize(): void
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
         $commandBus = $this->prophesize(CommandBus::class);
@@ -59,7 +59,7 @@ final class MessageProducerPluginTest extends TestCase
     /**
      * @test
      */
-    public function it_adds_message_producer_as_event_listener_on_dispatch_initialize() : void
+    public function it_adds_message_producer_as_event_listener_on_dispatch_initialize(): void
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
         $eventBus = $this->prophesize(EventBus::class);

@@ -29,7 +29,7 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_can_handle_routing_definition_by_chaining_route_to() : void
+    public function it_can_handle_routing_definition_by_chaining_route_to(): void
     {
         $router = new CommandRouter();
 
@@ -48,7 +48,7 @@ class SingleHandlerRouterTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
-    public function it_fails_when_routing_to_invalid_handler() : void
+    public function it_fails_when_routing_to_invalid_handler(): void
     {
         $router = new CommandRouter();
 
@@ -58,7 +58,7 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_when_message_name_is_empty() : void
+    public function it_returns_early_when_message_name_is_empty(): void
     {
         $router = new CommandRouter();
 
@@ -76,7 +76,7 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_when_message_name_is_not_in_event_map() : void
+    public function it_returns_early_when_message_name_is_not_in_event_map(): void
     {
         $router = new CommandRouter();
 
@@ -94,7 +94,7 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_fails_on_routing_a_second_command_before_first_definition_is_finished() : void
+    public function it_fails_on_routing_a_second_command_before_first_definition_is_finished(): void
     {
         $router = new CommandRouter();
 
@@ -108,7 +108,7 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_fails_on_setting_a_handler_before_a_command_is_set() : void
+    public function it_fails_on_setting_a_handler_before_a_command_is_set(): void
     {
         $router = new CommandRouter();
 
@@ -120,7 +120,7 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_takes_a_routing_definition_on_instantiation() : void
+    public function it_takes_a_routing_definition_on_instantiation(): void
     {
         $router = new CommandRouter([
             'ProophTest\ServiceBus\Mock\DoSomething' => 'DoSomethingHandler'

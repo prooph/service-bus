@@ -53,7 +53,7 @@ final class FinalizeGuardFactory
      * @return FinalizeGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic(string $name, array $arguments) : FinalizeGuard
+    public static function __callStatic(string $name, array $arguments): FinalizeGuard
     {
         if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
@@ -64,7 +64,7 @@ final class FinalizeGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    public function __invoke(ContainerInterface $container) : FinalizeGuard
+    public function __invoke(ContainerInterface $container): FinalizeGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

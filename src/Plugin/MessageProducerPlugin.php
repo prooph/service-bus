@@ -40,12 +40,12 @@ final class MessageProducerPlugin implements ActionEventListenerAggregate
         $this->messageProducer = $messageProducer;
     }
 
-    public function attach(ActionEventEmitter $emitter) : void
+    public function attach(ActionEventEmitter $emitter): void
     {
         $this->trackHandler($emitter->attachListener(MessageBus::EVENT_INITIALIZE, [$this, 'onDispatchInitialize']));
     }
 
-    public function onDispatchInitialize(ActionEvent $event) : void
+    public function onDispatchInitialize(ActionEvent $event): void
     {
         $bus = $event->getTarget();
 

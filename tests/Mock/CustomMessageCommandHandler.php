@@ -20,7 +20,7 @@ final class CustomMessageCommandHandler
 {
     private $lastMessage;
 
-    public function handleCustomMessage($message) : void
+    public function handleCustomMessage($message): void
     {
         $this->lastMessage = $message;
     }

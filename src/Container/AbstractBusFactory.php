@@ -37,12 +37,12 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
     /**
      * Returns the FQCN of a bus extending Prooph\ServiceBus\MessageBus
      */
-    abstract protected function getBusClass() : string;
+    abstract protected function getBusClass(): string;
 
     /**
      * Returns the default router class to use if no one was specified in the config
      */
-    abstract protected function getDefaultRouterClass() : string;
+    abstract protected function getDefaultRouterClass(): string;
 
     /**
      * @var string
@@ -67,7 +67,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
      * @return MessageBus
      * @throws InvalidArgumentException
      */
-    public static function __callStatic(string $name, array $arguments) : MessageBus
+    public static function __callStatic(string $name, array $arguments): MessageBus
     {
         if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
@@ -82,12 +82,12 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         $this->configId = $configId;
     }
 
-    public function dimensions() : array
+    public function dimensions(): array
     {
         return ['prooph', 'service_bus'];
     }
 
-    public function defaultOptions() : array
+    public function defaultOptions(): array
     {
         return [
             'enable_handler_location' => true,
@@ -95,7 +95,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         ];
     }
 
-    public function __invoke(ContainerInterface $container) : MessageBus
+    public function __invoke(ContainerInterface $container): MessageBus
     {
         $config = [];
 
@@ -128,7 +128,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         return $bus;
     }
 
-    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container) : void
+    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container): void
     {
         foreach ($utils as $index => $util) {
             if (! is_string($util) || ! $container->has($util)) {
@@ -142,7 +142,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         }
     }
 
-    private function attachRouter(MessageBus $bus, array $routerConfig, ContainerInterface $container) : void
+    private function attachRouter(MessageBus $bus, array $routerConfig, ContainerInterface $container): void
     {
         $routerClass = isset($routerConfig['type']) ? (string)$routerConfig['type'] : $this->getDefaultRouterClass();
 

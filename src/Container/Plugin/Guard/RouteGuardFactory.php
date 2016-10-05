@@ -53,7 +53,7 @@ final class RouteGuardFactory
      * @return RouteGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments) : RouteGuard
+    public static function __callStatic($name, array $arguments): RouteGuard
     {
         if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
@@ -64,7 +64,7 @@ final class RouteGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    public function __invoke(ContainerInterface $container) : RouteGuard
+    public function __invoke(ContainerInterface $container): RouteGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

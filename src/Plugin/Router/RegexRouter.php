@@ -63,12 +63,12 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         }
     }
 
-    public function attach(ActionEventEmitter $events) : void
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage'], 100));
     }
 
-    public function route(string $pattern) : RegexRouter
+    public function route(string $pattern): RegexRouter
     {
         Assertion::notEmpty($pattern);
 
@@ -87,7 +87,7 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function to($handler) : RegexRouter
+    public function to($handler): RegexRouter
     {
         if (! is_string($handler) && ! is_object($handler) && ! is_callable($handler)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -99,7 +99,7 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         if (null === $this->tmpPattern) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a pattern. Please use method route before calling method to",
-                (is_object($handler))? get_class($handler) : (is_string($handler))? $handler : gettype($handler)
+                (is_object($handler))? get_class($handler): (is_string($handler))? $handler : gettype($handler)
             ));
         }
 
@@ -110,7 +110,7 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         return $this;
     }
 
-    public function onRouteMessage(ActionEvent $actionEvent) : void
+    public function onRouteMessage(ActionEvent $actionEvent): void
     {
         if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) {
             $this->onRouteToSingleHandler($actionEvent);
@@ -119,7 +119,7 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         }
     }
 
-    private function onRouteToSingleHandler(ActionEvent $actionEvent) : void
+    private function onRouteToSingleHandler(ActionEvent $actionEvent): void
     {
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
@@ -148,7 +148,7 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         }
     }
 
-    private function onRouteEvent(ActionEvent $actionEvent) : void
+    private function onRouteEvent(ActionEvent $actionEvent): void
     {
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 

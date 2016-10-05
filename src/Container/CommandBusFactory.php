@@ -28,12 +28,12 @@ class CommandBusFactory extends AbstractBusFactory
         parent::__construct($configId);
     }
 
-    protected function getBusClass() : string
+    protected function getBusClass(): string
     {
         return CommandBus::class;
     }
 
-    protected function getDefaultRouterClass() : string
+    protected function getDefaultRouterClass(): string
     {
         return CommandRouter::class;
     }

@@ -52,12 +52,12 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         }
     }
 
-    public function attach(ActionEventEmitter $events) : void
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
-    public function route(string $messageName) : SingleHandlerRouter
+    public function route(string $messageName): SingleHandlerRouter
     {
         Assertion::notEmpty($messageName);
 
@@ -76,7 +76,7 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function to($messageHandler) : SingleHandlerRouter
+    public function to($messageHandler): SingleHandlerRouter
     {
         if (! is_string($messageHandler) && ! is_object($messageHandler) && ! is_callable($messageHandler)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -88,7 +88,7 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         if (null === $this->tmpMessageName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a message. Please use method route before calling method to",
-                (is_object($messageHandler))? get_class($messageHandler) : (is_string($messageHandler))? $messageHandler : gettype($messageHandler)
+                (is_object($messageHandler))? get_class($messageHandler): (is_string($messageHandler))? $messageHandler : gettype($messageHandler)
             ));
         }
 
@@ -99,7 +99,7 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         return $this;
     }
 
-    public function onRouteMessage(ActionEvent $actionEvent) : void
+    public function onRouteMessage(ActionEvent $actionEvent): void
     {
         $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 

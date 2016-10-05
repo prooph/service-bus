@@ -29,7 +29,7 @@ class OnEventStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_invokes_the_on_event_method_of_the_handler() : void
+    public function it_invokes_the_on_event_method_of_the_handler(): void
     {
         $onEventStrategy = new OnEventStrategy();
 
@@ -47,7 +47,7 @@ class OnEventStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_determines_the_event_name_from_message_name_call_if_event_has_one() : void
+    public function it_determines_the_event_name_from_message_name_call_if_event_has_one(): void
     {
         $onEventStrategy = new OnEventStrategy();
         $customEvent = new CustomMessageWithName("I am an event with a messageName() method");

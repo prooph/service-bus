@@ -55,12 +55,12 @@ abstract class MessageBus
      */
     abstract public function dispatch($message);
 
-    public function utilize(ActionEventListenerAggregate $plugin) : void
+    public function utilize(ActionEventListenerAggregate $plugin): void
     {
         $plugin->attach($this->getActionEventEmitter());
     }
 
-    public function deactivate(ActionEventListenerAggregate $plugin) : void
+    public function deactivate(ActionEventListenerAggregate $plugin): void
     {
         $plugin->detach($this->getActionEventEmitter());
     }
@@ -69,7 +69,7 @@ abstract class MessageBus
      * @param mixed $message
      * @param ActionEvent $actionEvent
      */
-    protected function initialize($message, ActionEvent $actionEvent) : void
+    protected function initialize($message, ActionEvent $actionEvent): void
     {
         $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
         $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
@@ -93,7 +93,7 @@ abstract class MessageBus
         }
     }
 
-    protected function handleException(ActionEvent $actionEvent, \Throwable $ex) : void
+    protected function handleException(ActionEvent $actionEvent, \Throwable $ex): void
     {
         $failedPhase = $actionEvent->getName();
 
@@ -108,7 +108,7 @@ abstract class MessageBus
         }
     }
 
-    protected function trigger(ActionEvent $actionEvent) : void
+    protected function trigger(ActionEvent $actionEvent): void
     {
         $this->getActionEventEmitter()->dispatch($actionEvent);
 
@@ -117,26 +117,26 @@ abstract class MessageBus
         }
     }
 
-    protected function triggerError(ActionEvent $actionEvent) : void
+    protected function triggerError(ActionEvent $actionEvent): void
     {
         $actionEvent->setName(self::EVENT_HANDLE_ERROR);
 
         $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
-    protected function triggerFinalize(ActionEvent $actionEvent) : void
+    protected function triggerFinalize(ActionEvent $actionEvent): void
     {
         $actionEvent->setName(self::EVENT_FINALIZE);
 
         $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher) : void
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
     {
         $this->events = $actionEventDispatcher;
     }
 
-    public function getActionEventEmitter() : ActionEventEmitter
+    public function getActionEventEmitter(): ActionEventEmitter
     {
         if (null === $this->events) {
             $this->setActionEventEmitter(new ProophActionEventEmitter());
@@ -149,7 +149,7 @@ abstract class MessageBus
      * @param mixed $message
      * @return string
      */
-    protected function getMessageName($message) : string
+    protected function getMessageName($message): string
     {
         if (is_object($message)) {
             return get_class($message);

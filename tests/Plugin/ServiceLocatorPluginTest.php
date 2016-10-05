@@ -29,7 +29,7 @@ final class ServiceLocatorPluginTest extends TestCase
     /**
      * @test
      */
-    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event() : void
+    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event(): void
     {
         $handler = new MessageHandler();
 

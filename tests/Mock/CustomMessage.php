@@ -25,7 +25,7 @@ final class CustomMessage
         $this->text = $text;
     }
 
-    public function getText() : string
+    public function getText(): string
     {
         return $this->text;
     }

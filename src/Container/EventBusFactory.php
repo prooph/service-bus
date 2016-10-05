@@ -28,12 +28,12 @@ class EventBusFactory extends AbstractBusFactory
         parent::__construct($configId);
     }
 
-    protected function getBusClass() : string
+    protected function getBusClass(): string
     {
         return EventBus::class;
     }
 
-    protected function getDefaultRouterClass() : string
+    protected function getDefaultRouterClass(): string
     {
         return EventRouter::class;
     }

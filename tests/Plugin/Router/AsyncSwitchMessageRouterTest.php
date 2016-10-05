@@ -39,7 +39,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize() : void
+    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize(): void
     {
         $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
         $listenerHandler = $this->prophesize(ListenerHandler::class);
@@ -60,7 +60,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_when_message_name_is_empty() : void
+    public function it_returns_early_when_message_name_is_empty(): void
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
 
@@ -167,7 +167,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_sets_message_producer_as_event_listener_if_target_is_an_event_bus() : void
+    public function it_sets_message_producer_as_event_listener_if_target_is_an_event_bus(): void
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
 

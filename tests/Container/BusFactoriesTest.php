@@ -48,7 +48,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $container->has('config')->willReturn(false);
         $container->has(MessageFactory::class)->willReturn(false);
@@ -66,7 +66,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $container->has('config')->willReturn(true);
         $container->get('config')->willReturn([]);
@@ -85,7 +85,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $firstPlugin = $this->prophesize(ActionEventListenerAggregate::class);
         $secondPlugin = $this->prophesize(ActionEventListenerAggregate::class);
@@ -129,7 +129,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
 
         $container->has('config')->willReturn(true);
@@ -160,7 +160,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
 
@@ -201,7 +201,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
 
@@ -243,7 +243,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
         $messageFactory = $this->prophesize(MessageFactory::class);
@@ -288,7 +288,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
         $message->willImplement(AsyncMessage::class);
@@ -340,7 +340,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
 
@@ -384,7 +384,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
 
@@ -427,7 +427,7 @@ final class BusFactoriesTest extends TestCase
         string $busClass,
         string $busConfigKey,
         AbstractBusFactory $busFactory
-    ) : void {
+    ): void {
         $container = $this->prophesize(ContainerInterface::class);
         $firstPlugin = $this->prophesize(ActionEventListenerAggregate::class);
 
@@ -461,7 +461,7 @@ final class BusFactoriesTest extends TestCase
      * @test
      * @dataProvider provideBusFactoryClasses
      */
-    public function it_creates_a_bus_from_static_call(string $busClass, string $busFactoryClass) : void
+    public function it_creates_a_bus_from_static_call(string $busClass, string $busFactoryClass): void
     {
         $container = $this->prophesize(ContainerInterface::class);
         $container->has('config')->willReturn(true);
@@ -475,7 +475,7 @@ final class BusFactoriesTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_invalid_argument_exception_without_container_on_static_call() : void
+    public function it_throws_invalid_argument_exception_without_container_on_static_call(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The first argument must be of type Interop\Container\ContainerInterface');
@@ -483,7 +483,7 @@ final class BusFactoriesTest extends TestCase
         CommandBusFactory::other_config_id();
     }
 
-    public function provideBusFactoryClasses() : array
+    public function provideBusFactoryClasses(): array
     {
         return [
             [CommandBus::class, CommandBusFactory::class],
@@ -492,7 +492,7 @@ final class BusFactoriesTest extends TestCase
         ];
     }
 
-    public function provideBuses() : array
+    public function provideBuses(): array
     {
         return [
             [CommandBus::class, 'command_bus', new CommandBusFactory()],

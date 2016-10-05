@@ -37,7 +37,7 @@ class QueryBus extends MessageBus
     public const EVENT_PARAM_PROMISE = 'query-promise';
     public const EVENT_PARAM_DEFERRED = 'query-deferred';
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher) : void
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function (ActionEvent $actionEvent) {
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -57,7 +57,7 @@ class QueryBus extends MessageBus
      * @param mixed $query
      * @return Promise
      */
-    public function dispatch($query) : Promise
+    public function dispatch($query): Promise
     {
         $deferred = new Deferred();
 

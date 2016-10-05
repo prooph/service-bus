@@ -21,7 +21,7 @@ final class AsyncEvent extends DomainEvent implements PayloadConstructable, Asyn
 {
     use PayloadTrait;
 
-    public static function createEvent($data) : AsyncEvent
+    public static function createEvent($data): AsyncEvent
     {
         return new self(['data' => $data]);
     }

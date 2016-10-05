@@ -25,12 +25,14 @@ namespace Prooph\ServiceBus\Example\Command {
          */
         private $text;
 
+        protected $messageName = 'Prooph\ServiceBus\Example\Command\EchoText';
+
         public function __construct(string $text)
         {
             $this->text = $text;
         }
 
-        public function getText() : string
+        public function getText(): string
         {
             return $this->text;
         }
@@ -38,7 +40,7 @@ namespace Prooph\ServiceBus\Example\Command {
         /**
          * Return message payload as array
          */
-        public function payload() : array
+        public function payload(): array
         {
             return ['text' => $this->text];
         }
@@ -46,7 +48,7 @@ namespace Prooph\ServiceBus\Example\Command {
         /**
          * This method is called when message is instantiated named constructor fromArray
          */
-        protected function setPayload(array $payload) : void
+        protected function setPayload(array $payload): void
         {
             $this->text = $payload['text'];
         }

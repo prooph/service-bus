@@ -25,7 +25,7 @@ final class MessageBusTest extends TestCase
     /**
      * @test
      */
-    public function it_attaches_action_event_emitter() : void
+    public function it_attaches_action_event_emitter(): void
     {
         $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
         $mock = $actionEventEmitter->reveal();
@@ -39,7 +39,7 @@ final class MessageBusTest extends TestCase
     /**
      * @test
      */
-    public function it_uses_message_class_as_name_if_no_one_was_set() : void
+    public function it_uses_message_class_as_name_if_no_one_was_set(): void
     {
         $messageBus = new CustomMessageBus();
         $messageBus->dispatch(new \stdClass());
@@ -50,7 +50,7 @@ final class MessageBusTest extends TestCase
     /**
      * @test
      */
-    public function it_uses_message_as_message_name_if_message_is_a_string() : void
+    public function it_uses_message_as_message_name_if_message_is_a_string(): void
     {
         $messageBus = new CustomMessageBus();
         $messageBus->dispatch('message and a message name');
@@ -61,7 +61,7 @@ final class MessageBusTest extends TestCase
     /**
      * @test
      */
-    public function it_uses_type_of_message_as_message_name_if_message_is_neither_object_nor_string() : void
+    public function it_uses_type_of_message_as_message_name_if_message_is_neither_object_nor_string(): void
     {
         $messageBus = new CustomMessageBus();
         $messageBus->dispatch([]);

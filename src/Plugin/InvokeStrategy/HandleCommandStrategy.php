@@ -25,7 +25,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      * @param mixed $message
      * @return bool
      */
-    public function canInvoke($handler, $message) : bool
+    public function canInvoke($handler, $message): bool
     {
         $handleMethod = 'handle' . $this->determineCommandName($message);
 
@@ -36,7 +36,7 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      * @param mixed $handler
      * @param mixed $message
      */
-    public function invoke($handler, $message) : void
+    public function invoke($handler, $message): void
     {
         $handleMethod = 'handle' . $this->determineCommandName($message);
 
@@ -51,9 +51,9 @@ class HandleCommandStrategy extends AbstractInvokeStrategy
      * @param mixed $message
      * @return string
      */
-    protected function determineCommandName($message) : string
+    protected function determineCommandName($message): string
     {
-        $eventName = ($message instanceof HasMessageName)? $message->messageName() : (is_object($message)? get_class($message) : gettype($message));
+        $eventName = ($message instanceof HasMessageName)? $message->messageName(): (is_object($message)? get_class($message): gettype($message));
         return implode('', array_slice(explode('\\', $eventName), -1));
     }
 }

@@ -38,7 +38,7 @@ class CommandBus extends MessageBus
      */
     private $isDispatching = false;
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher) : void
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
             $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -58,7 +58,7 @@ class CommandBus extends MessageBus
      * @throws CommandDispatchException
      * @return void
      */
-    public function dispatch($command) : void
+    public function dispatch($command): void
     {
         $this->commandQueue[] = $command;
 
@@ -77,7 +77,7 @@ class CommandBus extends MessageBus
         }
     }
 
-    protected function processCommand($command) : void
+    protected function processCommand($command): void
     {
         $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 

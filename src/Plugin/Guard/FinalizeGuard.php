@@ -42,7 +42,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
-    public function onFinalize(ActionEvent $actionEvent) : void
+    public function onFinalize(ActionEvent $actionEvent): void
     {
         $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
         $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
@@ -72,7 +72,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
         }
     }
 
-    public function attach(ActionEventEmitter $events) : void
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_FINALIZE, [$this, "onFinalize"], -1000));
     }

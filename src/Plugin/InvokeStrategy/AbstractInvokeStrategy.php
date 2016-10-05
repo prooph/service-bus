@@ -36,20 +36,20 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
      * @param mixed $message
      * @return bool
      */
-    abstract protected function canInvoke($handler, $message) : bool;
+    abstract protected function canInvoke($handler, $message): bool;
 
     /**
      * @param mixed $handler
      * @param mixed $message
      */
-    abstract protected function invoke($handler, $message) : void;
+    abstract protected function invoke($handler, $message): void;
 
-    public function attach(ActionEventEmitter $events) : void
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_INVOKE_HANDLER, $this, $this->priority));
     }
 
-    public function __invoke(ActionEvent $e) : void
+    public function __invoke(ActionEvent $e): void
     {
         $message = $e->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $handler = $e->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
