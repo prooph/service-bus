@@ -63,7 +63,7 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
         //if the message is marked with AsyncMessage, but had not yet been sent via async then sent to async producer
-        if ($message instanceof AsyncMessage && !(isset($message->metadata()['handled-async']) && $message->metadata()['handled-async'] === true)) {
+        if ($message instanceof AsyncMessage && ! (isset($message->metadata()['handled-async']) && $message->metadata()['handled-async'] === true)) {
             //apply meta data, this is need to we can identify that the message has already been send via the async producer
             $message = $message->withAddedMetadata('handled-async', true);
 

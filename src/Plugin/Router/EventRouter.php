@@ -128,7 +128,7 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
             return;
         }
 
-        if (!isset($this->eventMap[$messageName])) {
+        if (! isset($this->eventMap[$messageName])) {
             return;
         }
 

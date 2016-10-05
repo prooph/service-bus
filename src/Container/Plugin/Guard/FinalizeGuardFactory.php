@@ -55,7 +55,7 @@ final class FinalizeGuardFactory
      */
     public static function __callStatic(string $name, array $arguments): FinalizeGuard
     {
-        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+        if (! isset($arguments[0]) || ! $arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
                 sprintf('The first argument must be of type %s', ContainerInterface::class)
             );

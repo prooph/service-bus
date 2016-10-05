@@ -49,7 +49,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
 
         if ($promise instanceof Promise) {
             $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName) {
-                if (!$this->authorizationService->isGranted($messageName, $result)) {
+                if (! $this->authorizationService->isGranted($messageName, $result)) {
                     $actionEvent->stopPropagation(true);
 
                     if (! $this->exposeEventMessageName) {
@@ -61,7 +61,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
             });
 
             $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $newPromise);
-        } elseif (!$this->authorizationService->isGranted($messageName)) {
+        } elseif (! $this->authorizationService->isGranted($messageName)) {
             $actionEvent->stopPropagation(true);
 
             if (! $this->exposeEventMessageName) {

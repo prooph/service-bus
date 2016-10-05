@@ -87,7 +87,7 @@ class QueryBus extends MessageBus
 
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-            if (is_string($finder) && !is_callable($finder)) {
+            if (is_string($finder) && ! is_callable($finder)) {
                 $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);

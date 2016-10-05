@@ -107,7 +107,7 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
             return;
         }
 
-        if (!isset($this->messageMap[$messageName])) {
+        if (! isset($this->messageMap[$messageName])) {
             return;
         }
 
