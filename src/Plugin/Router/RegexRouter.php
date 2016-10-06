@@ -87,7 +87,6 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
      * @return RegexRouter
      *
      * @throws Exception\RuntimeException
-     *
      * @throws Exception\InvalidArgumentException
      */
     public function to($handler): RegexRouter
@@ -102,9 +101,9 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         if (null === $this->tmpPattern) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a pattern. Please use method route before calling method to",
-                (is_object($handler))
+                is_object($handler)
                     ? get_class($handler)
-                    : (is_string($handler))? $handler : gettype($handler)
+                    : is_string($handler) ? $handler : gettype($handler)
             ));
         }
 

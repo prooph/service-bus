@@ -89,7 +89,6 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
      * @return EventRouter
      *
      * @throws Exception\RuntimeException
-     *
      * @throws Exception\InvalidArgumentException
      */
     public function to($eventListener): EventRouter
@@ -104,9 +103,9 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         if (null === $this->tmpEventName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map listener %s to an event. Please use method route before calling method to",
-                (is_object($eventListener))
+                is_object($eventListener)
                     ? get_class($eventListener)
-                    : (is_string($eventListener))? $eventListener : gettype($eventListener)
+                    : is_string($eventListener) ? $eventListener : gettype($eventListener)
             ));
         }
 

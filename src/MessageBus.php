@@ -68,7 +68,6 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
-     *
      * @param ActionEvent $actionEvent
      */
     protected function initialize($message, ActionEvent $actionEvent): void

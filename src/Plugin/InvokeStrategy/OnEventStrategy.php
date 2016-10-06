@@ -22,7 +22,6 @@ class OnEventStrategy extends AbstractInvokeStrategy
 {
     /**
      * @param mixed $handler
-     *
      * @param mixed $message
      *
      * @return bool
@@ -36,7 +35,6 @@ class OnEventStrategy extends AbstractInvokeStrategy
 
     /**
      * @param mixed $handler
-     *
      * @param mixed $message
      *
      * @return void

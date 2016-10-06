@@ -20,7 +20,6 @@ interface AuthorizationService
      * Check if the permission is granted to the current identity
      *
      * @param string $messageName
-     *
      * @param mixed  $context
      *
      * @return bool

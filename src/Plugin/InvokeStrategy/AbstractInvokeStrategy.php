@@ -33,7 +33,6 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 
     /**
      * @param mixed $handler
-     *
      * @param mixed $message
      *
      * @return bool
@@ -42,7 +41,6 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 
     /**
      * @param mixed $handler
-     *
      * @param mixed $message
      *
      * @return void
