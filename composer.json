@@ -30,7 +30,7 @@
     },
     "require-dev": {
         "react/promise" : "^2.4.1",
-        "phpunit/phpunit": "^5.5.5",
+        "phpunit/phpunit": "^5.5.7",
         "phpunit/phpunit-mock-objects": "^3.3.1",
         "phpspec/prophecy": "dev-patch-1 as 1.6.1",
         "friendsofphp/php-cs-fixer": "^1.12.2",
