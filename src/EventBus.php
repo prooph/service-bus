@@ -43,6 +43,7 @@ class EventBus extends MessageBus
 
     /**
      * @param mixed $event
+     *
      * @return void
      */
     public function dispatch($event): void

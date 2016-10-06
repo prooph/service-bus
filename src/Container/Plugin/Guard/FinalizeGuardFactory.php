@@ -48,9 +48,6 @@ final class FinalizeGuardFactory
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return FinalizeGuard
      * @throws InvalidArgumentException
      */
     public static function __callStatic(string $name, array $arguments): FinalizeGuard

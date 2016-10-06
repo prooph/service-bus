@@ -33,14 +33,19 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 
     /**
      * @param mixed $handler
+     *
      * @param mixed $message
+     *
      * @return bool
      */
     abstract protected function canInvoke($handler, $message): bool;
 
     /**
      * @param mixed $handler
+     *
      * @param mixed $message
+     *
+     * @return void
      */
     abstract protected function invoke($handler, $message): void;
 

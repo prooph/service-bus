@@ -42,7 +42,7 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
     /**
      * @param null|array[eventName => eventListener] $eventMap
      */
-    public function __construct(?array $eventMap = null)
+    public function __construct(array $eventMap = null)
     {
         if (null === $eventMap) {
             return;
@@ -85,8 +85,11 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     /**
      * @param string|object|callable $eventListener
+     *
      * @return EventRouter
+     *
      * @throws Exception\RuntimeException
+     *
      * @throws Exception\InvalidArgumentException
      */
     public function to($eventListener): EventRouter
@@ -101,7 +104,9 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         if (null === $this->tmpEventName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map listener %s to an event. Please use method route before calling method to",
-                (is_object($eventListener))? get_class($eventListener): (is_string($eventListener))? $eventListener : gettype($eventListener)
+                (is_object($eventListener))
+                    ? get_class($eventListener)
+                    : (is_string($eventListener))? $eventListener : gettype($eventListener)
             ));
         }
 
@@ -112,7 +117,9 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     /**
      * Alias for method to
+     *
      * @param string|object|callable $eventListener
+     *
      * @return EventRouter
      */
     public function andTo($eventListener): EventRouter

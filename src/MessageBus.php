@@ -51,7 +51,8 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
-     * @return mixed|void depends on the bus type
+     *
+     * @return \React\Promise\Promise|void depends on the bus type
      */
     abstract public function dispatch($message);
 
@@ -67,6 +68,7 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
+     *
      * @param ActionEvent $actionEvent
      */
     protected function initialize($message, ActionEvent $actionEvent): void
@@ -155,6 +157,7 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
+     *
      * @return string
      */
     protected function getMessageName($message): string

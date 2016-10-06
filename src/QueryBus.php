@@ -55,6 +55,7 @@ class QueryBus extends MessageBus
 
     /**
      * @param mixed $query
+     *
      * @return Promise
      */
     public function dispatch($query): Promise

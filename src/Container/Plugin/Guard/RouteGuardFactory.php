@@ -48,9 +48,6 @@ final class RouteGuardFactory
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return RouteGuard
      * @throws InvalidArgumentException
      */
     public static function __callStatic($name, array $arguments): RouteGuard

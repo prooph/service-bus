@@ -62,9 +62,6 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return MessageBus
      * @throws InvalidArgumentException
      */
     public static function __callStatic(string $name, array $arguments): MessageBus
