@@ -144,9 +144,9 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
 
     private function attachRouter(MessageBus $bus, array $routerConfig, ContainerInterface $container): void
     {
-        $routerClass = isset($routerConfig['type']) ? (string)$routerConfig['type'] : $this->getDefaultRouterClass();
+        $routerClass = $routerConfig['type'] ?? $this->getDefaultRouterClass();
 
-        $routes = isset($routerConfig['routes']) ? $routerConfig['routes'] : [];
+        $routes = $routerConfig['routes'] ?? [];
 
         $router = new $routerClass($routes);
 
