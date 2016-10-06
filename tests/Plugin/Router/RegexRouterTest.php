@@ -15,6 +15,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use ProophTest\ServiceBus\TestCase;
@@ -68,12 +69,12 @@ class RegexRouterTest extends TestCase
      */
     public function it_does_not_allow_that_two_pattern_matches_with_same_command_name(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $regexRouter = new RegexRouter();
 
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to("DoSomethingHandler");
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*/')->to("DoSomethingHandler2");
-
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',

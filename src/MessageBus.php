@@ -139,7 +139,15 @@ abstract class MessageBus
     public function getActionEventEmitter(): ActionEventEmitter
     {
         if (null === $this->events) {
-            $this->setActionEventEmitter(new ProophActionEventEmitter());
+            $reflection = new \ReflectionClass($this);
+            $availableEventNames = array_values(array_filter(
+                $reflection->getConstants(),
+                function (string $key) {
+                    return (bool) ! substr_compare($key, 'EVENT_', 0, 6, false);
+                },
+                ARRAY_FILTER_USE_KEY
+            ));
+            $this->setActionEventEmitter(new ProophActionEventEmitter($availableEventNames));
         }
 
         return $this->events;

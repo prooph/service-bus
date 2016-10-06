@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use ProophTest\ServiceBus\TestCase;
@@ -96,11 +97,11 @@ class SingleHandlerRouterTest extends TestCase
      */
     public function it_fails_on_routing_a_second_command_before_first_definition_is_finished(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $router = new CommandRouter();
 
         $router->route('ProophTest\ServiceBus\Mock\DoSomething');
-
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
         $router->route('AnotherCommand');
     }
@@ -110,9 +111,9 @@ class SingleHandlerRouterTest extends TestCase
      */
     public function it_fails_on_setting_a_handler_before_a_command_is_set(): void
     {
-        $router = new CommandRouter();
+        $this->expectException(RuntimeException::class);
 
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
+        $router = new CommandRouter();
 
         $router->to('DoSomethingHandler');
     }

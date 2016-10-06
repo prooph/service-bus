@@ -21,6 +21,8 @@ use Prooph\ServiceBus\MessageBus;
  */
 final class CustomMessageBus extends MessageBus
 {
+    public const EVENT_FOO = 'foo';
+
     private $actionEvent;
 
     /**

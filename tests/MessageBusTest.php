@@ -68,4 +68,27 @@ final class MessageBusTest extends TestCase
 
         $this->assertSame('array', $messageBus->getActionEvent()->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME));
     }
+
+    /**
+     * @test
+     */
+    public function it_attaches_custom_event_name(): void
+    {
+        $messageBus = new CustomMessageBus();
+        $messageBus->getActionEventEmitter()->attachListener(CustomMessageBus::EVENT_FOO, function () {
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_attach_to_invalid_event_names(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown event name given: invalid');
+
+        $messageBus = new CustomMessageBus(['foo']);
+        $messageBus->getActionEventEmitter()->attachListener('invalid', function () {
+        });
+    }
 }
