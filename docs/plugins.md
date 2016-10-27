@@ -137,7 +137,7 @@ The route guard passes the message to the `Prooph\ServiceBus\Plugin\Guard\Author
 If you want to protect the query bus, you can also use the route guard, but in some situations, you want to deny access based on the result
 of the query. In this case it's important to make checks on the query results. The finalize guard hands over a query result as context to the AuthorizationService.
 
-We also provide [service-bus-zfc-rbac-brdige](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
+We also provide [service-bus-zfc-rbac-bridge](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
 You can also find some configuration examples in this repository. 
 
 *Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on
