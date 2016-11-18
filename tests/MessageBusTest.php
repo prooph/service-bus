@@ -16,11 +16,7 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\Mock\CustomMessageBus;
 
-/**
- * Class MessageBusTest
- * @package ProophTest\ServiceBus
- */
-final class MessageBusTest extends TestCase
+class MessageBusTest extends TestCase
 {
     /**
      * @test

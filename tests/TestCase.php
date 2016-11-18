@@ -12,12 +12,6 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus;
 
-/**
- * Class TestCase
- *
- * @package ProophTest\ServiceBus
- * @author Alexander Miertsch <contact@prooph.de>
- */
 class TestCase extends \PHPUnit_Framework_TestCase
 {
 }

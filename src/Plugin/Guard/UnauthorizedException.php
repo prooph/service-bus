@@ -8,13 +8,11 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Guard;
 
-/**
- * Class UnauthorizedException
- * @package Prooph\ServiceBus\Plugin\Guard
- */
-final class UnauthorizedException extends \RuntimeException
+class UnauthorizedException extends \RuntimeException
 {
     /**
      * @var string

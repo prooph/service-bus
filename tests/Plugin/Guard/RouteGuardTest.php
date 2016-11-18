@@ -20,11 +20,7 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 
-/**
- * Class RouteGuardTest
- * @package ProophTest\ServiceBus\Plugin\Guard
- */
-final class RouteGuardTest extends TestCase
+class RouteGuardTest extends TestCase
 {
     /**
      * @test

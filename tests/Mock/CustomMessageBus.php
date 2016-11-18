@@ -15,11 +15,7 @@ namespace ProophTest\ServiceBus\Mock;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\MessageBus;
 
-/**
- * Class CustomMessageBus
- * @package ProophTest\ServiceBus\Mock
- */
-final class CustomMessageBus extends MessageBus
+class CustomMessageBus extends MessageBus
 {
     public const EVENT_FOO = 'foo';
 

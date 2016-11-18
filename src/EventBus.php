@@ -16,12 +16,7 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 
 /**
- * Class EventBus
- *
  * An event bus is capable of dispatching a message to multiple listeners.
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class EventBus extends MessageBus
 {

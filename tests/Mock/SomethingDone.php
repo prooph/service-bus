@@ -16,11 +16,7 @@ use Prooph\Common\Messaging\DomainEvent;
 use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
 
-/**
- * Class SomethingDone
- * @package ProophTest\ServiceBus\Mock
- */
-final class SomethingDone extends DomainEvent implements PayloadConstructable
+class SomethingDone extends DomainEvent implements PayloadConstructable
 {
     use PayloadTrait;
 }

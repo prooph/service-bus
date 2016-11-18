@@ -12,11 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
-/**
- * Class MessageHandler
- * @package ProophTest\ServiceBus\Mock
- */
-final class MessageHandler
+class MessageHandler
 {
     private $lastMessage;
 

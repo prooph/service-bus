@@ -27,12 +27,6 @@ use ProophTest\ServiceBus\Mock\AsyncEvent;
 use ProophTest\ServiceBus\Mock\NonAsyncCommand;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class SingleHandlerRouterTest
- *
- * @package ProophTest\ServiceBus\Plugin\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class AsyncSwitchMessageRouterTest extends TestCase
 {
 

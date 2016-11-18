@@ -20,12 +20,7 @@ use ProophTest\ServiceBus\Mock\CustomMessageWithName;
 use ProophTest\ServiceBus\Mock\Finder;
 use React\Promise\Deferred;
 
-/**
- * Class FinderInvokeStrategyTest
- *
- * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
- */
-final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
+class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FinderInvokeStrategy

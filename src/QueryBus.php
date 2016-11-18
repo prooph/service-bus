@@ -20,15 +20,10 @@ use React\Promise\Deferred;
 use React\Promise\Promise;
 
 /**
- * Class QueryBus
- *
  * The query bus dispatches a query message to a finder.
  * The query is maybe dispatched async so the bus returns a promise
  * which gets either resolved with the response of the finder or rejected with an exception.
  * Additionally the finder can provide an update status but this is not guaranteed.
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class QueryBus extends MessageBus
 {
@@ -56,7 +51,6 @@ class QueryBus extends MessageBus
     /**
      * @param mixed $query
      *
-     * @return Promise
      * @throws RuntimeException
      */
     public function dispatch($query): Promise

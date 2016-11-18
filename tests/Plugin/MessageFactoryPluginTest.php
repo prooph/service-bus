@@ -22,11 +22,7 @@ use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use Prophecy\Argument;
 
-/**
- * Class MessageFactoryPluginTest
- * @package ProophTest\ServiceBus\Plugin
- */
-final class MessageFactoryPluginTest extends TestCase
+class MessageFactoryPluginTest extends TestCase
 {
     /**
      * @test

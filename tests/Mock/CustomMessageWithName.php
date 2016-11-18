@@ -14,11 +14,7 @@ namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\HasMessageName;
 
-/**
- * Class CustomMessage
- * @package ProophTest\ServiceBus\Mock
- */
-final class CustomMessageWithName implements HasMessageName
+class CustomMessageWithName implements HasMessageName
 {
     private $text;
 

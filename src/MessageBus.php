@@ -21,12 +21,7 @@ use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
- * Class MessageBus
- *
  * Base class for a message bus implementation
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 abstract class MessageBus
 {

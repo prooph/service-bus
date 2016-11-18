@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Assert\Assertion;
@@ -19,12 +21,6 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
 
-/**
- * Class EventRouter
- *
- * @package Prooph\ServiceBus\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;

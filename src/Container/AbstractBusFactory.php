@@ -24,12 +24,6 @@ use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 
-/**
- * Class AbstractBusFactory
- *
- * @package Prooph\ServiceBus\Container
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOptions
 {
     use ConfigurationTrait;

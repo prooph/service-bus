@@ -16,11 +16,7 @@ use Prooph\Common\Messaging\Command;
 use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
 
-/**
- * Class DoSomething
- * @package ProophTest\ServiceBus\Mock
- */
-final class DoSomething extends Command implements PayloadConstructable
+class DoSomething extends Command implements PayloadConstructable
 {
     use PayloadTrait;
 }

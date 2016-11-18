@@ -24,11 +24,7 @@ use ProophTest\ServiceBus\Mock\DoSomething;
 use ProophTest\ServiceBus\Mock\ErrorProducer;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 
-/**
- * Class CommandBusTest
- * @package ProophTest\ServiceBus
- */
-final class CommandBusTest extends TestCase
+class CommandBusTest extends TestCase
 {
     /**
      * @var CommandBus

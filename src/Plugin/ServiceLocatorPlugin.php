@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin;
 
 use Interop\Container\ContainerInterface;
@@ -18,14 +20,9 @@ use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
 
 /**
- * Class ServiceLocatorPlugin
- *
  * This plugin can be used to lazy load message handlers.
  * Initialize it with a Interop\Container\ContainerInterface
  * and route your messages to the service id only.
- *
- * @package Prooph\ServiceBus\ServiceLocator
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class ServiceLocatorPlugin implements ActionEventListenerAggregate
 {

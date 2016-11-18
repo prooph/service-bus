@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Assert\Assertion;
@@ -21,12 +23,6 @@ use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
 
-/**
- * Class RegexRouter
- *
- * @package Prooph\ServiceBus\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;

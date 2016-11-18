@@ -12,12 +12,6 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Exception;
 
-/**
- * Interface ServiceBusException
- *
- * @package Prooph\ServiceBus\Exception
- * @author Alexander Miertsch <contact@prooph.de>
- */
 interface ServiceBusException
 {
 }

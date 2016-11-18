@@ -12,11 +12,6 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Exception;
 
-/**
- * Class InvalidArgumentException
- *
- * @package Prooph\ServiceBus\Exception
- */
 class InvalidArgumentException extends \InvalidArgumentException implements ServiceBusException
 {
 }

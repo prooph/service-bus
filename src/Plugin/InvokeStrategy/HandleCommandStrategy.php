@@ -8,16 +8,12 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Messaging\HasMessageName;
 
-/**
- * Class HandleCommandStrategy
- *
- * @package Prooph\ServiceBus\InvokeStrategy
- * @author Alexander Miertsch <contact@prooph.de>
- */
 class HandleCommandStrategy extends AbstractInvokeStrategy
 {
     /**

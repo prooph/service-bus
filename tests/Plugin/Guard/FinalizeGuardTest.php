@@ -23,11 +23,7 @@ use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 use Prooph\ServiceBus\QueryBus;
 use React\Promise\Deferred;
 
-/**
- * Class FinalizeGuardTest
- * @package ProophTest\ServiceBus\Plugin\Guard
- */
-final class FinalizeGuardTest extends TestCase
+class FinalizeGuardTest extends TestCase
 {
     /**
      * @test

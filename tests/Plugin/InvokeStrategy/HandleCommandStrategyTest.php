@@ -19,12 +19,6 @@ use ProophTest\ServiceBus\Mock\CustomMessageWithName;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class HandleCommandStrategyTest
- *
- * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
- * @author Alexander Miertsch <contact@prooph.de>
- */
 class HandleCommandStrategyTest extends TestCase
 {
     /**

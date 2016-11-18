@@ -17,7 +17,7 @@ use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
 use Prooph\ServiceBus\Async\AsyncMessage;
 
-final class AsyncEvent extends DomainEvent implements PayloadConstructable, AsyncMessage
+class AsyncEvent extends DomainEvent implements PayloadConstructable, AsyncMessage
 {
     use PayloadTrait;
 

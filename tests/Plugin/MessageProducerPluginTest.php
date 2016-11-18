@@ -22,12 +22,7 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageProducerPlugin;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class MessageProducerPluginTest
- *
- * @package ProophTest\ServiceBus\Plugin
- */
-final class MessageProducerPluginTest extends TestCase
+class MessageProducerPluginTest extends TestCase
 {
     /**
      * @test

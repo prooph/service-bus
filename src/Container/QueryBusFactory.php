@@ -15,11 +15,6 @@ namespace Prooph\ServiceBus\Container;
 use Prooph\ServiceBus\Plugin\Router\QueryRouter;
 use Prooph\ServiceBus\QueryBus;
 
-/**
- * Class QueryBusFactory
- *
- * @package Prooph\ServiceBus\Container
- */
 class QueryBusFactory extends AbstractBusFactory
 {
     public function __construct(string $configId = 'query_bus')

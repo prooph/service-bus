@@ -18,13 +18,8 @@ use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
- * Class CommandBus
- *
  * A command bus is capable of dispatching a message to a command handler.
  * Only one handler per message is allowed!
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class CommandBus extends MessageBus
 {

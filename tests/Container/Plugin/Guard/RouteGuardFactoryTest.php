@@ -18,11 +18,7 @@ use Prooph\ServiceBus\Container\Plugin\Guard\RouteGuardFactory;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 
-/**
- * Class RouteGuardFactoryTest
- * @package ProophTest\ServiceBus\Container\Plugin\Guard
- */
-final class RouteGuardFactoryTest extends TestCase
+class RouteGuardFactoryTest extends TestCase
 {
     /**
      * @test

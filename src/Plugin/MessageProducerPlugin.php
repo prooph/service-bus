@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin;
 
 use Prooph\Common\Event\ActionEvent;
@@ -19,14 +21,10 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 
 /**
- * Class MessageProducerPlugin
- *
  * If the MessageProducerPlugin is attached to a message bus it routes all messages
  * to the Prooph\ServiceBus\Async\MessageProducer it is initialized with.
- *
- * @package Prooph\ServiceBus\Plugin
  */
-final class MessageProducerPlugin implements ActionEventListenerAggregate
+class MessageProducerPlugin implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 

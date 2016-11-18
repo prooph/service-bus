@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Event\ActionEvent;
@@ -16,12 +18,6 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
 
-/**
- * Class AbstractInvokeStrategy
- *
- * @package Prooph\ServiceBus\InvokeStrategy
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;

@@ -26,11 +26,7 @@ use ProophTest\ServiceBus\Mock\Finder;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 
-/**
- * Class QueryBusTest
- * @package ProophTest\ServiceBus
- */
-final class QueryBusTest extends TestCase
+class QueryBusTest extends TestCase
 {
     /**
      * @var QueryBus

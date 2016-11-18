@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin;
 
 use Prooph\Common\Event\ActionEvent;
@@ -18,18 +20,13 @@ use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\MessageBus;
 
 /**
- * Class MessageFactoryPlugin
- *
  * This plugin listens on the MessageBus::EVENT_INITIALIZE action event.
  * It checks if the message of the action event is given as an array and
  * if the array contains a key "message_name".
  * If both conditions are met the plugin uses the injected Prooph\Common\Messaging\MessageFactory
  * to translate the message array into a Prooph\Common\Messaging\Message
- *
- * @package Prooph\ServiceBus\Plugin
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class MessageFactoryPlugin implements ActionEventListenerAggregate
+class MessageFactoryPlugin implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 

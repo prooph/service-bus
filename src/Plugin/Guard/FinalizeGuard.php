@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Guard;
 
 use Prooph\Common\Event\ActionEvent;
@@ -18,10 +20,6 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
 use React\Promise\Promise;
 
-/**
- * Class FinalizeGuard
- * @package Prooph\ServiceBus\Plugin\Guard
- */
 final class FinalizeGuard implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;

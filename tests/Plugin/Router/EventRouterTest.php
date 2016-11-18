@@ -19,12 +19,6 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class EventRouterTest
- *
- * @package ProophTest\ServiceBus\Plugin\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class EventRouterTest extends TestCase
 {
     /**

@@ -16,11 +16,7 @@ use Prooph\Common\Messaging\PayloadConstructable;
 use Prooph\Common\Messaging\PayloadTrait;
 use Prooph\Common\Messaging\Query;
 
-/**
- * Class FetchSomething
- * @package ProophTest\ServiceBus\Mock
- */
-final class FetchSomething extends Query implements PayloadConstructable
+class FetchSomething extends Query implements PayloadConstructable
 {
     use PayloadTrait;
 }

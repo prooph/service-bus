@@ -15,12 +15,6 @@ namespace Prooph\ServiceBus\Container;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
 
-/**
- * Class EventBusFactory
- *
- * @package Prooph\ServiceBus\Container
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class EventBusFactory extends AbstractBusFactory
 {
     public function __construct(string $configId = 'event_bus')

@@ -17,11 +17,7 @@ use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 
-/**
- * Class FinalizeGuardFactory
- * @package Prooph\ServiceBus\Container\Plugin\Guard
- */
-final class FinalizeGuardFactory
+class FinalizeGuardFactory
 {
     /**
      * @var bool

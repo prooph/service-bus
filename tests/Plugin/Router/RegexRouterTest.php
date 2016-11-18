@@ -20,12 +20,6 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class RegexRouterTest
- *
- * @package ProophTest\ServiceBus\Plugin\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class RegexRouterTest extends TestCase
 {
     /**

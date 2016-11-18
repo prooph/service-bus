@@ -12,11 +12,6 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Exception;
 
-/**
- * Class CommandDispatchException
- *
- * @package Prooph\ServiceBus\Exception
- */
 class CommandDispatchException extends MessageDispatchException
 {
     private $pendingCommands = [];

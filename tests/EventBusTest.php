@@ -22,11 +22,7 @@ use ProophTest\ServiceBus\Mock\ErrorProducer;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\Mock\SomethingDone;
 
-/**
- * Class EventBusTest
- * @package ProophTest\ServiceBus
- */
-final class EventBusTest extends TestCase
+class EventBusTest extends TestCase
 {
     /**
      * @var EventBus

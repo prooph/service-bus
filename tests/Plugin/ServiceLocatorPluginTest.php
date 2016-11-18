@@ -20,11 +20,7 @@ use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class ServiceLocatorPluginTest
- * @package ProophTest\ServiceBus\Plugin
- */
-final class ServiceLocatorPluginTest extends TestCase
+class ServiceLocatorPluginTest extends TestCase
 {
     /**
      * @test

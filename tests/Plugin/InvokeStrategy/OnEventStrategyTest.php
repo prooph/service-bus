@@ -18,12 +18,6 @@ use ProophTest\ServiceBus\Mock\CustomMessageWithName;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class OnEventStrategyTest
- *
- * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
- * @author Alexander Miertsch <contact@prooph.de>
- */
 class OnEventStrategyTest extends TestCase
 {
     /**

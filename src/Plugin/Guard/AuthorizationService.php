@@ -8,12 +8,10 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Guard;
 
-/**
- * Interface AuthorizationService
- * @package Prooph\ServiceBus\Plugin\Guard
- */
 interface AuthorizationService
 {
     /**

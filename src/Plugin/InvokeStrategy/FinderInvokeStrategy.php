@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Event\ActionEvent;
@@ -18,18 +20,7 @@ use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
 
-/**
- * Class FinderInvokeStrategy
- *
- * This is a special invoke strategy for finders handling a query message and providing a response by resolving the
- * deferred of the query dispatch.
- *
- * The invoke strategy can handle finders which have a method named like the short name of the query.
- *
- * @package Prooph\ServiceBus\InvokeStrategy
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
-final class FinderInvokeStrategy implements ActionEventListenerAggregate
+class FinderInvokeStrategy implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 

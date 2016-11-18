@@ -12,11 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
-/**
- * Class Finder
- * @package ProophTest\ServiceBus\Mock
- */
-final class Finder
+class Finder
 {
     private $message;
 

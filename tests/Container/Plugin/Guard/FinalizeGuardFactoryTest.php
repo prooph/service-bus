@@ -18,11 +18,7 @@ use Prooph\ServiceBus\Container\Plugin\Guard\FinalizeGuardFactory;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 
-/**
- * Class FinalizeGuardFactoryTest
- * @package ProophTest\ServiceBus\Container\Plugin\Guard
- */
-final class FinalizeGuardFactoryTest extends TestCase
+class FinalizeGuardFactoryTest extends TestCase
 {
     /**
      * @test

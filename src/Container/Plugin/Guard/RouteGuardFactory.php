@@ -17,11 +17,7 @@ use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 
-/**
- * Class RouteGuardFactory
- * @package Prooph\ServiceBus\Container\Plugin\Guard
- */
-final class RouteGuardFactory
+class RouteGuardFactory
 {
     /**
      * @var bool

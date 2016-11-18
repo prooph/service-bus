@@ -19,12 +19,6 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 use ProophTest\ServiceBus\TestCase;
 
-/**
- * Class SingleHandlerRouterTest
- *
- * @package ProophTest\ServiceBus\Plugin\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class SingleHandlerRouterTest extends TestCase
 {
     /**

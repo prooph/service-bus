@@ -13,12 +13,7 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Async;
 
 /**
- * Class AsyncMessage
- *
- * The interface is used to mark Commands that are to be send via an async MessageProducer
- *
- * @package Prooph\ServiceBus\Router
- * @author Guy Radford <guyr@crazylime.co.uk>
+ * This interface is used to mark messages that are to be send via an async MessageProducer
  */
 interface AsyncMessage
 {

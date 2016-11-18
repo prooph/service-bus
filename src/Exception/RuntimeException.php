@@ -12,12 +12,6 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Exception;
 
-/**
- * Class RuntimeException
- *
- * @package Prooph\ServiceBus\Exception
- * @author Alexander Miertsch <contact@prooph.de>
- */
 class RuntimeException extends \RuntimeException implements ServiceBusException
 {
 }

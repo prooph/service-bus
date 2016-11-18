@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\ActionEvent;
@@ -21,12 +23,6 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
 
-/**
- * Class AsyncSwitchMessageRouter
- *
- * @package Prooph\ServiceBus\Router
- * @author Guy Radford <guyr@crazylime.co.uk>
- */
 class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;

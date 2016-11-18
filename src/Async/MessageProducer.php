@@ -16,12 +16,8 @@ use Prooph\Common\Messaging\Message;
 use React\Promise\Deferred;
 
 /**
- * Interface MessageProducer
- *
  * The message buses treat message producers like every other message handlers.
  * However, this interface marks a handler as an async message producer.
- *
- * @package Prooph\ServiceBus\Async
  */
 interface MessageProducer
 {

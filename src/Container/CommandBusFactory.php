@@ -15,12 +15,6 @@ namespace Prooph\ServiceBus\Container;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
 
-/**
- * Class CommandBusFactory
- *
- * @package Prooph\ServiceBus\Container
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class CommandBusFactory extends AbstractBusFactory
 {
     public function __construct(string $configId = 'command_bus')

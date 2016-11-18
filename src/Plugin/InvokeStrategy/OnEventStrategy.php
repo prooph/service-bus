@@ -8,23 +8,17 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Messaging\HasMessageName;
 
-/**
- * Class OnEventStrategy
- *
- * @package Prooph\ServiceBus\InvokeStrategy
- * @author Alexander Miertsch <contact@prooph.de>
- */
 class OnEventStrategy extends AbstractInvokeStrategy
 {
     /**
      * @param mixed $handler
      * @param mixed $message
-     *
-     * @return bool
      */
     public function canInvoke($handler, $message): bool
     {
@@ -36,8 +30,6 @@ class OnEventStrategy extends AbstractInvokeStrategy
     /**
      * @param mixed $handler
      * @param mixed $message
-     *
-     * @return void
      */
     public function invoke($handler, $message): void
     {
@@ -48,8 +40,6 @@ class OnEventStrategy extends AbstractInvokeStrategy
 
     /**
      * @param mixed $event
-     *
-     * @return string
      */
     protected function determineEventName($event): string
     {

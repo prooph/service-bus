@@ -8,14 +8,10 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Router;
 
-/**
- * Class CommandRouter
- *
- * @package Prooph\ServiceBus\Router
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class CommandRouter extends SingleHandlerRouter
 {
 }

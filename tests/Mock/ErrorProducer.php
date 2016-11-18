@@ -12,11 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
-/**
- * Class ErrorProducer
- * @package ProophTest\ServiceBus\Mock
- */
-final class ErrorProducer
+class ErrorProducer
 {
     public function throwException($message)
     {

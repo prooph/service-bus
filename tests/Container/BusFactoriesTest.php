@@ -33,12 +33,7 @@ use ProophTest\ServiceBus\Mock\NoopMessageProducer;
 use ProophTest\ServiceBus\TestCase;
 use Prophecy\Argument;
 
-/**
- * Class BusFactoriesTest
- *
- * @package ProophTest\ServiceBus\Container
- */
-final class BusFactoriesTest extends TestCase
+class BusFactoriesTest extends TestCase
 {
     /**
      * @test

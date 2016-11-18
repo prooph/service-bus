@@ -14,12 +14,6 @@ namespace Prooph\ServiceBus\Exception;
 
 use Prooph\Common\Event\ActionEvent;
 
-/**
- * Class MessageDispatchException
- *
- * @package Prooph\ServiceBus\Exception
- * @author Alexander Miertsch <kontakt@codeliner.ws>
- */
 class MessageDispatchException extends RuntimeException
 {
     /**

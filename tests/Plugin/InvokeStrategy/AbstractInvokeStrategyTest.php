@@ -19,11 +19,7 @@ use Prooph\Common\Event\ListenerHandler;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\AbstractInvokeStrategy;
 
-/**
- * Class AbstractInvokeStrategyTest
- * @package ProophTest\ServiceBus\Plugin\InvokeStrategy
- */
-final class AbstractInvokeStrategyTest extends TestCase
+class AbstractInvokeStrategyTest extends TestCase
 {
     /**
      * @test
