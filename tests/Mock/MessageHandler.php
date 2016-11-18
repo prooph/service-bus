@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 /**
@@ -20,25 +22,25 @@ final class MessageHandler
 
     private $invokeCounter = 0;
 
-    public function __invoke($message)
+    public function __invoke($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;
     }
 
-    public function handle($message)
+    public function handle($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;
     }
 
-    public function onCustomMessage($message)
+    public function onCustomMessage($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;
     }
 
-    public function getInvokeCounter()
+    public function getInvokeCounter(): int
     {
         return $this->invokeCounter;
     }

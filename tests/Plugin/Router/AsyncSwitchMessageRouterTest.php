@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\ActionEventEmitter;
@@ -37,7 +39,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize()
+    public function it_sets_message_producer_as_message_handler_on_dispatch_initialize(): void
     {
         $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
         $listenerHandler = $this->prophesize(ListenerHandler::class);
@@ -58,7 +60,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_when_message_name_is_empty()
+    public function it_returns_early_when_message_name_is_empty(): void
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
 
@@ -96,12 +98,11 @@ class AsyncSwitchMessageRouterTest extends TestCase
             ]
         );
 
-        $decoratedRouter->onRouteMessage($actionEvent)->willReturn('handled-by-decorated-router');
+        $decoratedRouter->onRouteMessage($actionEvent)->shouldBeCalled();
 
         $router = new AsyncSwitchMessageRouter($decoratedRouter->reveal(), $messageProducer->reveal());
-        $rtn = $router->onRouteMessage($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals('handled-by-decorated-router', $rtn);
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayNotHasKey('handled-async', $updatedMessage->metadata());
     }
@@ -153,12 +154,11 @@ class AsyncSwitchMessageRouterTest extends TestCase
             ]
         );
 
-        $decoratedRouter->onRouteMessage($actionEvent)->willReturn('handled-by-decorated-router');
+        $decoratedRouter->onRouteMessage($actionEvent)->shouldBeCalled();
 
         $router = new AsyncSwitchMessageRouter($decoratedRouter->reveal(), $messageProducer->reveal());
-        $rtn = $router->onRouteMessage($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals('handled-by-decorated-router', $rtn);
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
         $this->assertTrue($updatedMessage->metadata()['handled-async']);
@@ -167,7 +167,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_sets_message_producer_as_event_listener_if_target_is_an_event_bus()
+    public function it_sets_message_producer_as_event_listener_if_target_is_an_event_bus(): void
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
 

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 /**
@@ -18,7 +20,7 @@ final class CustomMessageCommandHandler
 {
     private $lastMessage;
 
-    public function handleCustomMessage($message)
+    public function handleCustomMessage($message): void
     {
         $this->lastMessage = $message;
     }

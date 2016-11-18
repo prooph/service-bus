@@ -8,10 +8,13 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
 use ProophTest\ServiceBus\TestCase;
@@ -27,7 +30,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_can_handle_routing_definition_by_chaining_route_to()
+    public function it_can_handle_routing_definition_by_chaining_route_to(): void
     {
         $router = new EventRouter();
 
@@ -50,13 +53,13 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_fails_on_routing_a_second_event_before_first_event_is_routed_at_least_to_one_listener()
+    public function it_fails_on_routing_a_second_event_before_first_event_is_routed_at_least_to_one_listener(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $router = new EventRouter();
 
         $router->route('SomethingDone');
-
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
         $router->route('AnotherEvent');
     }
@@ -64,7 +67,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_can_route_a_second_event_after_the_first_one_is_routed_to_at_least_one_listener()
+    public function it_can_route_a_second_event_after_the_first_one_is_routed_to_at_least_one_listener(): void
     {
         $router = new EventRouter();
 
@@ -79,11 +82,11 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_fails_on_setting_a_listener_before_an_event_is_set()
+    public function it_fails_on_setting_a_listener_before_an_event_is_set(): void
     {
-        $router = new EventRouter();
+        $this->expectException(RuntimeException::class);
 
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
+        $router = new EventRouter();
 
         $router->to('SomethingDoneListener');
     }
@@ -92,7 +95,7 @@ class EventRouterTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
-    public function it_fails_on_setting_an_invalid_listener()
+    public function it_fails_on_setting_an_invalid_listener(): void
     {
         $router = new EventRouter();
         $router->to(null);
@@ -101,7 +104,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_takes_a_routing_definition_with_a_single_listener_on_instantiation()
+    public function it_takes_a_routing_definition_with_a_single_listener_on_instantiation(): void
     {
         $router = new EventRouter([
             'SomethingDone' => 'SomethingDoneListener'
@@ -119,7 +122,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_takes_a_routing_definition_with_a_multiple_listeners_on_instantiation()
+    public function it_takes_a_routing_definition_with_a_multiple_listeners_on_instantiation(): void
     {
         $router = new EventRouter([
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
@@ -138,7 +141,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_still_works_if_deprecated_method_on_route_event_is_used()
+    public function it_still_works_if_deprecated_method_on_route_event_is_used(): void
     {
         $router = new EventRouter([
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
@@ -148,7 +151,7 @@ class EventRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
         ]);
 
-        $router->onRouteEvent($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
         $this->assertEquals("SomethingDoneListener1", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
         $this->assertEquals("SomethingDoneListener2", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
@@ -157,7 +160,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_on_route_event_when_message_name_is_empty()
+    public function it_returns_early_on_route_event_when_message_name_is_empty(): void
     {
         $router = new EventRouter([
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
@@ -176,7 +179,7 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_on_route_event_when_message_name_is_not_in_event_map()
+    public function it_returns_early_on_route_event_when_message_name_is_not_in_event_map(): void
     {
         $router = new EventRouter([
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']

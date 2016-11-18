@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\DomainEvent;
@@ -19,7 +21,7 @@ final class AsyncEvent extends DomainEvent implements PayloadConstructable, Asyn
 {
     use PayloadTrait;
 
-    public static function createEvent($data)
+    public static function createEvent($data): AsyncEvent
     {
         return new self(['data' => $data]);
     }

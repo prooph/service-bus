@@ -43,31 +43,22 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
      */
     public function __construct(array $messageMap = null)
     {
-        if (null !== $messageMap) {
-            foreach ($messageMap as $messageName => $handler) {
-                $this->route($messageName)->to($handler);
-            }
+        if (null === $messageMap) {
+            return;
+        }
+
+        foreach ($messageMap as $messageName => $handler) {
+            $this->route($messageName)->to($handler);
         }
     }
 
-    /**
-     * @param ActionEventEmitter $events
-     *
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
-    /**
-     * @param string $messageName
-     * @return $this
-     * @throws Exception\RuntimeException
-     */
-    public function route($messageName)
+    public function route(string $messageName): SingleHandlerRouter
     {
-        Assertion::string($messageName);
         Assertion::notEmpty($messageName);
 
         if (null !== $this->tmpMessageName) {
@@ -81,11 +72,13 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
 
     /**
      * @param string|object|callable $messageHandler
-     * @return $this
+     *
+     * @return SingleHandlerRouter
+     *
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function to($messageHandler)
+    public function to($messageHandler): SingleHandlerRouter
     {
         if (! is_string($messageHandler) && ! is_object($messageHandler) && ! is_callable($messageHandler)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -97,7 +90,9 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         if (null === $this->tmpMessageName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map handler %s to a message. Please use method route before calling method to",
-                (is_object($messageHandler))? get_class($messageHandler) : (is_string($messageHandler))? $messageHandler : gettype($messageHandler)
+                is_object($messageHandler)
+                    ? get_class($messageHandler)
+                    : is_string($messageHandler) ? $messageHandler : gettype($messageHandler)
             ));
         }
 
@@ -108,18 +103,15 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         return $this;
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function onRouteMessage(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent): void
     {
-        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+        $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if (empty($messageName)) {
             return;
         }
 
-        if (!isset($this->messageMap[$messageName])) {
+        if (! isset($this->messageMap[$messageName])) {
             return;
         }
 

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
@@ -30,18 +32,12 @@ use React\Promise\Promise;
  */
 class QueryBus extends MessageBus
 {
-    const EVENT_INVOKE_FINDER      = 'invoke-finder';
+    public const EVENT_INVOKE_FINDER      = 'invoke-finder';
 
-    const EVENT_PARAM_PROMISE = 'query-promise';
-    const EVENT_PARAM_DEFERRED = 'query-deferred';
+    public const EVENT_PARAM_PROMISE = 'query-promise';
+    public const EVENT_PARAM_DEFERRED = 'query-deferred';
 
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_FINDER, function (ActionEvent $actionEvent) {
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -59,9 +55,11 @@ class QueryBus extends MessageBus
 
     /**
      * @param mixed $query
+     *
      * @return Promise
+     * @throws RuntimeException
      */
-    public function dispatch($query)
+    public function dispatch($query): Promise
     {
         $deferred = new Deferred();
 
@@ -91,7 +89,7 @@ class QueryBus extends MessageBus
 
             $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-            if (is_string($finder) && !is_callable($finder)) {
+            if (is_string($finder) && ! is_callable($finder)) {
                 $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
 
                 $this->trigger($actionEvent);
@@ -105,7 +103,7 @@ class QueryBus extends MessageBus
             }
 
             $this->triggerFinalize($actionEvent);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $failedPhase = $actionEvent->getName();
 
             $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Event\ActionEvent;
@@ -19,22 +21,24 @@ use Prooph\ServiceBus\MessageBus;
  */
 final class CustomMessageBus extends MessageBus
 {
+    public const EVENT_FOO = 'foo';
+
     private $actionEvent;
 
     /**
      * @param mixed $message
      */
-    public function dispatch($message)
+    public function dispatch($message): void
     {
         $this->initialize($message, $this->getActionEvent());
     }
 
-    public function setActionEvent(ActionEvent $event)
+    public function setActionEvent(ActionEvent $event): void
     {
         $this->actionEvent = $event;
     }
 
-    public function getActionEvent()
+    public function getActionEvent(): ActionEvent
     {
         if (null === $this->actionEvent) {
             $this->actionEvent = $this->getActionEventEmitter()->getNewActionEvent();

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\Guard;
 
 use PHPUnit_Framework_TestCase as TestCase;
@@ -30,7 +32,7 @@ final class FinalizeGuardTest extends TestCase
     /**
      * @test
      */
-    public function it_attaches_to_action_event_emitter()
+    public function it_attaches_to_action_event_emitter(): void
     {
         $listenerHandler = $this->prophesize(ListenerHandler::class);
 
@@ -49,7 +51,7 @@ final class FinalizeGuardTest extends TestCase
     /**
      * @test
      */
-    public function it_allows_when_authorization_service_grants_access_without_deferred()
+    public function it_allows_when_authorization_service_grants_access_without_deferred(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event')->willReturn(true);
@@ -66,7 +68,7 @@ final class FinalizeGuardTest extends TestCase
     /**
      * @test
      */
-    public function it_allows_when_authorization_service_grants_access_with_deferred()
+    public function it_allows_when_authorization_service_grants_access_with_deferred(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', 'result')->willReturn(true);
@@ -90,7 +92,7 @@ final class FinalizeGuardTest extends TestCase
      * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
      * @expectedExceptionMessage You are not authorized to access this resource
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_without_deferred()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_without_deferred(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event')->willReturn(false);
@@ -98,7 +100,7 @@ final class FinalizeGuardTest extends TestCase
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent->stopPropagation(true)->shouldBeCalled();
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
 
@@ -110,7 +112,7 @@ final class FinalizeGuardTest extends TestCase
      * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
      * @expectedExceptionMessage You are not authorized to access this resource
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_with_deferred()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_with_deferred(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', 'result')->willReturn(false);
@@ -135,7 +137,7 @@ final class FinalizeGuardTest extends TestCase
      * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
      * @expectedExceptionMessage You are not authorized to access the resource "test_event"
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_without_deferred_and_exposes_message_name()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_without_deferred_and_exposes_message_name(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event')->willReturn(false);
@@ -143,7 +145,7 @@ final class FinalizeGuardTest extends TestCase
         $actionEvent = $this->prophesize(ActionEvent::class);
         $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
         $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $actionEvent->stopPropagation(true)->shouldBeCalled();
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal(), true);
 
@@ -155,7 +157,7 @@ final class FinalizeGuardTest extends TestCase
      * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
      * @expectedExceptionMessage You are not authorized to access the resource "test_event"
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_with_deferred_and_exposes_message_name()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_with_deferred_and_exposes_message_name(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', 'result')->willReturn(false);

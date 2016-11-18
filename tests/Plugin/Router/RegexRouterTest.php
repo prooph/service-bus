@@ -8,11 +8,14 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use ProophTest\ServiceBus\TestCase;
@@ -28,7 +31,7 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_matches_pattern_with_command_name_to_detect_appropriate_handler()
+    public function it_matches_pattern_with_command_name_to_detect_appropriate_handler(): void
     {
         $regexRouter = new RegexRouter();
 
@@ -46,7 +49,7 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_when_message_name_is_empty()
+    public function it_returns_early_when_message_name_is_empty(): void
     {
         $regexRouter = new RegexRouter();
 
@@ -64,14 +67,14 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_does_not_allow_that_two_pattern_matches_with_same_command_name()
+    public function it_does_not_allow_that_two_pattern_matches_with_same_command_name(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $regexRouter = new RegexRouter();
 
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to("DoSomethingHandler");
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*/')->to("DoSomethingHandler2");
-
-        $this->setExpectedException('\Prooph\ServiceBus\Exception\RuntimeException');
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
@@ -83,7 +86,7 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_matches_pattern_with_event_name_and_routes_to_multiple_listeners()
+    public function it_matches_pattern_with_event_name_and_routes_to_multiple_listeners(): void
     {
         $regexRouter = new RegexRouter();
 
@@ -102,7 +105,7 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_early_when_message_name_is_empty_on_multiple_listeners()
+    public function it_returns_early_when_message_name_is_empty_on_multiple_listeners(): void
     {
         $regexRouter = new RegexRouter();
 
@@ -122,7 +125,7 @@ class RegexRouterTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished()
+    public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished(): void
     {
         $router = new RegexRouter();
 
@@ -135,7 +138,7 @@ class RegexRouterTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function it_fails_on_setting_a_handler_before_a_pattern_is_set()
+    public function it_fails_on_setting_a_handler_before_a_pattern_is_set(): void
     {
         $router = new RegexRouter();
 
@@ -146,7 +149,7 @@ class RegexRouterTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
-    public function it_fails_when_routing_to_invalid_handler()
+    public function it_fails_when_routing_to_invalid_handler(): void
     {
         $router = new RegexRouter();
 
@@ -156,7 +159,7 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_takes_a_routing_definition_on_instantiation()
+    public function it_takes_a_routing_definition_on_instantiation(): void
     {
         $router = new RegexRouter([
             '/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
@@ -184,7 +187,7 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
-    public function it_still_works_if_deprecated_method_on_route_is_used()
+    public function it_still_works_if_deprecated_method_on_route_is_used(): void
     {
         $router = new RegexRouter([
             '/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
@@ -196,7 +199,7 @@ class RegexRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
         ]);
 
-        $router->onRoute($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
         $this->assertEquals("DoSomethingHandler", $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
 
@@ -204,7 +207,7 @@ class RegexRouterTest extends TestCase
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
         ]);
 
-        $router->onRoute($actionEvent);
+        $router->onRouteMessage($actionEvent);
 
         $this->assertEquals(["SomethingDoneListener1", "SomethingDoneListener2"], $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS));
     }

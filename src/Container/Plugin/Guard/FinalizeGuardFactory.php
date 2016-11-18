@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Container\Plugin\Guard;
 
 use Interop\Container\ContainerInterface;
@@ -26,11 +28,7 @@ final class FinalizeGuardFactory
      */
     private $exposeEventMessageName;
 
-    /**
-     * FinalizeGuardFactory constructor.
-     * @param bool $exposeEventMessageName
-     */
-    public function __construct($exposeEventMessageName = false)
+    public function __construct(bool $exposeEventMessageName = false)
     {
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
@@ -50,14 +48,11 @@ final class FinalizeGuardFactory
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return \Prooph\ServiceBus\Plugin\Guard\FinalizeGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments)
+    public static function __callStatic(string $name, array $arguments): FinalizeGuard
     {
-        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+        if (! isset($arguments[0]) || ! $arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
                 sprintf('The first argument must be of type %s', ContainerInterface::class)
             );
@@ -66,11 +61,7 @@ final class FinalizeGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return FinalizeGuard
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): FinalizeGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

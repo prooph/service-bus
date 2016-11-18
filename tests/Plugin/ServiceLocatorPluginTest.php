@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin;
 
 use Interop\Container\ContainerInterface;
@@ -27,7 +29,7 @@ final class ServiceLocatorPluginTest extends TestCase
     /**
      * @test
      */
-    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event()
+    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event(): void
     {
         $handler = new MessageHandler();
 

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
@@ -28,19 +30,19 @@ use Prooph\ServiceBus\Exception\RuntimeException;
  */
 abstract class MessageBus
 {
-    const EVENT_INITIALIZE          = "initialize";
-    const EVENT_DETECT_MESSAGE_NAME = "detect-message-name";
-    const EVENT_ROUTE               = "route";
-    const EVENT_LOCATE_HANDLER      = "locate-handler";
-    const EVENT_INVOKE_HANDLER      = "invoke-handler";
-    const EVENT_HANDLE_ERROR        = "handle-error";
-    const EVENT_FINALIZE            = "finalize";
+    public const EVENT_INITIALIZE          = "initialize";
+    public const EVENT_DETECT_MESSAGE_NAME = "detect-message-name";
+    public const EVENT_ROUTE               = "route";
+    public const EVENT_LOCATE_HANDLER      = "locate-handler";
+    public const EVENT_INVOKE_HANDLER      = "invoke-handler";
+    public const EVENT_HANDLE_ERROR        = "handle-error";
+    public const EVENT_FINALIZE            = "finalize";
 
-    const EVENT_PARAM_MESSAGE         = 'message';
-    const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
-    const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
-    const EVENT_PARAM_EXCEPTION       = 'exception';
-    const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
+    public const EVENT_PARAM_MESSAGE         = 'message';
+    public const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
+    public const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
+    public const EVENT_PARAM_EXCEPTION       = 'exception';
+    public const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
 
     /**
      * @var ActionEventEmitter
@@ -49,22 +51,17 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
-     * @return mixed|void depends on the bus type
+     *
+     * @return \React\Promise\Promise|void depends on the bus type
      */
     abstract public function dispatch($message);
 
-    /**
-     * @param ActionEventListenerAggregate $plugin
-     */
-    public function utilize(ActionEventListenerAggregate $plugin)
+    public function utilize(ActionEventListenerAggregate $plugin): void
     {
         $plugin->attach($this->getActionEventEmitter());
     }
 
-    /**
-     * @param ActionEventListenerAggregate $plugin
-     */
-    public function deactivate(ActionEventListenerAggregate $plugin)
+    public function deactivate(ActionEventListenerAggregate $plugin): void
     {
         $plugin->detach($this->getActionEventEmitter());
     }
@@ -73,7 +70,7 @@ abstract class MessageBus
      * @param mixed $message
      * @param ActionEvent $actionEvent
      */
-    protected function initialize($message, ActionEvent $actionEvent)
+    protected function initialize($message, ActionEvent $actionEvent): void
     {
         $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
         $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
@@ -97,12 +94,7 @@ abstract class MessageBus
         }
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     * @param \Exception $ex
-     * @throws Exception\MessageDispatchException
-     */
-    protected function handleException(ActionEvent $actionEvent, \Exception $ex)
+    protected function handleException(ActionEvent $actionEvent, \Throwable $ex): void
     {
         $failedPhase = $actionEvent->getName();
 
@@ -117,11 +109,7 @@ abstract class MessageBus
         }
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     * @throws Exception\RuntimeException
-     */
-    protected function trigger(ActionEvent $actionEvent)
+    protected function trigger(ActionEvent $actionEvent): void
     {
         $this->getActionEventEmitter()->dispatch($actionEvent);
 
@@ -130,49 +118,37 @@ abstract class MessageBus
         }
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    protected function triggerError(ActionEvent $actionEvent)
+    protected function triggerError(ActionEvent $actionEvent): void
     {
         $actionEvent->setName(self::EVENT_HANDLE_ERROR);
 
         $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    protected function triggerFinalize(ActionEvent $actionEvent)
+    protected function triggerFinalize(ActionEvent $actionEvent): void
     {
         $actionEvent->setName(self::EVENT_FINALIZE);
 
         $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
-
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
     {
         $this->events = $actionEventDispatcher;
     }
 
-    /**
-     * Retrieve the action event dispatcher
-     *
-     * Lazy-loads a dispatcher if none is registered.
-     *
-     * @return ActionEventEmitter
-     */
-    public function getActionEventEmitter()
+    public function getActionEventEmitter(): ActionEventEmitter
     {
         if (null === $this->events) {
-            $this->setActionEventEmitter(new ProophActionEventEmitter());
+            $reflection = new \ReflectionClass($this);
+            $availableEventNames = array_values(array_filter(
+                $reflection->getConstants(),
+                function (string $key) {
+                    return (bool) ! substr_compare($key, 'EVENT_', 0, 6, false);
+                },
+                ARRAY_FILTER_USE_KEY
+            ));
+            $this->setActionEventEmitter(new ProophActionEventEmitter($availableEventNames));
         }
 
         return $this->events;
@@ -180,9 +156,10 @@ abstract class MessageBus
 
     /**
      * @param mixed $message
+     *
      * @return string
      */
-    protected function getMessageName($message)
+    protected function getMessageName($message): string
     {
         if (is_object($message)) {
             return get_class($message);

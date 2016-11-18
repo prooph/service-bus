@@ -33,18 +33,12 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
 {
     use DetachAggregateHandlers;
 
-    /**
-     * @param ActionEventEmitter $dispatcher
-     */
-    public function attach(ActionEventEmitter $dispatcher)
+    public function attach(ActionEventEmitter $dispatcher): void
     {
         $this->trackHandler($dispatcher->attachListener(QueryBus::EVENT_INVOKE_FINDER, $this));
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function __invoke(ActionEvent $actionEvent)
+    public function __invoke(ActionEvent $actionEvent): void
     {
         $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER);
 
@@ -64,11 +58,15 @@ final class FinderInvokeStrategy implements ActionEventListenerAggregate
 
     /**
      * @param mixed $query
+     *
      * @return string
      */
-    private function determineQueryName($query)
+    private function determineQueryName($query): string
     {
-        $queryName = ($query instanceof HasMessageName)? $query->messageName() : (is_object($query)? get_class($query) : gettype($query));
+        $queryName = ($query instanceof HasMessageName)
+            ? $query->messageName()
+            : (is_object($query) ? get_class($query) : gettype($query));
+
         return implode('', array_slice(explode('\\', $queryName), -1));
     }
 }

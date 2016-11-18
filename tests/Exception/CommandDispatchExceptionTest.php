@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Exception;
 
 use Prooph\Common\Event\DefaultActionEvent;
@@ -21,7 +23,7 @@ class CommandDispatchExceptionTest extends TestCase
     /**
      * @test
      */
-    public function it_wraps_a_message_dispatch_exception_and_tracks_pending_commands()
+    public function it_wraps_a_message_dispatch_exception_and_tracks_pending_commands(): void
     {
         $pendingCommands = ['dispatchMe', 'tellMe'];
 
@@ -41,7 +43,7 @@ class CommandDispatchExceptionTest extends TestCase
     /**
      * @test
      */
-    public function it_can_also_wrap_a_normal_exception()
+    public function it_can_also_wrap_a_normal_exception(): void
     {
         $pendingCommands = ['dispatchMe', 'tellMe'];
 

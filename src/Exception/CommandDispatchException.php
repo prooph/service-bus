@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Exception;
 
 /**
@@ -19,12 +21,7 @@ class CommandDispatchException extends MessageDispatchException
 {
     private $pendingCommands = [];
 
-    /**
-     * @param \Exception $dispatchException
-     * @param array $pendingCommands
-     * @return CommandDispatchException
-     */
-    public static function wrap(\Exception $dispatchException, array $pendingCommands)
+    public static function wrap(\Throwable $dispatchException, array $pendingCommands): CommandDispatchException
     {
         if ($dispatchException instanceof MessageDispatchException) {
             $ex = parent::failed($dispatchException->getFailedDispatchEvent(), $dispatchException->getPrevious());
@@ -41,10 +38,7 @@ class CommandDispatchException extends MessageDispatchException
         return $ex;
     }
 
-    /**
-     * @return array
-     */
-    public function getPendingCommands()
+    public function getPendingCommands(): array
     {
         return $this->pendingCommands;
     }

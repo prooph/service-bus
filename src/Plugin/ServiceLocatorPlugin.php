@@ -36,24 +36,17 @@ class ServiceLocatorPlugin implements ActionEventListenerAggregate
      */
     protected $serviceLocator;
 
-    /**
-     * @param ContainerInterface $serviceLocator
-     */
     public function __construct(ContainerInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
     }
-    /**
-     * @param ActionEventEmitter $events
-     *
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_LOCATE_HANDLER, [$this, 'onLocateMessageHandler']));
     }
 
-    public function onLocateMessageHandler(ActionEvent $actionEvent)
+    public function onLocateMessageHandler(ActionEvent $actionEvent): void
     {
         $messageHandlerAlias = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
 

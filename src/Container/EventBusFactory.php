@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Container;
 
 use Prooph\ServiceBus\EventBus;
@@ -21,26 +23,17 @@ use Prooph\ServiceBus\Plugin\Router\EventRouter;
  */
 class EventBusFactory extends AbstractBusFactory
 {
-    /**
-     * @inheritdoc
-     */
-    public function __construct($configId = 'event_bus')
+    public function __construct(string $configId = 'event_bus')
     {
         parent::__construct($configId);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getBusClass()
+    protected function getBusClass(): string
     {
         return EventBus::class;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getDefaultRouterClass()
+    protected function getDefaultRouterClass(): string
     {
         return EventRouter::class;
     }

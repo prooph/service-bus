@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use PHPUnit_Framework_TestCase as TestCase;
@@ -26,7 +28,7 @@ final class AbstractInvokeStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_attached_listener_to_event_and_tracks_it()
+    public function it_attaches_listener_to_event_and_tracks_it(): void
     {
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
 
@@ -45,7 +47,7 @@ final class AbstractInvokeStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_fetches_message_and_handler_and_invokes_them_if_possible()
+    public function it_fetches_message_and_handler_and_invokes_them_if_possible(): void
     {
         $actionEventMock = $this->getMockForAbstractClass(ActionEvent::class);
         $actionEventMock
@@ -63,6 +65,7 @@ final class AbstractInvokeStrategyTest extends TestCase
         $actionEventMock->expects($this->at(2))
             ->method('setParam')
             ->with(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+
 
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
         $strategy

@@ -16,9 +16,6 @@ interface MessageBusRouterPlugin
 {
     /**
      * Handle route action event of a message bus dispatch
-     *
-     * @param ActionEvent $actionEvent
-     * @return void
      */
-    public function onRouteMessage(ActionEvent $actionEvent);
+    public function onRouteMessage(ActionEvent $actionEvent): void;
 }

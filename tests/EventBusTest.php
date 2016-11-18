@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
@@ -38,7 +40,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    public function it_dispatches_a_message_using_the_default_process()
+    public function it_dispatches_a_message_using_the_default_process(): void
     {
         $somethingDone = new SomethingDone(['done' => 'bought milk']);
 
@@ -61,7 +63,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    public function it_triggers_all_defined_action_events()
+    public function it_triggers_all_defined_action_events(): void
     {
         $initializeIsTriggered = false;
         $detectMessageNameIsTriggered = false;
@@ -160,7 +162,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    public function it_uses_the_fqcn_of_the_message_if_message_name_was_not_provided_and_message_does_not_implement_has_message_name()
+    public function it_uses_the_fqcn_of_the_message_if_message_name_was_not_provided_and_message_does_not_implement_has_message_name(): void
     {
         $handler = new MessageHandler();
 
@@ -181,7 +183,7 @@ final class EventBusTest extends TestCase
      * @test
      * @expectedException Prooph\ServiceBus\Exception\MessageDispatchException
      */
-    public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin()
+    public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin(): void
     {
         try {
             $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
@@ -199,7 +201,7 @@ final class EventBusTest extends TestCase
     /**
      * @test
      */
-    public function it_invokes_all_listeners()
+    public function it_invokes_all_listeners(): void
     {
         $handler = new MessageHandler();
 

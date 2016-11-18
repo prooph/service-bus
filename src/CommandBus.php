@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
@@ -36,13 +38,7 @@ class CommandBus extends MessageBus
      */
     private $isDispatching = false;
 
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
     {
         $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
             $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -59,10 +55,12 @@ class CommandBus extends MessageBus
 
     /**
      * @param mixed $command
-     * @throws CommandDispatchException
+     *
      * @return void
+     *
+     * @throws CommandDispatchException
      */
-    public function dispatch($command)
+    public function dispatch($command): void
     {
         $this->commandQueue[] = $command;
 
@@ -74,14 +72,14 @@ class CommandBus extends MessageBus
                     $this->processCommand($command);
                 }
                 $this->isDispatching = false;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->isDispatching = false;
                 throw CommandDispatchException::wrap($e, $this->commandQueue);
             }
         }
     }
 
-    protected function processCommand($command)
+    protected function processCommand($command): void
     {
         $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
 
@@ -119,7 +117,7 @@ class CommandBus extends MessageBus
             }
 
             $this->triggerFinalize($actionEvent);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->handleException($actionEvent, $ex);
         }
     }

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
@@ -28,7 +30,7 @@ class HandleCommandStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_invokes_the_handle_command_method_of_the_handler()
+    public function it_invokes_the_handle_command_method_of_the_handler(): void
     {
         $handleCommandStrategy = new HandleCommandStrategy();
 
@@ -46,7 +48,7 @@ class HandleCommandStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_invokes_the_handle_command_method_of_the_handler_without_command_name()
+    public function it_invokes_the_handle_command_method_of_the_handler_without_command_name(): void
     {
         $handleCommandStrategy = new HandleCommandStrategy();
 
@@ -64,7 +66,7 @@ class HandleCommandStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_determines_the_command_name_from_message_name_call_if_event_has_one()
+    public function it_determines_the_command_name_from_message_name_call_if_event_has_one(): void
     {
         $handleCommandStrategy = new HandleCommandStrategy();
         $customCommand = new CustomMessageWithName("I am an event with a messageName() method");

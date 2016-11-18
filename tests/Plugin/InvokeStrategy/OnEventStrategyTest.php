@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\ServiceBus\Plugin\InvokeStrategy\OnEventStrategy;
@@ -27,7 +29,7 @@ class OnEventStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_invokes_the_on_event_method_of_the_handler()
+    public function it_invokes_the_on_event_method_of_the_handler(): void
     {
         $onEventStrategy = new OnEventStrategy();
 
@@ -45,7 +47,7 @@ class OnEventStrategyTest extends TestCase
     /**
      * @test
      */
-    public function it_determines_the_event_name_from_message_name_call_if_event_has_one()
+    public function it_determines_the_event_name_from_message_name_call_if_event_has_one(): void
     {
         $onEventStrategy = new OnEventStrategy();
         $customEvent = new CustomMessageWithName("I am an event with a messageName() method");

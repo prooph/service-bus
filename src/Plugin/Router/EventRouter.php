@@ -44,39 +44,30 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
      */
     public function __construct(array $eventMap = null)
     {
-        if (null !== $eventMap) {
-            foreach ($eventMap as $eventName => $listeners) {
-                if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
-                    $listeners = [$listeners];
-                }
+        if (null === $eventMap) {
+            return;
+        }
 
-                $this->route($eventName);
+        foreach ($eventMap as $eventName => $listeners) {
+            if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
+                $listeners = [$listeners];
+            }
 
-                foreach ($listeners as $listener) {
-                    $this->to($listener);
-                }
+            $this->route($eventName);
+
+            foreach ($listeners as $listener) {
+                $this->to($listener);
             }
         }
     }
 
-    /**
-     * @param ActionEventEmitter $events
-     *
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+    public function attach(ActionEventEmitter $events): void
     {
         $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
     }
 
-    /**
-     * @param string $eventName
-     * @return $this
-     * @throws Exception\RuntimeException
-     */
-    public function route($eventName)
+    public function route(string $eventName): EventRouter
     {
-        Assertion::string($eventName);
         Assertion::notEmpty($eventName);
 
         if (null !== $this->tmpEventName && empty($this->eventMap[$this->tmpEventName])) {
@@ -94,11 +85,13 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     /**
      * @param string|object|callable $eventListener
-     * @return $this
+     *
+     * @return EventRouter
+     *
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function to($eventListener)
+    public function to($eventListener): EventRouter
     {
         if (! is_string($eventListener) && ! is_object($eventListener) && ! is_callable($eventListener)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -110,7 +103,9 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         if (null === $this->tmpEventName) {
             throw new Exception\RuntimeException(sprintf(
                 "Cannot map listener %s to an event. Please use method route before calling method to",
-                (is_object($eventListener))? get_class($eventListener) : (is_string($eventListener))? $eventListener : gettype($eventListener)
+                is_object($eventListener)
+                    ? get_class($eventListener)
+                    : is_string($eventListener) ? $eventListener : gettype($eventListener)
             ));
         }
 
@@ -121,18 +116,17 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     /**
      * Alias for method to
+     *
      * @param string|object|callable $eventListener
-     * @return $this
+     *
+     * @return EventRouter
      */
-    public function andTo($eventListener)
+    public function andTo($eventListener): EventRouter
     {
         return $this->to($eventListener);
     }
 
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function onRouteMessage(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent): void
     {
         $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
@@ -140,7 +134,7 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
             return;
         }
 
-        if (!isset($this->eventMap[$messageName])) {
+        if (! isset($this->eventMap[$messageName])) {
             return;
         }
 
@@ -149,14 +143,5 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         $listeners = array_merge($listeners, $this->eventMap[$messageName]);
 
         $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
-    }
-
-    /**
-     * @param ActionEvent $actionEvent
-     * @deprecated Will be removed with v6.0, use method onRouteMessage instead
-     */
-    public function onRouteEvent(ActionEvent $actionEvent)
-    {
-        $this->onRouteMessage($actionEvent);
     }
 }

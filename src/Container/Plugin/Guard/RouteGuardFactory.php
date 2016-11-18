@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Container\Plugin\Guard;
 
 use Interop\Container\ContainerInterface;
@@ -26,11 +28,7 @@ final class RouteGuardFactory
      */
     private $exposeEventMessageName;
 
-    /**
-     * RouteGuardFactory constructor.
-     * @param bool $exposeEventMessageName
-     */
-    public function __construct($exposeEventMessageName = false)
+    public function __construct(bool $exposeEventMessageName = false)
     {
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
@@ -50,14 +48,11 @@ final class RouteGuardFactory
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return \Prooph\ServiceBus\Plugin\Guard\RouteGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments)
+    public static function __callStatic($name, array $arguments): RouteGuard
     {
-        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+        if (! isset($arguments[0]) || ! $arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
                 sprintf('The first argument must be of type %s', ContainerInterface::class)
             );
@@ -66,11 +61,7 @@ final class RouteGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return RouteGuard
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): RouteGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

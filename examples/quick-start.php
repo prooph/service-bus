@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace {
     require_once __DIR__ . '/../vendor/autoload.php';
 }
@@ -23,33 +25,30 @@ namespace Prooph\ServiceBus\Example\Command {
          */
         private $text;
 
-        public function __construct($text)
+        protected $messageName = 'Prooph\ServiceBus\Example\Command\EchoText';
+
+        public function __construct(string $text)
         {
             $this->text = $text;
         }
 
-        public function getText()
+        public function getText(): string
         {
             return $this->text;
         }
 
         /**
          * Return message payload as array
-         *
-         * @return array
          */
-        public function payload()
+        public function payload(): array
         {
             return ['text' => $this->text];
         }
 
         /**
          * This method is called when message is instantiated named constructor fromArray
-         *
-         * @param array $payload
-         * @return void
          */
-        protected function setPayload(array $payload)
+        protected function setPayload(array $payload): void
         {
             $this->text = $payload['text'];
         }

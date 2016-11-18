@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Container;
 
 use Interop\Config\ConfigurationTrait;
@@ -34,17 +36,13 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
 
     /**
      * Returns the FQCN of a bus extending Prooph\ServiceBus\MessageBus
-     *
-     * @return string
      */
-    abstract protected function getBusClass();
+    abstract protected function getBusClass(): string;
 
     /**
      * Returns the default router class to use if no one was specified in the config
-     *
-     * @return string
      */
-    abstract protected function getDefaultRouterClass();
+    abstract protected function getDefaultRouterClass(): string;
 
     /**
      * @var string
@@ -64,14 +62,11 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments)
+    public static function __callStatic(string $name, array $arguments): MessageBus
     {
-        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+        if (! isset($arguments[0]) || ! $arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
                 sprintf('The first argument must be of type %s', ContainerInterface::class)
             );
@@ -79,27 +74,17 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         return (new static($name))->__invoke($arguments[0]);
     }
 
-    /**
-     * @param string $configId
-     */
-    public function __construct($configId)
+    public function __construct(string $configId)
     {
-        // ensure BC
-        $this->configId = method_exists($this, 'containerId') ? $this->containerId() : $configId;
+        $this->configId = $configId;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function dimensions()
+    public function dimensions(): array
     {
         return ['prooph', 'service_bus'];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function defaultOptions()
+    public function defaultOptions(): array
     {
         return [
             'enable_handler_location' => true,
@@ -107,14 +92,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         ];
     }
 
-    /**
-     * Create service.
-     *
-     * @param ContainerInterface $container
-     * @throws RuntimeException
-     * @return MessageBus
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): MessageBus
     {
         $config = [];
 
@@ -147,13 +125,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         return $bus;
     }
 
-    /**
-     * @param MessageBus $bus
-     * @param array $utils
-     * @param ContainerInterface $container
-     * @throws RuntimeException
-     */
-    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container)
+    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container): void
     {
         foreach ($utils as $index => $util) {
             if (! is_string($util) || ! $container->has($util)) {
@@ -167,16 +139,11 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         }
     }
 
-    /**
-     * @param MessageBus $bus
-     * @param array $routerConfig
-     * @param ContainerInterface $container
-     */
-    private function attachRouter(MessageBus $bus, array $routerConfig, ContainerInterface $container)
+    private function attachRouter(MessageBus $bus, array $routerConfig, ContainerInterface $container): void
     {
-        $routerClass = isset($routerConfig['type']) ? (string)$routerConfig['type'] : $this->getDefaultRouterClass();
+        $routerClass = $routerConfig['type'] ?? $this->getDefaultRouterClass();
 
-        $routes = isset($routerConfig['routes']) ? $routerConfig['routes'] : [];
+        $routes = $routerConfig['routes'] ?? [];
 
         $router = new $routerClass($routes);
 

@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\HasMessageName;
@@ -20,17 +22,17 @@ final class CustomMessageWithName implements HasMessageName
 {
     private $text;
 
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->text = $text;
     }
 
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    public function messageName()
+    public function messageName(): string
     {
         return 'Prooph\Test\ServiceBus\Mock\CustomMessageWithSomeOtherName';
     }

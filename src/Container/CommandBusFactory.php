@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Container;
 
 use Prooph\ServiceBus\CommandBus;
@@ -21,26 +23,17 @@ use Prooph\ServiceBus\Plugin\Router\CommandRouter;
  */
 class CommandBusFactory extends AbstractBusFactory
 {
-    /**
-     * @inheritdoc
-     */
-    public function __construct($configId = 'command_bus')
+    public function __construct(string $configId = 'command_bus')
     {
         parent::__construct($configId);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getBusClass()
+    protected function getBusClass(): string
     {
         return CommandBus::class;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function getDefaultRouterClass()
+    protected function getDefaultRouterClass(): string
     {
         return CommandRouter::class;
     }

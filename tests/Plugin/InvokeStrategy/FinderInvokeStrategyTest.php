@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Event\DefaultActionEvent;
@@ -49,7 +51,7 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function it_invokes_a_finder_which_has_method_named_like_the_query()
+    public function it_invokes_a_finder_which_has_method_named_like_the_query(): void
     {
         $finder = new Finder();
 
@@ -67,7 +69,7 @@ final class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function it_determines_the_query_name_from_message_name_call_if_event_has_one()
+    public function it_determines_the_query_name_from_message_name_call_if_event_has_one(): void
     {
         $finderInvokeStrategy = new FinderInvokeStrategy();
         $customQuery = new CustomMessageWithName("I am an event with a messageName() method");

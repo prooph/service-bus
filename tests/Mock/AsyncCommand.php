@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Messaging\Command;
@@ -18,11 +20,8 @@ use Prooph\ServiceBus\Async\AsyncMessage;
 class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
 {
     use PayloadTrait;
-    /**
-     * @param string $data
-     * @return AsyncCommand
-     */
-    public static function createCommand($data)
+
+    public static function createCommand(string $data): AsyncCommand
     {
         return new self([
             'data' => $data

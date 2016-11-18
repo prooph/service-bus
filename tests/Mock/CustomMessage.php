@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Mock;
 
 /**
@@ -18,12 +20,12 @@ final class CustomMessage
 {
     private $text;
 
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->text = $text;
     }
 
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
