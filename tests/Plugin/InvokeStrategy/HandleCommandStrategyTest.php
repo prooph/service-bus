@@ -15,7 +15,6 @@ namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\CustomMessageCommandHandler;
-use ProophTest\ServiceBus\Mock\CustomMessageWithName;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\TestCase;
 
@@ -31,8 +30,6 @@ class HandleCommandStrategyTest extends TestCase
         $doSomething = new CustomMessage("I am a command");
 
         $handleCommandHandler = new MessageHandler();
-
-        $this->assertTrue($handleCommandStrategy->canInvoke($handleCommandHandler, $doSomething));
 
         $handleCommandStrategy->invoke($handleCommandHandler, $doSomething);
 
@@ -50,26 +47,8 @@ class HandleCommandStrategyTest extends TestCase
 
         $handleCommandHandler = new CustomMessageCommandHandler();
 
-        $this->assertTrue($handleCommandStrategy->canInvoke($handleCommandHandler, $doSomething));
-
         $handleCommandStrategy->invoke($handleCommandHandler, $doSomething);
 
         $this->assertSame($doSomething, $handleCommandHandler->getLastMessage());
-    }
-
-    /**
-     * @test
-     */
-    public function it_determines_the_command_name_from_message_name_call_if_event_has_one(): void
-    {
-        $handleCommandStrategy = new HandleCommandStrategy();
-        $customCommand = new CustomMessageWithName("I am an event with a messageName() method");
-
-        $closure = function ($command) {
-            return $this->determineCommandName($command);
-        };
-        $determineCommandName = $closure->bindTo($handleCommandStrategy, $handleCommandStrategy);
-
-        $this->assertSame('CustomMessageWithSomeOtherName', $determineCommandName($customCommand));
     }
 }
