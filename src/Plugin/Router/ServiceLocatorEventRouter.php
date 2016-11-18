@@ -48,6 +48,6 @@ final class ServiceLocatorEventRouter implements MessageBusRouterPlugin, ActionE
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage']));
     }
 }

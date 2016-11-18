@@ -47,6 +47,6 @@ final class SingleHandlerServiceLocatorRouter implements MessageBusRouterPlugin,
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage']));
     }
 }

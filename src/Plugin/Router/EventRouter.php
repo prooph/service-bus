@@ -59,7 +59,7 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage']));
     }
 
     public function route(string $eventName): EventRouter
