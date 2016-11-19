@@ -16,7 +16,7 @@ class CustomMessageCommandHandler
 {
     private $lastMessage;
 
-    public function handleCustomMessage($message): void
+    public function handle($message): void
     {
         $this->lastMessage = $message;
     }

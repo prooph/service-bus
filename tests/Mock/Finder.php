@@ -18,7 +18,7 @@ class Finder
 
     private $deferred;
 
-    public function customMessage($message, $deferred)
+    public function find($message, $deferred)
     {
         $this->message = $message;
         $this->deferred = $deferred;

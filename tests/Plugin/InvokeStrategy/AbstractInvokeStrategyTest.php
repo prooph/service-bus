@@ -64,11 +64,6 @@ class AbstractInvokeStrategyTest extends TestCase
 
 
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
-        $strategy
-            ->expects($this->once())
-            ->method('canInvoke')
-            ->with('handler', 'message')
-            ->will($this->returnValue(true));
 
         $strategy
             ->expects($this->once())

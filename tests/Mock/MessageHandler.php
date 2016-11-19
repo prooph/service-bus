@@ -30,7 +30,7 @@ class MessageHandler
         $this->invokeCounter++;
     }
 
-    public function onCustomMessage($message): void
+    public function onEvent($message): void
     {
         $this->lastMessage = $message;
         $this->invokeCounter++;

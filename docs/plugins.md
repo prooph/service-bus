@@ -113,8 +113,7 @@ $commandBus->utilize($router);
 An invoke strategy knows how a message handler can be invoked. You can register many invoke strategies at once depending on
 how many different handler types you are using. The best way is to choose a convention and go with it. PSB ships with the invoke strategies
 listed below. If your favorite convention is not there you can easily write your own invoke strategy
-by extending `Prooph\ServiceBus\Plugin\InvokeStrategy\AbstractInvokeStrategy` and implementing the
-`canInvoke` and `invoke` methods.
+by extending `Prooph\ServiceBus\Plugin\InvokeStrategy\AbstractInvokeStrategy` and implementing the `invoke` method.
 
 ### Available Strategies
 

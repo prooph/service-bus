@@ -14,7 +14,6 @@ namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\ServiceBus\Plugin\InvokeStrategy\OnEventStrategy;
 use ProophTest\ServiceBus\Mock\CustomMessage;
-use ProophTest\ServiceBus\Mock\CustomMessageWithName;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\TestCase;
 
@@ -31,26 +30,8 @@ class OnEventStrategyTest extends TestCase
 
         $onEventHandler = new MessageHandler();
 
-        $this->assertTrue($onEventStrategy->canInvoke($onEventHandler, $customEvent));
-
         $onEventStrategy->invoke($onEventHandler, $customEvent);
 
         $this->assertSame($customEvent, $onEventHandler->getLastMessage());
-    }
-
-    /**
-     * @test
-     */
-    public function it_determines_the_event_name_from_message_name_call_if_event_has_one(): void
-    {
-        $onEventStrategy = new OnEventStrategy();
-        $customEvent = new CustomMessageWithName("I am an event with a messageName() method");
-
-        $closure = function ($event) {
-            return $this->determineEventName($event);
-        };
-        $determineEventName = $closure->bindTo($onEventStrategy, $onEventStrategy);
-
-        $this->assertSame('CustomMessageWithSomeOtherName', $determineEventName($customEvent));
     }
 }

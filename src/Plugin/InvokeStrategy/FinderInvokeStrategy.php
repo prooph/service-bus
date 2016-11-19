@@ -16,7 +16,6 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
-use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
 
@@ -38,26 +37,8 @@ class FinderInvokeStrategy implements ActionEventListenerAggregate
         $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
 
         if (is_object($finder)) {
-            $queryName = $this->determineQueryName($query);
-
-            if (method_exists($finder, $queryName)) {
-                $finder->{$queryName}($query, $deferred);
-                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
-            }
+            $finder->find($query, $deferred);
+            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
         }
-    }
-
-    /**
-     * @param mixed $query
-     *
-     * @return string
-     */
-    private function determineQueryName($query): string
-    {
-        $queryName = ($query instanceof HasMessageName)
-            ? $query->messageName()
-            : (is_object($query) ? get_class($query) : gettype($query));
-
-        return implode('', array_slice(explode('\\', $queryName), -1));
     }
 }
