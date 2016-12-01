@@ -11,6 +11,12 @@ matrix:
       env:
         - DEPENDENCIES="--prefer-lowest --prefer-stable"
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.php-cs-fixer
+    - $HOME/.local
+
 before_script:
   - mkdir -p "$HOME/.php-cs-fixer"
   - phpenv config-rm xdebug.ini
