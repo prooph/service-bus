@@ -21,10 +21,10 @@ use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Container\AbstractBusFactory;
-use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Container\CommandBusFactory;
 use Prooph\ServiceBus\Container\EventBusFactory;
 use Prooph\ServiceBus\Container\QueryBusFactory;
+use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
@@ -48,7 +48,7 @@ class BusFactoriesTest extends TestCase
         $container->has('config')->willReturn(false);
         $container->has(MessageFactory::class)->willReturn(false);
 
-        $bus =  $busFactory($container->reveal());
+        $bus = $busFactory($container->reveal());
 
         $this->assertInstanceOf($busClass, $bus);
     }
@@ -67,7 +67,7 @@ class BusFactoriesTest extends TestCase
         $container->get('config')->willReturn([]);
         $container->has(MessageFactory::class)->willReturn(false);
 
-        $bus =  $busFactory($container->reveal());
+        $bus = $busFactory($container->reveal());
 
         $this->assertInstanceOf($busClass, $bus);
     }
@@ -92,13 +92,12 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'plugins' => [
                             'first_plugin_service_id',
-                            'second_plugin_service_id'
-                        ]
-                    ]
-                ]
-            ]
+                            'second_plugin_service_id',
+                        ],
+                    ],
+                ],
+            ],
         ]);
-
 
         $firstPlugin->attach(Argument::type(ActionEventEmitter::class))->shouldBeCalled();
         $secondPlugin->attach(Argument::type(ActionEventEmitter::class))->shouldBeCalled();
@@ -110,7 +109,7 @@ class BusFactoriesTest extends TestCase
 
         $container->has(MessageFactory::class)->willReturn(false);
 
-        $bus =  $busFactory($container->reveal());
+        $bus = $busFactory($container->reveal());
 
         $this->assertInstanceOf($busClass, $bus);
     }
@@ -134,10 +133,10 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'plugins' => [
                             'plugin_service_id',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $container->has('plugin_service_id')->willReturn(false);
@@ -171,12 +170,12 @@ class BusFactoriesTest extends TestCase
                             'routes' => [
                                 'test_message' => function (Message $message) use (&$handlerWasCalled) {
                                     $handlerWasCalled = true;
-                                }
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                },
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $container->has(MessageFactory::class)->willReturn(false);
@@ -213,12 +212,12 @@ class BusFactoriesTest extends TestCase
                             'routes' => [
                                 '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
                                     $handlerWasCalled = true;
-                                }
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                },
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $container->has(MessageFactory::class)->willReturn(false);
@@ -256,13 +255,13 @@ class BusFactoriesTest extends TestCase
                             'routes' => [
                                 '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
                                     $handlerWasCalled = true;
-                                }
-                            ]
+                                },
+                            ],
                         ],
-                        'message_factory' => 'custom_message_factory'
-                    ]
-                ]
-            ]
+                        'message_factory' => 'custom_message_factory',
+                    ],
+                ],
+            ],
         ]);
 
         $container->has('custom_message_factory')->willReturn(true);
@@ -307,13 +306,13 @@ class BusFactoriesTest extends TestCase
                             'routes' => [
                                 '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
                                     $handlerWasCalled = true;
-                                }
-                            ]
+                                },
+                            ],
                         ],
-                        'message_factory' => 'custom_message_factory'
-                    ]
-                ]
-            ]
+                        'message_factory' => 'custom_message_factory',
+                    ],
+                ],
+            ],
         ]);
 
         $container->has('custom_message_factory')->willReturn(true);
@@ -349,12 +348,12 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'router' => [
                             'routes' => [
-                                'test_message' => 'handler_service_id'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'test_message' => 'handler_service_id',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $container->has('handler_service_id')->willReturn(true);
@@ -392,13 +391,13 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'router' => [
                             'routes' => [
-                                'test_message' => 'handler_service_id'
-                            ]
+                                'test_message' => 'handler_service_id',
+                            ],
                         ],
                         'enable_handler_location' => false,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
 
         $container->has(MessageFactory::class)->willReturn(false);
@@ -433,12 +432,11 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'plugins' => [
                             'first_plugin_service_id',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ]));
-
 
         $firstPlugin->attach(Argument::type(ActionEventEmitter::class))->shouldBeCalled();
 
@@ -447,7 +445,7 @@ class BusFactoriesTest extends TestCase
 
         $container->has(MessageFactory::class)->willReturn(false);
 
-        $bus =  $busFactory($container->reveal());
+        $bus = $busFactory($container->reveal());
 
         $this->assertInstanceOf($busClass, $bus);
     }

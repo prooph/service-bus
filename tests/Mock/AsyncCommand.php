@@ -24,7 +24,7 @@ class AsyncCommand extends Command implements PayloadConstructable, AsyncMessage
     public static function createCommand(string $data): AsyncCommand
     {
         return new self([
-            'data' => $data
+            'data' => $data,
         ]);
     }
 }

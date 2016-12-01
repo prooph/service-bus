@@ -37,6 +37,7 @@ class QueryBusTest extends TestCase
     {
         $this->queryBus = new QueryBus();
     }
+
     /**
      * @test
      */
@@ -90,7 +91,7 @@ class QueryBusTest extends TestCase
             MessageBus::EVENT_DETECT_MESSAGE_NAME,
             function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered) {
                 $detectMessageNameIsTriggered = true;
-                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, "custom-message");
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, 'custom-message');
             }
         );
 
@@ -99,9 +100,9 @@ class QueryBusTest extends TestCase
             MessageBus::EVENT_ROUTE,
             function (ActionEvent $actionEvent) use (&$routeIsTriggered) {
                 $routeIsTriggered = true;
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === "custom-message") {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === 'custom-message') {
                     //We provide the message handler as a string (service id) to tell the bus to trigger the locate-handler event
-                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, "error-producer");
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, 'error-producer');
                 }
             }
         );
@@ -111,7 +112,7 @@ class QueryBusTest extends TestCase
             MessageBus::EVENT_LOCATE_HANDLER,
             function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered) {
                 $locateHandlerIsTriggered = true;
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === "error-producer") {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === 'error-producer') {
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new ErrorProducer());
                 }
             }
@@ -149,7 +150,7 @@ class QueryBusTest extends TestCase
             }
         );
 
-        $customMessage = new CustomMessage("I have no further meaning");
+        $customMessage = new CustomMessage('I have no further meaning');
 
         $this->queryBus->dispatch($customMessage);
 
@@ -177,7 +178,7 @@ class QueryBusTest extends TestCase
 
         $this->queryBus->utilize(new FinderInvokeStrategy());
 
-        $customMessage = new CustomMessage("foo");
+        $customMessage = new CustomMessage('foo');
 
         $promise = $this->queryBus->dispatch($customMessage);
 
@@ -194,10 +195,10 @@ class QueryBusTest extends TestCase
         $exception = null;
 
         $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
-            throw new \Exception("ka boom");
+            throw new \Exception('ka boom');
         });
 
-        $promise = $this->queryBus->dispatch("throw it");
+        $promise = $this->queryBus->dispatch('throw it');
 
         $promise->otherwise(function ($ex) use (&$exception) {
             $exception = $ex;
@@ -220,7 +221,7 @@ class QueryBusTest extends TestCase
             }
         );
 
-        $promise = $this->queryBus->dispatch("throw it");
+        $promise = $this->queryBus->dispatch('throw it');
 
         $promise->otherwise(function ($ex) use (&$exception) {
             $exception = $ex;
@@ -243,7 +244,7 @@ class QueryBusTest extends TestCase
             }
         );
 
-        $promise = $this->queryBus->dispatch("throw it");
+        $promise = $this->queryBus->dispatch('throw it');
 
         $promise->otherwise(function ($ex) use (&$exception) {
             $exception = $ex;
@@ -270,7 +271,7 @@ class QueryBusTest extends TestCase
         $this->queryBus->utilize($plugin);
         $this->queryBus->deactivate($plugin);
 
-        $customMessage = new CustomMessage("foo");
+        $customMessage = new CustomMessage('foo');
 
         $promise = $this->queryBus->dispatch($customMessage);
 

@@ -62,7 +62,6 @@ class AbstractInvokeStrategyTest extends TestCase
             ->method('setParam')
             ->with(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
 
-
         $strategy = $this->getMockForAbstractClass(AbstractInvokeStrategy::class);
 
         $strategy

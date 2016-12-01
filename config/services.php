@@ -23,11 +23,11 @@ return [
         // to expose message name in UnauthorizedException
         Plugin\Guard\RouteGuard::class => [
             Container\Plugin\Guard\RouteGuardFactory::class,
-            'exposeMessageName'
+            'exposeMessageName',
         ],
         Plugin\Guard\FinalizeGuard::class => [
             Container\Plugin\Guard\FinalizeGuardFactory::class,
-            'exposeMessageName'
+            'exposeMessageName',
         ],
-    ]
+    ],
 ];

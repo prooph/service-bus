@@ -15,7 +15,6 @@ namespace {
 }
 
 namespace Prooph\ServiceBus\Example\Command {
-
     use Prooph\Common\Messaging\Command;
 
     class EchoText extends Command

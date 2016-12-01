@@ -26,7 +26,7 @@ class CommandDispatchException extends MessageDispatchException
             return $ex;
         }
 
-        $ex = new static("Command dispatch failed. See previous exception for details.", 422, $dispatchException);
+        $ex = new static('Command dispatch failed. See previous exception for details.', 422, $dispatchException);
 
         $ex->pendingCommands = $pendingCommands;
 

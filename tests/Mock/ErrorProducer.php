@@ -16,6 +16,6 @@ class ErrorProducer
 {
     public function throwException($message)
     {
-        throw new \Exception("I can only throw exceptions");
+        throw new \Exception('I can only throw exceptions');
     }
 }

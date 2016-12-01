@@ -27,7 +27,7 @@ class HandleCommandStrategyTest extends TestCase
     {
         $handleCommandStrategy = new HandleCommandStrategy();
 
-        $doSomething = new CustomMessage("I am a command");
+        $doSomething = new CustomMessage('I am a command');
 
         $handleCommandHandler = new MessageHandler();
 
@@ -43,7 +43,7 @@ class HandleCommandStrategyTest extends TestCase
     {
         $handleCommandStrategy = new HandleCommandStrategy();
 
-        $doSomething = new CustomMessage("I am a command");
+        $doSomething = new CustomMessage('I am a command');
 
         $handleCommandHandler = new CustomMessageCommandHandler();
 

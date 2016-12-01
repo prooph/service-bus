@@ -67,7 +67,7 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         Assertion::notEmpty($eventName);
 
         if (null !== $this->tmpEventName && empty($this->eventMap[$this->tmpEventName])) {
-            throw new Exception\RuntimeException(sprintf("event %s is not mapped to a listener.", $this->tmpEventName));
+            throw new Exception\RuntimeException(sprintf('event %s is not mapped to a listener.', $this->tmpEventName));
         }
 
         $this->tmpEventName = $eventName;
@@ -91,14 +91,14 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
     {
         if (! is_string($eventListener) && ! is_object($eventListener) && ! is_callable($eventListener)) {
             throw new Exception\InvalidArgumentException(sprintf(
-                "Invalid event listener provided. Expected type is string, object or callable but type of %s given.",
+                'Invalid event listener provided. Expected type is string, object or callable but type of %s given.',
                 gettype($eventListener)
             ));
         }
 
         if (null === $this->tmpEventName) {
             throw new Exception\RuntimeException(sprintf(
-                "Cannot map listener %s to an event. Please use method route before calling method to",
+                'Cannot map listener %s to an event. Please use method route before calling method to',
                 is_object($eventListener)
                     ? get_class($eventListener)
                     : is_string($eventListener) ? $eventListener : gettype($eventListener)
@@ -124,7 +124,7 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     public function onRouteMessage(ActionEvent $actionEvent): void
     {
-        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+        $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if (empty($messageName)) {
             return;

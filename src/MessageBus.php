@@ -25,18 +25,18 @@ use Prooph\ServiceBus\Exception\RuntimeException;
  */
 abstract class MessageBus
 {
-    public const EVENT_INITIALIZE          = "initialize";
-    public const EVENT_DETECT_MESSAGE_NAME = "detect-message-name";
-    public const EVENT_ROUTE               = "route";
-    public const EVENT_LOCATE_HANDLER      = "locate-handler";
-    public const EVENT_INVOKE_HANDLER      = "invoke-handler";
-    public const EVENT_HANDLE_ERROR        = "handle-error";
-    public const EVENT_FINALIZE            = "finalize";
+    public const EVENT_INITIALIZE = 'initialize';
+    public const EVENT_DETECT_MESSAGE_NAME = 'detect-message-name';
+    public const EVENT_ROUTE = 'route';
+    public const EVENT_LOCATE_HANDLER = 'locate-handler';
+    public const EVENT_INVOKE_HANDLER = 'invoke-handler';
+    public const EVENT_HANDLE_ERROR = 'handle-error';
+    public const EVENT_FINALIZE = 'finalize';
 
-    public const EVENT_PARAM_MESSAGE         = 'message';
-    public const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
+    public const EVENT_PARAM_MESSAGE = 'message';
+    public const EVENT_PARAM_MESSAGE_NAME = 'message-name';
     public const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
-    public const EVENT_PARAM_EXCEPTION       = 'exception';
+    public const EVENT_PARAM_EXCEPTION = 'exception';
     public const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
 
     /**
@@ -109,7 +109,7 @@ abstract class MessageBus
         $this->getActionEventEmitter()->dispatch($actionEvent);
 
         if ($actionEvent->propagationIsStopped()) {
-            throw new RuntimeException("Dispatch has stopped unexpectedly.");
+            throw new RuntimeException('Dispatch has stopped unexpectedly.');
         }
     }
 

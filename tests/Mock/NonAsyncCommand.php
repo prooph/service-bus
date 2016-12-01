@@ -23,7 +23,7 @@ class NonAsyncCommand extends Command implements PayloadConstructable
     public static function createCommand(string $data): NonAsyncCommand
     {
         return new self([
-            'data' => $data
+            'data' => $data,
         ]);
     }
 }

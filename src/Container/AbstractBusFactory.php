@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Container;
 
 use Interop\Config\ConfigurationTrait;
-use Interop\Config\RequiresConfigId;
 use Interop\Config\ProvidesDefaultOptions;
+use Interop\Config\RequiresConfigId;
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
@@ -65,6 +65,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
                 sprintf('The first argument must be of type %s', ContainerInterface::class)
             );
         }
+
         return (new static($name))->__invoke($arguments[0]);
     }
 

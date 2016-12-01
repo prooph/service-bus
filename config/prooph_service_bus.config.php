@@ -42,7 +42,7 @@ return [
                     //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
                     //using the producer AND decorating the actual configured router
                     //'async_switch' => 'container_id_of_async_message_producer',
-                ]
+                ],
             ],
             //This section will be used by Prooph\ServiceBus\Container\EventBusFactory
             'event_bus' => [
@@ -63,7 +63,7 @@ return [
                     //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
                     //using the producer AND decorating the actual configured router
                     //'async_switch' => 'container_id_of_async_message_producer',
-                ]
+                ],
             ],
             //This section will be used by Prooph\ServiceBus\Container\QueryBusFactory
             'query_bus' => [
@@ -84,7 +84,7 @@ return [
                     //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
                     //using the producer AND decorating the actual configured router
                     //'async_switch' => 'container_id_of_async_message_producer',
-                ]
+                ],
             ],
         ], //EO service_bus
     ], //EO prooph

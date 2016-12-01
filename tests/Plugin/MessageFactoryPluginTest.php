@@ -31,7 +31,7 @@ class MessageFactoryPluginTest extends TestCase
     {
         $messageFactory = $this->prophesize(MessageFactory::class);
 
-        $messageFactory->createMessageFromArray("custom-message", Argument::any())->will(function ($args) {
+        $messageFactory->createMessageFromArray('custom-message', Argument::any())->will(function ($args) {
             list($messageName, $messageArr) = $args;
 
             return new DoSomething($messageArr['payload']);
@@ -44,8 +44,8 @@ class MessageFactoryPluginTest extends TestCase
             //gets active
             MessageBus::EVENT_PARAM_MESSAGE => [
                 'message_name' => 'custom-message',
-                'payload' => ["some data"]
-            ]
+                'payload' => ['some data'],
+            ],
         ]);
 
         $factoryPlugin($actionEvent);
@@ -53,7 +53,7 @@ class MessageFactoryPluginTest extends TestCase
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
         $this->assertInstanceOf(DoSomething::class, $message);
-        $this->assertEquals(["some data"], $message->payload());
+        $this->assertEquals(['some data'], $message->payload());
     }
 
     /**

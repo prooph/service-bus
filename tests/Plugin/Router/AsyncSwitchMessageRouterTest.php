@@ -29,7 +29,6 @@ use ProophTest\ServiceBus\TestCase;
 
 class AsyncSwitchMessageRouterTest extends TestCase
 {
-
     /**
      * @test
      */
@@ -50,7 +49,6 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $router->attach($actionEventEmitter->reveal());
     }
 
-
     /**
      * @test
      */
@@ -65,8 +63,8 @@ class AsyncSwitchMessageRouterTest extends TestCase
             //gets active
             MessageBus::EVENT_PARAM_MESSAGE => [
                 'message_name' => 'custom-message',
-                'payload' => ["some data"]
-            ]
+                'payload' => ['some data'],
+            ],
         ]);
 
         $router->onRouteMessage($actionEvent);
@@ -88,7 +86,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             new CommandBus(),
             [
                 MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
-                MessageBus::EVENT_PARAM_MESSAGE => $message
+                MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
 
@@ -102,8 +100,8 @@ class AsyncSwitchMessageRouterTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function marked_message_is_passed_to_async_producer()
     {
         $messageProducer = $this->prophesize(MessageProducer::class);
@@ -114,7 +112,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             new CommandBus(),
             [
                 MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
-                MessageBus::EVENT_PARAM_MESSAGE => $message
+                MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
 
@@ -144,7 +142,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             new CommandBus(),
             [
                 MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
-                MessageBus::EVENT_PARAM_MESSAGE => $message
+                MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
 
@@ -171,7 +169,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             new EventBus(),
             [
                 MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
-                MessageBus::EVENT_PARAM_MESSAGE => $message
+                MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
 

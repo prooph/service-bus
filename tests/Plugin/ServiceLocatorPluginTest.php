@@ -31,14 +31,14 @@ class ServiceLocatorPluginTest extends TestCase
 
         $container = $this->prophesize(ContainerInterface::class);
 
-        $container->has("custom-handler")->willReturn(true);
+        $container->has('custom-handler')->willReturn(true);
 
-        $container->get("custom-handler")->willReturn($handler);
+        $container->get('custom-handler')->willReturn($handler);
 
         $locatorPlugin = new ServiceLocatorPlugin($container->reveal());
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_LOCATE_HANDLER, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_HANDLER => "custom-handler"
+            MessageBus::EVENT_PARAM_MESSAGE_HANDLER => 'custom-handler',
         ]);
 
         $locatorPlugin->onLocateMessageHandler($actionEvent);

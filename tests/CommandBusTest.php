@@ -86,7 +86,7 @@ class CommandBusTest extends TestCase
             MessageBus::EVENT_DETECT_MESSAGE_NAME,
             function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered) {
                 $detectMessageNameIsTriggered = true;
-                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, "custom-message");
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, 'custom-message');
             }
         );
 
@@ -95,9 +95,9 @@ class CommandBusTest extends TestCase
             MessageBus::EVENT_ROUTE,
             function (ActionEvent $actionEvent) use (&$routeIsTriggered) {
                 $routeIsTriggered = true;
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === "custom-message") {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === 'custom-message') {
                     //We provide the message handler as a string (service id) to tell the bus to trigger the locate-handler event
-                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, "error-producer");
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, 'error-producer');
                 }
             }
         );
@@ -107,7 +107,7 @@ class CommandBusTest extends TestCase
             MessageBus::EVENT_LOCATE_HANDLER,
             function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered) {
                 $locateHandlerIsTriggered = true;
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === "error-producer") {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === 'error-producer') {
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new ErrorProducer());
                 }
             }
@@ -145,7 +145,7 @@ class CommandBusTest extends TestCase
             }
         );
 
-        $customMessage = new CustomMessage("I have no further meaning");
+        $customMessage = new CustomMessage('I have no further meaning');
 
         $this->commandBus->dispatch($customMessage);
 
@@ -171,7 +171,7 @@ class CommandBusTest extends TestCase
             }
         });
 
-        $customMessage = new CustomMessage("foo");
+        $customMessage = new CustomMessage('foo');
 
         $this->commandBus->dispatch($customMessage);
 
@@ -186,10 +186,10 @@ class CommandBusTest extends TestCase
     {
         try {
             $this->commandBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
-                throw new \Exception("ka boom");
+                throw new \Exception('ka boom');
             });
 
-            $this->commandBus->dispatch("throw it");
+            $this->commandBus->dispatch('throw it');
         } catch (MessageDispatchException $e) {
             $this->assertInstanceOf(DefaultActionEvent::class, $e->getFailedDispatchEvent());
 
@@ -209,7 +209,7 @@ class CommandBusTest extends TestCase
             }
         );
 
-        $this->commandBus->dispatch("throw it");
+        $this->commandBus->dispatch('throw it');
     }
 
     /**
@@ -239,7 +239,7 @@ class CommandBusTest extends TestCase
             (new CommandRouter())
                 ->route(CustomMessage::class)->to($messageHandler)
                 ->route('initial message')->to(function () use ($messageHandler) {
-                    $delayedMessage = new CustomMessage("delayed message");
+                    $delayedMessage = new CustomMessage('delayed message');
 
                     $this->commandBus->dispatch($delayedMessage);
 
@@ -263,11 +263,11 @@ class CommandBusTest extends TestCase
             (new CommandRouter())
                 ->route(CustomMessage::class)->to($messageHandler)
                 ->route('initial message')->to(function () use ($messageHandler) {
-                    $delayedMessage = new CustomMessage("delayed message");
+                    $delayedMessage = new CustomMessage('delayed message');
 
                     $this->commandBus->dispatch($delayedMessage);
 
-                    throw new \Exception("Ka Boom");
+                    throw new \Exception('Ka Boom');
                 })
         );
 

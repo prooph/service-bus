@@ -26,7 +26,7 @@ class OnEventStrategyTest extends TestCase
     {
         $onEventStrategy = new OnEventStrategy();
 
-        $customEvent = new CustomMessage("I am an event");
+        $customEvent = new CustomMessage('I am an event');
 
         $onEventHandler = new MessageHandler();
 

@@ -72,6 +72,6 @@ final class FinalizeGuard implements ActionEventListenerAggregate
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_FINALIZE, [$this, "onFinalize"], -1000));
+        $this->trackHandler($events->attachListener(MessageBus::EVENT_FINALIZE, [$this, 'onFinalize'], -1000));
     }
 }

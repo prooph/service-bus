@@ -33,6 +33,7 @@ class EventBusTest extends TestCase
     {
         $this->eventBus = new EventBus();
     }
+
     /**
      * @test
      */
@@ -83,7 +84,7 @@ class EventBusTest extends TestCase
             MessageBus::EVENT_DETECT_MESSAGE_NAME,
             function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered) {
                 $detectMessageNameIsTriggered = true;
-                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, "custom-message");
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, 'custom-message');
             }
         );
 
@@ -92,9 +93,9 @@ class EventBusTest extends TestCase
             MessageBus::EVENT_ROUTE,
             function (ActionEvent $actionEvent) use (&$routeIsTriggered) {
                 $routeIsTriggered = true;
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === "custom-message") {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === 'custom-message') {
                     //We provide the message handler as a string (service id) to tell the bus to trigger the locate-handler event
-                    $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, ["error-producer"]);
+                    $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, ['error-producer']);
                 }
             }
         );
@@ -104,7 +105,7 @@ class EventBusTest extends TestCase
             MessageBus::EVENT_LOCATE_HANDLER,
             function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered) {
                 $locateHandlerIsTriggered = true;
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === "error-producer") {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === 'error-producer') {
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new ErrorProducer());
                 }
             }
@@ -142,7 +143,7 @@ class EventBusTest extends TestCase
             }
         );
 
-        $customMessage = new CustomMessage("I have no further meaning");
+        $customMessage = new CustomMessage('I have no further meaning');
 
         $this->eventBus->dispatch($customMessage);
 
@@ -168,7 +169,7 @@ class EventBusTest extends TestCase
             }
         });
 
-        $customMessage = new CustomMessage("foo");
+        $customMessage = new CustomMessage('foo');
 
         $this->eventBus->dispatch($customMessage);
 
@@ -183,10 +184,10 @@ class EventBusTest extends TestCase
     {
         try {
             $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
-                throw new \Exception("ka boom");
+                throw new \Exception('ka boom');
             });
 
-            $this->eventBus->dispatch("throw it");
+            $this->eventBus->dispatch('throw it');
         } catch (MessageDispatchException $e) {
             $this->assertInstanceOf(DefaultActionEvent::class, $e->getFailedDispatchEvent());
 
@@ -207,7 +208,7 @@ class EventBusTest extends TestCase
             }
         });
 
-        $customMessage = new CustomMessage("foo");
+        $customMessage = new CustomMessage('foo');
 
         $this->eventBus->dispatch($customMessage);
 

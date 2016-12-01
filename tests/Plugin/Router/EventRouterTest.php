@@ -28,20 +28,19 @@ class EventRouterTest extends TestCase
     {
         $router = new EventRouter();
 
-        $router->route('SomethingDone')->to("SomethingDoneListener1")->andTo('SomethingDoneListener2');
+        $router->route('SomethingDone')->to('SomethingDoneListener1')->andTo('SomethingDoneListener2');
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
             MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
         ]);
-
 
         $router->onRouteMessage($actionEvent);
 
         $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
 
         $this->assertCount(2, $listeners);
-        $this->assertEquals("SomethingDoneListener1", $listeners[0]);
-        $this->assertEquals("SomethingDoneListener2", $listeners[1]);
+        $this->assertEquals('SomethingDoneListener1', $listeners[0]);
+        $this->assertEquals('SomethingDoneListener2', $listeners[1]);
     }
 
     /**
@@ -101,7 +100,7 @@ class EventRouterTest extends TestCase
     public function it_takes_a_routing_definition_with_a_single_listener_on_instantiation(): void
     {
         $router = new EventRouter([
-            'SomethingDone' => 'SomethingDoneListener'
+            'SomethingDone' => 'SomethingDoneListener',
         ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
@@ -110,7 +109,7 @@ class EventRouterTest extends TestCase
 
         $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals("SomethingDoneListener", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
+        $this->assertEquals('SomethingDoneListener', $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
     }
 
     /**
@@ -119,7 +118,7 @@ class EventRouterTest extends TestCase
     public function it_takes_a_routing_definition_with_a_multiple_listeners_on_instantiation(): void
     {
         $router = new EventRouter([
-            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
+            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
@@ -128,8 +127,8 @@ class EventRouterTest extends TestCase
 
         $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals("SomethingDoneListener1", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
-        $this->assertEquals("SomethingDoneListener2", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
+        $this->assertEquals('SomethingDoneListener1', $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
+        $this->assertEquals('SomethingDoneListener2', $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
     }
 
     /**
@@ -138,7 +137,7 @@ class EventRouterTest extends TestCase
     public function it_still_works_if_deprecated_method_on_route_event_is_used(): void
     {
         $router = new EventRouter([
-            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
+            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
@@ -147,8 +146,8 @@ class EventRouterTest extends TestCase
 
         $router->onRouteMessage($actionEvent);
 
-        $this->assertEquals("SomethingDoneListener1", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
-        $this->assertEquals("SomethingDoneListener2", $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
+        $this->assertEquals('SomethingDoneListener1', $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
+        $this->assertEquals('SomethingDoneListener2', $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[1]);
     }
 
     /**
@@ -157,7 +156,7 @@ class EventRouterTest extends TestCase
     public function it_returns_early_on_route_event_when_message_name_is_empty(): void
     {
         $router = new EventRouter([
-            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
+            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
@@ -176,7 +175,7 @@ class EventRouterTest extends TestCase
     public function it_returns_early_on_route_event_when_message_name_is_not_in_event_map(): void
     {
         $router = new EventRouter([
-            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2']
+            'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
         $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
