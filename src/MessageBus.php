@@ -18,7 +18,6 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
  * Base class for a message bus implementation

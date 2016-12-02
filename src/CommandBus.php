@@ -86,7 +86,7 @@ class CommandBus extends MessageBus
                         self::EVENT_DISPATCH,
                         $this,
                         [
-                            self::EVENT_PARAM_MESSAGE => $command
+                            self::EVENT_PARAM_MESSAGE => $command,
                         ]
                     );
 
