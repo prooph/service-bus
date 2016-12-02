@@ -41,8 +41,8 @@
         "malukenho/docheader": "^0.1.4"
     },
     "suggest": {
-        "react/promise": "^2.2.2 for usage with provided QueryBus",
-        "prooph/event-store": "Let the EventBus dispatch persisted DomainEvents",
+        "react/promise": "^2.4.1 for usage with provided QueryBus",
+        "prooph/event-store-bus-bridge": "Let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zend ServiceManager to lazy load your handlers and listeners",
         "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard",
         "container-interop/container-interop": "For usage of provided factories",

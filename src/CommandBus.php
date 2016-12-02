@@ -33,19 +33,37 @@ class CommandBus extends MessageBus
      */
     private $isDispatching = false;
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
+    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
-            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) {
+                $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-            if (is_callable($commandHandler)) {
-                $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                $commandHandler($command);
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
-            }
-        });
+                if (is_callable($commandHandler)) {
+                    $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                    $commandHandler($command);
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+            },
+            self::PRIORITY_INVOKE_HANDLER
+        );
 
-        $this->events = $actionEventDispatcher;
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) {
+                if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
+                    $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                    throw new RuntimeException(sprintf(
+                        'CommandBus was not able to identify a CommandHandler for command %s',
+                        $this->getMessageName($command)
+                    ));
+                }
+            },
+            self::PRIORITY_ROUTE - 1 // after routing
+        );
+
+        parent::setActionEventEmitter($actionEventEmitter);
     }
 
     /**
@@ -64,56 +82,31 @@ class CommandBus extends MessageBus
 
             try {
                 while ($command = array_shift($this->commandQueue)) {
-                    $this->processCommand($command);
+                    $actionEvent = $this->getActionEventEmitter()->getNewActionEvent(
+                        self::EVENT_DISPATCH,
+                        $this,
+                        [
+                            self::EVENT_PARAM_MESSAGE => $command
+                        ]
+                    );
+
+                    try {
+                        $this->getActionEventEmitter()->dispatch($actionEvent);
+
+                        if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
+                            throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
+                        }
+                    } catch (\Throwable $exception) {
+                        $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
+                    } finally {
+                        $this->triggerFinalize($actionEvent);
+                    }
                 }
                 $this->isDispatching = false;
             } catch (\Throwable $e) {
                 $this->isDispatching = false;
                 throw CommandDispatchException::wrap($e, $this->commandQueue);
             }
-        }
-    }
-
-    protected function processCommand($command): void
-    {
-        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
-
-        $actionEvent->setTarget($this);
-
-        try {
-            $this->initialize($command, $actionEvent);
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                $actionEvent->setName(self::EVENT_ROUTE);
-
-                $this->trigger($actionEvent);
-            }
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                throw new RuntimeException(sprintf(
-                    'CommandBus was not able to identify a CommandHandler for command %s',
-                    $this->getMessageName($command)
-                ));
-            }
-
-            $handler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-
-            if (is_string($handler) && ! is_callable($handler)) {
-                $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-
-                $this->trigger($actionEvent);
-            }
-
-            $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-            $this->trigger($actionEvent);
-
-            if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
-                throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
-            }
-
-            $this->triggerFinalize($actionEvent);
-        } catch (\Throwable $ex) {
-            $this->handleException($actionEvent, $ex);
         }
     }
 }

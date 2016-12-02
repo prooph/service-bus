@@ -50,7 +50,11 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage']));
+        $this->trackHandler($events->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            [$this, 'onRouteMessage'],
+            MessageBus::PRIORITY_ROUTE
+        ));
     }
 
     public function route(string $messageName): SingleHandlerRouter
