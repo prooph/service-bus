@@ -23,11 +23,6 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
     use DetachAggregateHandlers;
 
     /**
-     * @var int
-     */
-    protected $priority = 0;
-
-    /**
      * @param mixed $handler
      * @param mixed $message
      */
@@ -35,7 +30,11 @@ abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_INVOKE_HANDLER, $this, $this->priority));
+        $this->trackHandler($events->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            $this,
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        ));
     }
 
     public function __invoke(ActionEvent $e): void
