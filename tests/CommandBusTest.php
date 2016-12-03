@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\MessageDispatchException;

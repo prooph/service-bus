@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus;
 
-use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\Mock\CustomMessageBus;
