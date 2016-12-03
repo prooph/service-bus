@@ -15,6 +15,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
@@ -138,10 +139,11 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_routing_a_second_pattern_before_first_definition_is_finished(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $router = new RegexRouter();
 
         $router->route('ProophTest\ServiceBus\Mock\DoSomething');
@@ -151,10 +153,11 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_fails_on_setting_a_handler_before_a_pattern_is_set(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $router = new RegexRouter();
 
         $router->to('DoSomethingHandler');
@@ -162,10 +165,11 @@ class RegexRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_when_routing_to_invalid_handler(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $router = new RegexRouter();
 
         $router->to(null);

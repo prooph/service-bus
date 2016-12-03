@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
@@ -91,10 +92,11 @@ class EventRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_on_setting_an_invalid_listener(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $router = new EventRouter();
         $router->to(null);
     }

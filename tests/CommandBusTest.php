@@ -190,33 +190,29 @@ class CommandBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\MessageDispatchException
      */
     public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin(): void
     {
-        try {
-            $this->commandBus->getActionEventEmitter()->attachListener(
-                MessageBus::EVENT_DISPATCH,
-                function () {
-                    throw new \Exception('ka boom');
-                },
-                MessageBus::PRIORITY_INITIALIZE
-            );
+        $this->expectException(MessageDispatchException::class);
 
-            $this->commandBus->dispatch('throw it');
-        } catch (MessageDispatchException $e) {
-            $this->assertInstanceOf(DefaultActionEvent::class, $e->getFailedDispatchEvent());
+        $this->commandBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function () {
+                throw new \Exception('ka boom');
+            },
+            MessageBus::PRIORITY_INITIALIZE
+        );
 
-            throw $e;
-        }
+        $this->commandBus->dispatch('throw it');
     }
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_throws_exception_if_event_has_no_handler_after_it_has_been_set_and_event_was_triggered(): void
     {
+        $this->expectException(MessageDispatchException::class);
+
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) {
@@ -230,10 +226,11 @@ class CommandBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_throws_exception_if_message_was_not_handled(): void
     {
+        $this->expectException(MessageDispatchException::class);
+
         $this->commandBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) {

@@ -26,6 +26,7 @@ use Prooph\ServiceBus\Container\EventBusFactory;
 use Prooph\ServiceBus\Container\QueryBusFactory;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
@@ -116,7 +117,6 @@ class BusFactoriesTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      * @dataProvider provideBuses
      */
     public function it_throws_a_runtime_exception_if_plugin_is_not_registered_in_container(
@@ -124,6 +124,8 @@ class BusFactoriesTest extends TestCase
         string $busConfigKey,
         AbstractBusFactory $busFactory
     ): void {
+        $this->expectException(RuntimeException::class);
+
         $container = $this->prophesize(ContainerInterface::class);
 
         $container->has('config')->willReturn(true);

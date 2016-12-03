@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
@@ -45,10 +46,11 @@ class SingleHandlerRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_when_routing_to_invalid_handler(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $router = new CommandRouter();
 
         $router->route('ProophTest\ServiceBus\Mock\DoSomething')->to(null);
