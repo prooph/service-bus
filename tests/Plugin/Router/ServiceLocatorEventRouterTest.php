@@ -33,9 +33,13 @@ class ServiceLocatorEventRouterTest extends TestCase
 
         $eventBus = new EventBus();
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            EventBus::EVENT_PARAM_MESSAGE_NAME => 'event',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                EventBus::EVENT_PARAM_MESSAGE_NAME => 'event',
+            ]
+        );
 
         $router = new ServiceLocatorEventRouter($container->reveal());
         $eventBus->utilize($router);

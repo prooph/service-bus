@@ -33,6 +33,15 @@ final class SingleHandlerServiceLocatorRouter implements MessageBusRouterPlugin,
         $this->container = $container;
     }
 
+    public function attach(ActionEventEmitter $events): void
+    {
+        $this->trackHandler($events->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            [$this, 'onRouteMessage'],
+            MessageBus::PRIORITY_ROUTE
+        ));
+    }
+
     public function onRouteMessage(ActionEvent $actionEvent): void
     {
         $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
@@ -43,10 +52,5 @@ final class SingleHandlerServiceLocatorRouter implements MessageBusRouterPlugin,
                 $this->container->get($messageName)
             );
         }
-    }
-
-    public function attach(ActionEventEmitter $events): void
-    {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage']));
     }
 }

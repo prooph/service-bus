@@ -33,9 +33,13 @@ class SingleHandlerServiceLocatorRouterTest extends TestCase
 
         $commandBus = new CommandBus();
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, $commandBus, [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'message',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            $commandBus,
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'message',
+            ]
+        );
 
         $router = new SingleHandlerServiceLocatorRouter($container->reveal());
         $commandBus->utilize($router);

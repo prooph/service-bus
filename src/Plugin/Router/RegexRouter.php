@@ -61,7 +61,11 @@ class RegexRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRouteMessage'], 100));
+        $this->trackHandler($events->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            [$this, 'onRouteMessage'],
+            MessageBus::PRIORITY_ROUTE
+        ));
     }
 
     public function route(string $pattern): RegexRouter

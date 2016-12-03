@@ -31,9 +31,14 @@ class RegexRouterTest extends TestCase
 
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $regexRouter->onRouteMessage($actionEvent);
 
@@ -49,9 +54,13 @@ class RegexRouterTest extends TestCase
 
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            '' => 'ProophTest\ServiceBus\Mock\DoSomething',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                '' => 'ProophTest\ServiceBus\Mock\DoSomething',
+            ]
+        );
 
         $regexRouter->onRouteMessage($actionEvent);
 
@@ -70,9 +79,13 @@ class RegexRouterTest extends TestCase
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*/')->to('DoSomethingHandler2');
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
+            ]
+        );
 
         $regexRouter->onRouteMessage($actionEvent);
     }
@@ -87,9 +100,13 @@ class RegexRouterTest extends TestCase
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener1');
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener2');
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
+            ]
+        );
 
         $regexRouter->onRouteMessage($actionEvent);
 
@@ -106,9 +123,13 @@ class RegexRouterTest extends TestCase
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener1');
         $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener2');
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            '' => 'ProophTest\ServiceBus\Mock\SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                '' => 'ProophTest\ServiceBus\Mock\SomethingDone',
+            ]
+        );
 
         $regexRouter->onRouteMessage($actionEvent);
 
@@ -160,17 +181,25 @@ class RegexRouterTest extends TestCase
             '/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
+            ]
+        );
 
         $router->onRouteMessage($actionEvent);
 
         $this->assertEquals('DoSomethingHandler', $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
+            ]
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -187,17 +216,25 @@ class RegexRouterTest extends TestCase
             '/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\DoSomething',
+            ]
+        );
 
         $router->onRouteMessage($actionEvent);
 
         $this->assertEquals('DoSomethingHandler', $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'ProophTest\ServiceBus\Mock\SomethingDone',
+            ]
+        );
 
         $router->onRouteMessage($actionEvent);
 
