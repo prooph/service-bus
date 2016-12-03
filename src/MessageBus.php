@@ -98,7 +98,7 @@ abstract class MessageBus
             self::EVENT_FINALIZE,
             function (ActionEvent $actionEvent) {
                 if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
-                    throw MessageDispatchException::failed($actionEvent, $exception);
+                    throw MessageDispatchException::failed($exception);
                 }
             }
         );

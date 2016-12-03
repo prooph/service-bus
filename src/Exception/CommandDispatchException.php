@@ -19,7 +19,7 @@ class CommandDispatchException extends MessageDispatchException
     public static function wrap(\Throwable $dispatchException, array $pendingCommands): CommandDispatchException
     {
         if ($dispatchException instanceof MessageDispatchException) {
-            $ex = parent::failed($dispatchException->getFailedDispatchEvent(), $dispatchException->getPrevious());
+            $ex = parent::failed($dispatchException->getPrevious());
 
             $ex->pendingCommands = $pendingCommands;
 

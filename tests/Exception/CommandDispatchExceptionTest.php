@@ -27,15 +27,12 @@ class CommandDispatchExceptionTest extends TestCase
     {
         $pendingCommands = ['dispatchMe', 'tellMe'];
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INVOKE_HANDLER);
-
         $prevException = new \Exception('previous');
 
-        $messageDispatchException = MessageDispatchException::failed($actionEvent, $prevException);
+        $messageDispatchException = MessageDispatchException::failed($prevException);
 
         $commandDispatchException = CommandDispatchException::wrap($messageDispatchException, $pendingCommands);
 
-        $this->assertSame($actionEvent, $commandDispatchException->getFailedDispatchEvent());
         $this->assertSame($prevException, $commandDispatchException->getPrevious());
         $this->assertSame($pendingCommands, $commandDispatchException->getPendingCommands());
     }

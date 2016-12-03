@@ -78,9 +78,11 @@ class CommandBus extends MessageBus
         if (! $this->isDispatching) {
             $this->isDispatching = true;
 
+            $actionEventEmitter = $this->getActionEventEmitter();
+
             try {
                 while ($command = array_shift($this->commandQueue)) {
-                    $actionEvent = $this->getActionEventEmitter()->getNewActionEvent(
+                    $actionEvent = $actionEventEmitter->getNewActionEvent(
                         self::EVENT_DISPATCH,
                         $this,
                         [
@@ -89,7 +91,7 @@ class CommandBus extends MessageBus
                     );
 
                     try {
-                        $this->getActionEventEmitter()->dispatch($actionEvent);
+                        $actionEventEmitter->dispatch($actionEvent);
 
                         if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
                             throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));

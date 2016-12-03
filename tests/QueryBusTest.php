@@ -47,12 +47,19 @@ class QueryBusTest extends TestCase
 
         $receivedMessage = null;
         $dispatchEvent = null;
-        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent) {
-            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, function (FetchSomething $fetchSomething, Deferred $deferred) use (&$receivedMessage) {
-                $deferred->resolve($fetchSomething);
-            });
-            $dispatchEvent = $actionEvent;
-        });
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent) {
+                $actionEvent->setParam(
+                    MessageBus::EVENT_PARAM_MESSAGE_HANDLER,
+                    function (FetchSomething $fetchSomething, Deferred $deferred) use (&$receivedMessage) {
+                        $deferred->resolve($fetchSomething);
+                    }
+                );
+                $dispatchEvent = $actionEvent;
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $promise = $this->queryBus->dispatch($fetchSomething);
 
@@ -74,80 +81,76 @@ class QueryBusTest extends TestCase
         $routeIsTriggered = false;
         $locateHandlerIsTriggered = false;
         $invokeFinderIsTriggered = false;
-        $handleErrorIsTriggered = false;
         $finalizeIsTriggered = false;
 
         //Should always be triggered
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_INITIALIZE,
+            MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$initializeIsTriggered) {
                 $initializeIsTriggered = true;
-            }
+            },
+            MessageBus::PRIORITY_INITIALIZE
         );
 
         //Should be triggered because we dispatch a message that does not
         //implement Prooph\Common\Messaging\HasMessageName
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_DETECT_MESSAGE_NAME,
+            MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered) {
                 $detectMessageNameIsTriggered = true;
                 $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, 'custom-message');
-            }
+            },
+            MessageBus::PRIORITY_DETECT_MESSAGE_NAME
         );
 
         //Should be triggered because we did not provide a message-handler yet
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_ROUTE,
+            MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$routeIsTriggered) {
                 $routeIsTriggered = true;
                 if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === 'custom-message') {
                     //We provide the message handler as a string (service id) to tell the bus to trigger the locate-handler event
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, 'error-producer');
                 }
-            }
+            },
+            MessageBus::PRIORITY_ROUTE
         );
 
         //Should be triggered because we provided the message-handler as string (service id)
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_LOCATE_HANDLER,
+            MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered) {
                 $locateHandlerIsTriggered = true;
                 if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === 'error-producer') {
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new ErrorProducer());
                 }
-            }
+            },
+            MessageBus::PRIORITY_LOCATE_HANDLER
         );
 
         //Should be triggered because the message-handler is not callable
         $this->queryBus->getActionEventEmitter()->attachListener(
-            QueryBus::EVENT_INVOKE_FINDER,
+            QueryBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$invokeFinderIsTriggered) {
                 $invokeFinderIsTriggered = true;
                 $handler = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
                 if ($handler instanceof ErrorProducer) {
                     $handler->throwException($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE));
                 }
-            }
-        );
-
-        //Should be triggered because the message-handler threw an exception
-        $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_HANDLE_ERROR,
-            function (ActionEvent $actionEvent) use (&$handleErrorIsTriggered) {
-                $handleErrorIsTriggered = true;
-
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_EXCEPTION) instanceof \Exception) {
-                    $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
-                }
-            }
+            },
+            QueryBus::PRIORITY_INVOKE_HANDLER
         );
 
         //Should always be triggered
         $this->queryBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_FINALIZE,
             function (ActionEvent $actionEvent) use (&$finalizeIsTriggered) {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_EXCEPTION) instanceof \Exception) {
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
+                }
                 $finalizeIsTriggered = true;
-            }
+            },
+            1000 // high priority
         );
 
         $customMessage = new CustomMessage('I have no further meaning');
@@ -159,7 +162,6 @@ class QueryBusTest extends TestCase
         $this->assertTrue($routeIsTriggered);
         $this->assertTrue($locateHandlerIsTriggered);
         $this->assertTrue($invokeFinderIsTriggered);
-        $this->assertTrue($handleErrorIsTriggered);
         $this->assertTrue($finalizeIsTriggered);
     }
 
@@ -170,11 +172,15 @@ class QueryBusTest extends TestCase
     {
         $handler = new Finder();
 
-        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $e) use ($handler) {
-            if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
-                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
-            }
-        });
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) use ($handler) {
+                if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                    $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
+                }
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $this->queryBus->utilize(new FinderInvokeStrategy());
 
@@ -194,9 +200,13 @@ class QueryBusTest extends TestCase
     {
         $exception = null;
 
-        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
-            throw new \Exception('ka boom');
-        });
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function () {
+                throw new \Exception('ka boom');
+            },
+            MessageBus::PRIORITY_INITIALIZE
+        );
 
         $promise = $this->queryBus->dispatch('throw it');
 
@@ -205,7 +215,6 @@ class QueryBusTest extends TestCase
         });
 
         $this->assertInstanceOf(MessageDispatchException::class, $exception);
-        $this->assertInstanceOf(DefaultActionEvent::class, $exception->getFailedDispatchEvent());
     }
 
     /**
@@ -216,9 +225,11 @@ class QueryBusTest extends TestCase
         $exception = null;
 
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) {
                 $e->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, null);
-            }
+            },
+            MessageBus::PRIORITY_INITIALIZE
         );
 
         $promise = $this->queryBus->dispatch('throw it');
@@ -228,7 +239,7 @@ class QueryBusTest extends TestCase
         });
 
         $this->assertInstanceOf(RuntimeException::class, $exception);
-        $this->assertEquals('Message dispatch failed during route phase. Error: QueryBus was not able to identify a Finder for query throw it', $exception->getMessage());
+        $this->assertEquals('Message dispatch failed. See previous exception for details.', $exception->getMessage());
     }
 
     /**
@@ -239,9 +250,11 @@ class QueryBusTest extends TestCase
         $exception = null;
 
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_INITIALIZE, function (ActionEvent $e) {
-                $e->stopPropagation(true);
-            }
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) {
+                throw new \RuntimeException('throw it!');
+            },
+            MessageBus::PRIORITY_INITIALIZE
         );
 
         $promise = $this->queryBus->dispatch('throw it');
@@ -250,8 +263,10 @@ class QueryBusTest extends TestCase
             $exception = $ex;
         });
 
-        $this->assertInstanceOf(RuntimeException::class, $exception);
-        $this->assertEquals('Message dispatch failed during initialize phase. Error: Dispatch has stopped unexpectedly.', $exception->getMessage());
+        $this->assertInstanceOf(MessageDispatchException::class, $exception);
+        $this->assertEquals('Message dispatch failed. See previous exception for details.', $exception->getMessage());
+        $this->assertInstanceOf(\RuntimeException::class, $exception->getPrevious());
+        $this->assertEquals('throw it!', $exception->getPrevious()->getMessage());
     }
 
     /**
@@ -261,11 +276,15 @@ class QueryBusTest extends TestCase
     {
         $handler = new Finder();
 
-        $this->queryBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $e) use ($handler) {
-            if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
-                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
-            }
-        });
+        $this->queryBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) use ($handler) {
+                if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                    $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
+                }
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $plugin = new FinderInvokeStrategy();
         $this->queryBus->utilize($plugin);
@@ -282,15 +301,17 @@ class QueryBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_throws_exception_if_message_was_not_handled(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $this->queryBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_INITIALIZE,
+            MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) {
                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
-            }
+            },
+            MessageBus::PRIORITY_INITIALIZE
         );
 
         $promise = $this->queryBus->dispatch('throw it');

@@ -25,7 +25,11 @@ class FinderInvokeStrategy implements ActionEventListenerAggregate
 
     public function attach(ActionEventEmitter $dispatcher): void
     {
-        $this->trackHandler($dispatcher->attachListener(QueryBus::EVENT_INVOKE_FINDER, $this));
+        $this->trackHandler($dispatcher->attachListener(
+            QueryBus::EVENT_DISPATCH,
+            $this,
+            QueryBus::PRIORITY_INVOKE_HANDLER
+        ));
     }
 
     public function __invoke(ActionEvent $actionEvent): void

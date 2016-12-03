@@ -21,30 +21,8 @@ class MessageDispatchException extends RuntimeException
      */
     protected $actionEvent;
 
-    public static function failed(ActionEvent $actionEvent, ?\Throwable $previousException): MessageDispatchException
+    public static function failed(\Throwable $dispatchException): MessageDispatchException
     {
-        $ex = new static(
-            sprintf(
-                'Message dispatch failed during %s phase.%s',
-                $actionEvent->getName(),
-                (null === $previousException) ? '' : ' Error: ' . $previousException->getMessage()
-            ),
-            422,
-            $previousException
-        );
-
-        $ex->setFailedDispatch($actionEvent);
-
-        return $ex;
-    }
-
-    public function getFailedDispatchEvent(): ActionEvent
-    {
-        return $this->actionEvent;
-    }
-
-    protected function setFailedDispatch(ActionEvent $actionEvent): void
-    {
-        $this->actionEvent = $actionEvent;
+        return new static('Message dispatch failed. See previous exception for details.', 422, $dispatchException);
     }
 }

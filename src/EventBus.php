@@ -47,7 +47,9 @@ class EventBus extends MessageBus
      */
     public function dispatch($event): void
     {
-        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent(
+        $actionEventEmitter = $this->getActionEventEmitter();
+
+        $actionEvent = $actionEventEmitter->getNewActionEvent(
             self::EVENT_DISPATCH,
             $this,
             [
@@ -56,25 +58,11 @@ class EventBus extends MessageBus
         );
 
         try {
-            $this->getActionEventEmitter()->dispatch($actionEvent);
+            $actionEventEmitter->dispatch($actionEvent);
         } catch (\Throwable $exception) {
             $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
         } finally {
             $this->triggerFinalize($actionEvent);
         }
-
-        /**
-         * foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
-        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLER, $eventListener);
-
-        if (is_string($eventListener) && ! is_callable($eventListener)) {
-        $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-        $this->trigger($actionEvent);
-        }
-
-        $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-        $this->trigger($actionEvent);
-        }
-         */
     }
 }

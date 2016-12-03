@@ -27,25 +27,53 @@ use React\Promise\Promise;
  */
 class QueryBus extends MessageBus
 {
-    public const EVENT_INVOKE_FINDER = 'invoke-finder';
-
     public const EVENT_PARAM_PROMISE = 'query-promise';
     public const EVENT_PARAM_DEFERRED = 'query-deferred';
 
     public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
     {
-        $actionEventEmitter->attachListener(self::EVENT_INVOKE_FINDER, function (ActionEvent $actionEvent) {
-            $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) {
+                $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-            if (is_callable($finder)) {
-                $query = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
-                $finder($query, $deferred);
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
-            }
-        });
+                if (is_callable($finder)) {
+                    $query = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                    $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
+                    $finder($query, $deferred);
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+            },
+            self::PRIORITY_INVOKE_HANDLER
+        );
 
-        $this->events = $actionEventEmitter;
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) {
+                if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
+                    $query = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                    throw new RuntimeException(sprintf(
+                        'QueryBus was not able to identify a Finder for query %s',
+                        $this->getMessageName($query)
+                    ));
+                }
+            },
+            self::PRIORITY_ROUTE - 100 // after routing
+        );
+
+        $actionEventEmitter->attachListener(
+            self::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent) {
+                if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
+                    $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
+                    $deferred->reject(MessageDispatchException::failed($exception));
+                    $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, null);
+                }
+            },
+            1000
+        );
+
+        parent::setActionEventEmitter($actionEventEmitter);
     }
 
     /**
@@ -57,59 +85,28 @@ class QueryBus extends MessageBus
     {
         $deferred = new Deferred();
 
-        $promise = $deferred->promise();
+        $actionEventEmitter = $this->getActionEventEmitter();
 
-        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
-
-        $actionEvent->setTarget($this);
-
-        $actionEvent->setParam(self::EVENT_PARAM_DEFERRED, $deferred);
-        $actionEvent->setParam(self::EVENT_PARAM_PROMISE, $promise);
+        $actionEvent = $actionEventEmitter->getNewActionEvent(
+            self::EVENT_DISPATCH,
+            $this,
+            [
+                self::EVENT_PARAM_MESSAGE => $query,
+                self::EVENT_PARAM_DEFERRED => $deferred,
+                self::EVENT_PARAM_PROMISE => $deferred->promise(),
+            ]
+        );
 
         try {
-            $this->initialize($query, $actionEvent);
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                $actionEvent->setName(self::EVENT_ROUTE);
-                $this->trigger($actionEvent);
-            }
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                throw new RuntimeException(sprintf(
-                    'QueryBus was not able to identify a Finder for query %s',
-                    $this->getMessageName($query)
-                ));
-            }
-
-            $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-
-            if (is_string($finder) && ! is_callable($finder)) {
-                $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-
-                $this->trigger($actionEvent);
-            }
-
-            $actionEvent->setName(self::EVENT_INVOKE_FINDER);
-            $this->trigger($actionEvent);
+            $actionEventEmitter->dispatch($actionEvent);
 
             if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
                 throw new RuntimeException(sprintf('Query %s was not handled', $this->getMessageName($query)));
             }
-
+        } catch (\Throwable $exception) {
+            $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
+        } finally {
             $this->triggerFinalize($actionEvent);
-        } catch (\Throwable $ex) {
-            $failedPhase = $actionEvent->getName();
-
-            $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);
-
-            $this->triggerError($actionEvent);
-            $this->triggerFinalize($actionEvent);
-
-            //Check if a listener has removed the exception to indicate that it was able to handle it
-            if ($ex = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
-                $actionEvent->setName($failedPhase);
-                $deferred->reject(MessageDispatchException::failed($actionEvent, $ex));
-            }
         }
 
         return $actionEvent->getParam(self::EVENT_PARAM_PROMISE);
