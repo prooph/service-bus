@@ -37,7 +37,7 @@ class CommandBus extends MessageBus
     {
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
                 if (is_callable($commandHandler)) {
@@ -51,7 +51,7 @@ class CommandBus extends MessageBus
 
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                     $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                     throw new RuntimeException(sprintf(

@@ -51,7 +51,7 @@ class QueryBusTest extends TestCase
             function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent): void {
                 $actionEvent->setParam(
                     MessageBus::EVENT_PARAM_MESSAGE_HANDLER,
-                    function (FetchSomething $fetchSomething, Deferred $deferred) use (&$receivedMessage) {
+                    function (FetchSomething $fetchSomething, Deferred $deferred) use (&$receivedMessage): void {
                         $deferred->resolve($fetchSomething);
                     }
                 );
@@ -62,7 +62,7 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch($fetchSomething);
 
-        $promise->then(function ($result) use (&$receivedMessage) {
+        $promise->then(function ($result) use (&$receivedMessage): void {
             $receivedMessage = $result;
         });
 
@@ -209,7 +209,7 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception) {
+        $promise->otherwise(function ($ex) use (&$exception): void {
             $exception = $ex;
         });
 
@@ -233,7 +233,7 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception) {
+        $promise->otherwise(function ($ex) use (&$exception): void {
             $exception = $ex;
         });
 
@@ -258,7 +258,7 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception) {
+        $promise->otherwise(function ($ex) use (&$exception): void {
             $exception = $ex;
         });
 

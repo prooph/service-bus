@@ -46,7 +46,7 @@ final class FinalizeGuard implements ActionEventListenerAggregate
         $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if ($promise instanceof Promise) {
-            $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName) {
+            $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName): void {
                 if (! $this->authorizationService->isGranted($messageName, $result)) {
                     $actionEvent->stopPropagation(true);
 

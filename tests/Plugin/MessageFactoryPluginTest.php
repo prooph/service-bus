@@ -31,7 +31,7 @@ class MessageFactoryPluginTest extends TestCase
     {
         $messageFactory = $this->prophesize(MessageFactory::class);
 
-        $messageFactory->createMessageFromArray('custom-message', Argument::any())->will(function ($args) {
+        $messageFactory->createMessageFromArray('custom-message', Argument::any())->will(function ($args): DoSomething {
             list($messageName, $messageArr) = $args;
 
             return new DoSomething($messageArr['payload']);

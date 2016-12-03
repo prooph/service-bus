@@ -65,7 +65,7 @@ namespace {
 
     //Register a callback as CommandHandler for the EchoText command
     $router->route('Prooph\ServiceBus\Example\Command\EchoText')
-        ->to(function (EchoText $aCommand) {
+        ->to(function (EchoText $aCommand): void {
             echo $aCommand->getText();
         });
 

@@ -50,7 +50,7 @@ class CommandBusTest extends TestCase
             function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent): void {
                 $actionEvent->setParam(
                     MessageBus::EVENT_PARAM_MESSAGE_HANDLER,
-                    function (DoSomething $doSomething) use (&$receivedMessage) {
+                    function (DoSomething $doSomething) use (&$receivedMessage): void {
                         $receivedMessage = $doSomething;
                     }
                 );
@@ -252,7 +252,7 @@ class CommandBusTest extends TestCase
         $this->commandBus->utilize(
             (new CommandRouter())
                 ->route(CustomMessage::class)->to($messageHandler)
-                ->route('initial message')->to(function () use ($messageHandler) {
+                ->route('initial message')->to(function () use ($messageHandler): void {
                     $delayedMessage = new CustomMessage('delayed message');
 
                     $this->commandBus->dispatch($delayedMessage);
@@ -276,7 +276,7 @@ class CommandBusTest extends TestCase
         $this->commandBus->utilize(
             (new CommandRouter())
                 ->route(CustomMessage::class)->to($messageHandler)
-                ->route('initial message')->to(function () use ($messageHandler) {
+                ->route('initial message')->to(function () use ($messageHandler): void {
                     $delayedMessage = new CustomMessage('delayed message');
 
                     $this->commandBus->dispatch($delayedMessage);

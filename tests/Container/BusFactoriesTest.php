@@ -170,7 +170,7 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'router' => [
                             'routes' => [
-                                'test_message' => function (Message $message) use (&$handlerWasCalled) {
+                                'test_message' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -212,7 +212,7 @@ class BusFactoriesTest extends TestCase
                         'router' => [
                             'type' => RegexRouter::class,
                             'routes' => [
-                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -255,7 +255,7 @@ class BusFactoriesTest extends TestCase
                         'router' => [
                             'type' => RegexRouter::class,
                             'routes' => [
-                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -306,7 +306,7 @@ class BusFactoriesTest extends TestCase
                             'async_switch' => 'noop_message_producer',
                             'type' => RegexRouter::class,
                             'routes' => [
-                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -340,10 +340,10 @@ class BusFactoriesTest extends TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
 
-        $message->messageName()->willReturn('test_message');
+        $message->messageName()->willReturn('test_message')->shouldBeCalled();
         $handlerWasCalled = false;
 
-        $container->has('config')->willReturn(true);
+        $container->has('config')->willReturn(true)->shouldBeCalled();
         $container->get('config')->willReturn([
             'prooph' => [
                 'service_bus' => [
@@ -356,14 +356,14 @@ class BusFactoriesTest extends TestCase
                     ],
                 ],
             ],
-        ]);
+        ])->shouldBeCalled();
 
-        $container->has('handler_service_id')->willReturn(true);
-        $container->get('handler_service_id')->willReturn(function (Message $message) use (&$handlerWasCalled) {
+        $container->has('handler_service_id')->willReturn(true)->shouldBeCalled();
+        $container->get('handler_service_id')->willReturn(function (Message $message) use (&$handlerWasCalled): void {
             $handlerWasCalled = true;
-        });
+        })->shouldBeCalled();
 
-        $container->has(MessageFactory::class)->willReturn(false);
+        $container->has(MessageFactory::class)->willReturn(false)->shouldBeCalled();
 
         $bus = $busFactory($container->reveal());
 

@@ -112,7 +112,7 @@ abstract class MessageBus
             $reflection = new \ReflectionClass($this);
             $availableEventNames = array_values(array_filter(
                 $reflection->getConstants(),
-                function (string $key) {
+                function (string $key): bool {
                     return (bool) ! substr_compare($key, 'EVENT_', 0, 6, false);
                 },
                 ARRAY_FILTER_USE_KEY
