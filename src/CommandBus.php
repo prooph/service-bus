@@ -60,7 +60,7 @@ class CommandBus extends MessageBus
                     ));
                 }
             },
-            self::PRIORITY_ROUTE - 1 // after routing
+            self::PRIORITY_ROUTE - 100 // after routing
         );
 
         parent::setActionEventEmitter($actionEventEmitter);
@@ -68,8 +68,6 @@ class CommandBus extends MessageBus
 
     /**
      * @param mixed $command
-     *
-     * @return void
      *
      * @throws CommandDispatchException
      */
