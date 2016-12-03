@@ -14,7 +14,6 @@ namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
  * An event bus is capable of dispatching a message to multiple listeners.

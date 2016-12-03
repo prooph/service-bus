@@ -49,7 +49,7 @@ class EventBusTest extends TestCase
                 $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [
                     function (SomethingDone $somethingDone) use (&$receivedMessage) {
                         $receivedMessage = $somethingDone;
-                    }
+                    },
                 ]);
 
                 $dispatchEvent = $actionEvent;

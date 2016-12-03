@@ -12,10 +12,8 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Exception;
 
-use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\TestCase;
 
 class CommandDispatchExceptionTest extends TestCase
