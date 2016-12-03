@@ -410,7 +410,7 @@ class BusFactoriesTest extends TestCase
 
         $bus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_DISPATCH,
-            function (ActionEvent $e) {
+            function (ActionEvent $e): void {
                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
             },
             MessageBus::PRIORITY_INVOKE_HANDLER
