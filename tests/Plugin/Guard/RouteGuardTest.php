@@ -36,7 +36,7 @@ class RouteGuardTest extends TestCase
 
         $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
         $actionEventEmitter
-            ->attachListener(MessageBus::EVENT_ROUTE, [$routeGuard, 'onRoute'], 1000)
+            ->attachListener(MessageBus::EVENT_DISPATCH, [$routeGuard, 'onRoute'], MessageBus::PRIORITY_ROUTE)
             ->willReturn($listenerHandler->reveal());
 
         $routeGuard->attach($actionEventEmitter->reveal());
@@ -86,7 +86,7 @@ class RouteGuardTest extends TestCase
     public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_and_exposed_message_name(): void
     {
         $this->expectException(UnauthorizedException::class);
-        $this->expectExceptionMessage('You are not authorized to access this resource');
+        $this->expectExceptionMessage('You are not authorized to access the resource "test_event"');
 
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);
