@@ -72,7 +72,7 @@ abstract class MessageBus
     {
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
                 $message = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
 
@@ -85,7 +85,7 @@ abstract class MessageBus
 
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
                     $message = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                     $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageName($message));
@@ -96,7 +96,7 @@ abstract class MessageBus
 
         $actionEventEmitter->attachListener(
             self::EVENT_FINALIZE,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
                     throw MessageDispatchException::failed($exception);
                 }

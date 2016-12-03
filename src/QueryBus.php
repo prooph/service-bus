@@ -34,7 +34,7 @@ class QueryBus extends MessageBus
     {
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
                 if (is_callable($finder)) {
@@ -49,7 +49,7 @@ class QueryBus extends MessageBus
 
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
                     $query = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                     throw new RuntimeException(sprintf(
@@ -63,7 +63,7 @@ class QueryBus extends MessageBus
 
         $actionEventEmitter->attachListener(
             self::EVENT_FINALIZE,
-            function (ActionEvent $actionEvent) {
+            function (ActionEvent $actionEvent): void {
                 if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
                     $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
                     $deferred->reject(MessageDispatchException::failed($exception));

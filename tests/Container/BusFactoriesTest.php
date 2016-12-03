@@ -408,9 +408,13 @@ class BusFactoriesTest extends TestCase
 
         $bus = $busFactory($container->reveal());
 
-        $bus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INVOKE_HANDLER, function (ActionEvent $e) {
-            $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
-        });
+        $bus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) {
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
 
         $bus->dispatch($message->reveal());
     }

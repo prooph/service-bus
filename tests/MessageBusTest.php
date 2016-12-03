@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\Mock\CustomMessageBus;
 
@@ -23,13 +24,12 @@ class MessageBusTest extends TestCase
      */
     public function it_attaches_action_event_emitter(): void
     {
-        $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
-        $mock = $actionEventEmitter->reveal();
+        $actionEventEmitter = new ProophActionEventEmitter();
 
         $messageBus = new CustomMessageBus();
-        $messageBus->setActionEventEmitter($mock);
+        $messageBus->setActionEventEmitter($actionEventEmitter);
 
-        $this->assertSame($mock, $messageBus->getActionEventEmitter());
+        $this->assertSame($actionEventEmitter, $messageBus->getActionEventEmitter());
     }
 
     /**
