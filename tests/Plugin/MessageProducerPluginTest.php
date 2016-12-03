@@ -38,7 +38,11 @@ class MessageProducerPluginTest extends TestCase
         $messageProducerPlugin = new MessageProducerPlugin($messageProducer->reveal());
 
         $actionEventEmitter
-            ->attachListener(MessageBus::EVENT_INITIALIZE, [$messageProducerPlugin, 'onDispatchInitialize'])
+            ->attachListener(
+                MessageBus::EVENT_DISPATCH,
+                $messageProducerPlugin,
+                MessageBus::PRIORITY_INITIALIZE
+            )
             ->willReturn($listenerHandler->reveal())
             ->shouldBeCalled();
 
@@ -48,7 +52,7 @@ class MessageProducerPluginTest extends TestCase
 
         $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $messageProducer->reveal())->shouldBeCalled();
 
-        $messageProducerPlugin->onDispatchInitialize($actionEvent->reveal());
+        $messageProducerPlugin($actionEvent->reveal());
     }
 
     /**
@@ -65,7 +69,11 @@ class MessageProducerPluginTest extends TestCase
         $messageProducerPlugin = new MessageProducerPlugin($messageProducer->reveal());
 
         $actionEventEmitter
-            ->attachListener(MessageBus::EVENT_INITIALIZE, [$messageProducerPlugin, 'onDispatchInitialize'])
+            ->attachListener(
+                MessageBus::EVENT_DISPATCH,
+                $messageProducerPlugin,
+                MessageBus::PRIORITY_INITIALIZE
+            )
             ->willReturn($listenerHandler->reveal())
             ->shouldBeCalled();
 
@@ -82,6 +90,6 @@ class MessageProducerPluginTest extends TestCase
 
         $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $eventListeners)->shouldBeCalled();
 
-        $messageProducerPlugin->onDispatchInitialize($actionEvent->reveal());
+        $messageProducerPlugin($actionEvent->reveal());
     }
 }

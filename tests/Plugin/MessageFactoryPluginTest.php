@@ -39,14 +39,18 @@ class MessageFactoryPluginTest extends TestCase
 
         $factoryPlugin = new MessageFactoryPlugin($messageFactory->reveal());
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INITIALIZE, new CommandBus(), [
-            //We provide message as array containing a "message_name" key because only in this case the factory plugin
-            //gets active
-            MessageBus::EVENT_PARAM_MESSAGE => [
-                'message_name' => 'custom-message',
-                'payload' => ['some data'],
-            ],
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                //We provide message as array containing a "message_name" key because only in this case the factory plugin
+                //gets active
+                MessageBus::EVENT_PARAM_MESSAGE => [
+                    'message_name' => 'custom-message',
+                    'payload' => ['some data'],
+                ],
+            ]
+        );
 
         $factoryPlugin($actionEvent);
 
