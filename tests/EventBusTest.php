@@ -184,21 +184,15 @@ class EventBusTest extends TestCase
     {
         $this->expectException(MessageDispatchException::class);
 
-        try {
-            $this->eventBus->getActionEventEmitter()->attachListener(
-                MessageBus::EVENT_DISPATCH,
-                function () {
-                    throw new \Exception('ka boom');
-                },
-                MessageBus::PRIORITY_INITIALIZE
-            );
+        $this->eventBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function () {
+                throw new \Exception('ka boom');
+            },
+            MessageBus::PRIORITY_INITIALIZE
+        );
 
-            $this->eventBus->dispatch('throw it');
-        } catch (MessageDispatchException $e) {
-            $this->assertInstanceOf(DefaultActionEvent::class, $e->getFailedDispatchEvent());
-
-            throw $e;
-        }
+        $this->eventBus->dispatch('throw it');
     }
 
     /**
