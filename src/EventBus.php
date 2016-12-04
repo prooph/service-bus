@@ -27,12 +27,16 @@ class EventBus extends MessageBus
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
-                foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
-                    if (is_callable($eventListener)) {
-                        $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                        $eventListener($event);
-                        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
-                    }
+                $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                $handled = false;
+
+                foreach (array_filter($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []), 'is_callable') as $eventListener) {
+                    $eventListener($event);
+                    $handled = true;
+                }
+
+                if ($handled) {
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
                 }
             },
             self::PRIORITY_INVOKE_HANDLER

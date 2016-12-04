@@ -87,8 +87,10 @@ abstract class MessageBus
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-                    $message = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageName($message));
+                    $actionEvent->setParam(
+                        self::EVENT_PARAM_MESSAGE_NAME,
+                        $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
+                    );
                 }
             },
             self::PRIORITY_DETECT_MESSAGE_NAME
