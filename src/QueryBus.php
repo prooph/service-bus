@@ -57,7 +57,7 @@ class QueryBus extends MessageBus
                     ));
                 }
             },
-            self::PRIORITY_ROUTE - 100 // after routing
+            self::PRIORITY_LOCATE_HANDLER
         );
 
         $actionEventEmitter->attachListener(
