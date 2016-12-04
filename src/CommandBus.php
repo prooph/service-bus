@@ -53,10 +53,9 @@ class CommandBus extends MessageBus
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                    $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                     throw new RuntimeException(sprintf(
                         'CommandBus was not able to identify a CommandHandler for command %s',
-                        $this->getMessageName($command)
+                        $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
                     ));
                 }
             },
