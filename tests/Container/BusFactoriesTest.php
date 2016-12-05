@@ -26,6 +26,7 @@ use Prooph\ServiceBus\Container\EventBusFactory;
 use Prooph\ServiceBus\Container\QueryBusFactory;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
@@ -116,7 +117,6 @@ class BusFactoriesTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      * @dataProvider provideBuses
      */
     public function it_throws_a_runtime_exception_if_plugin_is_not_registered_in_container(
@@ -124,6 +124,8 @@ class BusFactoriesTest extends TestCase
         string $busConfigKey,
         AbstractBusFactory $busFactory
     ): void {
+        $this->expectException(RuntimeException::class);
+
         $container = $this->prophesize(ContainerInterface::class);
 
         $container->has('config')->willReturn(true);
@@ -168,7 +170,7 @@ class BusFactoriesTest extends TestCase
                     $busConfigKey => [
                         'router' => [
                             'routes' => [
-                                'test_message' => function (Message $message) use (&$handlerWasCalled) {
+                                'test_message' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -210,7 +212,7 @@ class BusFactoriesTest extends TestCase
                         'router' => [
                             'type' => RegexRouter::class,
                             'routes' => [
-                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -253,7 +255,7 @@ class BusFactoriesTest extends TestCase
                         'router' => [
                             'type' => RegexRouter::class,
                             'routes' => [
-                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -304,7 +306,7 @@ class BusFactoriesTest extends TestCase
                             'async_switch' => 'noop_message_producer',
                             'type' => RegexRouter::class,
                             'routes' => [
-                                '/^test_./' => function (Message $message) use (&$handlerWasCalled) {
+                                '/^test_./' => function (Message $message) use (&$handlerWasCalled): void {
                                     $handlerWasCalled = true;
                                 },
                             ],
@@ -338,10 +340,10 @@ class BusFactoriesTest extends TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $message = $this->prophesize(Message::class);
 
-        $message->messageName()->willReturn('test_message');
+        $message->messageName()->willReturn('test_message')->shouldBeCalled();
         $handlerWasCalled = false;
 
-        $container->has('config')->willReturn(true);
+        $container->has('config')->willReturn(true)->shouldBeCalled();
         $container->get('config')->willReturn([
             'prooph' => [
                 'service_bus' => [
@@ -354,14 +356,14 @@ class BusFactoriesTest extends TestCase
                     ],
                 ],
             ],
-        ]);
+        ])->shouldBeCalled();
 
-        $container->has('handler_service_id')->willReturn(true);
-        $container->get('handler_service_id')->willReturn(function (Message $message) use (&$handlerWasCalled) {
+        $container->has('handler_service_id')->willReturn(true)->shouldBeCalled();
+        $container->get('handler_service_id')->willReturn(function (Message $message) use (&$handlerWasCalled): void {
             $handlerWasCalled = true;
-        });
+        })->shouldBeCalled();
 
-        $container->has(MessageFactory::class)->willReturn(false);
+        $container->has(MessageFactory::class)->willReturn(false)->shouldBeCalled();
 
         $bus = $busFactory($container->reveal());
 
@@ -406,9 +408,13 @@ class BusFactoriesTest extends TestCase
 
         $bus = $busFactory($container->reveal());
 
-        $bus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INVOKE_HANDLER, function (ActionEvent $e) {
-            $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
-        });
+        $bus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e): void {
+                $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
 
         $bus->dispatch($message->reveal());
     }

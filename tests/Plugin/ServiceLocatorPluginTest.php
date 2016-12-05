@@ -37,11 +37,15 @@ class ServiceLocatorPluginTest extends TestCase
 
         $locatorPlugin = new ServiceLocatorPlugin($container->reveal());
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_LOCATE_HANDLER, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_HANDLER => 'custom-handler',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_HANDLER => 'custom-handler',
+            ]
+        );
 
-        $locatorPlugin->onLocateMessageHandler($actionEvent);
+        $locatorPlugin($actionEvent);
 
         $this->assertSame($handler, $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
     }

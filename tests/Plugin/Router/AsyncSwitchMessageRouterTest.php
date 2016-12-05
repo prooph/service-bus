@@ -42,7 +42,11 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
 
         $actionEventEmitter
-            ->attachListener(MessageBus::EVENT_ROUTE, [$router, 'onRouteMessage'])
+            ->attachListener(
+                MessageBus::EVENT_DISPATCH,
+                [$router, 'onRouteMessage'],
+                MessageBus::PRIORITY_ROUTE
+            )
             ->willReturn($listenerHandler->reveal())
             ->shouldBeCalled();
 
@@ -58,14 +62,18 @@ class AsyncSwitchMessageRouterTest extends TestCase
 
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INITIALIZE, new CommandBus(), [
-            //We provide message as array containing a "message_name" key because only in this case the factory plugin
-            //gets active
-            MessageBus::EVENT_PARAM_MESSAGE => [
-                'message_name' => 'custom-message',
-                'payload' => ['some data'],
-            ],
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new CommandBus(),
+            [
+                //We provide message as array containing a "message_name" key because only in this case the factory plugin
+                //gets active
+                MessageBus::EVENT_PARAM_MESSAGE => [
+                    'message_name' => 'custom-message',
+                    'payload' => ['some data'],
+                ],
+            ]
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -164,8 +172,9 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $messageProducer = $this->prophesize(MessageProducer::class);
 
         $message = AsyncEvent::createEvent('test-data');
+
         $actionEvent = new DefaultActionEvent(
-            MessageBus::EVENT_ROUTE,
+            MessageBus::EVENT_DISPATCH,
             new EventBus(),
             [
                 MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),

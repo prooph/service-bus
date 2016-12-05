@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
@@ -43,13 +42,19 @@ class EventBusTest extends TestCase
 
         $receivedMessage = null;
         $dispatchEvent = null;
-        $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent) {
-            $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [function (SomethingDone $somethingDone) use (&$receivedMessage) {
-                $receivedMessage = $somethingDone;
-            }]);
+        $this->eventBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent): void {
+                $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [
+                    function (SomethingDone $somethingDone) use (&$receivedMessage): void {
+                        $receivedMessage = $somethingDone;
+                    },
+                ]);
 
-            $dispatchEvent = $actionEvent;
-        });
+                $dispatchEvent = $actionEvent;
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $this->eventBus->dispatch($somethingDone);
 
@@ -67,78 +72,70 @@ class EventBusTest extends TestCase
         $routeIsTriggered = false;
         $locateHandlerIsTriggered = false;
         $invokeHandlerIsTriggered = false;
-        $handleErrorIsTriggered = false;
         $finalizeIsTriggered = false;
 
         //Should always be triggered
         $this->eventBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_INITIALIZE,
-            function (ActionEvent $actionEvent) use (&$initializeIsTriggered) {
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$initializeIsTriggered): void {
                 $initializeIsTriggered = true;
-            }
+            },
+            MessageBus::PRIORITY_INITIALIZE
         );
 
         //Should be triggered because we dispatch a message that does not
         //implement Prooph\Common\Messaging\HasMessageName
         $this->eventBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_DETECT_MESSAGE_NAME,
-            function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered) {
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered): void {
                 $detectMessageNameIsTriggered = true;
                 $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, 'custom-message');
-            }
+            },
+            MessageBus::PRIORITY_DETECT_MESSAGE_NAME
         );
 
         //Should be triggered because we did not provide a message-handler yet
         $this->eventBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_ROUTE,
-            function (ActionEvent $actionEvent) use (&$routeIsTriggered) {
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$routeIsTriggered): void {
                 $routeIsTriggered = true;
                 if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === 'custom-message') {
                     //We provide the message handler as a string (service id) to tell the bus to trigger the locate-handler event
                     $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, ['error-producer']);
                 }
-            }
+            },
+            MessageBus::PRIORITY_ROUTE
         );
 
         //Should be triggered because we provided the message-handler as string (service id)
         $this->eventBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_LOCATE_HANDLER,
-            function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered) {
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered): void {
                 $locateHandlerIsTriggered = true;
                 if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER) === 'error-producer') {
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new ErrorProducer());
                 }
-            }
+            },
+            MessageBus::PRIORITY_LOCATE_HANDLER
         );
 
         //Should be triggered because the message-handler is not callable
         $this->eventBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_INVOKE_HANDLER,
-            function (ActionEvent $actionEvent) use (&$invokeHandlerIsTriggered) {
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use (&$invokeHandlerIsTriggered): void {
                 $invokeHandlerIsTriggered = true;
                 $handler = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
                 if ($handler instanceof ErrorProducer) {
                     $handler->throwException($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE));
                 }
-            }
-        );
-
-        //Should be triggered because the message-handler threw an exception
-        $this->eventBus->getActionEventEmitter()->attachListener(
-            MessageBus::EVENT_HANDLE_ERROR,
-            function (ActionEvent $actionEvent) use (&$handleErrorIsTriggered) {
-                $handleErrorIsTriggered = true;
-
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_EXCEPTION) instanceof \Exception) {
-                    $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
-                }
-            }
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
         );
 
         //Should always be triggered
         $this->eventBus->getActionEventEmitter()->attachListener(
             MessageBus::EVENT_FINALIZE,
-            function (ActionEvent $actionEvent) use (&$finalizeIsTriggered) {
+            function (ActionEvent $actionEvent) use (&$finalizeIsTriggered): void {
                 $finalizeIsTriggered = true;
             }
         );
@@ -152,7 +149,6 @@ class EventBusTest extends TestCase
         $this->assertTrue($routeIsTriggered);
         $this->assertTrue($locateHandlerIsTriggered);
         $this->assertTrue($invokeHandlerIsTriggered);
-        $this->assertTrue($handleErrorIsTriggered);
         $this->assertTrue($finalizeIsTriggered);
     }
 
@@ -163,11 +159,15 @@ class EventBusTest extends TestCase
     {
         $handler = new MessageHandler();
 
-        $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $e) use ($handler) {
-            if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
-                $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler]);
-            }
-        });
+        $this->eventBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) use ($handler): void {
+                if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                    $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler]);
+                }
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $customMessage = new CustomMessage('foo');
 
@@ -178,21 +178,20 @@ class EventBusTest extends TestCase
 
     /**
      * @test
-     * @expectedException Prooph\ServiceBus\Exception\MessageDispatchException
      */
     public function it_throws_service_bus_exception_if_exception_is_not_handled_by_a_plugin(): void
     {
-        try {
-            $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_INITIALIZE, function () {
+        $this->expectException(MessageDispatchException::class);
+
+        $this->eventBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function () {
                 throw new \Exception('ka boom');
-            });
+            },
+            MessageBus::PRIORITY_INITIALIZE
+        );
 
-            $this->eventBus->dispatch('throw it');
-        } catch (MessageDispatchException $e) {
-            $this->assertInstanceOf(DefaultActionEvent::class, $e->getFailedDispatchEvent());
-
-            throw $e;
-        }
+        $this->eventBus->dispatch('throw it');
     }
 
     /**
@@ -202,11 +201,15 @@ class EventBusTest extends TestCase
     {
         $handler = new MessageHandler();
 
-        $this->eventBus->getActionEventEmitter()->attachListener(MessageBus::EVENT_ROUTE, function (ActionEvent $e) use ($handler) {
-            if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
-                $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler, $handler]);
-            }
-        });
+        $this->eventBus->getActionEventEmitter()->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) use ($handler): void {
+                if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                    $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler, $handler]);
+                }
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $customMessage = new CustomMessage('foo');
 

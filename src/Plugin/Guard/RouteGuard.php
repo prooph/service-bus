@@ -38,6 +38,15 @@ final class RouteGuard implements ActionEventListenerAggregate
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
+    public function attach(ActionEventEmitter $events): void
+    {
+        $this->trackHandler($events->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            [$this, 'onRoute'],
+            MessageBus::PRIORITY_ROUTE
+        ));
+    }
+
     public function onRoute(ActionEvent $actionEvent): void
     {
         $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
@@ -56,10 +65,5 @@ final class RouteGuard implements ActionEventListenerAggregate
         }
 
         throw new UnauthorizedException($messageName);
-    }
-
-    public function attach(ActionEventEmitter $events): void
-    {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, 'onRoute'], 1000));
     }
 }

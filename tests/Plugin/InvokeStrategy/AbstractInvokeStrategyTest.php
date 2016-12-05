@@ -34,7 +34,7 @@ class AbstractInvokeStrategyTest extends TestCase
         $actionEventEmitterMock
             ->expects($this->once())
             ->method('attachListener')
-            ->with(MessageBus::EVENT_INVOKE_HANDLER, $strategy, 0)
+            ->with(MessageBus::EVENT_DISPATCH, $strategy, MessageBus::PRIORITY_INVOKE_HANDLER)
             ->will($this->returnValue($listenerHandlerMock));
 
         $strategy->attach($actionEventEmitterMock);

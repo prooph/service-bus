@@ -35,11 +35,15 @@ class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $this->finderInvokeStrategy = new FinderInvokeStrategy();
 
-        $this->actionEvent = new DefaultActionEvent(QueryBus::EVENT_INVOKE_FINDER, new QueryBus(), [
-            QueryBus::EVENT_PARAM_MESSAGE => new CustomMessage('I am a query'),
-            QueryBus::EVENT_PARAM_MESSAGE_NAME => CustomMessage::class,
-            QueryBus::EVENT_PARAM_DEFERRED => new Deferred(),
-        ]);
+        $this->actionEvent = new DefaultActionEvent(
+            QueryBus::EVENT_DISPATCH,
+            new QueryBus(),
+            [
+                QueryBus::EVENT_PARAM_MESSAGE => new CustomMessage('I am a query'),
+                QueryBus::EVENT_PARAM_MESSAGE_NAME => CustomMessage::class,
+                QueryBus::EVENT_PARAM_DEFERRED => new Deferred(),
+            ]
+        );
     }
 
     /**

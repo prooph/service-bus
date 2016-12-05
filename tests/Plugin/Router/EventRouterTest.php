@@ -14,6 +14,7 @@ namespace ProophTest\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
@@ -30,9 +31,14 @@ class EventRouterTest extends TestCase
 
         $router->route('SomethingDone')->to('SomethingDoneListener1')->andTo('SomethingDoneListener2');
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -86,10 +92,11 @@ class EventRouterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_fails_on_setting_an_invalid_listener(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $router = new EventRouter();
         $router->to(null);
     }
@@ -103,9 +110,14 @@ class EventRouterTest extends TestCase
             'SomethingDone' => 'SomethingDoneListener',
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -121,9 +133,14 @@ class EventRouterTest extends TestCase
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -140,9 +157,14 @@ class EventRouterTest extends TestCase
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'SomethingDone',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -159,9 +181,14 @@ class EventRouterTest extends TestCase
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            '' => 'SomethingDone',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                '' => 'SomethingDone',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $router->onRouteMessage($actionEvent);
 
@@ -178,9 +205,14 @@ class EventRouterTest extends TestCase
             'SomethingDone' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_ROUTE, new EventBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
-        ]);
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            new EventBus(),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => 'unknown',
+            ],
+            MessageBus::PRIORITY_ROUTE
+        );
 
         $router->onRouteMessage($actionEvent);
 

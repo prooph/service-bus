@@ -42,7 +42,11 @@ class MessageFactoryPlugin implements ActionEventListenerAggregate
 
     public function attach(ActionEventEmitter $dispatcher): void
     {
-        $this->trackHandler($dispatcher->attachListener(MessageBus::EVENT_INITIALIZE, $this));
+        $this->trackHandler($dispatcher->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            $this,
+            MessageBus::PRIORITY_INITIALIZE
+        ));
     }
 
     public function __invoke(ActionEvent $actionEvent): void

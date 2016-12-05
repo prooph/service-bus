@@ -17,6 +17,7 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
+use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 
 /**
@@ -40,15 +41,30 @@ class ServiceLocatorPlugin implements ActionEventListenerAggregate
 
     public function attach(ActionEventEmitter $events): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_LOCATE_HANDLER, [$this, 'onLocateMessageHandler']));
+        $this->trackHandler($events->attachListener(
+            MessageBus::EVENT_DISPATCH,
+            $this,
+            MessageBus::PRIORITY_LOCATE_HANDLER
+        ));
     }
 
-    public function onLocateMessageHandler(ActionEvent $actionEvent): void
+    public function __invoke(ActionEvent $actionEvent): void
     {
         $messageHandlerAlias = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
 
         if (is_string($messageHandlerAlias) && $this->serviceLocator->has($messageHandlerAlias)) {
             $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->serviceLocator->get($messageHandlerAlias));
+        }
+
+        // for event bus only
+        $eventListeners = [];
+        foreach ($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListenerAlias) {
+            if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
+                $eventListeners[] = $this->serviceLocator->get($eventListenerAlias);
+            }
+        }
+        if (! empty($eventListeners)) {
+            $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $eventListeners);
         }
     }
 }

@@ -22,53 +22,50 @@ class EventBus extends MessageBus
 {
     public const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
+    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
-            $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-            if (is_callable($eventListener)) {
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
                 $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                $eventListener($event);
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
-            }
-        });
+                $handled = false;
 
-        $this->events = $actionEventDispatcher;
+                foreach (array_filter($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []), 'is_callable') as $eventListener) {
+                    $eventListener($event);
+                    $handled = true;
+                }
+
+                if ($handled) {
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+            },
+            self::PRIORITY_INVOKE_HANDLER
+        );
+
+        parent::setActionEventEmitter($actionEventEmitter);
     }
 
     /**
      * @param mixed $event
-     *
-     * @return void
      */
     public function dispatch($event): void
     {
-        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
+        $actionEventEmitter = $this->getActionEventEmitter();
 
-        $actionEvent->setTarget($this);
+        $actionEvent = $actionEventEmitter->getNewActionEvent(
+            self::EVENT_DISPATCH,
+            $this,
+            [
+                self::EVENT_PARAM_MESSAGE => $event,
+            ]
+        );
 
         try {
-            $this->initialize($event, $actionEvent);
-
-            $actionEvent->setName(self::EVENT_ROUTE);
-
-            $this->trigger($actionEvent);
-
-            foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLER, $eventListener);
-
-                if (is_string($eventListener) && ! is_callable($eventListener)) {
-                    $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-                    $this->trigger($actionEvent);
-                }
-
-                $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-                $this->trigger($actionEvent);
-            }
-
+            $actionEventEmitter->dispatch($actionEvent);
+        } catch (\Throwable $exception) {
+            $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
+        } finally {
             $this->triggerFinalize($actionEvent);
-        } catch (\Throwable $ex) {
-            $this->handleException($actionEvent, $ex);
         }
     }
 }

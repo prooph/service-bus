@@ -12,10 +12,8 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Exception;
 
-use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\TestCase;
 
 class CommandDispatchExceptionTest extends TestCase
@@ -27,15 +25,12 @@ class CommandDispatchExceptionTest extends TestCase
     {
         $pendingCommands = ['dispatchMe', 'tellMe'];
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_INVOKE_HANDLER);
-
         $prevException = new \Exception('previous');
 
-        $messageDispatchException = MessageDispatchException::failed($actionEvent, $prevException);
+        $messageDispatchException = MessageDispatchException::failed($prevException);
 
         $commandDispatchException = CommandDispatchException::wrap($messageDispatchException, $pendingCommands);
 
-        $this->assertSame($actionEvent, $commandDispatchException->getFailedDispatchEvent());
         $this->assertSame($prevException, $commandDispatchException->getPrevious());
         $this->assertSame($pendingCommands, $commandDispatchException->getPendingCommands());
     }

@@ -18,19 +18,13 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
  * Base class for a message bus implementation
  */
 abstract class MessageBus
 {
-    public const EVENT_INITIALIZE = 'initialize';
-    public const EVENT_DETECT_MESSAGE_NAME = 'detect-message-name';
-    public const EVENT_ROUTE = 'route';
-    public const EVENT_LOCATE_HANDLER = 'locate-handler';
-    public const EVENT_INVOKE_HANDLER = 'invoke-handler';
-    public const EVENT_HANDLE_ERROR = 'handle-error';
+    public const EVENT_DISPATCH = 'dispatch';
     public const EVENT_FINALIZE = 'finalize';
 
     public const EVENT_PARAM_MESSAGE = 'message';
@@ -38,6 +32,12 @@ abstract class MessageBus
     public const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
     public const EVENT_PARAM_EXCEPTION = 'exception';
     public const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
+
+    public const PRIORITY_INITIALIZE = 400000;
+    public const PRIORITY_DETECT_MESSAGE_NAME = 300000;
+    public const PRIORITY_ROUTE = 200000;
+    public const PRIORITY_LOCATE_HANDLER = 100000;
+    public const PRIORITY_INVOKE_HANDLER = 0;
 
     /**
      * @var ActionEventEmitter
@@ -61,65 +61,6 @@ abstract class MessageBus
         $plugin->detach($this->getActionEventEmitter());
     }
 
-    /**
-     * @param mixed $message
-     * @param ActionEvent $actionEvent
-     */
-    protected function initialize($message, ActionEvent $actionEvent): void
-    {
-        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
-        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
-
-        if ($message instanceof HasMessageName) {
-            $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());
-        }
-
-        $actionEvent->setName(self::EVENT_INITIALIZE);
-
-        $this->trigger($actionEvent);
-
-        if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-            $actionEvent->setName(self::EVENT_DETECT_MESSAGE_NAME);
-
-            $this->trigger($actionEvent);
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageName($message));
-            }
-        }
-    }
-
-    protected function handleException(ActionEvent $actionEvent, \Throwable $ex): void
-    {
-        $failedPhase = $actionEvent->getName();
-
-        $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);
-        $this->triggerError($actionEvent);
-        $this->triggerFinalize($actionEvent);
-
-        //Check if a listener has removed the exception to indicate that it was able to handle it
-        if ($ex = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
-            $actionEvent->setName($failedPhase);
-            throw MessageDispatchException::failed($actionEvent, $ex);
-        }
-    }
-
-    protected function trigger(ActionEvent $actionEvent): void
-    {
-        $this->getActionEventEmitter()->dispatch($actionEvent);
-
-        if ($actionEvent->propagationIsStopped()) {
-            throw new RuntimeException('Dispatch has stopped unexpectedly.');
-        }
-    }
-
-    protected function triggerError(ActionEvent $actionEvent): void
-    {
-        $actionEvent->setName(self::EVENT_HANDLE_ERROR);
-
-        $this->getActionEventEmitter()->dispatch($actionEvent);
-    }
-
     protected function triggerFinalize(ActionEvent $actionEvent): void
     {
         $actionEvent->setName(self::EVENT_FINALIZE);
@@ -127,9 +68,44 @@ abstract class MessageBus
         $this->getActionEventEmitter()->dispatch($actionEvent);
     }
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher): void
+    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
     {
-        $this->events = $actionEventDispatcher;
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
+                $message = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+
+                if ($message instanceof HasMessageName) {
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());
+                }
+            },
+            self::PRIORITY_INITIALIZE
+        );
+
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
+                    $actionEvent->setParam(
+                        self::EVENT_PARAM_MESSAGE_NAME,
+                        $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
+                    );
+                }
+            },
+            self::PRIORITY_DETECT_MESSAGE_NAME
+        );
+
+        $actionEventEmitter->attachListener(
+            self::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent): void {
+                if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
+                    throw MessageDispatchException::failed($exception);
+                }
+            }
+        );
+
+        $this->events = $actionEventEmitter;
     }
 
     public function getActionEventEmitter(): ActionEventEmitter
@@ -138,7 +114,7 @@ abstract class MessageBus
             $reflection = new \ReflectionClass($this);
             $availableEventNames = array_values(array_filter(
                 $reflection->getConstants(),
-                function (string $key) {
+                function (string $key): bool {
                     return (bool) ! substr_compare($key, 'EVENT_', 0, 6, false);
                 },
                 ARRAY_FILTER_USE_KEY

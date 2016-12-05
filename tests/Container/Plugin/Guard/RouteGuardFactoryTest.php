@@ -15,6 +15,7 @@ namespace ProophTest\ServiceBus\Container\Plugin\Guard;
 use Interop\Container\ContainerInterface;
 use PHPUnit_Framework_TestCase as TestCase;
 use Prooph\ServiceBus\Container\Plugin\Guard\RouteGuardFactory;
+use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 
@@ -54,10 +55,11 @@ class RouteGuardFactoryTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\InvalidArgumentException
      */
     public function it_throws_invalid_argument_exception_when_call_static_is_used_without_container(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+
         RouteGuardFactory::{'exposeMessageName'}();
     }
 }
