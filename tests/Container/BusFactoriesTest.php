@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Factory;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
@@ -31,7 +32,6 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\NoopMessageProducer;
-use ProophTest\ServiceBus\TestCase;
 use Prophecy\Argument;
 
 class BusFactoriesTest extends TestCase

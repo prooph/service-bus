@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin\Router;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\CommandRouter;
-use ProophTest\ServiceBus\TestCase;
 
 class SingleHandlerRouterTest extends TestCase
 {

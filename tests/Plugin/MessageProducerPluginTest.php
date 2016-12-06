@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ListenerHandler;
@@ -20,7 +21,6 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageProducerPlugin;
-use ProophTest\ServiceBus\TestCase;
 
 class MessageProducerPluginTest extends TestCase
 {

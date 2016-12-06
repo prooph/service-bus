@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\CustomMessageCommandHandler;
 use ProophTest\ServiceBus\Mock\MessageHandler;
-use ProophTest\ServiceBus\TestCase;
 
 class HandleCommandStrategyTest extends TestCase
 {

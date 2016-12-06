@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
@@ -19,7 +20,7 @@ use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\Finder;
 use React\Promise\Deferred;
 
-class FinderInvokeStrategyTest extends \PHPUnit_Framework_TestCase
+class FinderInvokeStrategyTest extends TestCase
 {
     /**
      * @var FinderInvokeStrategy

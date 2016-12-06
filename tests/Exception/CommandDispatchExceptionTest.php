@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Exception;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use ProophTest\ServiceBus\TestCase;
 
 class CommandDispatchExceptionTest extends TestCase
 {

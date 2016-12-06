@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\CommandDispatchException;

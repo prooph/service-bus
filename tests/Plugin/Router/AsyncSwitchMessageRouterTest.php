@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin\Router;
 
+use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Event\ListenerHandler;
@@ -25,7 +26,6 @@ use Prooph\ServiceBus\Plugin\Router\SingleHandlerRouter;
 use ProophTest\ServiceBus\Mock\AsyncCommand;
 use ProophTest\ServiceBus\Mock\AsyncEvent;
 use ProophTest\ServiceBus\Mock\NonAsyncCommand;
-use ProophTest\ServiceBus\TestCase;
 
 class AsyncSwitchMessageRouterTest extends TestCase
 {
