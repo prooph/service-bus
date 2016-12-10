@@ -35,7 +35,7 @@
         "prooph/php-cs-fixer-config": "^0.1.1",
         "satooshi/php-coveralls": "^1.0",
         "container-interop/container-interop" : "^1.1",
-        "sandrokeil/interop-config": "^1.0",
+        "sandrokeil/interop-config": "^2.0.1",
         "tobiju/bookdown-bootswatch-templates": "^1.0",
         "malukenho/docheader": "^0.1.4"
     },
@@ -48,7 +48,7 @@
         "sandrokeil/interop-config": "For usage of provided factories"
     },
     "conflict": {
-        "sandrokeil/interop-config": "<1.0"
+        "sandrokeil/interop-config": "<2.0.1"
     },
     "autoload": {
         "psr-4": {

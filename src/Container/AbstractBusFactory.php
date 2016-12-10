@@ -74,12 +74,12 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         $this->configId = $configId;
     }
 
-    public function dimensions(): array
+    public function dimensions(): iterable
     {
         return ['prooph', 'service_bus'];
     }
 
-    public function defaultOptions(): array
+    public function defaultOptions(): iterable
     {
         return [
             'enable_handler_location' => true,
