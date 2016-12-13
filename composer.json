@@ -26,7 +26,7 @@
     "require": {
         "php": "^7.1",
         "beberlei/assert": "^2.6.4",
-        "prooph/common" : "^4.0.0-beta"
+        "prooph/common" : "^4.0.0-beta1"
     },
     "require-dev": {
         "react/promise" : "^2.4.1",
