@@ -1,6 +1,6 @@
 # Async Message Producer
 
-Messaging becomes really interesting if you process your messages asynchronous. PSB can
+Messaging becomes really interesting if you process your messages asynchronously. PSB can
 hide such an asynchronous workflow behind a unified interface. You can start with synchronous message
 dispatching by routing your messages directly to message handlers and if you later want to improve response
 times you can switch to async processing on a per message basis by routing the appropriate messages to a
