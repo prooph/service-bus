@@ -15,7 +15,7 @@ message producer which hands them over to a messaging system like rabbitMQ, zero
   HTTP
 - [ZeromqProducer](https://github.com/prooph/psb-zeromq-producer): Async message handling using super fast
 and simple to set up ZeroMQ
-- [HumusAmqpProducer](https://github.com/prolic/humus-amqp-producer): Async handling using amqp protocol
+- [HumusAmqpProducer](https://github.com/prooph/humus-amqp-producer): Async handling using amqp protocol
 (f.e. with RabbitMQ). This also includes JSON-RPC features.
 
 ## Usage
