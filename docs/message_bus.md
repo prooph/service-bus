@@ -83,11 +83,11 @@ public const PRIORITY_LOCATE_HANDLER = 100000;
 public const PRIORITY_INVOKE_HANDLER = 0;
 ```
 
-### initialize
+#### initialize
 
 At this time the action event only contains the `message`. You can attach any listeners for initialization.
 
-### detect-message-name
+#### detect-message-name
 
 Before a message handler can be located, the message bus needs to know how the message is named. Their are two
 possibilities to provide the information. The message can implement the
@@ -102,7 +102,7 @@ If no `message-name` was set by a listener the message bus uses a fallback:
 - message => message-name in case of string
 - `gettype($message)` in all other cases
 
-### route
+#### route
 
 During the `route` phase a plugin (typically a router) should provide the responsible message handler either
 in form of a ready to use `callable`, an object or just a string.
@@ -116,13 +116,13 @@ multiple listeners.
 This is one of the most important differences. Only the event bus allows multiple message handlers per
 message and therefor uses a slightly different dispatch process.
 
-### locate-handler
+#### locate-handler
 
 After routing the message, the message bus checks if the handler was provided as a string. This is the
 latest time to provide an object or callable as message handler. If no plugin was able to provide one the
 message bus throws an exception.
 
-### invoke-handler
+#### invoke-handler
 
 Having the message handler in place it's time to invoke it with the message. `callable` message handlers
 are invoked by the bus. However, the `invoke-handler` / `invoke-finder` events are always triggered.
