@@ -241,6 +241,6 @@ or b) Write a custom FinderInvokeStrategy.
 Same as for FinderInvokeStrategy, the handler is only expected have a `handle(Command $command): void` method.
 If you need the old behaviour back, implement this in your handlers or write a custom plugin.
 
-##### OnEventStrategy
+#### OnEventStrategy
 
 Same as above: There handler is only expected to have a `onEvent(Event $message): void` method.
