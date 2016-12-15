@@ -11,7 +11,7 @@ the message buses without the need to rely on a specific framework. However, the
 ### Requirements
 
 1. Your Inversion of Control container must implement the [interop-container interface](https://github.com/container-interop/container-interop).
-2. [interop-config](https://github.com/sandrokeil/interop-config) must be installed 
+2. [interop-config](https://github.com/sandrokeil/interop-config) must be installed
 3. The application configuration should be registered with the service id `config` in the container.
 
 *Note: Don't worry, if your environment doesn't provide the requirements. You can
