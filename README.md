@@ -1,6 +1,6 @@
 # PSB - ProophServiceBus
 
-PHP 5.5+ lightweight message bus supporting CQRS and Micro Services
+PHP 7.1+ lightweight message bus supporting CQRS and Micro Services
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 [![Coverage Status](https://coveralls.io/repos/prooph/service-bus/badge.svg?branch=master&service=github)](https://coveralls.io/github/prooph/service-bus?branch=master)
