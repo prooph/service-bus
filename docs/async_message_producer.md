@@ -4,7 +4,8 @@ Messaging becomes really interesting if you process your messages asynchronously
 hide such an asynchronous workflow behind a unified interface. You can start with synchronous message
 dispatching by routing your messages directly to message handlers and if you later want to improve response
 times you can switch to async processing on a per message basis by routing the appropriate messages to a
-message producer which hands them over to a messaging system like rabbitMQ, zeroMQ, gearman or beanstalkd.
+message producer which hands them over to a messaging system like RabbitMQ, ZeroMQ, Gearman, Beanstalkd or any
+other queue.
 
 ## Available MessageProducer
 
@@ -13,7 +14,7 @@ message producer which hands them over to a messaging system like rabbitMQ, zero
   [https://github.com/bernardphp/bernard](https://github.com/bernardphp/bernard) for a complete list of drivers)
 - [GuzzleHttpProducer](https://github.com/prooph/psb-http-producer): Send messages to a remote system using
   HTTP
-- [ZeromqProducer](https://github.com/prooph/psb-zeromq-producer): Async message handling using super fast
+- [ZeroMQProducer](https://github.com/prooph/psb-zeromq-producer): Async message handling using super fast
 and simple to set up ZeroMQ
 - [HumusAmqpProducer](https://github.com/prooph/humus-amqp-producer): Async handling using amqp protocol
 (f.e. with RabbitMQ). This also includes JSON-RPC features.
