@@ -154,6 +154,8 @@ throws a Prooph\ServiceBus\Exception\MessageDispatchException to inform the outs
 
 ## Migration from v5
 
+### Events & Priorities
+
 Two things are to consider, when upgrading from v5.
 
 1) The `handle-error` event is gone. If you want to have a plugin that tracks exception, you need to use the
