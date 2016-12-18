@@ -103,7 +103,7 @@ $router = new AsyncSwitchMessageRouter(
     $myRouter,
     $asyncMessageProducer
 );
-        
+
 //Add the router to a CommandBus
 $commandBus->utilize($router);
 ```
@@ -137,7 +137,7 @@ If you want to protect the query bus, you can also use the route guard, but in s
 of the query. In this case it's important to make checks on the query results. The finalize guard hands over a query result as context to the AuthorizationService.
 
 We also provide [service-bus-zfc-rbac-brdige](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
-You can also find some configuration examples in this repository. 
+You can also find some configuration examples in this repository.
 
 *Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on
 the query result, you need to make sure that the AuthorizationService can distinguish between the contexts (route guard passes query, finalize guard passes result)*
