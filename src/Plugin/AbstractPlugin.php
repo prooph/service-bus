@@ -18,7 +18,7 @@ abstract class AbstractPlugin implements Plugin
 {
     protected $listenerHandlers = [];
 
-    public function detachFromMessageBus(MessageBus $messageBus)
+    public function detachFromMessageBus(MessageBus $messageBus): void
     {
         foreach ($this->listenerHandlers as $listenerHandler) {
             $messageBus->detach($listenerHandler);
