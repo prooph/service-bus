@@ -77,7 +77,7 @@ class CommandBus extends MessageBus
         if (! $this->isDispatching) {
             $this->isDispatching = true;
 
-            $actionEventEmitter = $this->getActionEventEmitter();
+            $actionEventEmitter = $this->events;
 
             try {
                 while ($command = array_shift($this->commandQueue)) {
