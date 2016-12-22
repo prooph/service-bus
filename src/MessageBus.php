@@ -102,7 +102,7 @@ abstract class MessageBus
     {
         $actionEvent->setName(self::EVENT_FINALIZE);
 
-        $this->getActionEventEmitter()->dispatch($actionEvent);
+        $this->events->dispatch($actionEvent);
     }
 
     /**

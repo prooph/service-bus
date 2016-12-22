@@ -84,7 +84,7 @@ class QueryBus extends MessageBus
     {
         $deferred = new Deferred();
 
-        $actionEventEmitter = $this->getActionEventEmitter();
+        $actionEventEmitter = $this->events;
 
         $actionEvent = $actionEventEmitter->getNewActionEvent(
             self::EVENT_DISPATCH,
