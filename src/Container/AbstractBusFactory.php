@@ -123,7 +123,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
 
     private function attachPlugins(MessageBus $bus, array $plugins, ContainerInterface $container): void
     {
-        foreach ($utils as $index => $plugin) {
+        foreach ($plugins as $index => $plugin) {
             if (! is_string($plugin) || ! $container->has($plugin)) {
                 throw new RuntimeException(sprintf(
                     'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',

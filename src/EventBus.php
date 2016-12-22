@@ -22,9 +22,11 @@ class EventBus extends MessageBus
 {
     public const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
-        $actionEventEmitter->attachListener(
+        parent::__construct($actionEventEmitter);
+
+        $this->events->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
@@ -41,8 +43,6 @@ class EventBus extends MessageBus
             },
             self::PRIORITY_INVOKE_HANDLER
         );
-
-        parent::setActionEventEmitter($actionEventEmitter);
     }
 
     /**

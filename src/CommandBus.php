@@ -33,9 +33,11 @@ class CommandBus extends MessageBus
      */
     private $isDispatching = false;
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
-        $actionEventEmitter->attachListener(
+        parent::__construct($actionEventEmitter);
+
+        $this->events->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -49,7 +51,7 @@ class CommandBus extends MessageBus
             self::PRIORITY_INVOKE_HANDLER
         );
 
-        $actionEventEmitter->attachListener(
+        $this->events->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
@@ -61,8 +63,6 @@ class CommandBus extends MessageBus
             },
             self::PRIORITY_LOCATE_HANDLER
         );
-
-        parent::setActionEventEmitter($actionEventEmitter);
     }
 
     /**

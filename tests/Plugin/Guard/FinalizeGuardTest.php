@@ -17,15 +17,23 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Event\ListenerHandler;
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
 use Prooph\ServiceBus\QueryBus;
+use ProophTest\ServiceBus\Plugin\PluginTestCase;
 use React\Promise\Deferred;
+use React\Promise\Promise;
 
-class FinalizeGuardTest extends TestCase
+class FinalizeGuardTest extends PluginTestCase
 {
+    protected function createMessageBus(): MessageBus
+    {
+        return new QueryBus();
+    }
+
     /**
      * @test
      */
@@ -166,15 +174,20 @@ class FinalizeGuardTest extends TestCase
         $deferred = new Deferred();
         $deferred->resolve('result');
 
-        $actionEvent = new DefaultActionEvent(QueryBus::EVENT_FINALIZE);
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $deferred->promise());
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_NAME, 'test_event');
+        $finalizeGuard = new FinalizeGuard($authorizationService->reveal(), true);
+        $finalizeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard = new FinalizeGuard($authorizationService->reveal(), true);
+        $this->messageBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
+                $deferred->resolve('result');
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            QueryBus::PRIORITY_LOCATE_HANDLER + 1000
+        );
 
-        $routeGuard->onFinalize($actionEvent);
-
-        $this->assertTrue($actionEvent->propagationIsStopped());
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->done();
+        $promise = $this->messageBus->dispatch('test_event');
+        $promise->done();
     }
 }

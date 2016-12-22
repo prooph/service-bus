@@ -18,6 +18,7 @@ use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use React\Promise\Deferred;
 use React\Promise\Promise;
+use React\Promise\PromiseInterface;
 
 /**
  * The query bus dispatches a query message to a finder.
@@ -30,9 +31,11 @@ class QueryBus extends MessageBus
     public const EVENT_PARAM_PROMISE = 'query-promise';
     public const EVENT_PARAM_DEFERRED = 'query-deferred';
 
-    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
-        $actionEventEmitter->attachListener(
+        parent::__construct($actionEventEmitter);
+
+        $this->events->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
@@ -47,7 +50,7 @@ class QueryBus extends MessageBus
             self::PRIORITY_INVOKE_HANDLER
         );
 
-        $actionEventEmitter->attachListener(
+        $this->events->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
@@ -60,7 +63,7 @@ class QueryBus extends MessageBus
             self::PRIORITY_LOCATE_HANDLER
         );
 
-        $actionEventEmitter->attachListener(
+        $this->events->attachListener(
             self::EVENT_FINALIZE,
             function (ActionEvent $actionEvent): void {
                 if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
@@ -71,8 +74,6 @@ class QueryBus extends MessageBus
             },
             1000
         );
-
-        parent::setActionEventEmitter($actionEventEmitter);
     }
 
     /**
@@ -80,7 +81,7 @@ class QueryBus extends MessageBus
      *
      * @throws RuntimeException
      */
-    public function dispatch($query): Promise
+    public function dispatch($query): PromiseInterface
     {
         $deferred = new Deferred();
 

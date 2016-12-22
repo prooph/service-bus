@@ -39,7 +39,7 @@ final class FinalizeGuard extends AbstractPlugin
 
     public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->listenerHandlers[] = $messageName->attach(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_FINALIZE,
             function (ActionEvent $actionEvent): void {
                 $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
