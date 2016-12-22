@@ -15,6 +15,7 @@ namespace Prooph\ServiceBus;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ListenerHandler;
+use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 
@@ -43,8 +44,15 @@ abstract class MessageBus
      */
     protected $events;
 
-    public function __construct(ActionEventEmitter $actionEventEmitter)
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
+        if (null === $actionEventEmitter) {
+            $actionEventEmitter = new ProophActionEventEmitter([
+                self::EVENT_DISPATCH,
+                self::EVENT_FINALIZE,
+            ]);
+        }
+
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {

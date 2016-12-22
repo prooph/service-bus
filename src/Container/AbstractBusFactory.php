@@ -100,10 +100,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
 
         $busClass = $this->getBusClass();
 
-        $bus = new $busClass(new ProophActionEventEmitter([
-            MessageBus::EVENT_DISPATCH,
-            MessageBus::EVENT_FINALIZE,
-        ]));
+        $bus = new $busClass();
 
         if (isset($busConfig['plugins'])) {
             $this->attachPlugins($bus, $busConfig['plugins'], $container);
