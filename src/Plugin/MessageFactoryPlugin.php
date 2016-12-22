@@ -13,9 +13,6 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\MessageBus;
 

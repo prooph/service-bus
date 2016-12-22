@@ -13,12 +13,8 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin\Guard;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
-use Prooph\ServiceBus\Plugin\Plugin;
 
 final class RouteGuard extends AbstractPlugin
 {

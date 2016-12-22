@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
@@ -22,7 +20,6 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
-use Prooph\ServiceBus\Plugin\Plugin;
 use Prooph\ServiceBus\QueryBus;
 
 class AsyncSwitchMessageRouter extends AbstractPlugin implements MessageBusRouterPlugin
