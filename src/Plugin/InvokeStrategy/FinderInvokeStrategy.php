@@ -17,32 +17,28 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 use Prooph\ServiceBus\QueryBus;
 
-class FinderInvokeStrategy implements ActionEventListenerAggregate
+class FinderInvokeStrategy extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
-    public function attach(ActionEventEmitter $dispatcher): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($dispatcher->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             QueryBus::EVENT_DISPATCH,
-            $this,
+            function (ActionEvent $actionEvent): void {
+                $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER);
+
+                $query = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE);
+
+                $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
+
+                if (is_object($finder)) {
+                    $finder->find($query, $deferred);
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+            },
             QueryBus::PRIORITY_INVOKE_HANDLER
-        ));
-    }
-
-    public function __invoke(ActionEvent $actionEvent): void
-    {
-        $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER);
-
-        $query = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE);
-
-        $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
-
-        if (is_object($finder)) {
-            $finder->find($query, $deferred);
-            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
-        }
+        );
     }
 }

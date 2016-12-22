@@ -17,13 +17,13 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
+use Prooph\ServiceBus\Plugin\Plugin;
 use Prooph\ServiceBus\QueryBus;
 use React\Promise\Promise;
 
-final class FinalizeGuard implements ActionEventListenerAggregate
+final class FinalizeGuard extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var AuthorizationService
      */
@@ -40,14 +40,29 @@ final class FinalizeGuard implements ActionEventListenerAggregate
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
-    public function onFinalize(ActionEvent $actionEvent): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
-        $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+        $this->listenerHandlers[] = $messageName->attach(
+            MessageBus::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent): void {
+                $promise = $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE);
+                $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
-        if ($promise instanceof Promise) {
-            $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName): void {
-                if (! $this->authorizationService->isGranted($messageName, $result)) {
+                if ($promise instanceof Promise) {
+                    $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName): void {
+                        if (! $this->authorizationService->isGranted($messageName, $result)) {
+                            $actionEvent->stopPropagation(true);
+
+                            if (! $this->exposeEventMessageName) {
+                                $messageName = '';
+                            }
+
+                            throw new UnauthorizedException($messageName);
+                        }
+                    });
+
+                    $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $newPromise);
+                } elseif (! $this->authorizationService->isGranted($messageName)) {
                     $actionEvent->stopPropagation(true);
 
                     if (! $this->exposeEventMessageName) {
@@ -56,18 +71,9 @@ final class FinalizeGuard implements ActionEventListenerAggregate
 
                     throw new UnauthorizedException($messageName);
                 }
-            });
-
-            $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $newPromise);
-        } elseif (! $this->authorizationService->isGranted($messageName)) {
-            $actionEvent->stopPropagation(true);
-
-            if (! $this->exposeEventMessageName) {
-                $messageName = '';
-            }
-
-            throw new UnauthorizedException($messageName);
-        }
+            },
+            -1000
+        );
     }
 
     public function attach(ActionEventEmitter $events): void

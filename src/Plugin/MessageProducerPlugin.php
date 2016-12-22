@@ -24,10 +24,8 @@ use Prooph\ServiceBus\MessageBus;
  * If the MessageProducerPlugin is attached to a message bus it routes all messages
  * to the Prooph\ServiceBus\Async\MessageProducer it is initialized with.
  */
-class MessageProducerPlugin implements ActionEventListenerAggregate
+class MessageProducerPlugin extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var MessageProducer
      */
@@ -38,25 +36,22 @@ class MessageProducerPlugin implements ActionEventListenerAggregate
         $this->messageProducer = $messageProducer;
     }
 
-    public function attach(ActionEventEmitter $emitter): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($emitter->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
-            $this,
+            function (ActionEvent $event): void {
+                $bus = $event->getTarget();
+
+                if ($bus instanceof EventBus) {
+                    $listeners = $event->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
+                    $listeners[] = $this->messageProducer;
+                    $event->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
+                } else {
+                    $event->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->messageProducer);
+                }
+            },
             MessageBus::PRIORITY_INITIALIZE
-        ));
-    }
-
-    public function __invoke(ActionEvent $event): void
-    {
-        $bus = $event->getTarget();
-
-        if ($bus instanceof EventBus) {
-            $listeners = $event->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
-            $listeners[] = $this->messageProducer;
-            $event->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
-        } else {
-            $event->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->messageProducer);
-        }
+        );
     }
 }

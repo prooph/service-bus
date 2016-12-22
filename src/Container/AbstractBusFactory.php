@@ -16,6 +16,7 @@ use Interop\Config\ConfigurationTrait;
 use Interop\Config\ProvidesDefaultOptions;
 use Interop\Config\RequiresConfigId;
 use Interop\Container\ContainerInterface;
+use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
@@ -99,7 +100,10 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
 
         $busClass = $this->getBusClass();
 
-        $bus = new $busClass();
+        $bus = new $busClass(new ProophActionEventEmitter([
+            MessageBus::EVENT_DISPATCH,
+            MessageBus::EVENT_FINALIZE,
+        ]));
 
         if (isset($busConfig['plugins'])) {
             $this->attachPlugins($bus, $busConfig['plugins'], $container);
@@ -114,23 +118,23 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         }
 
         if ($container->has($busConfig['message_factory'])) {
-            $bus->utilize(new MessageFactoryPlugin($container->get($busConfig['message_factory'])));
+            (new MessageFactoryPlugin($container->get($busConfig['message_factory'])))->setUpMessageBus($bus);
         }
 
         return $bus;
     }
 
-    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container): void
+    private function attachPlugins(MessageBus $bus, array $plugins, ContainerInterface $container): void
     {
-        foreach ($utils as $index => $util) {
-            if (! is_string($util) || ! $container->has($util)) {
+        foreach ($utils as $index => $plugin) {
+            if (! is_string($plugin) || ! $container->has($plugin)) {
                 throw new RuntimeException(sprintf(
                     'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',
                     implode('.', $this->dimensions()) . '.' . $this->configId . '.' . $index
                 ));
             }
 
-            $bus->utilize($container->get($util));
+            $plugin->attachToMessageBus($bus);
         }
     }
 
@@ -148,6 +152,6 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
             $router = new AsyncSwitchMessageRouter($router, $asyncMessageProducer);
         }
 
-        $bus->utilize($router);
+        $router->setUpMessageBus($bus);
     }
 }

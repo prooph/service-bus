@@ -19,11 +19,10 @@ use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
+class SingleHandlerRouter extends AbstractPlugin implements MessageBusRouterPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var array[messageName => messageHandler]
      */
@@ -48,13 +47,13 @@ class SingleHandlerRouter implements MessageBusRouterPlugin, ActionEventListener
         }
     }
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
             [$this, 'onRouteMessage'],
             MessageBus::PRIORITY_ROUTE
-        ));
+        );
     }
 
     public function route(string $messageName): SingleHandlerRouter
