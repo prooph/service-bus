@@ -42,7 +42,7 @@ class ServiceLocatorEventRouterTest extends TestCase
         );
 
         $router = new ServiceLocatorEventRouter($container->reveal());
-        $eventBus->utilize($router);
+        $router->attachToMessageBus($eventBus);
 
         $router->onRouteMessage($actionEvent);
 
