@@ -17,8 +17,6 @@ use Prooph\ServiceBus\MessageBus;
 
 class CustomMessageBus extends MessageBus
 {
-    public const EVENT_FOO = 'foo';
-
     private $actionEvent;
 
     /**

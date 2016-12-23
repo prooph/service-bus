@@ -110,11 +110,11 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         }
 
         if ((bool) $busConfig['enable_handler_location']) {
-            $bus->utilize(new ServiceLocatorPlugin($container));
+            (new ServiceLocatorPlugin($container))->attachToMessageBus($bus);
         }
 
         if ($container->has($busConfig['message_factory'])) {
-            (new MessageFactoryPlugin($container->get($busConfig['message_factory'])))->setUpMessageBus($bus);
+            (new MessageFactoryPlugin($container->get($busConfig['message_factory'])))->attachToMessageBus($bus);
         }
 
         return $bus;
@@ -130,7 +130,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
                 ));
             }
 
-            $plugin->attachToMessageBus($bus);
+            $container->get($plugin)->attachToMessageBus($bus);
         }
     }
 
@@ -148,6 +148,6 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
             $router = new AsyncSwitchMessageRouter($router, $asyncMessageProducer);
         }
 
-        $router->setUpMessageBus($bus);
+        $router->attachToMessageBus($bus);
     }
 }

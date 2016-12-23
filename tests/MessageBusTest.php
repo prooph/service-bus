@@ -54,16 +54,6 @@ class MessageBusTest extends TestCase
     /**
      * @test
      */
-    public function it_attaches_custom_event_name(): void
-    {
-        $messageBus = new CustomMessageBus();
-        $messageBus->getActionEventEmitter()->attachListener(CustomMessageBus::EVENT_FOO, function () {
-        });
-    }
-
-    /**
-     * @test
-     */
     public function it_does_not_attach_to_invalid_event_names(): void
     {
         $this->expectException(\InvalidArgumentException::class);

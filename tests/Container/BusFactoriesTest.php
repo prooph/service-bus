@@ -29,6 +29,7 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\Plugin;
 use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\NoopMessageProducer;
@@ -83,8 +84,8 @@ class BusFactoriesTest extends TestCase
         AbstractBusFactory $busFactory
     ): void {
         $container = $this->prophesize(ContainerInterface::class);
-        $firstPlugin = $this->prophesize(ActionEventListenerAggregate::class);
-        $secondPlugin = $this->prophesize(ActionEventListenerAggregate::class);
+        $firstPlugin = $this->prophesize(Plugin::class);
+        $secondPlugin = $this->prophesize(Plugin::class);
 
         $container->has('config')->willReturn(true);
         $container->get('config')->willReturn([
@@ -100,8 +101,8 @@ class BusFactoriesTest extends TestCase
             ],
         ]);
 
-        $firstPlugin->attach(Argument::type(ActionEventEmitter::class))->shouldBeCalled();
-        $secondPlugin->attach(Argument::type(ActionEventEmitter::class))->shouldBeCalled();
+        $firstPlugin->attachToMessageBus(Argument::type(MessageBus::class))->shouldBeCalled();
+        $secondPlugin->attachToMessageBus(Argument::type(MessageBus::class))->shouldBeCalled();
 
         $container->has('first_plugin_service_id')->willReturn(true);
         $container->get('first_plugin_service_id')->willReturn($firstPlugin->reveal());
@@ -408,7 +409,7 @@ class BusFactoriesTest extends TestCase
 
         $bus = $busFactory($container->reveal());
 
-        $bus->getActionEventEmitter()->attachListener(
+        $bus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e): void {
                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
@@ -429,7 +430,7 @@ class BusFactoriesTest extends TestCase
         AbstractBusFactory $busFactory
     ): void {
         $container = $this->prophesize(ContainerInterface::class);
-        $firstPlugin = $this->prophesize(ActionEventListenerAggregate::class);
+        $firstPlugin = $this->prophesize(Plugin::class);
 
         $container->has('config')->willReturn(true);
         $container->get('config')->willReturn(new \ArrayObject([
@@ -444,7 +445,7 @@ class BusFactoriesTest extends TestCase
             ],
         ]));
 
-        $firstPlugin->attach(Argument::type(ActionEventEmitter::class))->shouldBeCalled();
+        $firstPlugin->attachToMessageBus(Argument::type(MessageBus::class))->shouldBeCalled();
 
         $container->has('first_plugin_service_id')->willReturn(true);
         $container->get('first_plugin_service_id')->willReturn($firstPlugin->reveal());
