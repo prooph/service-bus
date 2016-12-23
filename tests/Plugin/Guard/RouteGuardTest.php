@@ -13,22 +13,24 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Plugin\Guard;
 
 use PHPUnit\Framework\TestCase;
-use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ListenerHandler;
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
-use ProophTest\ServiceBus\Plugin\PluginTestCase;
 
-class RouteGuardTest extends PluginTestCase
+class RouteGuardTest extends TestCase
 {
-    protected function createMessageBus(): MessageBus
+    /**
+     * @var CommandBus
+     */
+    protected $messageBus;
+
+    protected function setUp(): void
     {
-        return new CommandBus();
+        $this->messageBus = new CommandBus();
     }
 
     /**
@@ -37,7 +39,7 @@ class RouteGuardTest extends PluginTestCase
     public function it_allows_when_authorization_service_grants_access(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Command stdClass was not handled');
+        $this->expectExceptionMessage('CommandBus was not able to identify a CommandHandler for command stdClass');
 
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('stdClass', new \stdClass())->willReturn(true);
@@ -47,7 +49,7 @@ class RouteGuardTest extends PluginTestCase
 
         try {
             $this->messageBus->dispatch(new \stdClass());
-        } catch (\Throwable $e) {
+        } catch (MessageDispatchException $e) {
             throw $e->getPrevious();
         }
     }
@@ -76,7 +78,7 @@ class RouteGuardTest extends PluginTestCase
 
         try {
             $this->messageBus->dispatch(new \stdClass());
-        } catch (\Throwable $e) {
+        } catch (MessageDispatchException $e) {
             throw $e->getPrevious();
         }
     }
@@ -105,7 +107,7 @@ class RouteGuardTest extends PluginTestCase
 
         try {
             $this->messageBus->dispatch(new \stdClass());
-        } catch (\Throwable $e) {
+        } catch (MessageDispatchException $e) {
             throw $e->getPrevious();
         }
     }

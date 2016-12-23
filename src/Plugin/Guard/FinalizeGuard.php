@@ -72,9 +72,4 @@ final class FinalizeGuard extends AbstractPlugin
             -1000
         );
     }
-
-    public function attach(ActionEventEmitter $events): void
-    {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_FINALIZE, [$this, 'onFinalize'], -1000));
-    }
 }

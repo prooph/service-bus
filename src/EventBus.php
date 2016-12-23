@@ -50,7 +50,7 @@ class EventBus extends MessageBus
      */
     public function dispatch($event): void
     {
-        $actionEventEmitter = $this->getActionEventEmitter();
+        $actionEventEmitter = $this->events;
 
         $actionEvent = $actionEventEmitter->getNewActionEvent(
             self::EVENT_DISPATCH,
