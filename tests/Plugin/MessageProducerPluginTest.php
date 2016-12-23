@@ -12,16 +12,11 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin;
 
-use Guzzle\Common\Event;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ListenerHandler;
-use Prooph\Common\Messaging\Message;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
-use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageProducerPlugin;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use ProophTest\ServiceBus\Mock\SomethingDone;
@@ -77,7 +72,6 @@ class MessageProducerPluginTest extends TestCase
                 $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
             }
         );
-
 
         $eventBus->dispatch($event);
         $this->assertSame($messageProducer->reveal(), $listeners[0]);

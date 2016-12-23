@@ -135,7 +135,6 @@ class FinalizeGuardTest extends TestCase
         } catch (MessageDispatchException $exception) {
             throw $exception->getPrevious();
         }
-
     }
 
     /**

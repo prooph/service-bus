@@ -14,11 +14,9 @@ namespace ProophTest\ServiceBus\Plugin;
 
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use Prophecy\Argument;
@@ -41,7 +39,6 @@ class MessageFactoryPluginTest extends TestCase
 
         $factoryPlugin = new MessageFactoryPlugin($messageFactory->reveal());
         $factoryPlugin->attachToMessageBus($commandBus);
-
 
         $commandBus->attach(
             CommandBus::EVENT_FINALIZE,
@@ -81,8 +78,7 @@ class MessageFactoryPluginTest extends TestCase
                     [
                         'payload' => ['some data'],
                     ],
-                    $message)
-                ;
+                    $message);
             }
         );
 

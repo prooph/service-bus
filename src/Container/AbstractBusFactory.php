@@ -16,7 +16,6 @@ use Interop\Config\ConfigurationTrait;
 use Interop\Config\ProvidesDefaultOptions;
 use Interop\Config\RequiresConfigId;
 use Interop\Container\ContainerInterface;
-use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;

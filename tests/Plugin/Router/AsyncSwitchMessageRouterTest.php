@@ -13,10 +13,7 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use PHPUnit\Framework\TestCase;
-use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
-use Prooph\Common\Event\ListenerHandler;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;

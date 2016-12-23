@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus;
 
 use PHPUnit\Framework\TestCase;
-use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\ServiceBus\MessageBus;
 use ProophTest\ServiceBus\Mock\CustomMessageBus;
 
@@ -71,7 +70,7 @@ class MessageBusTest extends TestCase
         $this->expectExceptionMessage('Unknown event name given: invalid');
 
         $messageBus = new CustomMessageBus();
-        $messageBus->attach('invalid', function() {
+        $messageBus->attach('invalid', function () {
         });
     }
 }
