@@ -26,7 +26,7 @@ class CustomMessageBus extends MessageBus
      */
     public function dispatch($message): void
     {
-        $actionEventEmitter = $this->getActionEventEmitter();
+        $actionEventEmitter = $this->events;
 
         $actionEvent = $this->getActionEvent();
         $actionEvent->setName(self::EVENT_DISPATCH);
@@ -44,7 +44,7 @@ class CustomMessageBus extends MessageBus
     public function getActionEvent(): ActionEvent
     {
         if (null === $this->actionEvent) {
-            $this->actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
+            $this->actionEvent = $this->events->getNewActionEvent();
         }
 
         return $this->actionEvent;

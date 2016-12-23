@@ -22,19 +22,6 @@ class MessageBusTest extends TestCase
     /**
      * @test
      */
-    public function it_attaches_action_event_emitter(): void
-    {
-        $actionEventEmitter = new ProophActionEventEmitter();
-
-        $messageBus = new CustomMessageBus();
-        $messageBus->setActionEventEmitter($actionEventEmitter);
-
-        $this->assertSame($actionEventEmitter, $messageBus->getActionEventEmitter());
-    }
-
-    /**
-     * @test
-     */
     public function it_uses_message_class_as_name_if_no_one_was_set(): void
     {
         $messageBus = new CustomMessageBus();
@@ -83,8 +70,8 @@ class MessageBusTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown event name given: invalid');
 
-        $messageBus = new CustomMessageBus(['foo']);
-        $messageBus->getActionEventEmitter()->attachListener('invalid', function () {
+        $messageBus = new CustomMessageBus();
+        $messageBus->attach('invalid', function() {
         });
     }
 }

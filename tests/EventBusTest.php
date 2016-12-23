@@ -43,7 +43,7 @@ class EventBusTest extends TestCase
 
         $receivedMessage = null;
         $dispatchEvent = null;
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent): void {
                 $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [
@@ -76,7 +76,7 @@ class EventBusTest extends TestCase
         $finalizeIsTriggered = false;
 
         //Should always be triggered
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$initializeIsTriggered): void {
                 $initializeIsTriggered = true;
@@ -86,7 +86,7 @@ class EventBusTest extends TestCase
 
         //Should be triggered because we dispatch a message that does not
         //implement Prooph\Common\Messaging\HasMessageName
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered): void {
                 $detectMessageNameIsTriggered = true;
@@ -96,7 +96,7 @@ class EventBusTest extends TestCase
         );
 
         //Should be triggered because we did not provide a message-handler yet
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$routeIsTriggered): void {
                 $routeIsTriggered = true;
@@ -109,7 +109,7 @@ class EventBusTest extends TestCase
         );
 
         //Should be triggered because we provided the message-handler as string (service id)
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered): void {
                 $locateHandlerIsTriggered = true;
@@ -121,7 +121,7 @@ class EventBusTest extends TestCase
         );
 
         //Should be triggered because the message-handler is not callable
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$invokeHandlerIsTriggered): void {
                 $invokeHandlerIsTriggered = true;
@@ -134,7 +134,7 @@ class EventBusTest extends TestCase
         );
 
         //Should always be triggered
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_FINALIZE,
             function (ActionEvent $actionEvent) use (&$finalizeIsTriggered): void {
                 $finalizeIsTriggered = true;
@@ -160,7 +160,7 @@ class EventBusTest extends TestCase
     {
         $handler = new MessageHandler();
 
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) use ($handler): void {
                 if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
@@ -184,7 +184,7 @@ class EventBusTest extends TestCase
     {
         $this->expectException(MessageDispatchException::class);
 
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function () {
                 throw new \Exception('ka boom');
@@ -202,7 +202,7 @@ class EventBusTest extends TestCase
     {
         $handler = new MessageHandler();
 
-        $this->eventBus->getActionEventEmitter()->attachListener(
+        $this->eventBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) use ($handler): void {
                 if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {

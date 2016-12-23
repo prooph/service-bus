@@ -45,7 +45,7 @@ class CommandBusTest extends TestCase
 
         $receivedMessage = null;
         $dispatchEvent = null;
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$receivedMessage, &$dispatchEvent): void {
                 $actionEvent->setParam(
@@ -79,7 +79,7 @@ class CommandBusTest extends TestCase
         $finalizeIsTriggered = false;
 
         //Should always be triggered
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$initializeIsTriggered): void {
                 $initializeIsTriggered = true;
@@ -89,7 +89,7 @@ class CommandBusTest extends TestCase
 
         //Should be triggered because we dispatch a message that does not
         //implement Prooph\Common\Messaging\HasMessageName
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$detectMessageNameIsTriggered): void {
                 $detectMessageNameIsTriggered = true;
@@ -99,7 +99,7 @@ class CommandBusTest extends TestCase
         );
 
         //Should be triggered because we did not provide a message-handler yet
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$routeIsTriggered): void {
                 $routeIsTriggered = true;
@@ -112,7 +112,7 @@ class CommandBusTest extends TestCase
         );
 
         //Should be triggered because we provided the message-handler as string (service id)
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$locateHandlerIsTriggered): void {
                 $locateHandlerIsTriggered = true;
@@ -124,7 +124,7 @@ class CommandBusTest extends TestCase
         );
 
         //Should be triggered because the message-handler is not callable
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent) use (&$invokeHandlerIsTriggered): void {
                 $invokeHandlerIsTriggered = true;
@@ -137,7 +137,7 @@ class CommandBusTest extends TestCase
         );
 
         //Should always be triggered
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_FINALIZE,
             function (ActionEvent $actionEvent) use (&$finalizeIsTriggered): void {
                 if ($actionEvent->getParam(MessageBus::EVENT_PARAM_EXCEPTION) instanceof \Exception) {
@@ -171,7 +171,7 @@ class CommandBusTest extends TestCase
     {
         $handler = new MessageHandler();
 
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) use ($handler): void {
                 if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
@@ -195,7 +195,7 @@ class CommandBusTest extends TestCase
     {
         $this->expectException(MessageDispatchException::class);
 
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function () {
                 throw new \Exception('ka boom');
@@ -213,7 +213,7 @@ class CommandBusTest extends TestCase
     {
         $this->expectException(MessageDispatchException::class);
 
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e): void {
                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, null);
@@ -231,7 +231,7 @@ class CommandBusTest extends TestCase
     {
         $this->expectException(MessageDispatchException::class);
 
-        $this->commandBus->getActionEventEmitter()->attachListener(
+        $this->commandBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e): void {
                 $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, new \stdClass());
@@ -249,17 +249,16 @@ class CommandBusTest extends TestCase
     {
         $messageHandler = new MessageHandler();
 
-        $this->commandBus->utilize(
-            (new CommandRouter())
-                ->route(CustomMessage::class)->to($messageHandler)
-                ->route('initial message')->to(function () use ($messageHandler): void {
-                    $delayedMessage = new CustomMessage('delayed message');
+        (new CommandRouter())
+            ->route(CustomMessage::class)->to($messageHandler)
+            ->route('initial message')->to(function () use ($messageHandler): void {
+                $delayedMessage = new CustomMessage('delayed message');
 
-                    $this->commandBus->dispatch($delayedMessage);
+                $this->commandBus->dispatch($delayedMessage);
 
-                    $this->assertEquals(0, $messageHandler->getInvokeCounter());
-                })
-        );
+                $this->assertEquals(0, $messageHandler->getInvokeCounter());
+            })
+            ->attachToMessageBus($this->commandBus);
 
         $this->commandBus->dispatch('initial message');
 
@@ -273,17 +272,16 @@ class CommandBusTest extends TestCase
     {
         $messageHandler = new MessageHandler();
 
-        $this->commandBus->utilize(
-            (new CommandRouter())
-                ->route(CustomMessage::class)->to($messageHandler)
-                ->route('initial message')->to(function () use ($messageHandler): void {
-                    $delayedMessage = new CustomMessage('delayed message');
+        (new CommandRouter())
+            ->route(CustomMessage::class)->to($messageHandler)
+            ->route('initial message')->to(function () use ($messageHandler): void {
+                $delayedMessage = new CustomMessage('delayed message');
 
-                    $this->commandBus->dispatch($delayedMessage);
+                $this->commandBus->dispatch($delayedMessage);
 
-                    throw new \Exception('Ka Boom');
-                })
-        );
+                throw new \Exception('Ka Boom');
+            })
+            ->attachToMessageBus($this->commandBus);
 
         $commandDispatchException = null;
 

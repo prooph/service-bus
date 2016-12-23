@@ -182,7 +182,7 @@ class QueryBusTest extends TestCase
             MessageBus::PRIORITY_ROUTE
         );
 
-        $this->queryBus->utilize(new FinderInvokeStrategy());
+        (new FinderInvokeStrategy())->attachToMessageBus($this->queryBus);
 
         $customMessage = new CustomMessage('foo');
 
