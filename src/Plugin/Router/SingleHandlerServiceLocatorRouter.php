@@ -14,15 +14,11 @@ namespace Prooph\ServiceBus\Plugin\Router;
 
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-final class SingleHandlerServiceLocatorRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
+final class SingleHandlerServiceLocatorRouter extends AbstractPlugin implements MessageBusRouterPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var ContainerInterface
      */
@@ -33,13 +29,13 @@ final class SingleHandlerServiceLocatorRouter implements MessageBusRouterPlugin,
         $this->container = $container;
     }
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
             [$this, 'onRouteMessage'],
             MessageBus::PRIORITY_ROUTE
-        ));
+        );
     }
 
     public function onRouteMessage(ActionEvent $actionEvent): void

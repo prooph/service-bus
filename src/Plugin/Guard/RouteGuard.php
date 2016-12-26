@@ -13,15 +13,11 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin\Guard;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-final class RouteGuard implements ActionEventListenerAggregate
+final class RouteGuard extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var AuthorizationService
      */
@@ -38,32 +34,29 @@ final class RouteGuard implements ActionEventListenerAggregate
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
-            [$this, 'onRoute'],
+            function (ActionEvent $actionEvent): void {
+                $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+
+                if ($this->authorizationService->isGranted(
+                    $messageName,
+                    $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)
+                )) {
+                    return;
+                }
+
+                $actionEvent->stopPropagation(true);
+
+                if (! $this->exposeEventMessageName) {
+                    $messageName = '';
+                }
+
+                throw new UnauthorizedException($messageName);
+            },
             MessageBus::PRIORITY_ROUTE
-        ));
-    }
-
-    public function onRoute(ActionEvent $actionEvent): void
-    {
-        $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
-
-        if ($this->authorizationService->isGranted(
-            $messageName,
-            $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)
-        )) {
-            return;
-        }
-
-        $actionEvent->stopPropagation(true);
-
-        if (! $this->exposeEventMessageName) {
-            $messageName = '';
-        }
-
-        throw new UnauthorizedException($messageName);
+        );
     }
 }

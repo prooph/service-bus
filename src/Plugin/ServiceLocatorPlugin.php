@@ -14,9 +14,6 @@ namespace Prooph\ServiceBus\Plugin;
 
 use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 
@@ -25,10 +22,8 @@ use Prooph\ServiceBus\MessageBus;
  * Initialize it with a Interop\Container\ContainerInterface
  * and route your messages to the service id only.
  */
-class ServiceLocatorPlugin implements ActionEventListenerAggregate
+class ServiceLocatorPlugin extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var ContainerInterface
      */
@@ -39,32 +34,29 @@ class ServiceLocatorPlugin implements ActionEventListenerAggregate
         $this->serviceLocator = $serviceLocator;
     }
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
-            $this,
+            function (ActionEvent $actionEvent): void {
+                $messageHandlerAlias = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
+
+                if (is_string($messageHandlerAlias) && $this->serviceLocator->has($messageHandlerAlias)) {
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->serviceLocator->get($messageHandlerAlias));
+                }
+
+                // for event bus only
+                $eventListeners = [];
+                foreach ($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListenerAlias) {
+                    if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
+                        $eventListeners[] = $this->serviceLocator->get($eventListenerAlias);
+                    }
+                }
+                if (! empty($eventListeners)) {
+                    $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $eventListeners);
+                }
+            },
             MessageBus::PRIORITY_LOCATE_HANDLER
-        ));
-    }
-
-    public function __invoke(ActionEvent $actionEvent): void
-    {
-        $messageHandlerAlias = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
-
-        if (is_string($messageHandlerAlias) && $this->serviceLocator->has($messageHandlerAlias)) {
-            $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->serviceLocator->get($messageHandlerAlias));
-        }
-
-        // for event bus only
-        $eventListeners = [];
-        foreach ($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListenerAlias) {
-            if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
-                $eventListeners[] = $this->serviceLocator->get($eventListenerAlias);
-            }
-        }
-        if (! empty($eventListeners)) {
-            $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $eventListeners);
-        }
+        );
     }
 }

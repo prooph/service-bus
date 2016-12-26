@@ -110,27 +110,27 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
         }
 
         if ((bool) $busConfig['enable_handler_location']) {
-            $bus->utilize(new ServiceLocatorPlugin($container));
+            (new ServiceLocatorPlugin($container))->attachToMessageBus($bus);
         }
 
         if ($container->has($busConfig['message_factory'])) {
-            $bus->utilize(new MessageFactoryPlugin($container->get($busConfig['message_factory'])));
+            (new MessageFactoryPlugin($container->get($busConfig['message_factory'])))->attachToMessageBus($bus);
         }
 
         return $bus;
     }
 
-    private function attachPlugins(MessageBus $bus, array $utils, ContainerInterface $container): void
+    private function attachPlugins(MessageBus $bus, array $plugins, ContainerInterface $container): void
     {
-        foreach ($utils as $index => $util) {
-            if (! is_string($util) || ! $container->has($util)) {
+        foreach ($plugins as $index => $plugin) {
+            if (! is_string($plugin) || ! $container->has($plugin)) {
                 throw new RuntimeException(sprintf(
                     'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',
                     implode('.', $this->dimensions()) . '.' . $this->configId . '.' . $index
                 ));
             }
 
-            $bus->utilize($container->get($util));
+            $container->get($plugin)->attachToMessageBus($bus);
         }
     }
 
@@ -148,6 +148,6 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
             $router = new AsyncSwitchMessageRouter($router, $asyncMessageProducer);
         }
 
-        $bus->utilize($router);
+        $router->attachToMessageBus($bus);
     }
 }

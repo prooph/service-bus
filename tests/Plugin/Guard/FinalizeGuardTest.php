@@ -14,35 +14,24 @@ namespace ProophTest\ServiceBus\Plugin\Guard;
 
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\DefaultActionEvent;
-use Prooph\Common\Event\ListenerHandler;
+use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
 use Prooph\ServiceBus\QueryBus;
-use React\Promise\Deferred;
 
 class FinalizeGuardTest extends TestCase
 {
     /**
-     * @test
+     * @var MessageBus
      */
-    public function it_attaches_to_action_event_emitter(): void
+    protected $messageBus;
+
+    protected function setUp(): void
     {
-        $listenerHandler = $this->prophesize(ListenerHandler::class);
-
-        $authorizationService = $this->prophesize(AuthorizationService::class);
-
-        $routeGuard = new FinalizeGuard($authorizationService->reveal());
-
-        $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
-        $actionEventEmitter
-            ->attachListener(MessageBus::EVENT_FINALIZE, [$routeGuard, 'onFinalize'], -1000)
-            ->willReturn($listenerHandler->reveal());
-
-        $routeGuard->attach($actionEventEmitter->reveal());
+        $this->messageBus = new QueryBus();
     }
 
     /**
@@ -53,13 +42,10 @@ class FinalizeGuardTest extends TestCase
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event')->willReturn(true);
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $this->assertNull($routeGuard->onFinalize($actionEvent->reveal()));
+        $this->messageBus->dispatch('test_event');
     }
 
     /**
@@ -70,18 +56,21 @@ class FinalizeGuardTest extends TestCase
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', 'result')->willReturn(true);
 
-        $deferred = new Deferred();
-        $deferred->resolve('result');
-
-        $actionEvent = new DefaultActionEvent(QueryBus::EVENT_FINALIZE);
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $deferred->promise());
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_NAME, 'test_event');
-
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard->onFinalize($actionEvent);
+        $this->messageBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
+                $deferred->resolve('result');
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            QueryBus::PRIORITY_LOCATE_HANDLER + 1000
+        );
 
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->done();
+        $promise = $this->messageBus->dispatch('test_event');
+        $promise->done();
     }
 
     /**
@@ -92,17 +81,28 @@ class FinalizeGuardTest extends TestCase
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('You are not authorized to access this resource');
 
+        $this->messageBus = new EventBus();
+
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event')->willReturn(false);
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->shouldBeCalled();
-
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard->onFinalize($actionEvent->reveal());
+        $this->messageBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            QueryBus::PRIORITY_LOCATE_HANDLER + 1000
+        );
+
+        try {
+            $promise = $this->messageBus->dispatch('test_event');
+            $promise->done();
+        } catch (MessageDispatchException $exception) {
+            throw $exception->getPrevious();
+        }
     }
 
     /**
@@ -116,19 +116,25 @@ class FinalizeGuardTest extends TestCase
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', 'result')->willReturn(false);
 
-        $deferred = new Deferred();
-        $deferred->resolve('result');
-
-        $actionEvent = new DefaultActionEvent(QueryBus::EVENT_FINALIZE);
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $deferred->promise());
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_NAME, 'test_event');
-
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard->onFinalize($actionEvent);
+        $this->messageBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
+                $deferred->resolve('result');
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            QueryBus::PRIORITY_LOCATE_HANDLER + 1000
+        );
 
-        $this->assertTrue($actionEvent->propagationIsStopped());
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->done();
+        try {
+            $promise = $this->messageBus->dispatch('test_event');
+            $promise->done();
+        } catch (MessageDispatchException $exception) {
+            throw $exception->getPrevious();
+        }
     }
 
     /**
@@ -139,17 +145,28 @@ class FinalizeGuardTest extends TestCase
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('You are not authorized to access the resource "test_event"');
 
+        $this->messageBus = new EventBus();
+
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event')->willReturn(false);
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->willReturn(null);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->stopPropagation(true)->shouldBeCalled();
-
         $routeGuard = new FinalizeGuard($authorizationService->reveal(), true);
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard->onFinalize($actionEvent->reveal());
+        $this->messageBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            QueryBus::PRIORITY_LOCATE_HANDLER + 1000
+        );
+
+        try {
+            $promise = $this->messageBus->dispatch('test_event');
+            $promise->done();
+        } catch (MessageDispatchException $exception) {
+            throw $exception->getPrevious();
+        }
     }
 
     /**
@@ -163,18 +180,20 @@ class FinalizeGuardTest extends TestCase
         $authorizationService = $this->prophesize(AuthorizationService::class);
         $authorizationService->isGranted('test_event', 'result')->willReturn(false);
 
-        $deferred = new Deferred();
-        $deferred->resolve('result');
+        $finalizeGuard = new FinalizeGuard($authorizationService->reveal(), true);
+        $finalizeGuard->attachToMessageBus($this->messageBus);
 
-        $actionEvent = new DefaultActionEvent(QueryBus::EVENT_FINALIZE);
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $deferred->promise());
-        $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_NAME, 'test_event');
+        $this->messageBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
+                $deferred->resolve('result');
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            QueryBus::PRIORITY_LOCATE_HANDLER + 1000
+        );
 
-        $routeGuard = new FinalizeGuard($authorizationService->reveal(), true);
-
-        $routeGuard->onFinalize($actionEvent);
-
-        $this->assertTrue($actionEvent->propagationIsStopped());
-        $actionEvent->getParam(QueryBus::EVENT_PARAM_PROMISE)->done();
+        $promise = $this->messageBus->dispatch('test_event');
+        $promise->done();
     }
 }

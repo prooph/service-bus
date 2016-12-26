@@ -14,9 +14,8 @@ namespace ProophTest\ServiceBus\Plugin;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
-use Prooph\Common\Event\DefaultActionEvent;
+use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\CommandBus;
-use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 
@@ -31,22 +30,23 @@ class ServiceLocatorPluginTest extends TestCase
 
         $container = $this->prophesize(ContainerInterface::class);
 
-        $container->has('custom-handler')->willReturn(true);
+        $container->has('custom-handler')->willReturn(true)->shouldBeCalled();
 
-        $container->get('custom-handler')->willReturn($handler);
+        $container->get('custom-handler')->willReturn($handler)->shouldBeCalled();
+
+        $commandBus = new CommandBus();
 
         $locatorPlugin = new ServiceLocatorPlugin($container->reveal());
+        $locatorPlugin->attachToMessageBus($commandBus);
 
-        $actionEvent = new DefaultActionEvent(
-            MessageBus::EVENT_DISPATCH,
-            new CommandBus(),
-            [
-                MessageBus::EVENT_PARAM_MESSAGE_HANDLER => 'custom-handler',
-            ]
+        $commandBus->attach(
+            CommandBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $actionEvent->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, 'custom-handler');
+            },
+            CommandBus::PRIORITY_INITIALIZE
         );
 
-        $locatorPlugin($actionEvent);
-
-        $this->assertSame($handler, $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+        $commandBus->dispatch('foo');
     }
 }

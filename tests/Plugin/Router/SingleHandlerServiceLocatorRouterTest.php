@@ -42,7 +42,7 @@ class SingleHandlerServiceLocatorRouterTest extends TestCase
         );
 
         $router = new SingleHandlerServiceLocatorRouter($container->reveal());
-        $commandBus->utilize($router);
+        $router->attachToMessageBus($commandBus);
 
         $router->onRouteMessage($actionEvent);
 

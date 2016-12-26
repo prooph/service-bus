@@ -10,16 +10,13 @@
 
 declare(strict_types=1);
 
-namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
+namespace Prooph\ServiceBus\Plugin;
 
-class HandleCommandStrategy extends AbstractInvokeStrategy
+use Prooph\ServiceBus\MessageBus;
+
+interface Plugin
 {
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     */
-    public function invoke($handler, $message): void
-    {
-        $handler->handle($message);
-    }
+    public function attachToMessageBus(MessageBus $messageBus): void;
+
+    public function detachFromMessageBus(MessageBus $messageBus): void;
 }

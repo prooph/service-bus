@@ -14,7 +14,7 @@ namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\ListenerHandler;
 use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
@@ -44,32 +44,15 @@ abstract class MessageBus
      */
     protected $events;
 
-    /**
-     * @param mixed $message
-     *
-     * @return \React\Promise\Promise|void depends on the bus type
-     */
-    abstract public function dispatch($message);
-
-    public function utilize(ActionEventListenerAggregate $plugin): void
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
-        $plugin->attach($this->getActionEventEmitter());
-    }
+        if (null === $actionEventEmitter) {
+            $actionEventEmitter = new ProophActionEventEmitter([
+                self::EVENT_DISPATCH,
+                self::EVENT_FINALIZE,
+            ]);
+        }
 
-    public function deactivate(ActionEventListenerAggregate $plugin): void
-    {
-        $plugin->detach($this->getActionEventEmitter());
-    }
-
-    protected function triggerFinalize(ActionEvent $actionEvent): void
-    {
-        $actionEvent->setName(self::EVENT_FINALIZE);
-
-        $this->getActionEventEmitter()->dispatch($actionEvent);
-    }
-
-    public function setActionEventEmitter(ActionEventEmitter $actionEventEmitter): void
-    {
         $actionEventEmitter->attachListener(
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
@@ -108,27 +91,22 @@ abstract class MessageBus
         $this->events = $actionEventEmitter;
     }
 
-    public function getActionEventEmitter(): ActionEventEmitter
-    {
-        if (null === $this->events) {
-            $reflection = new \ReflectionClass($this);
-            $availableEventNames = array_values(array_filter(
-                $reflection->getConstants(),
-                function (string $key): bool {
-                    return (bool) ! substr_compare($key, 'EVENT_', 0, 6, false);
-                },
-                ARRAY_FILTER_USE_KEY
-            ));
-            $this->setActionEventEmitter(new ProophActionEventEmitter($availableEventNames));
-        }
+    /**
+     * @param mixed $message
+     *
+     * @return \React\Promise\Promise|void depends on the bus type
+     */
+    abstract public function dispatch($message);
 
-        return $this->events;
+    protected function triggerFinalize(ActionEvent $actionEvent): void
+    {
+        $actionEvent->setName(self::EVENT_FINALIZE);
+
+        $this->events->dispatch($actionEvent);
     }
 
     /**
      * @param mixed $message
-     *
-     * @return string
      */
     protected function getMessageName($message): string
     {
@@ -141,5 +119,15 @@ abstract class MessageBus
         }
 
         return gettype($message);
+    }
+
+    public function attach(string $eventName, callable $listener, int $priority = 0): ListenerHandler
+    {
+        return $this->events->attachListener($eventName, $listener, $priority);
+    }
+
+    public function detach(ListenerHandler $handler): void
+    {
+        $this->events->detachListener($handler);
     }
 }

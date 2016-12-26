@@ -13,17 +13,16 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 use Prooph\ServiceBus\QueryBus;
 
-class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
+class AsyncSwitchMessageRouter extends AbstractPlugin implements MessageBusRouterPlugin
 {
     use DetachAggregateHandlers;
 
@@ -43,13 +42,13 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
         $this->asyncMessageProducer = $asyncMessageProducer;
     }
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
             [$this, 'onRouteMessage'],
             MessageBus::PRIORITY_ROUTE
-        ));
+        );
     }
 
     public function onRouteMessage(ActionEvent $actionEvent): void

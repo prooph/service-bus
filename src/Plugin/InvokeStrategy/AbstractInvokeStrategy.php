@@ -13,36 +13,29 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-abstract class AbstractInvokeStrategy implements ActionEventListenerAggregate
+abstract class AbstractInvokeStrategy extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @param mixed $handler
      * @param mixed $message
      */
     abstract protected function invoke($handler, $message): void;
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
-            $this,
+            function (ActionEvent $actionEvent): void {
+                $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+                $handler = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
+
+                $this->invoke($handler, $message);
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
             MessageBus::PRIORITY_INVOKE_HANDLER
-        ));
-    }
-
-    public function __invoke(ActionEvent $e): void
-    {
-        $message = $e->getParam(MessageBus::EVENT_PARAM_MESSAGE);
-        $handler = $e->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
-
-        $this->invoke($handler, $message);
-        $e->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+        );
     }
 }

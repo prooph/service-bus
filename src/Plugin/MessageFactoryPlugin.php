@@ -13,23 +13,18 @@ declare(strict_types=1);
 namespace Prooph\ServiceBus\Plugin;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\MessageBus;
 
 /**
- * This plugin listens on the MessageBus::EVENT_INITIALIZE action event.
+ * This plugin listens on the MessageBus::EVENT_DISPATCH action event with MessageBus::PRIORITY_INITIALIZE.
  * It checks if the message of the action event is given as an array and
  * if the array contains a key "message_name".
  * If both conditions are met the plugin uses the injected Prooph\Common\Messaging\MessageFactory
  * to translate the message array into a Prooph\Common\Messaging\Message
  */
-class MessageFactoryPlugin implements ActionEventListenerAggregate
+class MessageFactoryPlugin extends AbstractPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var MessageFactory
      */
@@ -40,33 +35,30 @@ class MessageFactoryPlugin implements ActionEventListenerAggregate
         $this->messageFactory = $messageFactory;
     }
 
-    public function attach(ActionEventEmitter $dispatcher): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($dispatcher->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
-            $this,
+            function (ActionEvent $actionEvent): void {
+                $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+
+                if (! is_array($message)) {
+                    return;
+                }
+
+                if (! array_key_exists('message_name', $message)) {
+                    return;
+                }
+
+                $messageName = $message['message_name'];
+                unset($message['message_name']);
+
+                $message = $this->messageFactory->createMessageFromArray($messageName, $message);
+
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, $messageName);
+            },
             MessageBus::PRIORITY_INITIALIZE
-        ));
-    }
-
-    public function __invoke(ActionEvent $actionEvent): void
-    {
-        $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
-
-        if (! is_array($message)) {
-            return;
-        }
-
-        if (! array_key_exists('message_name', $message)) {
-            return;
-        }
-
-        $messageName = $message['message_name'];
-        unset($message['message_name']);
-
-        $message = $this->messageFactory->createMessageFromArray($messageName, $message);
-
-        $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE, $message);
-        $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_NAME, $messageName);
+        );
     }
 }

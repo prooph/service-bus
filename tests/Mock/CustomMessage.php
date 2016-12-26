@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
-/**
- * Class CustomMessage
- * @package ProophTest\ServiceBus\Mock
- */
 final class CustomMessage
 {
     private $text;

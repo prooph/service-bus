@@ -14,17 +14,13 @@ namespace Prooph\ServiceBus\Plugin\Router;
 
 use Assert\Assertion;
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
-use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Exception;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
+class EventRouter extends AbstractPlugin implements MessageBusRouterPlugin
 {
-    use DetachAggregateHandlers;
-
     /**
      * @var array[eventName => eventListener]
      */
@@ -57,13 +53,13 @@ class EventRouter implements MessageBusRouterPlugin, ActionEventListenerAggregat
         }
     }
 
-    public function attach(ActionEventEmitter $events): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(
+        $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
             [$this, 'onRouteMessage'],
             MessageBus::PRIORITY_ROUTE
-        ));
+        );
     }
 
     public function route(string $eventName): EventRouter

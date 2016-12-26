@@ -13,9 +13,7 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Plugin\Router;
 
 use PHPUnit\Framework\TestCase;
-use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\Common\Event\DefaultActionEvent;
-use Prooph\Common\Event\ListenerHandler;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
@@ -34,23 +32,16 @@ class AsyncSwitchMessageRouterTest extends TestCase
      */
     public function it_sets_message_producer_as_message_handler_on_dispatch_initialize(): void
     {
-        $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
-        $listenerHandler = $this->prophesize(ListenerHandler::class);
-
         $messageProducer = $this->prophesize(MessageProducer::class);
 
+        $commandBus = new CommandBus();
+
         $router = new AsyncSwitchMessageRouter(new SingleHandlerRouter(), $messageProducer->reveal());
+        $router->attachToMessageBus($commandBus);
 
-        $actionEventEmitter
-            ->attachListener(
-                MessageBus::EVENT_DISPATCH,
-                [$router, 'onRouteMessage'],
-                MessageBus::PRIORITY_ROUTE
-            )
-            ->willReturn($listenerHandler->reveal())
-            ->shouldBeCalled();
+        $message = new AsyncCommand(['foo' => 'bar']);
 
-        $router->attach($actionEventEmitter->reveal());
+        $commandBus->dispatch($message);
     }
 
     /**
