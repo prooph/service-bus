@@ -50,7 +50,7 @@ $router->route('Prooph\ServiceBus\Example\Command\EchoText')
     });
 
 //Expand command bus with the router plugin
-$commandBus->utilize($router);
+$router->attachToMessageBus($commandBus);
 
 //We create a new Command
 $echoText = new EchoText('It works');

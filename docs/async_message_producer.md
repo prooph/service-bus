@@ -47,7 +47,7 @@ $commandBus = new \Prooph\ServiceBus\CommandBus();
 
 $messageProducerForwarder = new \Prooph\ServiceBus\Plugin\MessageProducerPlugin($zmqProducer);
 
-$commandBus->utilize($messageProducerForwarder);
+$messageProducerForwarder->attachToMessageBus($commandBus);
 
 $echoText = new ExampleCommand('It works');
 $commandBus->dispatch($echoText);
