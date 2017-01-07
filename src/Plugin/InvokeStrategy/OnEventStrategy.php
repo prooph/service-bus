@@ -44,7 +44,5 @@ class OnEventStrategy extends AbstractPlugin
             },
             MessageBus::PRIORITY_INVOKE_HANDLER
         );
-
-
     }
 }
