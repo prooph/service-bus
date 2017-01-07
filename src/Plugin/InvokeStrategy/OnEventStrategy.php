@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
+use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
