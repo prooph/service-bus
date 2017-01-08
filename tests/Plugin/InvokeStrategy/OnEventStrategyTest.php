@@ -13,9 +13,12 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use PHPUnit\Framework\TestCase;
+use Prooph\Common\Event\DefaultListenerHandler;
+use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\OnEventStrategy;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\MessageHandler;
+use Prophecy\Argument;
 
 class OnEventStrategyTest extends TestCase
 {
@@ -33,5 +36,24 @@ class OnEventStrategyTest extends TestCase
         $onEventStrategy->invoke($onEventHandler, $customEvent);
 
         $this->assertSame($customEvent, $onEventHandler->getLastMessage());
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_be_attached_to_event_bus(): void
+    {
+        $onEventStrategy = new OnEventStrategy();
+
+        $prophet = new \Prophecy\Prophet();
+
+        $bus = $prophet->prophesize(EventBus::class);
+        $bus->attach(Argument::type('string'), Argument::type('callable'), Argument::type('integer'))->willReturn(new DefaultListenerHandler(function () {
+        }));
+
+        $onEventStrategy->attachToMessageBus($bus->reveal());
+
+        $bus->attach(Argument::type('string'), Argument::type('callable'), Argument::type('integer'))->shouldHaveBeenCalled();
+        $prophet->checkPredictions();
     }
 }
