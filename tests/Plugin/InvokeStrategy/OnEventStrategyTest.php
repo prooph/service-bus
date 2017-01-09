@@ -45,15 +45,17 @@ class OnEventStrategyTest extends TestCase
     {
         $onEventStrategy = new OnEventStrategy();
 
-        $prophet = new \Prophecy\Prophet();
+        $bus = $this->prophesize(EventBus::class);
+        $bus->attach(Argument::type('string'), Argument::type('callable'), Argument::type('integer'))
+            ->shouldBeCalled()
+            ->willReturn(
+                new DefaultListenerHandler(
+                    function () {
 
-        $bus = $prophet->prophesize(EventBus::class);
-        $bus->attach(Argument::type('string'), Argument::type('callable'), Argument::type('integer'))->willReturn(new DefaultListenerHandler(function () {
-        }));
+                    }
+                )
+            );
 
         $onEventStrategy->attachToMessageBus($bus->reveal());
-
-        $bus->attach(Argument::type('string'), Argument::type('callable'), Argument::type('integer'))->shouldHaveBeenCalled();
-        $prophet->checkPredictions();
     }
 }
