@@ -17,17 +17,8 @@ use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-class OnEventStrategy extends AbstractPlugin
+final class OnEventStrategy extends AbstractPlugin
 {
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     */
-    public function invoke($handler, $message): void
-    {
-        $handler->onEvent($message);
-    }
-
     public function attachToMessageBus(MessageBus $messageBus): void
     {
         $this->listenerHandlers[] = $messageBus->attach(
@@ -37,7 +28,7 @@ class OnEventStrategy extends AbstractPlugin
                 $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
 
                 foreach ($handlers as $handler) {
-                    $this->invoke($handler, $message);
+                    $handler->onEvent($message);
                 }
 
                 $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);

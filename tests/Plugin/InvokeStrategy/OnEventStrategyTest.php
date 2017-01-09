@@ -16,8 +16,9 @@ use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\DefaultListenerHandler;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\OnEventStrategy;
+use Prooph\ServiceBus\Plugin\Router\EventRouter;
 use ProophTest\ServiceBus\Mock\CustomMessage;
-use ProophTest\ServiceBus\Mock\MessageHandler;
+use ProophTest\ServiceBus\Mock\CustomMessageEventHandler;
 use Prophecy\Argument;
 
 class OnEventStrategyTest extends TestCase
@@ -27,15 +28,23 @@ class OnEventStrategyTest extends TestCase
      */
     public function it_invokes_the_on_event_method_of_the_handler(): void
     {
+        $eventBus = new EventBus();
+
         $onEventStrategy = new OnEventStrategy();
+        $onEventStrategy->attachToMessageBus($eventBus);
+
+        $onEventHandler = new CustomMessageEventHandler();
+
+        $eventRouter = new EventRouter([
+            'ProophTest\ServiceBus\Mock\CustomMessage' => $onEventHandler,
+        ]);
+        $eventRouter->attachToMessageBus($eventBus);
 
         $customEvent = new CustomMessage('I am an event');
-
-        $onEventHandler = new MessageHandler();
-
-        $onEventStrategy->invoke($onEventHandler, $customEvent);
+        $eventBus->dispatch($customEvent);
 
         $this->assertSame($customEvent, $onEventHandler->getLastMessage());
+        $this->assertSame(1, $onEventHandler->getInvokeCounter());
     }
 
     /**
@@ -51,7 +60,6 @@ class OnEventStrategyTest extends TestCase
             ->willReturn(
                 new DefaultListenerHandler(
                     function () {
-
                     }
                 )
             );
