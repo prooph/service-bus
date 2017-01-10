@@ -217,7 +217,7 @@ $commandBus->attach(string $event, callable $listener, int $priority = 1): Liste
 4) Plugins
 
 Instead of implementing `Prooph\Common\Event\ActionEventListenerAggregate` a plugin now has to
-implment `Prooph\ServiceBus\Plugin\Plugin`. The signature is:
+implement `Prooph\ServiceBus\Plugin\Plugin`. The signature is:
 
 ```php
 public function attachToMessageBus(MessageBus $messageBus): void;
