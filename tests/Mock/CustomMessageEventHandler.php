@@ -12,10 +12,25 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
-class ErrorProducer
+final class CustomMessageEventHandler
 {
-    public function throwException($message)
+    private $lastMessage;
+
+    private $invokeCounter = 0;
+
+    public function onEvent($message): void
     {
-        throw new \Exception('I can only throw exceptions');
+        $this->lastMessage = $message;
+        $this->invokeCounter++;
+    }
+
+    public function getLastMessage()
+    {
+        return $this->lastMessage;
+    }
+
+    public function getInvokeCounter(): int
+    {
+        return $this->invokeCounter;
     }
 }
