@@ -25,7 +25,7 @@ final class OnEventStrategy extends AbstractPlugin
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
-                $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
+                $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
                 foreach ($handlers as $handler) {
                     $handler->onEvent($message);
