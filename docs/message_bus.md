@@ -40,11 +40,9 @@ QueryBus except that the QueryBus returns a promise from `QueryBus::dispatch`.
 ```php
 class CommandBus extends MessageBus
 {
-    public function utilize(ActionEventListenerAggregate $plugin): void;
+    public function attach(string $eventName, callable $listener, int $priority = 0): ListenerHandler
 
-    public function deactivate(ActionEventListenerAggregate $plugin): void;
-
-    public function getActionEventEmitter(): ActionEventEmitter;
+    public function detach(ListenerHandler $handler): void
 
     /**
      * @param mixed $command
@@ -75,7 +73,7 @@ This action event is triggered right after `MessageBus::dispatch($message)` is i
 
 The following default priorities are integrated:
 
-```
+```php
 public const PRIORITY_INITIALIZE = 400000;
 public const PRIORITY_DETECT_MESSAGE_NAME = 300000;
 public const PRIORITY_ROUTE = 200000;
@@ -161,8 +159,8 @@ Two things are to consider, when upgrading from v5.
 1) The `handle-error` event is gone. If you want to have a plugin that tracks exception, you need to use the
 `finalize` event and check for existence of an exception. This can look like this:
 
-```
-$commandBus->getActionEventEmitter()->attachListener(
+```php
+$commandBus->attach(
     CommandBus::EVENT_FINALIZE,
     function (ActionEvent $actionEvent) {
         if ($ex = $actionEvent->getParam(CommandBus::EVENT_PARAM_EXCEPTION) {
@@ -175,8 +173,8 @@ $commandBus->getActionEventEmitter()->attachListener(
 2) There is a new `dispatch` event replacing all other previously existing events. It is controlled by
 event priorities instead. So if your previous plugin looked like this:
 
-```
-$commandBus->getActionEventEmitter()->attachListener(
+```php
+$commandBus->attach(
     CommandBus::EVENT_INVOKE_HANDLER,
     function (ActionEvent $actionEvent) {
         if ($ex = $actionEvent->getParam(CommandBus::EVENT_PARAM_EXCEPTION) {
@@ -188,8 +186,8 @@ $commandBus->getActionEventEmitter()->attachListener(
 
 it now has to look like this:
 
-```
-$commandBus->getActionEventEmitter()->attachListener(
+```php
+$commandBus->attach(
     CommandBus::EVENT_DISPATCH,
     function (ActionEvent $actionEvent) {
         if ($ex = $actionEvent->getParam(CommandBus::EVENT_PARAM_EXCEPTION) {
@@ -200,19 +198,46 @@ $commandBus->getActionEventEmitter()->attachListener(
 );
 ```
 
+3) Attaching to ActionEvents
+
+Instead of calling:
+
+```php
+$commandBus
+    ->getActionEventEmitter()
+    ->attachListener(string $event, callable $listener, int $priority = 1): ListenerHandler;
+```
+
+It's more simple now:
+
+```php
+$commandBus->attach(string $event, callable $listener, int $priority = 1): ListenerHandler;
+```
+
+4) Plugins
+
+Instead of implementing `Prooph\Common\Event\ActionEventListenerAggregate` a plugin now has to
+implement `Prooph\ServiceBus\Plugin\Plugin`. The signature is:
+
+```php
+public function attachToMessageBus(MessageBus $messageBus): void;
+    
+public function detachFromMessageBus(MessageBus $messageBus): void;
+``` 
+
 ### Further changes
 
 #### FinderInvokeStrategy
 
 Instead of having this:
 
-```
+```php
 $finder->findQueryOne(QueryOne $query, Deferred $deferred = null): void;
 ```
 
 you simply have this:
 
-```
+```php
 $finder->find(QueryOne $query, Deferred $deferred = null): void;
 ```
 
@@ -220,7 +245,7 @@ If you want to go back to the old behaviour, you can do the following things:
 
 a)
 
-```
+```php
 class MyFinder
 {
     public function find(Query $query, Deferred $deferred = null): void
