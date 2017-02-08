@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Plugin\InvokeStrategy;
 
 use PHPUnit\Framework\TestCase;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\CustomMessageCommandHandler;
@@ -25,15 +27,25 @@ class HandleCommandStrategyTest extends TestCase
      */
     public function it_invokes_the_handle_command_method_of_the_handler(): void
     {
+        $commandHandler = new MessageHandler();
+
+        $commandBus = new CommandBus();
+        $commandBus->attach(
+            CommandBus::EVENT_DISPATCH,
+            function (ActionEvent $event) use ($commandHandler): void {
+                $event->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, $commandHandler);
+            },
+            CommandBus::PRIORITY_ROUTE
+        );
+
         $handleCommandStrategy = new HandleCommandStrategy();
+        $handleCommandStrategy->attachToMessageBus($commandBus);
 
         $doSomething = new CustomMessage('I am a command');
 
-        $handleCommandHandler = new MessageHandler();
+        $commandBus->dispatch($doSomething);
 
-        $handleCommandStrategy->invoke($handleCommandHandler, $doSomething);
-
-        $this->assertSame($doSomething, $handleCommandHandler->getLastMessage());
+        $this->assertSame($doSomething, $commandHandler->getLastMessage());
     }
 
     /**
@@ -41,14 +53,24 @@ class HandleCommandStrategyTest extends TestCase
      */
     public function it_invokes_the_handle_command_method_of_the_handler_without_command_name(): void
     {
+        $commandHandler = new CustomMessageCommandHandler();
+
+        $commandBus = new CommandBus();
+        $commandBus->attach(
+            CommandBus::EVENT_DISPATCH,
+            function (ActionEvent $event) use ($commandHandler): void {
+                $event->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, $commandHandler);
+            },
+            CommandBus::PRIORITY_ROUTE
+        );
+
         $handleCommandStrategy = new HandleCommandStrategy();
+        $handleCommandStrategy->attachToMessageBus($commandBus);
 
         $doSomething = new CustomMessage('I am a command');
 
-        $handleCommandHandler = new CustomMessageCommandHandler();
+        $commandBus->dispatch($doSomething);
 
-        $handleCommandStrategy->invoke($handleCommandHandler, $doSomething);
-
-        $this->assertSame($doSomething, $handleCommandHandler->getLastMessage());
+        $this->assertSame($doSomething, $commandHandler->getLastMessage());
     }
 }
