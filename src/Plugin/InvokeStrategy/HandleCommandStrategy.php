@@ -12,14 +12,24 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
-class HandleCommandStrategy extends AbstractInvokeStrategy
+use Prooph\Common\Event\ActionEvent;
+use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
+
+class HandleCommandStrategy extends AbstractPlugin
 {
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     */
-    public function invoke($handler, $message): void
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $handler->handle($message);
+        $this->listenerHandlers[] = $messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+                $handler = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
+
+                $handler->handle($message);
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
     }
 }
