@@ -322,7 +322,7 @@ class QueryBusTest extends TestCase
     /**
      * @test
      */
-    public function it_could_unset_exception_with_finalize_event(): void
+    public function it_could_reset_exception_before_promise_becomes_rejected(): void
     {
         $exceptionParamWasSet = false;
 
@@ -344,7 +344,7 @@ class QueryBusTest extends TestCase
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
                 }
             },
-            1
+            MessageBus::PRIORITY_PROMISE_REJECT + 1
         );
 
         $promise = $this->queryBus->dispatch('throw an exception!');

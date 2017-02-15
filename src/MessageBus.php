@@ -37,6 +37,7 @@ abstract class MessageBus
     public const PRIORITY_DETECT_MESSAGE_NAME = 300000;
     public const PRIORITY_ROUTE = 200000;
     public const PRIORITY_LOCATE_HANDLER = 100000;
+    public const PRIORITY_PROMISE_REJECT = 1000;
     public const PRIORITY_INVOKE_HANDLER = 0;
 
     /**
