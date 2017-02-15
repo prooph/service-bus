@@ -34,7 +34,7 @@
         "phpspec/prophecy": "dev-patch-1 as 1.6.2",
         "prooph/php-cs-fixer-config": "^0.1.1",
         "satooshi/php-coveralls": "^1.0",
-        "container-interop/container-interop" : "^1.1",
+        "psr/container": "^1.0",
         "sandrokeil/interop-config": "^2.0.1",
         "prooph/bookdown-template": "^0.2.3",
         "malukenho/docheader": "^0.1.4"
@@ -44,7 +44,7 @@
         "prooph/event-store-bus-bridge": "Let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zend ServiceManager to lazy load your handlers and listeners",
         "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard",
-        "container-interop/container-interop": "For usage of provided factories",
+        "psr/container": "^1.0 for usage of provided factories",
         "sandrokeil/interop-config": "For usage of provided factories"
     },
     "conflict": {

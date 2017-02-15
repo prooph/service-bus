@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Container\Plugin\Guard;
 
-use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\ServiceBus\Container\Plugin\Guard\RouteGuardFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
+use Psr\Container\ContainerInterface;
 
 class RouteGuardFactoryTest extends TestCase
 {

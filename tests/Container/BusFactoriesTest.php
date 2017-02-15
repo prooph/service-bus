@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Factory;
 
-use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Messaging\Message;
@@ -32,6 +31,7 @@ use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\NoopMessageProducer;
 use Prophecy\Argument;
+use Psr\Container\ContainerInterface;
 
 class BusFactoriesTest extends TestCase
 {
@@ -476,7 +476,7 @@ class BusFactoriesTest extends TestCase
     public function it_throws_invalid_argument_exception_without_container_on_static_call(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The first argument must be of type Interop\Container\ContainerInterface');
+        $this->expectExceptionMessage('The first argument must be of type Psr\Container\ContainerInterface');
 
         CommandBusFactory::other_config_id();
     }
