@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Plugin\Router;
 
-use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
+use Psr\Container\ContainerInterface;
 
 final class ServiceLocatorEventRouter extends AbstractPlugin implements MessageBusRouterPlugin
 {

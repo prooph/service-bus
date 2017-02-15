@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Plugin\Router;
 
-use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\ServiceLocatorEventRouter;
 use ProophTest\ServiceBus\Mock\MessageHandler;
+use Psr\Container\ContainerInterface;
 
 class ServiceLocatorEventRouterTest extends TestCase
 {

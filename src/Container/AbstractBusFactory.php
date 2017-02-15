@@ -15,7 +15,6 @@ namespace Prooph\ServiceBus\Container;
 use Interop\Config\ConfigurationTrait;
 use Interop\Config\ProvidesDefaultOptions;
 use Interop\Config\RequiresConfigId;
-use Interop\Container\ContainerInterface;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Exception\RuntimeException;
@@ -23,6 +22,7 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
+use Psr\Container\ContainerInterface;
 
 abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOptions
 {

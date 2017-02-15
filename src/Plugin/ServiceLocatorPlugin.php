@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Plugin;
 
-use Interop\Container\ContainerInterface;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
+use Psr\Container\ContainerInterface;
 
 /**
  * This plugin can be used to lazy load message handlers.
- * Initialize it with a Interop\Container\ContainerInterface
+ * Initialize it with a Psr\Container\ContainerInterface
  * and route your messages to the service id only.
  */
 class ServiceLocatorPlugin extends AbstractPlugin

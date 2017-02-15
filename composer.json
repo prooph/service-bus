@@ -44,7 +44,7 @@
         "prooph/event-store-bus-bridge": "Let the EventBus dispatch persisted DomainEvents",
         "zendframework/zend-servicemanager": "Use Zend ServiceManager to lazy load your handlers and listeners",
         "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard",
-        "container-interop/container-interop": "For usage of provided factories",
+        "psr/container": "^1.0 for usage of provided factories",
         "sandrokeil/interop-config": "For usage of provided factories"
     },
     "conflict": {

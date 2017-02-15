@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Container\Plugin\Guard;
 
-use Interop\Container\ContainerInterface;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
+use Psr\Container\ContainerInterface;
 
 class FinalizeGuardFactory
 {
