@@ -17,7 +17,6 @@ use Prooph\Common\Event\ActionEventEmitter;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 use React\Promise\Deferred;
-use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 
 /**

@@ -14,6 +14,9 @@ namespace Prooph\ServiceBus\Exception;
 
 class CommandDispatchException extends MessageDispatchException
 {
+    /**
+     * @var array
+     */
     private $pendingCommands = [];
 
     public static function wrap(\Throwable $dispatchException, array $pendingCommands): CommandDispatchException

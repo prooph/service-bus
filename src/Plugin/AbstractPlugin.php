@@ -16,6 +16,9 @@ use Prooph\ServiceBus\MessageBus;
 
 abstract class AbstractPlugin implements Plugin
 {
+    /**
+     * @var array
+     */
     protected $listenerHandlers = [];
 
     public function detachFromMessageBus(MessageBus $messageBus): void
