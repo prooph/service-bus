@@ -467,7 +467,7 @@ class BusFactoriesTest extends TestCase
         $container->get('config')->willReturn([]);
 
         $factory = [$busFactoryClass, 'other_config_id'];
-        self::assertInstanceOf($busClass, $factory($container->reveal()));
+        $this->assertInstanceOf($busClass, $factory($container->reveal()));
     }
 
     /**
