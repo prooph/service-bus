@@ -59,11 +59,6 @@
             "ProophTest\\ServiceBus\\": "tests/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-develop": "6.0-dev"
-        }
-    },
     "scripts": {
         "check": [
             "@cs",
