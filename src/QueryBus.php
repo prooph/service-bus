@@ -72,7 +72,7 @@ class QueryBus extends MessageBus
                     $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, null);
                 }
             },
-            1000
+            self::PRIORITY_PROMISE_REJECT
         );
     }
 

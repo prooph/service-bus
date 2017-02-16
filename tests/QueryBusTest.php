@@ -318,4 +318,38 @@ class QueryBusTest extends TestCase
 
         $promise->done();
     }
+
+    /**
+     * @test
+     */
+    public function it_could_reset_exception_before_promise_becomes_rejected(): void
+    {
+        $exceptionParamWasSet = false;
+
+        $this->queryBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) {
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, function (): void {
+                    throw new \Exception('Unset me!');
+                });
+            },
+            MessageBus::PRIORITY_INITIALIZE
+        );
+
+        $this->queryBus->attach(
+            MessageBus::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent) use (&$exceptionParamWasSet): void {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_EXCEPTION) instanceof \Throwable) {
+                    $exceptionParamWasSet = true;
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
+                }
+            },
+            MessageBus::PRIORITY_PROMISE_REJECT + 1
+        );
+
+        $promise = $this->queryBus->dispatch('throw an exception!');
+        $promise->done();
+
+        $this->assertTrue($exceptionParamWasSet);
+    }
 }
