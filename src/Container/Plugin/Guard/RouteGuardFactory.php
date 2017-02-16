@@ -1,36 +1,30 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Container\Plugin\Guard;
 
-use Interop\Container\ContainerInterface;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
+use Psr\Container\ContainerInterface;
 
-/**
- * Class RouteGuardFactory
- * @package Prooph\ServiceBus\Container\Plugin\Guard
- */
-final class RouteGuardFactory
+class RouteGuardFactory
 {
     /**
      * @var bool
      */
     private $exposeEventMessageName;
 
-    /**
-     * RouteGuardFactory constructor.
-     * @param bool $exposeEventMessageName
-     */
-    public function __construct($exposeEventMessageName = false)
+    public function __construct(bool $exposeEventMessageName = false)
     {
         $this->exposeEventMessageName = $exposeEventMessageName;
     }
@@ -50,14 +44,11 @@ final class RouteGuardFactory
      * ];
      * </code>
      *
-     * @param string $name
-     * @param array $arguments
-     * @return \Prooph\ServiceBus\Plugin\Guard\RouteGuard
      * @throws InvalidArgumentException
      */
-    public static function __callStatic($name, array $arguments)
+    public static function __callStatic($name, array $arguments): RouteGuard
     {
-        if (!isset($arguments[0]) || !$arguments[0] instanceof ContainerInterface) {
+        if (! isset($arguments[0]) || ! $arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
                 sprintf('The first argument must be of type %s', ContainerInterface::class)
             );
@@ -66,11 +57,7 @@ final class RouteGuardFactory
         return (new static(true))->__invoke($arguments[0]);
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return RouteGuard
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): RouteGuard
     {
         $authorizationService = $container->get(AuthorizationService::class);
 

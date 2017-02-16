@@ -1,33 +1,28 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\Router;
 
 use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
 use Prooph\Common\Event\DetachAggregateHandlers;
 use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 use Prooph\ServiceBus\QueryBus;
 
-/**
- * Class AsyncSwitchMessageRouter
- *
- * @package Prooph\ServiceBus\Router
- * @author Guy Radford <guyr@crazylime.co.uk>
- */
-class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventListenerAggregate
+class AsyncSwitchMessageRouter extends AbstractPlugin implements MessageBusRouterPlugin
 {
     use DetachAggregateHandlers;
 
@@ -41,33 +36,24 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
      */
     protected $asyncMessageProducer;
 
-
-    /**
-     * @param MessageBusRouterPlugin $router
-     * @param MessageProducer $asyncMessageProducer
-     */
     public function __construct(MessageBusRouterPlugin $router, MessageProducer $asyncMessageProducer)
     {
         $this->router = $router;
         $this->asyncMessageProducer = $asyncMessageProducer;
     }
 
-    /**
-     * @param ActionEventEmitter $events
-     * @return void
-     */
-    public function attach(ActionEventEmitter $events)
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $this->trackHandler($events->attachListener(MessageBus::EVENT_ROUTE, [$this, "onRouteMessage"]));
+        $this->listenerHandlers[] = $messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            [$this, 'onRouteMessage'],
+            MessageBus::PRIORITY_ROUTE
+        );
     }
 
-
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    public function onRouteMessage(ActionEvent $actionEvent)
+    public function onRouteMessage(ActionEvent $actionEvent): void
     {
-        $messageName = (string)$actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
+        $messageName = (string) $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
         if (empty($messageName)) {
             return;
@@ -76,7 +62,7 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
         $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
         //if the message is marked with AsyncMessage, but had not yet been sent via async then sent to async producer
-        if ($message instanceof AsyncMessage && !(isset($message->metadata()['handled-async']) && $message->metadata()['handled-async'] === true)) {
+        if ($message instanceof AsyncMessage && ! (isset($message->metadata()['handled-async']) && $message->metadata()['handled-async'] === true)) {
             //apply meta data, this is need to we can identify that the message has already been send via the async producer
             $message = $message->withAddedMetadata('handled-async', true);
 
@@ -90,13 +76,10 @@ class AsyncSwitchMessageRouter implements MessageBusRouterPlugin, ActionEventLis
                 $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$this->asyncMessageProducer]);
             }
 
-
-
-
             return;
         }
 
         // pass ActionEvent to decorated router
-        return $this->router->onRouteMessage($actionEvent);
+        $this->router->onRouteMessage($actionEvent);
     }
 }

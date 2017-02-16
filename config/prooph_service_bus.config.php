@@ -1,12 +1,14 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 /**
  * This file contains default configuration for prooph/service-bus
@@ -40,7 +42,7 @@ return [
                     //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
                     //using the producer AND decorating the actual configured router
                     //'async_switch' => 'container_id_of_async_message_producer',
-                ]
+                ],
             ],
             //This section will be used by Prooph\ServiceBus\Container\EventBusFactory
             'event_bus' => [
@@ -61,7 +63,7 @@ return [
                     //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
                     //using the producer AND decorating the actual configured router
                     //'async_switch' => 'container_id_of_async_message_producer',
-                ]
+                ],
             ],
             //This section will be used by Prooph\ServiceBus\Container\QueryBusFactory
             'query_bus' => [
@@ -82,7 +84,7 @@ return [
                     //the factory will pull the producer from the container and set up an AsyncSwitchMessageRouter
                     //using the producer AND decorating the actual configured router
                     //'async_switch' => 'container_id_of_async_message_producer',
-                ]
+                ],
             ],
         ], //EO service_bus
     ], //EO prooph

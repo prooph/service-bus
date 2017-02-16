@@ -10,8 +10,13 @@
 
 declare(strict_types=1);
 
-namespace Prooph\ServiceBus\Exception;
+namespace Prooph\ServiceBus\Plugin;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ServiceBusException
+use Prooph\ServiceBus\MessageBus;
+
+interface Plugin
 {
+    public function attachToMessageBus(MessageBus $messageBus): void;
+
+    public function detachFromMessageBus(MessageBus $messageBus): void;
 }

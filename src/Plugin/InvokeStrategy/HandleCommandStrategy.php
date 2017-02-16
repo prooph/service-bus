@@ -1,59 +1,35 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
-use Prooph\Common\Messaging\HasMessageName;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-/**
- * Class HandleCommandStrategy
- *
- * @package Prooph\ServiceBus\InvokeStrategy
- * @author Alexander Miertsch <contact@prooph.de>
- */
-class HandleCommandStrategy extends AbstractInvokeStrategy
+class HandleCommandStrategy extends AbstractPlugin
 {
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     * @return bool
-     */
-    public function canInvoke($handler, $message)
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $handleMethod = 'handle' . $this->determineCommandName($message);
+        $this->listenerHandlers[] = $messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+                $handler = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
 
-        return method_exists($handler, $handleMethod) || method_exists($handler, 'handle');
-    }
-
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     */
-    public function invoke($handler, $message)
-    {
-        $handleMethod = 'handle' . $this->determineCommandName($message);
-
-        if (method_exists($handler, $handleMethod)) {
-            $handler->{$handleMethod}($message);
-        } else {
-            $handler->handle($message);
-        }
-    }
-
-    /**
-     * @param mixed $message
-     * @return string
-     */
-    protected function determineCommandName($message)
-    {
-        $eventName = ($message instanceof HasMessageName)? $message->messageName() : (is_object($message)? get_class($message) : gettype($message));
-        return implode('', array_slice(explode('\\', $eventName), -1));
+                $handler->handle($message);
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
     }
 }

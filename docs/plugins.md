@@ -23,7 +23,7 @@ $router->route('My.Command.SendPaymentEmail')->to(array($mailer, "handleSendPaym
 $router->route('My.Command.PayOrder')->to("payment_processor");
 
 //Add the router to a CommandBus
-$commandBus->utilize($router);
+$router->attachToMessageBus($commandBus);
 ```
 
 ### Prooph\ServiceBus\Plugin\Router\QueryRouter
@@ -48,7 +48,7 @@ $router->route('My.Event.ArticleWasBought')->to(new OrderCartUpdater())->andTo(n
 $router->route('My.Event.OrderWasPayed')->to("delivery_processor");
 
 //Add the router to an EventBus
-$eventBus->utilize($router);
+$router->attachToMessageBus($eventBus);
 ```
 
 ### Prooph\ServiceBus\Plugin\Router\RegexRouter
@@ -66,7 +66,7 @@ $router = new RegexRouter(array('/^My\.Command\.Buy.*/' => new BuyArticleHandler
 $router->route('/^My\.Command\.Register.*/')->to(new RegisterUserHandler());
 
 //Add the router to a CommandBus
-$commandBus->utilize($router);
+$router->attachToMessageBus($commandBus);
 
 //When routing an event you can provide a list of listeners for each pattern ...
 $router = new RegexRouter(array('/^My\.Event\.Article.*/' => array(new OrderCartUpdater(), new InventoryUpdater())));
@@ -80,7 +80,7 @@ $router->route('/^My\.Event\.Article.*/')->to(new OrderCartUpdater());
 $router->route('/^My\.Event\.Article.*/')->to(new InventoryUpdater());
 
 //Add the router to an EventBus
-$eventBus->utilize($router);
+$router->attachToMessageBus($eventBus);
 ```
 
 ### Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter
@@ -103,18 +103,16 @@ $router = new AsyncSwitchMessageRouter(
     $myRouter,
     $asyncMessageProducer
 );
-        
+
 //Add the router to a CommandBus
-$commandBus->utilize($router);
+$router->attachToMessageBus($commandBus);
 ```
 
 ## Invoke Strategies
 
 An invoke strategy knows how a message handler can be invoked. You can register many invoke strategies at once depending on
 how many different handler types you are using. The best way is to choose a convention and go with it. PSB ships with the invoke strategies
-listed below. If your favorite convention is not there you can easily write your own invoke strategy
-by extending `Prooph\ServiceBus\Plugin\InvokeStrategy\AbstractInvokeStrategy` and implementing the
-`canInvoke` and `invoke` methods.
+listed below.
 
 ### Available Strategies
 
@@ -162,14 +160,14 @@ $serviceManager = new ServiceManager(new Config([
 ]));
 
 //The ZF2\ServiceManager implements Interop\Container\ContainerInterface since v2.6
-$commandBus->utilize(new ServiceLocatorPlugin($serviceManager));
+(new ServiceLocatorPlugin($serviceManager))->attachToMessageBus($commandBus);
 
 $router = new CommandRouter();
 
 //In the routing map we use the alias of the command handler
 $router->route('My.Command.DoSomething')->to('My.Command.DoSomethingHandler');
 
-$commandBus->utilize($router);
+$router->attachToMessageBus($commandBus);
 ```
 
 With this technique you can configure the routing for all your messages without the need to create all message handlers
@@ -192,7 +190,7 @@ $messageProducerPlugin = new \Prooph\ServiceBus\Plugin\MessageProducerPlugin($ze
 
 $eventBus = new \Prooph\ServiceBus\EventBus();
 
-$eventBus->utilize($messageProducerPlugin);
+$messageProducerPlugin->attachToMessageBus($eventBus);
 
 //Each event will now be routed to the async message producer
 $eventBus->dispatch($domainEvent);

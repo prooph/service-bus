@@ -1,43 +1,48 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\MessageBus;
 
-/**
- * Class CustomMessageBus
- * @package ProophTest\ServiceBus\Mock
- */
-final class CustomMessageBus extends MessageBus
+class CustomMessageBus extends MessageBus
 {
     private $actionEvent;
 
     /**
      * @param mixed $message
      */
-    public function dispatch($message)
+    public function dispatch($message): void
     {
-        $this->initialize($message, $this->getActionEvent());
+        $actionEventEmitter = $this->events;
+
+        $actionEvent = $this->getActionEvent();
+        $actionEvent->setName(self::EVENT_DISPATCH);
+        $actionEvent->setTarget($this);
+        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
+
+        $actionEventEmitter->dispatch($actionEvent);
     }
 
-    public function setActionEvent(ActionEvent $event)
+    public function setActionEvent(ActionEvent $event): void
     {
         $this->actionEvent = $event;
     }
 
-    public function getActionEvent()
+    public function getActionEvent(): ActionEvent
     {
         if (null === $this->actionEvent) {
-            $this->actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
+            $this->actionEvent = $this->events->getNewActionEvent();
         }
 
         return $this->actionEvent;

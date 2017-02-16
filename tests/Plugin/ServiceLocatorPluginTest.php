@@ -1,50 +1,52 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin;
 
-use Interop\Container\ContainerInterface;
-use Prooph\Common\Event\DefaultActionEvent;
+use PHPUnit\Framework\TestCase;
+use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\CommandBus;
-use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use ProophTest\ServiceBus\Mock\MessageHandler;
-use ProophTest\ServiceBus\TestCase;
+use Psr\Container\ContainerInterface;
 
-/**
- * Class ServiceLocatorPluginTest
- * @package ProophTest\ServiceBus\Plugin
- */
-final class ServiceLocatorPluginTest extends TestCase
+class ServiceLocatorPluginTest extends TestCase
 {
     /**
      * @test
      */
-    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event()
+    public function it_locates_a_service_using_the_message_handler_param_of_the_action_event(): void
     {
         $handler = new MessageHandler();
 
         $container = $this->prophesize(ContainerInterface::class);
 
-        $container->has("custom-handler")->willReturn(true);
+        $container->has('custom-handler')->willReturn(true)->shouldBeCalled();
 
-        $container->get("custom-handler")->willReturn($handler);
+        $container->get('custom-handler')->willReturn($handler)->shouldBeCalled();
+
+        $commandBus = new CommandBus();
 
         $locatorPlugin = new ServiceLocatorPlugin($container->reveal());
+        $locatorPlugin->attachToMessageBus($commandBus);
 
-        $actionEvent = new DefaultActionEvent(MessageBus::EVENT_LOCATE_HANDLER, new CommandBus(), [
-            MessageBus::EVENT_PARAM_MESSAGE_HANDLER => "custom-handler"
-        ]);
+        $commandBus->attach(
+            CommandBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $actionEvent->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, 'custom-handler');
+            },
+            CommandBus::PRIORITY_INITIALIZE
+        );
 
-        $locatorPlugin->onLocateMessageHandler($actionEvent);
-
-        $this->assertSame($handler, $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER));
+        $commandBus->dispatch('foo');
     }
 }

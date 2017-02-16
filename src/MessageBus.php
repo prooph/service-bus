@@ -1,188 +1,115 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ActionEventListenerAggregate;
+use Prooph\Common\Event\ListenerHandler;
 use Prooph\Common\Event\ProophActionEventEmitter;
 use Prooph\Common\Messaging\HasMessageName;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
-use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
- * Class MessageBus
- *
  * Base class for a message bus implementation
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 abstract class MessageBus
 {
-    const EVENT_INITIALIZE          = "initialize";
-    const EVENT_DETECT_MESSAGE_NAME = "detect-message-name";
-    const EVENT_ROUTE               = "route";
-    const EVENT_LOCATE_HANDLER      = "locate-handler";
-    const EVENT_INVOKE_HANDLER      = "invoke-handler";
-    const EVENT_HANDLE_ERROR        = "handle-error";
-    const EVENT_FINALIZE            = "finalize";
+    public const EVENT_DISPATCH = 'dispatch';
+    public const EVENT_FINALIZE = 'finalize';
 
-    const EVENT_PARAM_MESSAGE         = 'message';
-    const EVENT_PARAM_MESSAGE_NAME    = 'message-name';
-    const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
-    const EVENT_PARAM_EXCEPTION       = 'exception';
-    const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
+    public const EVENT_PARAM_MESSAGE = 'message';
+    public const EVENT_PARAM_MESSAGE_NAME = 'message-name';
+    public const EVENT_PARAM_MESSAGE_HANDLER = 'message-handler';
+    public const EVENT_PARAM_EXCEPTION = 'exception';
+    public const EVENT_PARAM_MESSAGE_HANDLED = 'message-handled';
+
+    public const PRIORITY_INITIALIZE = 400000;
+    public const PRIORITY_DETECT_MESSAGE_NAME = 300000;
+    public const PRIORITY_ROUTE = 200000;
+    public const PRIORITY_LOCATE_HANDLER = 100000;
+    public const PRIORITY_PROMISE_REJECT = 1000;
+    public const PRIORITY_INVOKE_HANDLER = 0;
 
     /**
      * @var ActionEventEmitter
      */
     protected $events;
 
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
+    {
+        if (null === $actionEventEmitter) {
+            $actionEventEmitter = new ProophActionEventEmitter([
+                self::EVENT_DISPATCH,
+                self::EVENT_FINALIZE,
+            ]);
+        }
+
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
+                $message = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+
+                if ($message instanceof HasMessageName) {
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());
+                }
+            },
+            self::PRIORITY_INITIALIZE
+        );
+
+        $actionEventEmitter->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
+                    $actionEvent->setParam(
+                        self::EVENT_PARAM_MESSAGE_NAME,
+                        $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
+                    );
+                }
+            },
+            self::PRIORITY_DETECT_MESSAGE_NAME
+        );
+
+        $actionEventEmitter->attachListener(
+            self::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent): void {
+                if ($exception = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
+                    throw MessageDispatchException::failed($exception);
+                }
+            }
+        );
+
+        $this->events = $actionEventEmitter;
+    }
+
     /**
      * @param mixed $message
-     * @return mixed|void depends on the bus type
+     *
+     * @return \React\Promise\Promise|void depends on the bus type
      */
     abstract public function dispatch($message);
 
-    /**
-     * @param ActionEventListenerAggregate $plugin
-     */
-    public function utilize(ActionEventListenerAggregate $plugin)
-    {
-        $plugin->attach($this->getActionEventEmitter());
-    }
-
-    /**
-     * @param ActionEventListenerAggregate $plugin
-     */
-    public function deactivate(ActionEventListenerAggregate $plugin)
-    {
-        $plugin->detach($this->getActionEventEmitter());
-    }
-
-    /**
-     * @param mixed $message
-     * @param ActionEvent $actionEvent
-     */
-    protected function initialize($message, ActionEvent $actionEvent)
-    {
-        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE, $message);
-        $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, false);
-
-        if ($message instanceof HasMessageName) {
-            $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $message->messageName());
-        }
-
-        $actionEvent->setName(self::EVENT_INITIALIZE);
-
-        $this->trigger($actionEvent);
-
-        if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-            $actionEvent->setName(self::EVENT_DETECT_MESSAGE_NAME);
-
-            $this->trigger($actionEvent);
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_NAME) === null) {
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_NAME, $this->getMessageName($message));
-            }
-        }
-    }
-
-    /**
-     * @param ActionEvent $actionEvent
-     * @param \Exception $ex
-     * @throws Exception\MessageDispatchException
-     */
-    protected function handleException(ActionEvent $actionEvent, \Exception $ex)
-    {
-        $failedPhase = $actionEvent->getName();
-
-        $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $ex);
-        $this->triggerError($actionEvent);
-        $this->triggerFinalize($actionEvent);
-
-        //Check if a listener has removed the exception to indicate that it was able to handle it
-        if ($ex = $actionEvent->getParam(self::EVENT_PARAM_EXCEPTION)) {
-            $actionEvent->setName($failedPhase);
-            throw MessageDispatchException::failed($actionEvent, $ex);
-        }
-    }
-
-    /**
-     * @param ActionEvent $actionEvent
-     * @throws Exception\RuntimeException
-     */
-    protected function trigger(ActionEvent $actionEvent)
-    {
-        $this->getActionEventEmitter()->dispatch($actionEvent);
-
-        if ($actionEvent->propagationIsStopped()) {
-            throw new RuntimeException("Dispatch has stopped unexpectedly.");
-        }
-    }
-
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    protected function triggerError(ActionEvent $actionEvent)
-    {
-        $actionEvent->setName(self::EVENT_HANDLE_ERROR);
-
-        $this->getActionEventEmitter()->dispatch($actionEvent);
-    }
-
-    /**
-     * @param ActionEvent $actionEvent
-     */
-    protected function triggerFinalize(ActionEvent $actionEvent)
+    protected function triggerFinalize(ActionEvent $actionEvent): void
     {
         $actionEvent->setName(self::EVENT_FINALIZE);
 
-        $this->getActionEventEmitter()->dispatch($actionEvent);
-    }
-
-
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
-    {
-        $this->events = $actionEventDispatcher;
-    }
-
-    /**
-     * Retrieve the action event dispatcher
-     *
-     * Lazy-loads a dispatcher if none is registered.
-     *
-     * @return ActionEventEmitter
-     */
-    public function getActionEventEmitter()
-    {
-        if (null === $this->events) {
-            $this->setActionEventEmitter(new ProophActionEventEmitter());
-        }
-
-        return $this->events;
+        $this->events->dispatch($actionEvent);
     }
 
     /**
      * @param mixed $message
-     * @return string
      */
-    protected function getMessageName($message)
+    protected function getMessageName($message): string
     {
         if (is_object($message)) {
             return get_class($message);
@@ -193,5 +120,15 @@ abstract class MessageBus
         }
 
         return gettype($message);
+    }
+
+    public function attach(string $eventName, callable $listener, int $priority = 0): ListenerHandler
+    {
+        return $this->events->attachListener($eventName, $listener, $priority);
+    }
+
+    public function detach(ListenerHandler $handler): void
+    {
+        $this->events->detachListener($handler);
     }
 }

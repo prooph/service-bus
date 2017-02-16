@@ -1,55 +1,39 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
 
-use Prooph\Common\Messaging\HasMessageName;
+use Prooph\Common\Event\ActionEvent;
+use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\MessageBus;
+use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-/**
- * Class OnEventStrategy
- *
- * @package Prooph\ServiceBus\InvokeStrategy
- * @author Alexander Miertsch <contact@prooph.de>
- */
-class OnEventStrategy extends AbstractInvokeStrategy
+final class OnEventStrategy extends AbstractPlugin
 {
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     * @return bool
-     */
-    public function canInvoke($handler, $message)
+    public function attachToMessageBus(MessageBus $messageBus): void
     {
-        $handleMethod = 'on' . $this->determineEventName($message);
+        $this->listenerHandlers[] = $messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+                $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
-        return method_exists($handler, $handleMethod);
-    }
+                foreach ($handlers as $handler) {
+                    $handler->onEvent($message);
+                }
 
-    /**
-     * @param mixed $handler
-     * @param mixed $message
-     */
-    public function invoke($handler, $message)
-    {
-        $handleMethod = 'on' . $this->determineEventName($message);
-
-        $handler->{$handleMethod}($message);
-    }
-
-    /**
-     * @param mixed $event
-     * @return string
-     */
-    protected function determineEventName($event)
-    {
-        $eventName = ($event instanceof HasMessageName)? $event->messageName() : (is_object($event)? get_class($event) : gettype($event));
-        return implode('', array_slice(explode('\\', $eventName), -1));
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
     }
 }

@@ -1,12 +1,14 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Prooph\ServiceBus;
 
@@ -14,69 +16,56 @@ use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
 
 /**
- * Class EventBus
- *
  * An event bus is capable of dispatching a message to multiple listeners.
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class EventBus extends MessageBus
 {
-    const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
+    public const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
 
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
-            $eventListener = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-            if (is_callable($eventListener)) {
-                $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                $eventListener($event);
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
-            }
-        });
+        parent::__construct($actionEventEmitter);
 
-        $this->events = $actionEventDispatcher;
+        $this->events->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                $handled = false;
+
+                foreach (array_filter($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []), 'is_callable') as $eventListener) {
+                    $eventListener($event);
+                    $handled = true;
+                }
+
+                if ($handled) {
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+            },
+            self::PRIORITY_INVOKE_HANDLER
+        );
     }
 
     /**
      * @param mixed $event
-     * @return void
      */
-    public function dispatch($event)
+    public function dispatch($event): void
     {
-        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
+        $actionEventEmitter = $this->events;
 
-        $actionEvent->setTarget($this);
+        $actionEvent = $actionEventEmitter->getNewActionEvent(
+            self::EVENT_DISPATCH,
+            $this,
+            [
+                self::EVENT_PARAM_MESSAGE => $event,
+            ]
+        );
 
         try {
-            $this->initialize($event, $actionEvent);
-
-            $actionEvent->setName(self::EVENT_ROUTE);
-
-            $this->trigger($actionEvent);
-
-            foreach ($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListener) {
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLER, $eventListener);
-
-                if (is_string($eventListener) && ! is_callable($eventListener)) {
-                    $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-                    $this->trigger($actionEvent);
-                }
-
-                $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-                $this->trigger($actionEvent);
-            }
-
+            $actionEventEmitter->dispatch($actionEvent);
+        } catch (\Throwable $exception) {
+            $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
+        } finally {
             $this->triggerFinalize($actionEvent);
-        } catch (\Exception $ex) {
-            $this->handleException($actionEvent, $ex);
         }
     }
 }

@@ -1,6 +1,6 @@
 # PSB - ProophServiceBus
 
-PHP 5.5+ lightweight message bus supporting CQRS and Micro Services
+PHP 7.1+ lightweight message bus supporting CQRS and Micro Services
 
 [![Build Status](https://travis-ci.org/prooph/service-bus.png?branch=master)](https://travis-ci.org/prooph/service-bus)
 [![Coverage Status](https://coveralls.io/repos/prooph/service-bus/badge.svg?branch=master&service=github)](https://coveralls.io/github/prooph/service-bus?branch=master)
@@ -45,12 +45,12 @@ $router = new CommandRouter();
 
 //Register a callback as CommandHandler for the EchoText command
 $router->route('Prooph\ServiceBus\Example\Command\EchoText')
-    ->to(function (EchoText $aCommand) {
+    ->to(function (EchoText $aCommand): void {
         echo $aCommand->getText();
     });
 
 //Expand command bus with the router plugin
-$commandBus->utilize($router);
+$router->attachToMessageBus($commandBus);
 
 //We create a new Command
 $echoText = new EchoText('It works');

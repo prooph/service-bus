@@ -1,12 +1,14 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Prooph\ServiceBus;
 
@@ -16,13 +18,8 @@ use Prooph\ServiceBus\Exception\CommandDispatchException;
 use Prooph\ServiceBus\Exception\RuntimeException;
 
 /**
- * Class CommandBus
- *
  * A command bus is capable of dispatching a message to a command handler.
  * Only one handler per message is allowed!
- *
- * @package Prooph\ServiceBus
- * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class CommandBus extends MessageBus
 {
@@ -36,91 +33,79 @@ class CommandBus extends MessageBus
      */
     private $isDispatching = false;
 
-    /**
-     * Inject an ActionEventDispatcher instance
-     *
-     * @param  ActionEventEmitter $actionEventDispatcher
-     * @return void
-     */
-    public function setActionEventEmitter(ActionEventEmitter $actionEventDispatcher)
+    public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
-        $actionEventDispatcher->attachListener(self::EVENT_INVOKE_HANDLER, function (ActionEvent $actionEvent) {
-            $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
+        parent::__construct($actionEventEmitter);
 
-            if (is_callable($commandHandler)) {
-                $command        = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
-                $commandHandler($command);
-                $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
-            }
-        });
+        $this->events->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-        $this->events = $actionEventDispatcher;
+                if (is_callable($commandHandler)) {
+                    $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
+                    $commandHandler($command);
+                    $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+            },
+            self::PRIORITY_INVOKE_HANDLER
+        );
+
+        $this->events->attachListener(
+            self::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
+                    throw new RuntimeException(sprintf(
+                        'CommandBus was not able to identify a CommandHandler for command %s',
+                        $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
+                    ));
+                }
+            },
+            self::PRIORITY_LOCATE_HANDLER
+        );
     }
 
     /**
      * @param mixed $command
+     *
      * @throws CommandDispatchException
-     * @return void
      */
-    public function dispatch($command)
+    public function dispatch($command): void
     {
         $this->commandQueue[] = $command;
 
         if (! $this->isDispatching) {
             $this->isDispatching = true;
 
+            $actionEventEmitter = $this->events;
+
             try {
                 while ($command = array_shift($this->commandQueue)) {
-                    $this->processCommand($command);
+                    $actionEvent = $actionEventEmitter->getNewActionEvent(
+                        self::EVENT_DISPATCH,
+                        $this,
+                        [
+                            self::EVENT_PARAM_MESSAGE => $command,
+                        ]
+                    );
+
+                    try {
+                        $actionEventEmitter->dispatch($actionEvent);
+
+                        if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
+                            throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
+                        }
+                    } catch (\Throwable $exception) {
+                        $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
+                    } finally {
+                        $this->triggerFinalize($actionEvent);
+                    }
                 }
                 $this->isDispatching = false;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->isDispatching = false;
                 throw CommandDispatchException::wrap($e, $this->commandQueue);
             }
-        }
-    }
-
-    protected function processCommand($command)
-    {
-        $actionEvent = $this->getActionEventEmitter()->getNewActionEvent();
-
-        $actionEvent->setTarget($this);
-
-        try {
-            $this->initialize($command, $actionEvent);
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                $actionEvent->setName(self::EVENT_ROUTE);
-
-                $this->trigger($actionEvent);
-            }
-
-            if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                throw new RuntimeException(sprintf(
-                    "CommandBus was not able to identify a CommandHandler for command %s",
-                    $this->getMessageName($command)
-                ));
-            }
-
-            $handler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
-
-            if (is_string($handler) && ! is_callable($handler)) {
-                $actionEvent->setName(self::EVENT_LOCATE_HANDLER);
-
-                $this->trigger($actionEvent);
-            }
-
-            $actionEvent->setName(self::EVENT_INVOKE_HANDLER);
-            $this->trigger($actionEvent);
-
-            if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
-                throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
-            }
-
-            $this->triggerFinalize($actionEvent);
-        } catch (\Exception $ex) {
-            $this->handleException($actionEvent, $ex);
         }
     }
 }

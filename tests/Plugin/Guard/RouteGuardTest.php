@@ -1,102 +1,114 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2016 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2016 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace ProophTest\ServiceBus\Plugin\Guard;
 
-use PHPUnit_Framework_TestCase as TestCase;
-use Prooph\Common\Event\ActionEvent;
-use Prooph\Common\Event\ActionEventEmitter;
-use Prooph\Common\Event\ListenerHandler;
+use PHPUnit\Framework\TestCase;
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Exception\MessageDispatchException;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
+use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
 
-/**
- * Class RouteGuardTest
- * @package ProophTest\ServiceBus\Plugin\Guard
- */
-final class RouteGuardTest extends TestCase
+class RouteGuardTest extends TestCase
 {
     /**
-     * @test
+     * @var CommandBus
      */
-    public function it_attaches_to_action_event_emitter()
+    protected $messageBus;
+
+    protected function setUp(): void
     {
-        $listenerHandler = $this->prophesize(ListenerHandler::class);
-
-        $authorizationService = $this->prophesize(AuthorizationService::class);
-
-        $routeGuard = new RouteGuard($authorizationService->reveal());
-
-        $actionEventEmitter = $this->prophesize(ActionEventEmitter::class);
-        $actionEventEmitter
-            ->attachListener(MessageBus::EVENT_ROUTE, [$routeGuard, 'onRoute'], 1000)
-            ->willReturn($listenerHandler->reveal());
-
-        $routeGuard->attach($actionEventEmitter->reveal());
+        $this->messageBus = new CommandBus();
     }
 
     /**
      * @test
      */
-    public function it_allows_when_authorization_service_grants_access()
+    public function it_allows_when_authorization_service_grants_access(): void
     {
-        $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event', new \stdClass())->willReturn(true);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('CommandBus was not able to identify a CommandHandler for command stdClass');
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+        $authorizationService->isGranted('stdClass', new \stdClass())->willReturn(true);
 
         $routeGuard = new RouteGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $this->assertNull($routeGuard->onRoute($actionEvent->reveal()));
+        try {
+            $this->messageBus->dispatch(new \stdClass());
+        } catch (MessageDispatchException $e) {
+            throw $e->getPrevious();
+        }
     }
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
-     * @expectedExceptionMessage You are not authorized to access this resource
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access(): void
     {
-        $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You are not authorized to access this resource');
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+        $authorizationService->isGranted('stdClass', new \stdClass())->willReturn(false);
 
         $routeGuard = new RouteGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard->onRoute($actionEvent->reveal());
+        $this->messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function () {
+                throw new \RuntimeException('foo');
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
+
+        try {
+            $this->messageBus->dispatch(new \stdClass());
+        } catch (MessageDispatchException $e) {
+            throw $e->getPrevious();
+        }
     }
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Plugin\Guard\UnauthorizedException
-     * @expectedExceptionMessage You are not authorized to access the resource "test_event"
      */
-    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_and_exposed_message_name()
+    public function it_stops_propagation_and_throws_unauthorizedexception_when_authorization_service_denies_access_and_exposed_message_name(): void
     {
-        $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event', new \stdClass())->willReturn(false);
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('You are not authorized to access the resource "stdClass"');
 
-        $actionEvent = $this->prophesize(ActionEvent::class);
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME)->willReturn('test_event');
-        $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE)->willReturn(new \stdClass());
-        $actionEvent->stopPropagation(true)->willReturn(null);
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+        $authorizationService->isGranted('stdClass', new \stdClass())->willReturn(false);
 
         $routeGuard = new RouteGuard($authorizationService->reveal(), true);
+        $routeGuard->attachToMessageBus($this->messageBus);
 
-        $routeGuard->onRoute($actionEvent->reveal());
+        $this->messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function () {
+                throw new \RuntimeException('foo');
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
+
+        try {
+            $this->messageBus->dispatch(new \stdClass());
+        } catch (MessageDispatchException $e) {
+            throw $e->getPrevious();
+        }
     }
 }
