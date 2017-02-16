@@ -150,6 +150,10 @@ A `finalize` plugin can unset the exception by calling `ActionEvent::setParam("e
 When all plugins are informed about the error and no one has unset the exception the message bus
 throws a Prooph\ServiceBus\Exception\MessageDispatchException to inform the outside world about the error.
 
+Note: The query bus has another additional priority `PRIORITY_PROMISE_REJECT` which is used to reject the promise
+in case of an exception during the finalize event. If you want to remove the exception with a listener, you need
+to add your listener with a higher priority than that.
+
 ## Migration from v5
 
 ### Events & Priorities
