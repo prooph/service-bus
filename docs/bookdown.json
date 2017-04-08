@@ -1,5 +1,5 @@
 {
-  "title": "PHP Enterprise Service Bus Implementation supporting CQRS and DDD",
+  "title": "Service Bus",
   "content": [
     {"intro": "../README.md"},
     {"overview": "service_bus_system.md"},
