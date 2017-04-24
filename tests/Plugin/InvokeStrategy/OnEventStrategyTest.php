@@ -17,6 +17,7 @@ use Prooph\Common\Event\DefaultListenerHandler;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\OnEventStrategy;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
+use ProophTest\ServiceBus\Mock\CustomInvokableMessageHandler;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\CustomMessageEventHandler;
 use Prophecy\Argument;
@@ -65,5 +66,29 @@ class OnEventStrategyTest extends TestCase
             );
 
         $onEventStrategy->attachToMessageBus($bus->reveal());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_not_handle_already_processed_messages(): void
+    {
+        $eventBus = new EventBus();
+
+        $onEventStrategy = new OnEventStrategy();
+        $onEventStrategy->attachToMessageBus($eventBus);
+
+        $callableHandler = new CustomInvokableMessageHandler();
+
+        $eventRouter = new EventRouter([
+            'ProophTest\ServiceBus\Mock\CustomMessage' => $callableHandler,
+        ]);
+        $eventRouter->attachToMessageBus($eventBus);
+
+        $customEvent = new CustomMessage('I am an event');
+        $eventBus->dispatch($customEvent);
+
+        $this->assertSame($customEvent, $callableHandler->getLastMessage());
+        $this->assertSame(1, $callableHandler->getInvokeCounter());
     }
 }
