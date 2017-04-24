@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
+use ProophTest\ServiceBus\Mock\CustomInvokableMessageHandler;
 use ProophTest\ServiceBus\Mock\Finder;
 
 class FinderInvokeStrategyTest extends TestCase
@@ -42,5 +43,37 @@ class FinderInvokeStrategyTest extends TestCase
 
         $queryBus->dispatch('foo');
         $this->assertEquals('foo', $finder->getLastMessage());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_not_handle_already_processed_messages(): void
+    {
+        $queryBus = new QueryBus();
+
+        $finderInvokeStrategy = new FinderInvokeStrategy();
+        $finderInvokeStrategy->attachToMessageBus($queryBus);
+
+        $finder = new CustomInvokableMessageHandler();
+
+        $queryBus->attach(
+            QueryBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent) use ($finder): void {
+                $actionEvent->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, $finder);
+            },
+            QueryBus::PRIORITY_INITIALIZE
+        );
+
+        $promise = $queryBus->dispatch('foo');
+
+        $promise->otherwise(function ($ex) use (&$exception): void {
+            $exception = $ex;
+        });
+
+        $this->assertNull($exception);
+
+        $this->assertEquals('foo', $finder->getLastMessage());
+        $this->assertSame(1, $finder->getInvokeCounter());
     }
 }

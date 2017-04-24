@@ -24,6 +24,10 @@ class FinderInvokeStrategy extends AbstractPlugin
         $this->listenerHandlers[] = $messageBus->attach(
             QueryBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
+                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, false)) {
+                    return;
+                }
+
                 $finder = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER);
 
                 $query = $actionEvent->getParam(QueryBus::EVENT_PARAM_MESSAGE);

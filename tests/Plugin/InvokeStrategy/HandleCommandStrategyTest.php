@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Plugin\InvokeStrategy\HandleCommandStrategy;
+use ProophTest\ServiceBus\Mock\CustomInvokableMessageHandler;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\CustomMessageCommandHandler;
 use ProophTest\ServiceBus\Mock\MessageHandler;
@@ -46,6 +47,7 @@ class HandleCommandStrategyTest extends TestCase
         $commandBus->dispatch($doSomething);
 
         $this->assertSame($doSomething, $commandHandler->getLastMessage());
+        $this->assertSame(1, $commandHandler->getInvokeCounter());
     }
 
     /**
@@ -54,6 +56,32 @@ class HandleCommandStrategyTest extends TestCase
     public function it_invokes_the_handle_command_method_of_the_handler_without_command_name(): void
     {
         $commandHandler = new CustomMessageCommandHandler();
+
+        $commandBus = new CommandBus();
+        $commandBus->attach(
+            CommandBus::EVENT_DISPATCH,
+            function (ActionEvent $event) use ($commandHandler): void {
+                $event->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, $commandHandler);
+            },
+            CommandBus::PRIORITY_ROUTE
+        );
+
+        $handleCommandStrategy = new HandleCommandStrategy();
+        $handleCommandStrategy->attachToMessageBus($commandBus);
+
+        $doSomething = new CustomMessage('I am a command');
+
+        $commandBus->dispatch($doSomething);
+
+        $this->assertSame($doSomething, $commandHandler->getLastMessage());
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_not_handle_already_processed_messages(): void
+    {
+        $commandHandler = new CustomInvokableMessageHandler();
 
         $commandBus = new CommandBus();
         $commandBus->attach(
