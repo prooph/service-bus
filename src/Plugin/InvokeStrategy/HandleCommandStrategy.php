@@ -29,9 +29,10 @@ class HandleCommandStrategy extends AbstractPlugin
 
                 $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
                 $handler = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
-
-                $handler->handle($message);
-                $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+                if ($handler instanceof UseHandleCommandStrategy) {
+                    $handler->handle($message);
+                    $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
             },
             MessageBus::PRIORITY_INVOKE_HANDLER
         );

@@ -29,7 +29,9 @@ final class OnEventStrategy extends AbstractPlugin
                 }
 
                 $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
-                $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
+                $handlers = array_filter($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []), function($handler) {
+                    return ($handler instanceof UseOnEventStrategy);
+                });
 
                 foreach ($handlers as $handler) {
                     $handler->onEvent($message);

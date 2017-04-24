@@ -34,7 +34,7 @@ class FinderInvokeStrategy extends AbstractPlugin
 
                 $deferred = $actionEvent->getParam(QueryBus::EVENT_PARAM_DEFERRED);
 
-                if (is_object($finder)) {
+                if (is_object($finder) && $finder instanceof UseFinderInvokeStrategy) {
                     $finder->find($query, $deferred);
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);
                 }
