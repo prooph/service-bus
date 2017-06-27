@@ -1,5 +1,24 @@
 # Change Log
 
+## [v6.0.2](https://github.com/prooph/service-bus/tree/v6.0.2)
+
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.1...v6.0.2)
+
+**Fixed bugs:**
+
+- fix service locator plugin [\#161](https://github.com/prooph/service-bus/pull/161) ([prolic](https://github.com/prolic))
+
+**Closed issues:**
+
+- Servicelocator deletes listeners [\#160](https://github.com/prooph/service-bus/issues/160)
+
+## [v6.0.1](https://github.com/prooph/service-bus/tree/v6.0.1) (2017-04-24)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.0...v6.0.1)
+
+**Fixed bugs:**
+
+- Do not process already process messages with a custom strategy [\#159](https://github.com/prooph/service-bus/pull/159) ([lunetics](https://github.com/lunetics))
+
 ## [v6.0.0](https://github.com/prooph/service-bus/tree/v6.0.0) (2017-02-16)
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.0-beta3...v6.0.0)
 
