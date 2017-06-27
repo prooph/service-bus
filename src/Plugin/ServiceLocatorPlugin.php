@@ -46,15 +46,16 @@ class ServiceLocatorPlugin extends AbstractPlugin
                 }
 
                 // for event bus only
-                $eventListeners = [];
-                foreach ($actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []) as $eventListenerAlias) {
+                $currentEventListeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
+                $newEventListeners = [];
+
+                foreach ($currentEventListeners as $eventListenerAlias) {
                     if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
-                        $eventListeners[] = $this->serviceLocator->get($eventListenerAlias);
+                        $newEventListeners[] = $this->serviceLocator->get($eventListenerAlias);
                     }
                 }
-                if (! empty($eventListeners)) {
-                    $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $eventListeners);
-                }
+
+                $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, array_merge($currentEventListeners, $newEventListeners));
             },
             MessageBus::PRIORITY_LOCATE_HANDLER
         );

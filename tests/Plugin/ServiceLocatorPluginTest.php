@@ -15,8 +15,11 @@ namespace ProophTest\ServiceBus\Plugin;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Plugin\Router\EventRouter;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use ProophTest\ServiceBus\Mock\MessageHandler;
+use ProophTest\ServiceBus\Mock\SomethingDone;
 use Psr\Container\ContainerInterface;
 
 class ServiceLocatorPluginTest extends TestCase
@@ -48,5 +51,42 @@ class ServiceLocatorPluginTest extends TestCase
         );
 
         $commandBus->dispatch('foo');
+    }
+
+    /**
+     * @test
+     * @group by
+     */
+    public function it_doesnt_override_previous_event_handlers(): void
+    {
+        $handledOne = false;
+
+        $handlerOne = function (SomethingDone $event) use (&$handledOne): void {
+            $handledOne = true;
+        };
+
+        $handlerTwo = new MessageHandler();
+
+        $container = $this->prophesize(ContainerInterface::class);
+
+        $container->has('custom-handler')->willReturn(true)->shouldBeCalled();
+
+        $container->get('custom-handler')->willReturn($handlerTwo)->shouldBeCalled();
+
+        $eventBus = new EventBus();
+
+        $router = new EventRouter();
+        $router->route(SomethingDone::class)->to($handlerOne)->andTo('custom-handler');
+
+        $router->attachToMessageBus($eventBus);
+
+        $locatorPlugin = new ServiceLocatorPlugin($container->reveal());
+
+        $locatorPlugin->attachToMessageBus($eventBus);
+
+        $eventBus->dispatch(new SomethingDone(['foo' => 'bar']));
+
+        $this->assertTrue($handledOne);
+        $this->assertSame(1, $handlerTwo->getInvokeCounter());
     }
 }
