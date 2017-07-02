@@ -1,7 +1,14 @@
 # Change Log
 
-## [v6.0.2](https://github.com/prooph/service-bus/tree/v6.0.2)
+## [v6.0.3](https://github.com/prooph/service-bus/tree/v6.0.3)
 
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.2...v6.0.3)
+
+**Merged pull requests:**
+
+- avoid array\_merge due to appending [\#164](https://github.com/prooph/service-bus/pull/164) ([basz](https://github.com/basz))
+
+## [v6.0.2](https://github.com/prooph/service-bus/tree/v6.0.2) (2017-06-27)
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.1...v6.0.2)
 
 **Fixed bugs:**
