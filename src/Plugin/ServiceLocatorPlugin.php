@@ -49,13 +49,14 @@ class ServiceLocatorPlugin extends AbstractPlugin
                 $currentEventListeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
                 $newEventListeners = [];
 
-                foreach ($currentEventListeners as $eventListenerAlias) {
+                foreach ($currentEventListeners as $key => $eventListenerAlias) {
                     if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
-                        $newEventListeners[] = $this->serviceLocator->get($eventListenerAlias);
+                        $newEventListeners[$key] = $this->serviceLocator->get($eventListenerAlias);
                     }
                 }
 
-                $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, array_merge($currentEventListeners, $newEventListeners));
+                // merge array whilst preserving numeric keys and giving priority to newEventListeners
+                $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $newEventListeners + $currentEventListeners);
             },
             MessageBus::PRIORITY_LOCATE_HANDLER
         );
