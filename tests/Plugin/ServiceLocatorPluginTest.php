@@ -89,4 +89,42 @@ class ServiceLocatorPluginTest extends TestCase
         $this->assertTrue($handledOne);
         $this->assertSame(1, $handlerTwo->getInvokeCounter());
     }
+
+    /**
+     * @test
+     */
+    public function make_sure_servicenames_do_not_end_up_as_listener_instance(): void
+    {
+        $handlerOne = new MessageHandler();
+        $handlerTwo = new MessageHandler();
+        $eventBus = new EventBus();
+        $router = new EventRouter();
+
+        $container = $this->prophesize(ContainerInterface::class);
+
+        $container->has('handler-one')->willReturn(true)->shouldBeCalled();
+        $container->get('handler-one')->willReturn($handlerOne)->shouldBeCalled();
+
+        $container->has('handler-two')->willReturn(true)->shouldBeCalled();
+        $container->get('handler-two')->willReturn($handlerTwo)->shouldBeCalled();
+
+        $router->route(SomethingDone::class)->to('handler-one');
+        $router->route(SomethingDone::class)->to('handler-two');
+
+        $router->attachToMessageBus($eventBus);
+
+        $locatorPlugin = new ServiceLocatorPlugin($container->reveal());
+
+        $locatorPlugin->attachToMessageBus($eventBus);
+
+        $eventBus->attach(EventBus::EVENT_DISPATCH,
+            function (ActionEvent $actionEvent): void {
+                $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS);
+
+                $this->assertCount(2, $listeners);
+                $this->assertContainsOnly(MessageHandler::class, $listeners);
+            }, PHP_INT_MIN);
+
+        $eventBus->dispatch(new SomethingDone(['foo' => 'bar']));
+    }
 }
