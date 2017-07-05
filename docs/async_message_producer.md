@@ -18,7 +18,7 @@ other queue.
 and simple to set up ZeroMQ
 - [HumusAmqpProducer](https://github.com/prooph/humus-amqp-producer): Async handling using amqp protocol
 (f.e. with RabbitMQ). This also includes JSON-RPC features.
-- [EnqueueProducer](https://github.com/formapro/psb-enqueue-producer): Async handling using Enqueue MQ library.
+- [EnqueueProducer](https://github.com/prooph/psb-enqueue-producer): Async handling using Enqueue MQ library.
 
 ## Usage
 
