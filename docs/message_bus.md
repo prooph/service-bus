@@ -174,6 +174,13 @@ $commandBus->attach(
 );
 ```
 
+The event bus has a listener exception collection mode. This means that you can activate the mode and the event bus will
+invoke all event listeners, catch possible exceptions and push them to a exception collection. If an exception is caught
+the event bus will throw an `Prooph\ServiceBus\Exception\EventListenerException` at the end which contains all caught listener exceptions.
+
+To enable the collection mode you can attach the plugin `Prooph\ServiceBus\Plugin\ListenerExceptionCollectionMode`.
+Detach the plugin to deactivate the mode again.
+
 2) There is a new `dispatch` event replacing all other previously existing events. It is controlled by
 event priorities instead. So if your previous plugin looked like this:
 

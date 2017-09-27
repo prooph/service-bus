@@ -15,8 +15,10 @@ namespace ProophTest\ServiceBus;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\EventListenerException;
 use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\MessageBus;
+use ProophTest\ServiceBus\Mock\AutoErrorProducer;
 use ProophTest\ServiceBus\Mock\CustomMessage;
 use ProophTest\ServiceBus\Mock\ErrorProducer;
 use ProophTest\ServiceBus\Mock\MessageHandler;
@@ -216,6 +218,90 @@ class EventBusTest extends TestCase
 
         $this->eventBus->dispatch($customMessage);
 
+        $this->assertSame($customMessage, $handler->getLastMessage());
+        $this->assertEquals(2, $handler->getInvokeCounter());
+    }
+
+    /**
+     * @test
+     */
+    public function it_stops_by_default_if_listener_throws_an_exception(): void
+    {
+        $handler = new MessageHandler();
+        $errorProducer = new AutoErrorProducer();
+        $finalizeIsTriggered = false;
+
+        $this->eventBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) use ($handler, $errorProducer): void {
+                if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                    $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler, $errorProducer,  $handler]);
+                }
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
+
+        $this->eventBus->attach(
+            MessageBus::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent) use (&$finalizeIsTriggered) {
+                $finalizeIsTriggered = true;
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
+            },
+            1000
+        );
+
+        $customMessage = new CustomMessage('foo');
+
+        $this->eventBus->dispatch($customMessage);
+
+        $this->assertTrue($finalizeIsTriggered);
+        $this->assertSame($customMessage, $handler->getLastMessage());
+        $this->assertEquals(1, $handler->getInvokeCounter());
+    }
+
+    /**
+     * @test
+     */
+    public function it_collects_exceptions_if_mode_is_enabled(): void
+    {
+        $handler = new MessageHandler();
+        $errorProducer = new AutoErrorProducer();
+        $finalizeIsTriggered = false;
+        $listenerExceptions = [];
+
+        $this->eventBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function (ActionEvent $e) use ($handler, $errorProducer): void {
+                if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
+                    $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler, $errorProducer,  $handler]);
+                }
+            },
+            MessageBus::PRIORITY_ROUTE
+        );
+
+        $this->eventBus->attach(
+            MessageBus::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent) use (&$finalizeIsTriggered, &$listenerExceptions) {
+                $finalizeIsTriggered = true;
+                if ($exception = $actionEvent->getParam(MessageBus::EVENT_PARAM_EXCEPTION)) {
+                    if ($exception instanceof EventListenerException) {
+                        $listenerExceptions = $exception->listenerExceptions();
+                    }
+                }
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, null);
+            },
+            1000
+        );
+
+        $this->eventBus->enableCollectExceptions();
+
+        $customMessage = new CustomMessage('foo');
+
+        $this->eventBus->dispatch($customMessage);
+
+        $this->assertTrue($finalizeIsTriggered);
+        $this->assertCount(1, $listenerExceptions);
+        $this->assertInstanceOf(\Throwable::class, $listenerExceptions[0]);
         $this->assertSame($customMessage, $handler->getLastMessage());
         $this->assertEquals(2, $handler->getInvokeCounter());
     }
