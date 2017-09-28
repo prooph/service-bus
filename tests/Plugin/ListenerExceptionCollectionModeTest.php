@@ -21,7 +21,7 @@ class ListenerExceptionCollectionModeTest extends TestCase
 {
     private $eventBus;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventBus = new class() extends EventBus {
             public function isCollectExceptionsModeOn(): bool
@@ -36,7 +36,7 @@ class ListenerExceptionCollectionModeTest extends TestCase
     /**
      * @test
      */
-    public function it_enables_collect_exceptions_mode_if_attached_and_disables_mode_if_detached_again()
+    public function it_enables_collect_exceptions_mode_if_attached_and_disables_mode_if_detached_again(): void
     {
         $plugin = new ListenerExceptionCollectionMode();
         $plugin->attachToMessageBus($this->eventBus);
@@ -49,7 +49,7 @@ class ListenerExceptionCollectionModeTest extends TestCase
      * @test
      * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
-    public function it_throws_exception_if_message_bus_is_not_an_event_bus()
+    public function it_throws_exception_if_message_bus_is_not_an_event_bus(): void
     {
         $plugin = new ListenerExceptionCollectionMode();
         $plugin->attachToMessageBus(new CommandBus());
