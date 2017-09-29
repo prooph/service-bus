@@ -285,8 +285,7 @@ class BusFactoriesTest extends TestCase
         AbstractBusFactory $busFactory
     ): void {
         $container = $this->prophesize(ContainerInterface::class);
-        $message = $this->prophesize(Message::class);
-        $message->willImplement(AsyncMessage::class);
+        $message = $this->prophesize(AsyncMessage::class);
         $messageFactory = $this->prophesize(MessageFactory::class);
         $messageProducer = new NoopMessageProducer();
         $container->get('noop_message_producer')->willReturn($messageProducer);

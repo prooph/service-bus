@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Async;
 
+use Prooph\Common\Messaging\Message;
+
 /**
  * This interface is used to mark messages that are to be send via an async MessageProducer
  */
-interface AsyncMessage
+interface AsyncMessage extends Message
 {
 }
