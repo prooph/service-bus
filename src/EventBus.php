@@ -14,6 +14,7 @@ namespace Prooph\ServiceBus;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\Common\Event\ActionEventEmitter;
+use Prooph\ServiceBus\Exception\EventListenerException;
 
 /**
  * An event bus is capable of dispatching a message to multiple listeners.
@@ -21,6 +22,13 @@ use Prooph\Common\Event\ActionEventEmitter;
 class EventBus extends MessageBus
 {
     public const EVENT_PARAM_EVENT_LISTENERS = 'event-listeners';
+
+    /**
+     * Flag that enables or disables behaviour to collect listener exceptions
+     *
+     * @var bool
+     */
+    protected $collectExceptions = false;
 
     public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
@@ -31,14 +39,27 @@ class EventBus extends MessageBus
             function (ActionEvent $actionEvent): void {
                 $event = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                 $handled = false;
+                $caughtExceptions = [];
 
                 foreach (array_filter($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []), 'is_callable') as $eventListener) {
-                    $eventListener($event);
-                    $handled = true;
+                    try {
+                        $eventListener($event);
+                        $handled = true;
+                    } catch (\Throwable $exception) {
+                        if ($this->collectExceptions) {
+                            $caughtExceptions[] = $exception;
+                        } else {
+                            throw $exception;
+                        }
+                    }
                 }
 
                 if ($handled) {
                     $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
+                }
+
+                if (count($caughtExceptions)) {
+                    throw EventListenerException::collected(...$caughtExceptions);
                 }
             },
             self::PRIORITY_INVOKE_HANDLER
@@ -67,5 +88,15 @@ class EventBus extends MessageBus
         } finally {
             $this->triggerFinalize($actionEvent);
         }
+    }
+
+    public function enableCollectExceptions(): void
+    {
+        $this->collectExceptions = true;
+    }
+
+    public function disableCollectExceptions(): void
+    {
+        $this->collectExceptions = false;
     }
 }
