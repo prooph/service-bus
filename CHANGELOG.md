@@ -1,10 +1,26 @@
 # Change Log
 
-## [v6.0.3](https://github.com/prooph/service-bus/tree/v6.0.3)
+## [v6.1.0](https://github.com/prooph/service-bus/tree/v6.1.0)
 
-[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.2...v6.0.3)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.3...v6.1.0)
+
+**Implemented enhancements:**
+
+- AsyncMessage now implements the Message interface [\#167](https://github.com/prooph/service-bus/pull/167) ([iainmckay](https://github.com/iainmckay))
+- Optionally collect listener exceptions [\#166](https://github.com/prooph/service-bus/pull/166) ([codeliner](https://github.com/codeliner))
+
+**Closed issues:**
+
+- Exception in event listener stops propagating event to other registered listeners  [\#165](https://github.com/prooph/service-bus/issues/165)
 
 **Merged pull requests:**
+
+- \[doc\] Add enqueue producer to the list of available solutions. [\#162](https://github.com/prooph/service-bus/pull/162) ([makasim](https://github.com/makasim))
+
+## [v6.0.3](https://github.com/prooph/service-bus/tree/v6.0.3) (2017-07-02)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.2...v6.0.3)
+
+**Fixed bugs:**
 
 - avoid array\_merge due to appending [\#164](https://github.com/prooph/service-bus/pull/164) ([basz](https://github.com/basz))
 
