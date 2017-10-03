@@ -1,6 +1,6 @@
 # PSB Plugins
 
-Plugins expand a message bus with additional functionality.
+Plugins extend a message bus with additional functionality.
 PSB ships with a list of useful plugins that can be mixed and matched with your own implementations:
 
 ## Routers
@@ -16,7 +16,7 @@ $router = new CommandRouter(array('My.Command.BuyArticle' => new BuyArticleHandl
 //... or using the programmatic api
 $router->route('My.Command.RegisterUser')->to(new RegisterUserHandler());
 
-//Command handlers can be objects like shown above or everything that is callable (callbacks, callable arrays, etc.) ...
+//Command handlers can be objects like shown above or anything that is callable (callbacks, callable arrays, etc.) ...
 $router->route('My.Command.SendPaymentEmail')->to(array($mailer, "handleSendPaymentEmail"));
 
 //... or a string that can be used by a DIC to locate the command handler instance
@@ -30,7 +30,7 @@ $router->attachToMessageBus($commandBus);
 
 Use the QueryRouter to provide a list of queries (identified by their names) and their responsible finders.
 
-The QueryRouter share the same base class with the CommandRouter so its interface looks exactly the same.
+The QueryRouter shares the same base class with the CommandRouter so its interface looks exactly the same.
 
 
 ### Prooph\ServiceBus\Plugin\Router\EventRouter
@@ -53,7 +53,7 @@ $router->attachToMessageBus($eventBus);
 
 ### Prooph\ServiceBus\Plugin\Router\RegexRouter
 
-The RegexRouter works with regular expressions to determine handlers for messages. It can be used together with a CommandBus, a QueryBus and
+The RegexRouter works with regular expressions to determine handlers for messages. It can be used together with a CommandBus, a QueryBus or
 an EventBus but for the latter it behaves a bit different. When routing a command or query the RegexRouter makes sure that only one pattern matches.
 If more than one pattern matches it throws a `Prooph\ServiceBus\Exception\RuntimeException`. On the other hand when routing
 an event each time a pattern matches the corresponding listener is added to the list of listeners.
@@ -85,7 +85,7 @@ $router->attachToMessageBus($eventBus);
 
 ### Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter
 
-The `AsyncSwitchMessageRouter` Router allows you to easily set up a single router to handle both your async and sync messages.
+The `AsyncSwitchMessageRouter` allows you to easily set up a single router to handle both your async and sync messages.
 
 To send messages via the Async Producer mark them with the `Prooph\ServiceBus\Async\AsyncMessage` interface.
 
@@ -133,15 +133,15 @@ does not allow access to the command, an `Prooph\ServiceBus\Plugin\Guard\Unautho
 The route guard passes the message to the `Prooph\ServiceBus\Plugin\Guard\AuthorizationService` as context, so you can make assertions on it.
 
 If you want to protect the query bus, you can also use the route guard, but in some situations, you want to deny access based on the result
-of the query. In this case it's important to make checks on the query results. The finalize guard hands over a query result as context to the AuthorizationService.
+of the query. In this case it's important to make checks on the query results. The finalize guard passes a query result as context to the AuthorizationService.
 
 We also provide [service-bus-zfc-rbac-bridge](https://github.com/prooph/service-bus-zfc-rbac-bridge), a bridge to marry these guards with ZFC-Rbac.
-You can also find some configuration examples in this repository. 
+You can also find some configuration examples in this repository.
 
-*Note: If you use both, the route guard and the finalize guard on the query bus and you want to make assertions on
+*Note: If you use both the route guard and the finalize guard on the query bus and you want to make assertions on
 the query result, you need to make sure that the AuthorizationService can distinguish between the contexts (route guard passes query, finalize guard passes result)*
 
-If you want to use the RouteGuard or FinalizeGuard with exposed message name in the exception message, configure your container accordingly, see: config/services.php:21.
+If you want to use the RouteGuard or FinalizeGuard with an exposed message name in the exception message, configure your container accordingly, see: config/services.php:21.
 
 ## ServiceLocatorPlugin
 

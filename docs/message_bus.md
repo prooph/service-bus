@@ -5,19 +5,19 @@
 When you want to apply [CQRS](http://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf) the command bus is
 your best friend.
 It takes an incoming command message and routes it to the responsible command handler.
-The advantage of using a CommandBus instead of calling command handlers directly is, that you can change your model
-without effecting the application logic. You can work with command versions to dispatch a newer version to a new
+The advantage of using a CommandBus instead of calling command handlers directly is that you can change your model
+without affecting the application logic. You can work with command versions to dispatch a newer version to a new
 command handler and older versions to old command handlers. Your model can support different versions at the same
 time which makes migrations a lot easier.
-Second feature of a command bus could be automatic transaction handling.
-And for distributed systems it is also interesting to push the command on a queue and handle it asynchronous.
+Another feature of a command bus could be automatic transaction handling.
+And for distributed systems it is also interesting to push the command on a queue and handle it asynchronously.
 
 ## Eventing
 
 When dividing your domain logic into modules or bounded contexts you need a way to inform the outside world
 about events that happened in your model.
 An EventBus is responsible for dispatching event messages to all interested listeners. If a listener is part of
-another system the event may need to be send to a remote interface.
+another system the event may need to be sent to a remote interface.
 
 ## Querying
 
@@ -25,7 +25,7 @@ A system based on [Microservices](http://martinfowler.com/articles/microservices
 communication channel.
 The two most used protocols are HTTP request-response with resource API's and lightweight messaging. The latter
 is supported by prooph/service-bus out-of-the-box but HTTP API's can be integrated too.
-The QueryBus is responsible for routing a query message to a so called finder. The query indicates that the
+The QueryBus is responsible for routing a query message to a so-called finder. The query indicates that the
 producer expects a response.
 The finder's responsibility is to fetch data from a data source using the query parameters defined in the query
 message. It is up to the finder if the data is fetched synchronous or asynchronous, so the QueryBus returns
@@ -61,7 +61,7 @@ listener aggregates and you can dispatch a message.
 Internally a prooph message bus uses an [event-driven process](https://github.com/prooph/common#actioneventemitter)
 to dispatch messages.
 This offers a lot of flexibility without the need to define interfaces for messages.
-A message can be everything even a string. prooph/service-bus doesn't care. But using some defaults will reduce
+A message can be anything, even a string. prooph/service-bus doesn't care. But using some defaults will reduce
 the number of required plugins and increase performance.
 
 But first let's take a look at the internals of a message dispatch process and the differences between the
@@ -91,11 +91,11 @@ Before a message handler can be located, the message bus needs to know how the m
 possibilities to provide the information. The message can implement the
 [Prooph\Common\Messaging\HasMessageName](https://github.com/prooph/common/blob/master/src/Messaging/HasMessageName.php)
 interface.
-In this case the message bus picks the name directly from the message and set it as param `message-name` in the
-action event for later use. The `detect-message-name` event is not triggered. If the message
+In this case the message bus picks the name directly from the message and sets it as the param `message-name` in the
+action event for use later. The `detect-message-name` event is not triggered. If the message
 does not implement the interface the `detect-message-name` priority can be used to add a plugin to inject the
 name using `ActionEvent::setParam('message-name', $messageName)`.
-If no `message-name` was set by a listener the message bus uses a fallback:
+If no `message-name` was set by a listener, the message bus uses a fallback:
 - FQCN of message in case of object
 - message => message-name in case of string
 - `gettype($message)` in all other cases
@@ -103,26 +103,26 @@ If no `message-name` was set by a listener the message bus uses a fallback:
 #### route
 
 During the `route` phase a plugin (typically a router) should provide the responsible message handler either
-in form of a ready to use `callable`, an object or just a string.
+in the form of a ready to use `callable`, an object or just a string.
 The latter should be a service id that can be passed to a service locator to get an instance of the message
 handler.
 The message handler should be set as action event param `message-handler` (for CommandBus and QueryBus) or
 `event-listeners` (for EventBus).
 
-As you can see command and query bus work with a single message handler whereby the event bus works with
+As you can see, the command and query bus work with a single message handler whereas the event bus works with
 multiple listeners.
 This is one of the most important differences. Only the event bus allows multiple message handlers per
-message and therefor uses a slightly different dispatch process.
+message and therefore uses a slightly different dispatch process.
 
 #### locate-handler
 
 After routing the message, the message bus checks if the handler was provided as a string. This is the
-latest time to provide an object or callable as message handler. If no plugin was able to provide one the
+last chance to provide an object or callable as message handler. If no plugin was able to provide one the
 message bus throws an exception.
 
 #### invoke-handler
 
-Having the message handler in place it's time to invoke it with the message. `callable` message handlers
+With the message handler in place, it's time to invoke it with the message. `callable` message handlers
 are invoked by the bus. However, the `invoke-handler` / `invoke-finder` events are always triggered.
 At this stage all three bus types behave a bit different.
 
@@ -134,7 +134,7 @@ handler.
 - EventBus: loops over all `event-listeners` and triggers the `locate-handler` and `invoke-handler` action
 events for each message listener.
 
-*Note: * The command and query bus have a mechanism to check if the command or query was handled. If not they
+*Note:* The command and query bus have a mechanism to check if the command or query was handled. If not they
 throw an exception.
 The event bus does not have such a mechanism as having no listener for an event is a valid case.
 
@@ -158,10 +158,10 @@ to add your listener with a higher priority than that.
 
 ### Events & Priorities
 
-Two things are to consider, when upgrading from v5.
+There are two things to consider when upgrading from v5.
 
-1) The `handle-error` event is gone. If you want to have a plugin that tracks exception, you need to use the
-`finalize` event and check for existence of an exception. This can look like this:
+1) The `handle-error` event is gone. If you want to have a plugin that tracks exceptions, you need to use the
+`finalize` event and check for the existence of an exception. This can look like this:
 
 ```php
 $commandBus->attach(
@@ -175,7 +175,7 @@ $commandBus->attach(
 ```
 
 The event bus has a listener exception collection mode. This means that you can activate the mode and the event bus will
-invoke all event listeners, catch possible exceptions and push them to a exception collection. If an exception is caught
+invoke all event listeners, catch possible exceptions and push them to an exception collection. If an exception is caught
 the event bus will throw an `Prooph\ServiceBus\Exception\EventListenerException` at the end which contains all caught listener exceptions.
 
 To enable the collection mode you can attach the plugin `Prooph\ServiceBus\Plugin\ListenerExceptionCollectionMode`.
@@ -232,9 +232,9 @@ implement `Prooph\ServiceBus\Plugin\Plugin`. The signature is:
 
 ```php
 public function attachToMessageBus(MessageBus $messageBus): void;
-    
+
 public function detachFromMessageBus(MessageBus $messageBus): void;
-``` 
+```
 
 ### Further changes
 
