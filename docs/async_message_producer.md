@@ -22,7 +22,7 @@ and simple to set up ZeroMQ
 
 ## Usage
 
-If you want to set up a bus that handles all messages async you can do so by attaching a
+If you want to set up a bus that handles all messages asynchronously you can do so by attaching a
 `Prooph\ServiceBus\Plugin\MessageProducerPlugin` initialized with your message producer of choice
 to a message bus.
 
@@ -54,14 +54,14 @@ $echoText = new ExampleCommand('It works');
 $commandBus->dispatch($echoText);
 ```
 
-You can also route individual messages to message producer by using a message router plugin.
+You can also route individual messages to message producers by using a message router plugin.
 
 *Note: `Prooph\ServiceBus\Plugin\Router\RegexRouter` is a good choice
 if you want to handle all messages of a specific namespace async.*
 
 ## Async Querying
 
-An async message producer for the QueryBus needs to provide a response by resolving the handed over
+An async message producer for the QueryBus needs to provide a response by resolving the input
 `React\Promise\Deferred`. When using a messaging system like ZeroMQ for example you can make use of
 request/response mode or RPC mode. HTTP APIs provide responses naturally. So these are both good
 candidates to use for remote querying.
