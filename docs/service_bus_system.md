@@ -4,7 +4,56 @@ prooph/service-bus acts as a messaging facade. It operates on the application la
 In addition we also provide so-called "message producers" which connect prooph/service-bus
 with messaging infrastructure on the system and network level.
 
-Three different message bus implementations are available.
+## Installation
+
+```bash
+composer require prooph/service-bus
+```
+## Quick Start
+
+```php
+<?php
+
+use Prooph\ServiceBus\CommandBus;
+use Prooph\ServiceBus\Example\Command\EchoText;
+use Prooph\ServiceBus\Plugin\Router\CommandRouter;
+
+$commandBus = new CommandBus();
+
+$router = new CommandRouter();
+
+//Register a callback as CommandHandler for the EchoText command
+$router->route('Prooph\ServiceBus\Example\Command\EchoText')
+    ->to(function (EchoText $aCommand): void {
+        echo $aCommand->getText();
+    });
+
+//Expand command bus with the router plugin
+$router->attachToMessageBus($commandBus);
+
+//We create a new Command
+$echoText = new EchoText('It works');
+
+//... and dispatch it
+$commandBus->dispatch($echoText);
+
+//Output should be: It works
+```
+
+## Live Coding Introduction
+
+[![Prooph Service Bus v6](https://img.youtube.com/vi/6EcQjVSj3m4/0.jpg)](https://www.youtube.com/watch?v=6EcQjVSj3m4)
+
+
+## Messaging API
+
+`prooph/service-bus` allows you to define the API of your model with the help of messages.
+
+1. **Command** messages describe actions your model can handle.
+2. **Event** messages describe things that happened while your model handled a command.
+3. **Query** messages describe available information that can be fetched from your (read) model.
+
+Three different message bus implementations are available, too.
 
 ## CommandBus
 

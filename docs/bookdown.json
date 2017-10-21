@@ -1,7 +1,6 @@
 {
   "title": "Service Bus",
   "content": [
-    {"intro": "../README.md"},
     {"overview": "service_bus_system.md"},
     {"message_bus": "message_bus.md"},
     {"plugins": "plugins.md"},

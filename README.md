@@ -61,6 +61,10 @@ $commandBus->dispatch($echoText);
 //Output should be: It works
 ```
 
+## Live Coding Introduction
+
+[![Prooph Service Bus v6](https://img.youtube.com/vi/6EcQjVSj3m4/0.jpg)](https://www.youtube.com/watch?v=6EcQjVSj3m4)
+
 ## Documentation
 
 Documentation is [in the docs tree](docs/), and can be compiled using [bookdown](http://bookdown.io).
