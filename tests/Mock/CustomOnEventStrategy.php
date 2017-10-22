@@ -10,14 +10,14 @@
 
 declare(strict_types=1);
 
-namespace Prooph\ServiceBus\Plugin\InvokeStrategy;
+namespace ProophTest\ServiceBus\Mock;
 
 use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\EventBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
 
-final class OnEventStrategy extends AbstractPlugin
+final class CustomOnEventStrategy extends AbstractPlugin
 {
     public function attachToMessageBus(MessageBus $messageBus): void
     {
@@ -29,12 +29,12 @@ final class OnEventStrategy extends AbstractPlugin
                 $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
                 foreach ($handlers as $handler) {
-                    if (is_callable($handler) || ! is_object($handler) || ! method_exists($handler, 'onEvent')) {
+                    if (is_callable($handler) || ! is_object($handler) || ! method_exists($handler, 'on')) {
                         continue;
                     }
 
                     try {
-                        $handler->onEvent($message);
+                        $handler->on($message);
                     } catch (\Throwable $e) {
                         if ($target->isCollectingException()) {
                             $target->addCollectedException($e);
