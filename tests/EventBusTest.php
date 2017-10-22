@@ -273,7 +273,7 @@ class EventBusTest extends TestCase
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $e) use ($handler, $errorProducer): void {
                 if ($e->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME) === CustomMessage::class) {
-                    $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler, $errorProducer,  $handler]);
+                    $e->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$handler, $errorProducer, $handler]);
                 }
             },
             MessageBus::PRIORITY_ROUTE

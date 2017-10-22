@@ -24,15 +24,24 @@ final class OnEventStrategy extends AbstractPlugin
         $this->listenerHandlers[] = $messageBus->attach(
             MessageBus::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
-                if ($actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, false)) {
-                    return;
-                }
-
+                $target = $actionEvent->getTarget();
                 $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
                 $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
-                foreach ($handlers as $handler) {
-                    $handler->onEvent($message);
+                try {
+                    foreach ($handlers as $handler) {
+                        if (is_callable($handler)) {
+                            continue;
+                        }
+
+                        $handler->onEvent($message);
+                    }
+                } catch (\Throwable $e) {
+                    if ($target->isCollectingException()) {
+                        $target->addCollectedException($e);
+                    } else {
+                        throw $e;
+                    }
                 }
 
                 $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLED, true);

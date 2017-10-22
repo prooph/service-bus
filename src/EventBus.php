@@ -30,6 +30,11 @@ class EventBus extends MessageBus
      */
     protected $collectExceptions = false;
 
+    /**
+     * @var array
+     */
+    protected $collectedExceptions = [];
+
     public function __construct(ActionEventEmitter $actionEventEmitter = null)
     {
         parent::__construct($actionEventEmitter);
@@ -58,11 +63,28 @@ class EventBus extends MessageBus
                     $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
                 }
 
-                if (count($caughtExceptions)) {
-                    throw EventListenerException::collected(...$caughtExceptions);
+                foreach ($caughtExceptions as $ex) {
+                    $this->collectedExceptions[] = $ex;
                 }
             },
             self::PRIORITY_INVOKE_HANDLER
+        );
+
+        $this->events->attachListener(
+            self::EVENT_FINALIZE,
+            function (ActionEvent $actionEvent): void {
+                $target = $actionEvent->getTarget();
+
+                if (empty($target->collectedExceptions)) {
+                    return;
+                }
+
+                $exceptions = $target->collectedExceptions;
+                $target->collectedExceptions = [];
+
+                $actionEvent->setParam(MessageBus::EVENT_PARAM_EXCEPTION, EventListenerException::collected(...$exceptions));
+            },
+            1000
         );
     }
 
@@ -98,5 +120,15 @@ class EventBus extends MessageBus
     public function disableCollectExceptions(): void
     {
         $this->collectExceptions = false;
+    }
+
+    public function isCollectingException(): bool
+    {
+        return $this->collectExceptions;
+    }
+
+    public function addCollectedException(\Throwable $e): void
+    {
+        $this->collectedExceptions[] = $e;
     }
 }
