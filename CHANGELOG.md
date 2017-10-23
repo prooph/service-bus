@@ -1,10 +1,46 @@
 # Change Log
 
-## [v6.0.3](https://github.com/prooph/service-bus/tree/v6.0.3)
+## [v6.1.1](https://github.com/prooph/service-bus/tree/v6.1.1)
 
-[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.2...v6.0.3)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.0...v6.1.1)
+
+**Fixed bugs:**
+
+- Bug in OnEventStrategy [\#169](https://github.com/prooph/service-bus/issues/169)
+- Fix Bugs in Event Bus [\#171](https://github.com/prooph/service-bus/pull/171) ([prolic](https://github.com/prolic))
 
 **Merged pull requests:**
+
+- Merge readme into overview and add live coding video [\#170](https://github.com/prooph/service-bus/pull/170) ([codeliner](https://github.com/codeliner))
+- Make small grammar changes to docs [\#168](https://github.com/prooph/service-bus/pull/168) ([camuthig](https://github.com/camuthig))
+
+## [v5.2.1](https://github.com/prooph/service-bus/tree/v5.2.1) (2017-10-23)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.0...v5.2.1)
+
+**Merged pull requests:**
+
+- Catch throwable and reset isDispatching [\#172](https://github.com/prooph/service-bus/pull/172) ([codeliner](https://github.com/codeliner))
+
+## [v6.1.0](https://github.com/prooph/service-bus/tree/v6.1.0) (2017-09-29)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.3...v6.1.0)
+
+**Implemented enhancements:**
+
+- AsyncMessage now implements the Message interface [\#167](https://github.com/prooph/service-bus/pull/167) ([iainmckay](https://github.com/iainmckay))
+- Optionally collect listener exceptions [\#166](https://github.com/prooph/service-bus/pull/166) ([codeliner](https://github.com/codeliner))
+
+**Closed issues:**
+
+- Exception in event listener stops propagating event to other registered listeners  [\#165](https://github.com/prooph/service-bus/issues/165)
+
+**Merged pull requests:**
+
+- \[doc\] Add enqueue producer to the list of available solutions. [\#162](https://github.com/prooph/service-bus/pull/162) ([makasim](https://github.com/makasim))
+
+## [v6.0.3](https://github.com/prooph/service-bus/tree/v6.0.3) (2017-07-02)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.2...v6.0.3)
+
+**Fixed bugs:**
 
 - avoid array\_merge due to appending [\#164](https://github.com/prooph/service-bus/pull/164) ([basz](https://github.com/basz))
 
