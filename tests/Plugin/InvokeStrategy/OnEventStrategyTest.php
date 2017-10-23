@@ -66,7 +66,7 @@ class OnEventStrategyTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(
                 new DefaultListenerHandler(
-                    function () {
+                    function (): void {
                     }
                 )
             );
@@ -114,7 +114,7 @@ class OnEventStrategyTest extends TestCase
 
         $router = new EventRouter();
         $router->route(CustomMessage::class)
-            ->to(function (CustomMessage $message) use (&$result) {
+            ->to(function (CustomMessage $message) use (&$result): void {
                 $result = true;
             })
             ->andTo($handler);
@@ -144,7 +144,7 @@ class OnEventStrategyTest extends TestCase
 
         $router = new EventRouter();
         $router->route(CustomMessage::class)
-            ->to(function (CustomMessage $message) {
+            ->to(function (CustomMessage $message): void {
                 throw new \Exception('foo');
             })
             ->andTo($handler);
@@ -181,7 +181,7 @@ class OnEventStrategyTest extends TestCase
 
         $router = new EventRouter();
         $router->route(CustomMessage::class)
-            ->to(function (CustomMessage $message) {
+            ->to(function (CustomMessage $message): void {
                 throw new \Exception('foo');
             })
             ->andTo($handler)
@@ -222,7 +222,7 @@ class OnEventStrategyTest extends TestCase
 
         $router = new EventRouter();
         $router->route(CustomMessage::class)
-            ->to(function (CustomMessage $message) use (&$result) {
+            ->to(function (CustomMessage $message) use (&$result): void {
                 $result = true;
             })
             ->andTo($handler)

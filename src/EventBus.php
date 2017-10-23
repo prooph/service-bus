@@ -122,7 +122,7 @@ class EventBus extends MessageBus
         $this->collectExceptions = false;
     }
 
-    public function isCollectingException(): bool
+    public function isCollectingExceptions(): bool
     {
         return $this->collectExceptions;
     }

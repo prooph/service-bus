@@ -29,14 +29,14 @@ final class OnEventStrategy extends AbstractPlugin
                 $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
                 foreach ($handlers as $handler) {
-                    if (is_callable($handler) || ! is_object($handler) || ! method_exists($handler, 'onEvent')) {
+                    if (is_callable($handler) || ! is_object($handler) || ! is_callable([$handler, 'onEvent'])) {
                         continue;
                     }
 
                     try {
                         $handler->onEvent($message);
                     } catch (\Throwable $e) {
-                        if ($target->isCollectingException()) {
+                        if ($target->isCollectingExceptions()) {
                             $target->addCollectedException($e);
                         } else {
                             throw $e;
