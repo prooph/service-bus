@@ -77,6 +77,9 @@ class CommandBus extends MessageBus
             } catch (\Exception $e) {
                 $this->isDispatching = false;
                 throw CommandDispatchException::wrap($e, $this->commandQueue);
+            } catch (\Throwable $e) {
+                $this->isDispatching = false;
+                throw $e;
             }
         }
     }
