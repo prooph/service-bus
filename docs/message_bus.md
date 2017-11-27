@@ -167,7 +167,7 @@ There are two things to consider when upgrading from v5.
 $commandBus->attach(
     CommandBus::EVENT_FINALIZE,
     function (ActionEvent $actionEvent) {
-        if ($ex = $actionEvent->getParam(CommandBus::EVENT_PARAM_EXCEPTION) {
+        if ($ex = $actionEvent->getParam(CommandBus::EVENT_PARAM_EXCEPTION)) {
             // do something
         }
     }
