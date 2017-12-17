@@ -1,18 +1,33 @@
 # Change Log
 
-## [v6.1.1](https://github.com/prooph/service-bus/tree/v6.1.1)
+## [v6.2.0](https://github.com/prooph/service-bus/tree/v6.2.0)
 
-[Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.0...v6.1.1)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.1...v6.2.0)
+
+**Implemented enhancements:**
+
+- add tests, small bugfix in exception handling [\#176](https://github.com/prooph/service-bus/pull/176) ([prolic](https://github.com/prolic))
+- test php 7.2 on travis [\#175](https://github.com/prooph/service-bus/pull/175) ([prolic](https://github.com/prolic))
+
+**Fixed bugs:**
+
+- add tests, small bugfix in exception handling [\#176](https://github.com/prooph/service-bus/pull/176) ([prolic](https://github.com/prolic))
+
+**Closed issues:**
+
+- QueryBus with Guzzle/Promises? [\#174](https://github.com/prooph/service-bus/issues/174)
+
+**Merged pull requests:**
+
+- Fixed typo [\#173](https://github.com/prooph/service-bus/pull/173) ([gquemener](https://github.com/gquemener))
+
+## [v6.1.1](https://github.com/prooph/service-bus/tree/v6.1.1) (2017-10-23)
+[Full Changelog](https://github.com/prooph/service-bus/compare/v5.2.1...v6.1.1)
 
 **Fixed bugs:**
 
 - Bug in OnEventStrategy [\#169](https://github.com/prooph/service-bus/issues/169)
 - Fix Bugs in Event Bus [\#171](https://github.com/prooph/service-bus/pull/171) ([prolic](https://github.com/prolic))
-
-**Merged pull requests:**
-
-- Merge readme into overview and add live coding video [\#170](https://github.com/prooph/service-bus/pull/170) ([codeliner](https://github.com/codeliner))
-- Make small grammar changes to docs [\#168](https://github.com/prooph/service-bus/pull/168) ([camuthig](https://github.com/camuthig))
 
 ## [v5.2.1](https://github.com/prooph/service-bus/tree/v5.2.1) (2017-10-23)
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.0...v5.2.1)
@@ -20,6 +35,8 @@
 **Merged pull requests:**
 
 - Catch throwable and reset isDispatching [\#172](https://github.com/prooph/service-bus/pull/172) ([codeliner](https://github.com/codeliner))
+- Merge readme into overview and add live coding video [\#170](https://github.com/prooph/service-bus/pull/170) ([codeliner](https://github.com/codeliner))
+- Make small grammar changes to docs [\#168](https://github.com/prooph/service-bus/pull/168) ([camuthig](https://github.com/camuthig))
 
 ## [v6.1.0](https://github.com/prooph/service-bus/tree/v6.1.0) (2017-09-29)
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.3...v6.1.0)
