@@ -55,7 +55,6 @@ class ServiceLocatorPluginTest extends TestCase
 
     /**
      * @test
-     * @group by
      */
     public function it_doesnt_override_previous_event_handlers(): void
     {

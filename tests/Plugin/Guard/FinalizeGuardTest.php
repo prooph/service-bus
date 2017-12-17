@@ -40,12 +40,14 @@ class FinalizeGuardTest extends TestCase
     public function it_allows_when_authorization_service_grants_access_without_deferred(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event')->willReturn(true);
+        $authorizationService->isGranted('test_event')->willReturn(true)->shouldBeCalled();
+
+        $messageBus = new EventBus();
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
-        $routeGuard->attachToMessageBus($this->messageBus);
+        $routeGuard->attachToMessageBus($messageBus);
 
-        $this->messageBus->dispatch('test_event');
+        $messageBus->dispatch('test_event');
     }
 
     /**
@@ -54,7 +56,7 @@ class FinalizeGuardTest extends TestCase
     public function it_allows_when_authorization_service_grants_access_with_deferred(): void
     {
         $authorizationService = $this->prophesize(AuthorizationService::class);
-        $authorizationService->isGranted('test_event', 'result')->willReturn(true);
+        $authorizationService->isGranted('test_event', 'result')->willReturn(true)->shouldBeCalled();
 
         $routeGuard = new FinalizeGuard($authorizationService->reveal());
         $routeGuard->attachToMessageBus($this->messageBus);

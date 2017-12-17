@@ -97,7 +97,7 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
                 'Cannot map handler %s to a pattern. Please use method route before calling method to',
                 is_object($handler)
                     ? get_class($handler)
-                    : is_string($handler) ? $handler : gettype($handler)
+                    : (is_string($handler) ? $handler : gettype($handler))
             ));
         }
 
