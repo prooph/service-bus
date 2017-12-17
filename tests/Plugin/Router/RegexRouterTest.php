@@ -166,6 +166,18 @@ class RegexRouterTest extends TestCase
     /**
      * @test
      */
+    public function it_fails_on_setting_a_handler_before_a_pattern_is_set_2(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $router = new RegexRouter();
+
+        $router->to(new \stdClass());
+    }
+
+    /**
+     * @test
+     */
     public function it_fails_when_routing_to_invalid_handler(): void
     {
         $this->expectException(InvalidArgumentException::class);

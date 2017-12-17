@@ -93,6 +93,18 @@ class EventRouterTest extends TestCase
     /**
      * @test
      */
+    public function it_fails_on_setting_a_listener_before_an_event_is_set_2(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $router = new EventRouter();
+
+        $router->to(new \stdClass());
+    }
+
+    /**
+     * @test
+     */
     public function it_fails_on_setting_an_invalid_listener(): void
     {
         $this->expectException(InvalidArgumentException::class);

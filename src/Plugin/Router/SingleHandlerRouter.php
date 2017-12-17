@@ -88,7 +88,7 @@ class SingleHandlerRouter extends AbstractPlugin implements MessageBusRouterPlug
                 'Cannot map handler %s to a message. Please use method route before calling method to',
                 is_object($messageHandler)
                     ? get_class($messageHandler)
-                    : is_string($messageHandler) ? $messageHandler : gettype($messageHandler)
+                    : (is_string($messageHandler) ? $messageHandler : gettype($messageHandler))
             ));
         }
 

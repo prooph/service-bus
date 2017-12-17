@@ -129,6 +129,18 @@ class SingleHandlerRouterTest extends TestCase
     /**
      * @test
      */
+    public function it_fails_on_setting_a_handler_before_a_command_is_set_2(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $router = new CommandRouter();
+
+        $router->to(new \stdClass());
+    }
+
+    /**
+     * @test
+     */
     public function it_takes_a_routing_definition_on_instantiation(): void
     {
         $router = new CommandRouter([

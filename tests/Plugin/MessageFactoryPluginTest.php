@@ -40,6 +40,20 @@ class MessageFactoryPluginTest extends TestCase
         $factoryPlugin = new MessageFactoryPlugin($messageFactory->reveal());
         $factoryPlugin->attachToMessageBus($commandBus);
 
+        $handled = false;
+
+        $handler = function (DoSomething $command) use (&$handled): void {
+            $handled = true;
+        };
+
+        $commandBus->attach(
+            CommandBus::EVENT_DISPATCH,
+            function (ActionEvent $event) use (&$handler): void {
+                $event->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, $handler);
+            },
+            CommandBus::PRIORITY_ROUTE
+        );
+
         $commandBus->attach(
             CommandBus::EVENT_FINALIZE,
             function (ActionEvent $actionEvent): void {
@@ -49,20 +63,19 @@ class MessageFactoryPluginTest extends TestCase
             }
         );
 
-        try {
-            $commandBus->dispatch([
-                'message_name' => 'custom-message',
-                'payload' => ['some data'],
-            ]);
-        } catch (MessageDispatchException $exception) {
-            // ignore
-        }
+        $commandBus->dispatch([
+            'message_name' => 'custom-message',
+            'payload' => ['some data'],
+        ]);
+
+        $this->assertTrue($handled);
     }
 
     /**
      * @test
+     * @group by
      */
-    public function it_will_return_eary_if_message_name_not_present_in_message(): void
+    public function it_will_return_early_if_message_name_not_present_in_message(): void
     {
         $commandBus = new CommandBus();
         $messageFactory = $this->prophesize(MessageFactory::class);
@@ -79,7 +92,8 @@ class MessageFactoryPluginTest extends TestCase
                         'payload' => ['some data'],
                     ],
                     $message);
-            }
+            },
+            1000
         );
 
         try {
