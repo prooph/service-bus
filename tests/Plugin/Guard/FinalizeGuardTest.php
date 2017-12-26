@@ -20,7 +20,9 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
+use Prooph\ServiceBus\Plugin\Router\QueryRouter;
 use Prooph\ServiceBus\QueryBus;
+use React\Promise\Deferred;
 
 class FinalizeGuardTest extends TestCase
 {
@@ -72,7 +74,10 @@ class FinalizeGuardTest extends TestCase
         );
 
         $promise = $this->messageBus->dispatch('test_event');
-        $promise->done();
+        $promise->done(function ($result) {
+            $this->assertNotNull($result);
+            $this->assertEquals('result', $result);
+        });
     }
 
     /**

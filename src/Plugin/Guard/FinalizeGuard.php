@@ -45,7 +45,7 @@ final class FinalizeGuard extends AbstractPlugin
                 $messageName = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_NAME);
 
                 if ($promise instanceof Promise) {
-                    $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName): void {
+                    $newPromise = $promise->then(function ($result) use ($actionEvent, $messageName) {
                         if (! $this->authorizationService->isGranted($messageName, $result)) {
                             $actionEvent->stopPropagation(true);
 
@@ -55,8 +55,9 @@ final class FinalizeGuard extends AbstractPlugin
 
                             throw new UnauthorizedException($messageName);
                         }
-                    });
 
+                        return $result;
+                    });
                     $actionEvent->setParam(QueryBus::EVENT_PARAM_PROMISE, $newPromise);
                 } elseif (! $this->authorizationService->isGranted($messageName)) {
                     $actionEvent->stopPropagation(true);
