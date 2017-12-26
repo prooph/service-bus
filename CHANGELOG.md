@@ -1,7 +1,18 @@
 # Change Log
 
-## [v6.2.0](https://github.com/prooph/service-bus/tree/v6.2.0)
+## [v6.2.1](https://github.com/prooph/service-bus/tree/v6.2.1)
 
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.2.0...v6.2.1)
+
+**Fixed bugs:**
+
+- fix FinalizeGuard [\#178](https://github.com/prooph/service-bus/pull/178) ([prolic](https://github.com/prolic))
+
+**Closed issues:**
+
+- QueryBus returns null with FinalizeGuard plugin included [\#177](https://github.com/prooph/service-bus/issues/177)
+
+## [v6.2.0](https://github.com/prooph/service-bus/tree/v6.2.0) (2017-12-17)
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.1...v6.2.0)
 
 **Implemented enhancements:**
