@@ -72,7 +72,10 @@ class FinalizeGuardTest extends TestCase
         );
 
         $promise = $this->messageBus->dispatch('test_event');
-        $promise->done();
+        $promise->done(function ($result) {
+            $this->assertNotNull($result);
+            $this->assertEquals('result', $result);
+        });
     }
 
     /**
