@@ -111,4 +111,38 @@ class RouteGuardTest extends TestCase
             throw $e->getPrevious();
         }
     }
+
+    /**
+     * @test
+     */
+    public function it_still_throws_unauthorizedexception_if_access_is_denied_while_other_finalize_listeners_are_available(): void
+    {
+        $this->expectException(UnauthorizedException::class);
+        $authorizationService = $this->prophesize(AuthorizationService::class);
+        $authorizationService->isGranted('stdClass', new \stdClass())->willReturn(false);
+
+        $routeGuard = new RouteGuard($authorizationService->reveal());
+        $routeGuard->attachToMessageBus($this->messageBus);
+
+        $this->messageBus->attach(
+            MessageBus::EVENT_DISPATCH,
+            function () {
+                throw new \RuntimeException('foo');
+            },
+            MessageBus::PRIORITY_INVOKE_HANDLER
+        );
+
+        $this->messageBus->attach(
+            MessageBus::EVENT_FINALIZE,
+            function () {
+            },
+            $priorityHigherThanTheDefaultEventEmitterPriority = 2
+        );
+
+        try {
+            $this->messageBus->dispatch(new \stdClass());
+        } catch (MessageDispatchException $e) {
+            throw $e->getPrevious();
+        }
+    }
 }
