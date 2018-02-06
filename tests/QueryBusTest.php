@@ -364,7 +364,6 @@ class QueryBusTest extends TestCase
         }, QueryBus::PRIORITY_LOCATE_HANDLER + 1);
         $this->queryBus->attach(QueryBus::EVENT_DISPATCH, function (ActionEvent $event): void {
             $event->stopPropagation();
-            throw new \RuntimeException('boom');
         }, QueryBus::PRIORITY_INVOKE_HANDLER - 1);
 
         $this->queryBus->attach(MessageBus::EVENT_FINALIZE, function (): void {

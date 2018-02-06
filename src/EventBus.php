@@ -107,8 +107,8 @@ class EventBus extends MessageBus
             $actionEventEmitter->dispatch($actionEvent);
         } catch (\Throwable $exception) {
             $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
-            $actionEvent->stopPropagation(false);
         } finally {
+            $actionEvent->stopPropagation(false);
             $this->triggerFinalize($actionEvent);
         }
     }

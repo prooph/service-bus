@@ -317,7 +317,6 @@ class EventBusTest extends TestCase
         }, EventBus::PRIORITY_LOCATE_HANDLER + 1);
         $this->eventBus->attach(EventBus::EVENT_DISPATCH, function (ActionEvent $event): void {
             $event->stopPropagation();
-            throw new \RuntimeException('boom');
         }, EventBus::PRIORITY_INVOKE_HANDLER - 1);
 
         $this->eventBus->attach(MessageBus::EVENT_FINALIZE, function (): void {
