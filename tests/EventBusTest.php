@@ -305,4 +305,34 @@ class EventBusTest extends TestCase
         $this->assertSame($customMessage, $handler->getLastMessage());
         $this->assertEquals(2, $handler->getInvokeCounter());
     }
+
+    /**
+     * @test
+     */
+    public function it_always_triggers_finalize_listeners_regardless_whether_the_propagation_of_the_event_has_been_stopped(): void
+    {
+        $this->eventBus->attach(EventBus::EVENT_DISPATCH, function (ActionEvent $event) {
+            $event->setParam(EventBus::EVENT_PARAM_MESSAGE_HANDLER, function (): void {
+            });
+        }, EventBus::PRIORITY_LOCATE_HANDLER + 1);
+        $this->eventBus->attach(EventBus::EVENT_DISPATCH, function (ActionEvent $event): void {
+            $event->stopPropagation();
+            throw new \RuntimeException('boom');
+        }, EventBus::PRIORITY_INVOKE_HANDLER - 1);
+
+        $this->eventBus->attach(MessageBus::EVENT_FINALIZE, function (): void {
+        }, 3);
+        $finalizeHasBeenCalled = false;
+        $this->eventBus->attach(MessageBus::EVENT_FINALIZE, function () use (&$finalizeHasBeenCalled): void {
+            $finalizeHasBeenCalled = true;
+        }, 2);
+
+        try {
+            $this->eventBus->dispatch('a message');
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        $this->assertTrue($finalizeHasBeenCalled);
+    }
 }

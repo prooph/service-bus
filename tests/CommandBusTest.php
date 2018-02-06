@@ -295,4 +295,34 @@ class CommandBusTest extends TestCase
         $this->assertSame(1, count($commandDispatchException->getPendingCommands()));
         $this->assertSame(CustomMessage::class, get_class($commandDispatchException->getPendingCommands()[0]));
     }
+
+    /**
+     * @test
+     */
+    public function it_always_triggers_finalize_listeners_regardless_whether_the_propagation_of_the_event_has_been_stopped(): void
+    {
+        $this->commandBus->attach(CommandBus::EVENT_DISPATCH, function (ActionEvent $event) {
+            $event->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, function (): void {
+            });
+        }, CommandBus::PRIORITY_LOCATE_HANDLER + 1);
+        $this->commandBus->attach(CommandBus::EVENT_DISPATCH, function (ActionEvent $event): void {
+            $event->stopPropagation();
+            throw new \RuntimeException('boom');
+        }, CommandBus::PRIORITY_INVOKE_HANDLER - 1);
+
+        $this->commandBus->attach(MessageBus::EVENT_FINALIZE, function (): void {
+        }, 3);
+        $finalizeHasBeenCalled = false;
+        $this->commandBus->attach(MessageBus::EVENT_FINALIZE, function () use (&$finalizeHasBeenCalled): void {
+            $finalizeHasBeenCalled = true;
+        }, 2);
+
+        try {
+            $this->commandBus->dispatch('a message');
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        $this->assertTrue($finalizeHasBeenCalled);
+    }
 }

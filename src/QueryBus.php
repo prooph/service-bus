@@ -104,7 +104,7 @@ class QueryBus extends MessageBus
             }
         } catch (\Throwable $exception) {
             $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);
-            //$actionEvent->stopPropagation(false);
+            $actionEvent->stopPropagation(false);
         } finally {
             $this->triggerFinalize($actionEvent);
         }

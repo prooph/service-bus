@@ -352,4 +352,30 @@ class QueryBusTest extends TestCase
 
         $this->assertTrue($exceptionParamWasSet);
     }
+
+    /**
+     * @test
+     */
+    public function it_always_triggers_finalize_listeners_regardless_whether_the_propagation_of_the_event_has_been_stopped(): void
+    {
+        $this->queryBus->attach(QueryBus::EVENT_DISPATCH, function (ActionEvent $event) {
+            $event->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, function (): void {
+            });
+        }, QueryBus::PRIORITY_LOCATE_HANDLER + 1);
+        $this->queryBus->attach(QueryBus::EVENT_DISPATCH, function (ActionEvent $event): void {
+            $event->stopPropagation();
+            throw new \RuntimeException('boom');
+        }, QueryBus::PRIORITY_INVOKE_HANDLER - 1);
+
+        $this->queryBus->attach(MessageBus::EVENT_FINALIZE, function (): void {
+        }, 3);
+        $finalizeHasBeenCalled = false;
+        $this->queryBus->attach(MessageBus::EVENT_FINALIZE, function () use (&$finalizeHasBeenCalled): void {
+            $finalizeHasBeenCalled = true;
+        }, 2);
+
+        $this->queryBus->dispatch('a message');
+
+        $this->assertTrue($finalizeHasBeenCalled);
+    }
 }

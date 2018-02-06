@@ -73,7 +73,6 @@ class MessageFactoryPluginTest extends TestCase
 
     /**
      * @test
-     * @group by
      */
     public function it_will_return_early_if_message_name_not_present_in_message(): void
     {
