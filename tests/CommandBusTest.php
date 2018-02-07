@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2018 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -294,5 +294,34 @@ class CommandBusTest extends TestCase
         $this->assertInstanceOf(CommandDispatchException::class, $commandDispatchException);
         $this->assertSame(1, count($commandDispatchException->getPendingCommands()));
         $this->assertSame(CustomMessage::class, get_class($commandDispatchException->getPendingCommands()[0]));
+    }
+
+    /**
+     * @test
+     */
+    public function it_always_triggers_finalize_listeners_regardless_whether_the_propagation_of_the_event_has_been_stopped(): void
+    {
+        $this->commandBus->attach(CommandBus::EVENT_DISPATCH, function (ActionEvent $event) {
+            $event->setParam(CommandBus::EVENT_PARAM_MESSAGE_HANDLER, function (): void {
+            });
+        }, CommandBus::PRIORITY_LOCATE_HANDLER + 1);
+        $this->commandBus->attach(CommandBus::EVENT_DISPATCH, function (ActionEvent $event): void {
+            $event->stopPropagation();
+        }, CommandBus::PRIORITY_INVOKE_HANDLER - 1);
+
+        $this->commandBus->attach(MessageBus::EVENT_FINALIZE, function (): void {
+        }, 3);
+        $finalizeHasBeenCalled = false;
+        $this->commandBus->attach(MessageBus::EVENT_FINALIZE, function () use (&$finalizeHasBeenCalled): void {
+            $finalizeHasBeenCalled = true;
+        }, 2);
+
+        try {
+            $this->commandBus->dispatch('a message');
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        $this->assertTrue($finalizeHasBeenCalled);
     }
 }

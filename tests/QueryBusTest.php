@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of the prooph/service-bus.
- * (c) 2014-2017 prooph software GmbH <contact@prooph.de>
- * (c) 2015-2017 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2018 prooph software GmbH <contact@prooph.de>
+ * (c) 2015-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -351,5 +351,30 @@ class QueryBusTest extends TestCase
         $promise->done();
 
         $this->assertTrue($exceptionParamWasSet);
+    }
+
+    /**
+     * @test
+     */
+    public function it_always_triggers_finalize_listeners_regardless_whether_the_propagation_of_the_event_has_been_stopped(): void
+    {
+        $this->queryBus->attach(QueryBus::EVENT_DISPATCH, function (ActionEvent $event) {
+            $event->setParam(QueryBus::EVENT_PARAM_MESSAGE_HANDLER, function (): void {
+            });
+        }, QueryBus::PRIORITY_LOCATE_HANDLER + 1);
+        $this->queryBus->attach(QueryBus::EVENT_DISPATCH, function (ActionEvent $event): void {
+            $event->stopPropagation();
+        }, QueryBus::PRIORITY_INVOKE_HANDLER - 1);
+
+        $this->queryBus->attach(MessageBus::EVENT_FINALIZE, function (): void {
+        }, 3);
+        $finalizeHasBeenCalled = false;
+        $this->queryBus->attach(MessageBus::EVENT_FINALIZE, function () use (&$finalizeHasBeenCalled): void {
+            $finalizeHasBeenCalled = true;
+        }, 2);
+
+        $this->queryBus->dispatch('a message');
+
+        $this->assertTrue($finalizeHasBeenCalled);
     }
 }
