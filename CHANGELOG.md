@@ -1,7 +1,23 @@
 # Change Log
 
-## [v6.2.1](https://github.com/prooph/service-bus/tree/v6.2.1)
+## [v6.2.2](https://github.com/prooph/service-bus/tree/v6.2.2)
 
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.2.1...v6.2.2)
+
+**Fixed bugs:**
+
+- Finalize trigger enables propagation if it was stopped [\#184](https://github.com/prooph/service-bus/pull/184) ([prolic](https://github.com/prolic))
+
+**Closed issues:**
+
+- Process Manager Plugin [\#181](https://github.com/prooph/service-bus/issues/181)
+- CommanHandler is a FQCN [\#180](https://github.com/prooph/service-bus/issues/180)
+
+**Merged pull requests:**
+
+- RouteGuard Exception is not re-thrown  [\#183](https://github.com/prooph/service-bus/pull/183) ([UFOMelkor](https://github.com/UFOMelkor))
+
+## [v6.2.1](https://github.com/prooph/service-bus/tree/v6.2.1) (2017-12-26)
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.2.0...v6.2.1)
 
 **Fixed bugs:**
