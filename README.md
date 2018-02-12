@@ -28,7 +28,7 @@ It is also a perfect fit for microservices architecture as it provides an abstra
 
 ## Installation
 
-You can install prooph/service-bus via composer by adding `"prooph/service-bus": "~5.0"` as requirement to your composer.json.
+You can install prooph/service-bus via composer by running `composer require prooph/service-bus`, which will install the latest version as requirement to your composer.json.
 
 ## Quick Start
 
