@@ -1,4 +1,4 @@
-# PSB - ProophServiceBus
+# Prooph Service Bus
 
 PHP 7.1+ lightweight message bus supporting CQRS and Micro Services
 
