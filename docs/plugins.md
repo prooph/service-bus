@@ -1,7 +1,7 @@
-# PSB Plugins
+# Prooph Service Bus Plugins
 
 Plugins extend a message bus with additional functionality.
-PSB ships with a list of useful plugins that can be mixed and matched with your own implementations:
+Prooph Service Bus ships with a list of useful plugins that can be mixed and matched with your own implementations:
 
 ## Routers
 
@@ -111,7 +111,7 @@ $router->attachToMessageBus($commandBus);
 ## Invoke Strategies
 
 An invoke strategy knows how a message handler can be invoked. You can register many invoke strategies at once depending on
-how many different handler types you are using. The best way is to choose a convention and go with it. PSB ships with the invoke strategies
+how many different handler types you are using. The best way is to choose a convention and go with it. Prooph Service Bus ships with the invoke strategies
 listed below.
 
 ### Available Strategies

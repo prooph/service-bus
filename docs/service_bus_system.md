@@ -1,4 +1,4 @@
-# PSB Overview
+# Prooph Service Bus Overview
 
 prooph/service-bus acts as a messaging facade. It operates on the application layer and shields your domain model.
 In addition we also provide so-called "message producers" which connect prooph/service-bus
@@ -79,7 +79,7 @@ It is pretty straight forward.
 
 # Synchronous Versus Asynchronous Processing
 
-PSB provides both possibilities behind a unified interface.
+Prooph Service Bus provides both possibilities behind a unified interface.
 Remember the statement "Messaging means fire and forget".
 The callee never knows if the message is processed synchronously or asynchronously.
 A message can be directly routed to its handler. In this case, we talk about synchronous
