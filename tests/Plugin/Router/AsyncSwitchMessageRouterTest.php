@@ -18,6 +18,7 @@ use Prooph\Common\Event\DefaultActionEvent;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\AsyncSwitchMessageRouter;
 use Prooph\ServiceBus\Plugin\Router\EventRouter;
@@ -191,6 +192,36 @@ class AsyncSwitchMessageRouterTest extends TestCase
         $router->onRouteMessage($actionEvent);
 
         $this->assertEquals($messageProducer->reveal(), $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS)[0]);
+
+        $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
+        $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());
+        $this->assertTrue($updatedMessage->metadata()['handled-async']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_if_target_is_unknown_bus(): void
+    {
+        $messageProducer = $this->prophesize(MessageProducer::class);
+
+        $message = AsyncEvent::createEvent('test-data');
+
+        $actionEvent = new DefaultActionEvent(
+            MessageBus::EVENT_DISPATCH,
+            $this->prophesize(MessageBus::class),
+            [
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE => $message,
+            ]
+        );
+
+        $router = new AsyncSwitchMessageRouter(new EventRouter(), $messageProducer->reveal());
+        try {
+            $router->onRouteMessage($actionEvent);
+            $this->fail();
+        } catch (RuntimeException $exception) {
+        }
 
         $updatedMessage = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
         $this->assertArrayHasKey('handled-async', $updatedMessage->metadata());

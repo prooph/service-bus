@@ -18,6 +18,7 @@ use Prooph\ServiceBus\Async\AsyncMessage;
 use Prooph\ServiceBus\Async\MessageProducer;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\AbstractPlugin;
 use Prooph\ServiceBus\QueryBus;
@@ -71,9 +72,11 @@ class AsyncSwitchMessageRouter extends AbstractPlugin implements MessageBusRoute
 
             if ($actionEvent->getTarget() instanceof CommandBus || $actionEvent->getTarget() instanceof QueryBus) {
                 $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->asyncMessageProducer);
-            } else {
+            } elseif ($actionEvent->getTarget() instanceof EventBus) {
                 //Target is an event bus so we set message producer as the only listener of the message
                 $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, [$this->asyncMessageProducer]);
+            } else {
+                throw new RuntimeException('Unexpected bus implementation. This plugin is only compatible with standard CommandBus, QueryBus and EventBus implementations.');
             }
 
             return;
