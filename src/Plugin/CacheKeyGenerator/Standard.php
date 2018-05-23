@@ -30,6 +30,6 @@ final class Standard implements CacheKeyGenerator
 
     private function sanitizeKeyPart(string $part)
     {
-        return str_replace(['{', '}', '(', ')', '/', '\\', '@'], '_', $part);
+        return str_replace(['{', '}', '(', ')', '/', '\\', '@', ':'], '_', $part);
     }
 }
