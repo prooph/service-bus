@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Plugin\CacheKeyGenerator;
 
-use Prooph\ServiceBus\Plugin\CacheKeyGenerator;
 use Prooph\Common\Messaging\Query;
+use Prooph\ServiceBus\Plugin\CacheKeyGenerator;
 
 final class Standard implements CacheKeyGenerator
 {

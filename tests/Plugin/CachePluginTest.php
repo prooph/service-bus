@@ -13,17 +13,16 @@ declare(strict_types=1);
 namespace ProophTest\ServiceBus\Plugin;
 
 use PHPUnit\Framework\TestCase;
-use Prooph\ServiceBus\Plugin\Plugin;
-use Prooph\ServiceBus\Plugin\CachePlugin;
-use Symfony\Component\Cache\Simple\NullCache;
-use Psr\SimpleCache\CacheInterface;
-use Prooph\ServiceBus\QueryBus;
-use Prooph\ServiceBus\Plugin\CacheKeyGenerator;
 use Prooph\Common\Messaging\Query;
-use React\Promise\Deferred;
-use Prooph\ServiceBus\Plugin\Router\QueryRouter;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Plugin\CacheKeyGenerator;
+use Prooph\ServiceBus\Plugin\CachePlugin;
+use Prooph\ServiceBus\Plugin\Plugin;
+use Prooph\ServiceBus\Plugin\Router\QueryRouter;
+use Prooph\ServiceBus\QueryBus;
+use Psr\SimpleCache\CacheInterface;
+use React\Promise\Deferred;
 
 class CachePluginTest extends TestCase
 {
@@ -31,7 +30,7 @@ class CachePluginTest extends TestCase
     private $keyGen;
     private $plugin;
 
-    function setUp()
+    public function setUp()
     {
         $this->cache = $this->prophesize(CacheInterface::class);
         $this->keyGen = $this->prophesize(CacheKeyGenerator::class);
@@ -44,7 +43,7 @@ class CachePluginTest extends TestCase
     /**
      * @test
      */
-    function it_is_a_message_bus_plugin()
+    public function it_is_a_message_bus_plugin()
     {
         $this->assertInstanceOf(Plugin::class, $this->plugin);
     }
@@ -52,17 +51,17 @@ class CachePluginTest extends TestCase
     /**
      * @test
      */
-    function it_resolves_with_cached_value_on_hit()
+    public function it_resolves_with_cached_value_on_hit()
     {
         $queryBus = new QueryBus();
 
         $router = new QueryRouter();
         $router->route('a-query')
-           ->to(function($query, Deferred $deferred): void {});
+           ->to(function ($query, Deferred $deferred): void {
+           });
         $router->attachToMessageBus($queryBus);
         $query = $this->prophesize(Query::class);
         $this->plugin->attachToMessageBus($queryBus);
-
 
         $query->messageName()->willReturn('a-query');
         $this->keyGen->getCacheKey($query)->willReturn('cache-key');
@@ -70,7 +69,7 @@ class CachePluginTest extends TestCase
 
         $promise = $queryBus->dispatch($query->reveal());
         $value = null;
-        $promise->then(function($result) use (&$value) {
+        $promise->then(function ($result) use (&$value) {
             $value = $result;
         });
         $this->assertEquals('Hello World', $value);
@@ -79,13 +78,13 @@ class CachePluginTest extends TestCase
     /**
      * @test
      */
-    function it_caches_resolved_value()
+    public function it_caches_resolved_value()
     {
         $queryBus = new QueryBus();
 
         $router = new QueryRouter();
         $router->route('a-query')
-            ->to(function($query, Deferred $deferred): void {
+            ->to(function ($query, Deferred $deferred): void {
                 $deferred->resolve('Hello World');
             });
         $router->attachToMessageBus($queryBus);
@@ -103,7 +102,7 @@ class CachePluginTest extends TestCase
     /**
      * @test
      */
-    function it_does_not_attach_to_command_bus()
+    public function it_does_not_attach_to_command_bus()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->plugin->attachToMessageBus(new CommandBus());
@@ -112,7 +111,7 @@ class CachePluginTest extends TestCase
     /**
      * @test
      */
-    function it_does_not_attach_to_event_bus()
+    public function it_does_not_attach_to_event_bus()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->plugin->attachToMessageBus(new EventBus());

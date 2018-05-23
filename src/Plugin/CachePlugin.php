@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Prooph\ServiceBus\Plugin;
 
+use Prooph\Common\Event\ActionEvent;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\QueryBus;
-use Prooph\Common\Event\ActionEvent;
 use Psr\SimpleCache\CacheInterface;
-use Prooph\Common\Messaging\Query;
-use Prooph\ServiceBus\Plugin\CacheKeyGenerator;
 
 final class CachePlugin extends AbstractPlugin
 {
@@ -34,7 +32,7 @@ final class CachePlugin extends AbstractPlugin
 
     public function attachToMessageBus(MessageBus $messageBus): void
     {
-        if (!$messageBus instanceof QueryBus) {
+        if (! $messageBus instanceof QueryBus) {
             throw new \InvalidArgumentException(sprintf(
                 'The cache plugin can only be attached to an instance of "Prooph\ServiceBus\QueryBus", got "%s".',
                 get_class($messageBus)
@@ -60,7 +58,7 @@ final class CachePlugin extends AbstractPlugin
                     return;
                 }
 
-                $deferred->promise()->then(function($data) use ($key) {
+                $deferred->promise()->then(function ($data) use ($key) {
                     $this->cache->set($key, $data);
                 });
             },
