@@ -36,7 +36,8 @@
         "psr/container": "^1.0",
         "sandrokeil/interop-config": "^2.0.1",
         "prooph/bookdown-template": "^0.2.3",
-        "malukenho/docheader": "^0.1.4"
+        "malukenho/docheader": "^0.1.4",
+        "psr/simple-cache": "^1.0"
     },
     "suggest": {
         "react/promise": "^2.4.1 for usage with provided QueryBus",
@@ -44,6 +45,7 @@
         "zendframework/zend-servicemanager": "Use Zend ServiceManager to lazy load your handlers and listeners",
         "prooph/service-bus-zfc-rbac-bridge": "Use ZfcRbac as authorization service for route and finalize guard",
         "psr/container": "^1.0 for usage of provided factories",
+        "psr/simple-cache": "^1.0 for usage of provided CachePlugin",
         "sandrokeil/interop-config": "For usage of provided factories"
     },
     "conflict": {
