@@ -25,11 +25,6 @@ final class Standard implements CacheKeyGenerator
             $keyParts[] = $value;
         }
 
-        return implode('.', array_map([$this, 'sanitizeKeyPart'], $keyParts));
-    }
-
-    private function sanitizeKeyPart(string $part)
-    {
-        return str_replace(['{', '}', '(', ')', '/', '\\', '@', ':'], '_', $part);
+        return sha1(json_encode($keyParts));
     }
 }
