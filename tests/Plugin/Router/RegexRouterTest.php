@@ -30,7 +30,7 @@ class RegexRouterTest extends TestCase
     {
         $regexRouter = new RegexRouter();
 
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
 
         $actionEvent = new DefaultActionEvent(
             MessageBus::EVENT_DISPATCH,
@@ -53,7 +53,7 @@ class RegexRouterTest extends TestCase
     {
         $regexRouter = new RegexRouter();
 
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
 
         $actionEvent = new DefaultActionEvent(
             MessageBus::EVENT_DISPATCH,
@@ -77,8 +77,8 @@ class RegexRouterTest extends TestCase
 
         $regexRouter = new RegexRouter();
 
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*/')->to('DoSomethingHandler2');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/')->to('DoSomethingHandler');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*/')->to('DoSomethingHandler2');
 
         $actionEvent = new DefaultActionEvent(
             MessageBus::EVENT_DISPATCH,
@@ -98,8 +98,8 @@ class RegexRouterTest extends TestCase
     {
         $regexRouter = new RegexRouter();
 
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener1');
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener2');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener1');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener2');
 
         $actionEvent = new DefaultActionEvent(
             MessageBus::EVENT_DISPATCH,
@@ -121,8 +121,8 @@ class RegexRouterTest extends TestCase
     {
         $regexRouter = new RegexRouter();
 
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener1');
-        $regexRouter->route('/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener2');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener1');
+        $regexRouter->route('/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/')->to('SomethingDoneListener2');
 
         $actionEvent = new DefaultActionEvent(
             MessageBus::EVENT_DISPATCH,
@@ -193,8 +193,8 @@ class RegexRouterTest extends TestCase
     public function it_takes_a_routing_definition_on_instantiation(): void
     {
         $router = new RegexRouter([
-            '/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
-            '/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
+            '/^'.\preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
+            '/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
         $actionEvent = new DefaultActionEvent(
@@ -228,8 +228,8 @@ class RegexRouterTest extends TestCase
     public function it_still_works_if_deprecated_method_on_route_is_used(): void
     {
         $router = new RegexRouter([
-            '/^'.preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
-            '/^'.preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
+            '/^'.\preg_quote('ProophTest\ServiceBus\Mock\Do').'.*/' => 'DoSomethingHandler',
+            '/^'.\preg_quote('ProophTest\ServiceBus\Mock\\').'.*Done$/' => ['SomethingDoneListener1', 'SomethingDoneListener2'],
         ]);
 
         $actionEvent = new DefaultActionEvent(

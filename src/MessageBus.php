@@ -111,15 +111,15 @@ abstract class MessageBus
      */
     protected function getMessageName($message): string
     {
-        if (is_object($message)) {
-            return get_class($message);
+        if (\is_object($message)) {
+            return \get_class($message);
         }
 
-        if (is_string($message)) {
+        if (\is_string($message)) {
             return $message;
         }
 
-        return gettype($message);
+        return \gettype($message);
     }
 
     public function attach(string $eventName, callable $listener, int $priority = 0): ListenerHandler

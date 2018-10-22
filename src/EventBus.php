@@ -46,7 +46,7 @@ class EventBus extends MessageBus
                 $handled = false;
                 $caughtExceptions = [];
 
-                foreach (array_filter($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []), 'is_callable') as $eventListener) {
+                foreach (\array_filter($actionEvent->getParam(self::EVENT_PARAM_EVENT_LISTENERS, []), 'is_callable') as $eventListener) {
                     try {
                         $eventListener($event);
                         $handled = true;

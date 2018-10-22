@@ -42,11 +42,11 @@ class MessageFactoryPlugin extends AbstractPlugin
             function (ActionEvent $actionEvent): void {
                 $message = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE);
 
-                if (! is_array($message)) {
+                if (! \is_array($message)) {
                     return;
                 }
 
-                if (! array_key_exists('message_name', $message)) {
+                if (! \array_key_exists('message_name', $message)) {
                     return;
                 }
 

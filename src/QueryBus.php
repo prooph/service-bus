@@ -39,7 +39,7 @@ class QueryBus extends MessageBus
             function (ActionEvent $actionEvent): void {
                 $finder = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-                if (is_callable($finder)) {
+                if (\is_callable($finder)) {
                     $query = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                     $deferred = $actionEvent->getParam(self::EVENT_PARAM_DEFERRED);
                     $finder($query, $deferred);
@@ -53,7 +53,7 @@ class QueryBus extends MessageBus
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                    throw new RuntimeException(sprintf(
+                    throw new RuntimeException(\sprintf(
                         'QueryBus was not able to identify a Finder for query %s',
                         $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
                     ));
@@ -100,7 +100,7 @@ class QueryBus extends MessageBus
             $actionEventEmitter->dispatch($actionEvent);
 
             if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
-                throw new RuntimeException(sprintf('Query %s was not handled', $this->getMessageName($query)));
+                throw new RuntimeException(\sprintf('Query %s was not handled', $this->getMessageName($query)));
             }
         } catch (\Throwable $exception) {
             $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);

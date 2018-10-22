@@ -99,7 +99,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             AsyncCommand::class,
             new CommandBus(),
             [
-                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => \get_class($message),
                 MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
@@ -125,7 +125,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             AsyncCommand::class,
             new CommandBus(),
             [
-                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => \get_class($message),
                 MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
@@ -155,7 +155,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             AsyncCommand::class,
             new CommandBus(),
             [
-                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => \get_class($message),
                 MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
@@ -183,7 +183,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             MessageBus::EVENT_DISPATCH,
             new EventBus(),
             [
-                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => \get_class($message),
                 MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );
@@ -211,7 +211,7 @@ class AsyncSwitchMessageRouterTest extends TestCase
             MessageBus::EVENT_DISPATCH,
             $this->prophesize(MessageBus::class),
             [
-                MessageBus::EVENT_PARAM_MESSAGE_NAME => get_class($message),
+                MessageBus::EVENT_PARAM_MESSAGE_NAME => \get_class($message),
                 MessageBus::EVENT_PARAM_MESSAGE => $message,
             ]
         );

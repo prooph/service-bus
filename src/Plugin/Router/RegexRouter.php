@@ -45,7 +45,7 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         }
 
         foreach ($patternMap as $pattern => $handler) {
-            if (is_array($handler)) {
+            if (\is_array($handler)) {
                 foreach ($handler as $singleHandler) {
                     $this->route($pattern)->to($singleHandler);
                 }
@@ -69,7 +69,7 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         Assertion::notEmpty($pattern);
 
         if (null !== $this->tmpPattern) {
-            throw new Exception\RuntimeException(sprintf('pattern %s is not mapped to a handler.', $this->tmpPattern));
+            throw new Exception\RuntimeException(\sprintf('pattern %s is not mapped to a handler.', $this->tmpPattern));
         }
 
         $this->tmpPattern = $pattern;
@@ -85,19 +85,19 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
      */
     public function to($handler): RegexRouter
     {
-        if (! is_string($handler) && ! is_object($handler) && ! is_callable($handler)) {
-            throw new Exception\InvalidArgumentException(sprintf(
+        if (! \is_string($handler) && ! \is_object($handler) && ! \is_callable($handler)) {
+            throw new Exception\InvalidArgumentException(\sprintf(
                 'Invalid handler provided. Expected type is string, object or callable but type of %s given.',
-                gettype($handler)
+                \gettype($handler)
             ));
         }
 
         if (null === $this->tmpPattern) {
-            throw new Exception\RuntimeException(sprintf(
+            throw new Exception\RuntimeException(\sprintf(
                 'Cannot map handler %s to a pattern. Please use method route before calling method to',
-                is_object($handler)
-                    ? get_class($handler)
-                    : (is_string($handler) ? $handler : gettype($handler))
+                \is_object($handler)
+                    ? \get_class($handler)
+                    : (\is_string($handler) ? $handler : \gettype($handler))
             ));
         }
 
@@ -128,10 +128,10 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         $alreadyMatched = false;
 
         foreach ($this->patternMap as $map) {
-            list($pattern, $handler) = each($map);
-            if (preg_match($pattern, $messageName)) {
+            list($pattern, $handler) = \each($map);
+            if (\preg_match($pattern, $messageName)) {
                 if ($alreadyMatched) {
-                    throw new Exception\RuntimeException(sprintf(
+                    throw new Exception\RuntimeException(\sprintf(
                         'Multiple handlers detected for message %s. The patterns %s and %s matches both',
                         $messageName,
                         $alreadyMatched,
@@ -154,8 +154,8 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         }
 
         foreach ($this->patternMap as $map) {
-            list($pattern, $handler) = each($map);
-            if (preg_match($pattern, $messageName)) {
+            list($pattern, $handler) = \each($map);
+            if (\preg_match($pattern, $messageName)) {
                 $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
                 $listeners[] = $handler;
                 $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);

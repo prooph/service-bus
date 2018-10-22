@@ -292,8 +292,8 @@ class CommandBusTest extends TestCase
         }
 
         $this->assertInstanceOf(CommandDispatchException::class, $commandDispatchException);
-        $this->assertSame(1, count($commandDispatchException->getPendingCommands()));
-        $this->assertSame(CustomMessage::class, get_class($commandDispatchException->getPendingCommands()[0]));
+        $this->assertSame(1, \count($commandDispatchException->getPendingCommands()));
+        $this->assertSame(CustomMessage::class, \get_class($commandDispatchException->getPendingCommands()[0]));
     }
 
     /**
