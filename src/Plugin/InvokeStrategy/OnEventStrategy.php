@@ -29,7 +29,7 @@ final class OnEventStrategy extends AbstractPlugin
                 $handlers = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
                 foreach ($handlers as $handler) {
-                    if (is_callable($handler) || ! is_object($handler) || ! is_callable([$handler, 'onEvent'])) {
+                    if (\is_callable($handler) || ! \is_object($handler) || ! \is_callable([$handler, 'onEvent'])) {
                         continue;
                     }
 

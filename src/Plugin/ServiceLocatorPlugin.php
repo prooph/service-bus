@@ -41,7 +41,7 @@ class ServiceLocatorPlugin extends AbstractPlugin
             function (ActionEvent $actionEvent): void {
                 $messageHandlerAlias = $actionEvent->getParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER);
 
-                if (is_string($messageHandlerAlias) && $this->serviceLocator->has($messageHandlerAlias)) {
+                if (\is_string($messageHandlerAlias) && $this->serviceLocator->has($messageHandlerAlias)) {
                     $actionEvent->setParam(MessageBus::EVENT_PARAM_MESSAGE_HANDLER, $this->serviceLocator->get($messageHandlerAlias));
                 }
 
@@ -50,7 +50,7 @@ class ServiceLocatorPlugin extends AbstractPlugin
                 $newEventListeners = [];
 
                 foreach ($currentEventListeners as $key => $eventListenerAlias) {
-                    if (is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
+                    if (\is_string($eventListenerAlias) && $this->serviceLocator->has($eventListenerAlias)) {
                         $newEventListeners[$key] = $this->serviceLocator->get($eventListenerAlias);
                     }
                 }

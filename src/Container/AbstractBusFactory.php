@@ -62,7 +62,7 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
     {
         if (! isset($arguments[0]) || ! $arguments[0] instanceof ContainerInterface) {
             throw new InvalidArgumentException(
-                sprintf('The first argument must be of type %s', ContainerInterface::class)
+                \sprintf('The first argument must be of type %s', ContainerInterface::class)
             );
         }
 
@@ -123,10 +123,10 @@ abstract class AbstractBusFactory implements RequiresConfigId, ProvidesDefaultOp
     private function attachPlugins(MessageBus $bus, array $plugins, ContainerInterface $container): void
     {
         foreach ($plugins as $index => $plugin) {
-            if (! is_string($plugin) || ! $container->has($plugin)) {
-                throw new RuntimeException(sprintf(
+            if (! \is_string($plugin) || ! $container->has($plugin)) {
+                throw new RuntimeException(\sprintf(
                     'Wrong message bus utility configured at %s. Either it is not a string or unknown by the container.',
-                    implode('.', $this->dimensions()) . '.' . $this->configId . '.' . $index
+                    \implode('.', $this->dimensions()) . '.' . $this->configId . '.' . $index
                 ));
             }
 

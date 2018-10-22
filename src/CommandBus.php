@@ -42,7 +42,7 @@ class CommandBus extends MessageBus
             function (ActionEvent $actionEvent): void {
                 $commandHandler = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER);
 
-                if (is_callable($commandHandler)) {
+                if (\is_callable($commandHandler)) {
                     $command = $actionEvent->getParam(self::EVENT_PARAM_MESSAGE);
                     $commandHandler($command);
                     $actionEvent->setParam(self::EVENT_PARAM_MESSAGE_HANDLED, true);
@@ -55,7 +55,7 @@ class CommandBus extends MessageBus
             self::EVENT_DISPATCH,
             function (ActionEvent $actionEvent): void {
                 if ($actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLER) === null) {
-                    throw new RuntimeException(sprintf(
+                    throw new RuntimeException(\sprintf(
                         'CommandBus was not able to identify a CommandHandler for command %s',
                         $this->getMessageName($actionEvent->getParam(self::EVENT_PARAM_MESSAGE))
                     ));
@@ -80,7 +80,7 @@ class CommandBus extends MessageBus
             $actionEventEmitter = $this->events;
 
             try {
-                while ($command = array_shift($this->commandQueue)) {
+                while ($command = \array_shift($this->commandQueue)) {
                     $actionEvent = $actionEventEmitter->getNewActionEvent(
                         self::EVENT_DISPATCH,
                         $this,
@@ -93,7 +93,7 @@ class CommandBus extends MessageBus
                         $actionEventEmitter->dispatch($actionEvent);
 
                         if (! $actionEvent->getParam(self::EVENT_PARAM_MESSAGE_HANDLED)) {
-                            throw new RuntimeException(sprintf('Command %s was not handled', $this->getMessageName($command)));
+                            throw new RuntimeException(\sprintf('Command %s was not handled', $this->getMessageName($command)));
                         }
                     } catch (\Throwable $exception) {
                         $actionEvent->setParam(self::EVENT_PARAM_EXCEPTION, $exception);

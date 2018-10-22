@@ -41,7 +41,7 @@ class EventRouter extends AbstractPlugin implements MessageBusRouterPlugin
         }
 
         foreach ($eventMap as $eventName => $listeners) {
-            if (is_string($listeners) || is_object($listeners) || is_callable($listeners)) {
+            if (\is_string($listeners) || \is_object($listeners) || \is_callable($listeners)) {
                 $listeners = [$listeners];
             }
 
@@ -67,7 +67,7 @@ class EventRouter extends AbstractPlugin implements MessageBusRouterPlugin
         Assertion::notEmpty($eventName);
 
         if (null !== $this->tmpEventName && empty($this->eventMap[$this->tmpEventName])) {
-            throw new Exception\RuntimeException(sprintf('event %s is not mapped to a listener.', $this->tmpEventName));
+            throw new Exception\RuntimeException(\sprintf('event %s is not mapped to a listener.', $this->tmpEventName));
         }
 
         $this->tmpEventName = $eventName;
@@ -89,19 +89,19 @@ class EventRouter extends AbstractPlugin implements MessageBusRouterPlugin
      */
     public function to($eventListener): EventRouter
     {
-        if (! is_string($eventListener) && ! is_object($eventListener) && ! is_callable($eventListener)) {
-            throw new Exception\InvalidArgumentException(sprintf(
+        if (! \is_string($eventListener) && ! \is_object($eventListener) && ! \is_callable($eventListener)) {
+            throw new Exception\InvalidArgumentException(\sprintf(
                 'Invalid event listener provided. Expected type is string, object or callable but type of %s given.',
-                gettype($eventListener)
+                \gettype($eventListener)
             ));
         }
 
         if (null === $this->tmpEventName) {
-            throw new Exception\RuntimeException(sprintf(
+            throw new Exception\RuntimeException(\sprintf(
                 'Cannot map listener %s to an event. Please use method route before calling method to',
-                is_object($eventListener)
-                    ? get_class($eventListener)
-                    : (is_string($eventListener) ? $eventListener : gettype($eventListener))
+                \is_object($eventListener)
+                    ? \get_class($eventListener)
+                    : (\is_string($eventListener) ? $eventListener : \gettype($eventListener))
             ));
         }
 
@@ -136,7 +136,7 @@ class EventRouter extends AbstractPlugin implements MessageBusRouterPlugin
 
         $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
 
-        $listeners = array_merge($listeners, $this->eventMap[$messageName]);
+        $listeners = \array_merge($listeners, $this->eventMap[$messageName]);
 
         $actionEvent->setParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, $listeners);
     }
