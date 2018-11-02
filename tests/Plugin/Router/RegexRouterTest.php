@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/service-bus.
+ * This file is part of prooph/service-bus.
  * (c) 2014-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2015-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
