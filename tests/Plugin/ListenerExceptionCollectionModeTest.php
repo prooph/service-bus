@@ -16,6 +16,7 @@ namespace ProophTest\ServiceBus\Plugin;
 use PHPUnit\Framework\TestCase;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use Prooph\ServiceBus\Exception\RuntimeException;
 use Prooph\ServiceBus\Plugin\ListenerExceptionCollectionMode;
 
 class ListenerExceptionCollectionModeTest extends TestCase
@@ -27,7 +28,7 @@ class ListenerExceptionCollectionModeTest extends TestCase
         $this->eventBus = new class() extends EventBus {
             public function isCollectExceptionsModeOn(): bool
             {
-                return (bool) $this->collectExceptions;
+                return (bool)$this->collectExceptions;
             }
         };
 
@@ -48,10 +49,11 @@ class ListenerExceptionCollectionModeTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Prooph\ServiceBus\Exception\RuntimeException
      */
     public function it_throws_exception_if_message_bus_is_not_an_event_bus(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $plugin = new ListenerExceptionCollectionMode();
         $plugin->attachToMessageBus(new CommandBus());
     }

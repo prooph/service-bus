@@ -22,9 +22,12 @@ use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
 use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
 use Prooph\ServiceBus\QueryBus;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class FinalizeGuardTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var MessageBus
      */

@@ -22,9 +22,12 @@ use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
 use Prooph\ServiceBus\Plugin\Guard\UnauthorizedException;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class RouteGuardTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var CommandBus
      */

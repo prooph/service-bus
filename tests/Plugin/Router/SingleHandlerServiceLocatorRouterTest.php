@@ -19,10 +19,13 @@ use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\MessageBus;
 use Prooph\ServiceBus\Plugin\Router\SingleHandlerServiceLocatorRouter;
 use ProophTest\ServiceBus\Mock\MessageHandler;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class SingleHandlerServiceLocatorRouterTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

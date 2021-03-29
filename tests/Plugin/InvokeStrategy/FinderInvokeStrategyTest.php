@@ -19,9 +19,12 @@ use Prooph\ServiceBus\Plugin\InvokeStrategy\FinderInvokeStrategy;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\CustomInvokableMessageHandler;
 use ProophTest\ServiceBus\Mock\Finder;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class FinderInvokeStrategyTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

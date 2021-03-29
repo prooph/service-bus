@@ -18,10 +18,13 @@ use Prooph\ServiceBus\Container\Plugin\Guard\FinalizeGuardFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\FinalizeGuard;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class FinalizeGuardFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

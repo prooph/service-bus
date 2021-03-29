@@ -8,16 +8,15 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="false"
          bootstrap="vendor/autoload.php"
         >
     <testsuite name="Prooph Service Bus Test Suite">
         <directory>./tests</directory>
     </testsuite>
 
-    <filter>
-        <whitelist>
+    <coverage>
+        <include>
             <directory>./src/</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </coverage>
 </phpunit>

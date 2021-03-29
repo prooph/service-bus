@@ -32,10 +32,13 @@ use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\NoopMessageProducer;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class BusFactoriesTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      * @dataProvider provideBuses

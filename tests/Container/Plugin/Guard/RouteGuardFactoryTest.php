@@ -18,10 +18,13 @@ use Prooph\ServiceBus\Container\Plugin\Guard\RouteGuardFactory;
 use Prooph\ServiceBus\Exception\InvalidArgumentException;
 use Prooph\ServiceBus\Plugin\Guard\AuthorizationService;
 use Prooph\ServiceBus\Plugin\Guard\RouteGuard;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class RouteGuardFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

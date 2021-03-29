@@ -22,9 +22,12 @@ use Prooph\ServiceBus\Plugin\MessageProducerPlugin;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use ProophTest\ServiceBus\Mock\SomethingDone;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class MessageProducerPluginTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

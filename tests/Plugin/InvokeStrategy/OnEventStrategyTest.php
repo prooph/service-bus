@@ -28,9 +28,12 @@ use ProophTest\ServiceBus\Mock\CustomMessageEventHandler2;
 use ProophTest\ServiceBus\Mock\CustomMessageEventHandlerThrowingExceptions;
 use ProophTest\ServiceBus\Mock\CustomOnEventStrategy;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class OnEventStrategyTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

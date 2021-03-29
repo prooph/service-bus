@@ -21,9 +21,12 @@ use Prooph\ServiceBus\Exception\MessageDispatchException;
 use Prooph\ServiceBus\Plugin\MessageFactoryPlugin;
 use ProophTest\ServiceBus\Mock\DoSomething;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class MessageFactoryPluginTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

@@ -34,7 +34,7 @@ class QueryBusTest extends TestCase
      */
     private $queryBus;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryBus = new QueryBus();
     }

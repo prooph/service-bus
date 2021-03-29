@@ -21,10 +21,13 @@ use Prooph\ServiceBus\Plugin\Router\EventRouter;
 use Prooph\ServiceBus\Plugin\ServiceLocatorPlugin;
 use ProophTest\ServiceBus\Mock\MessageHandler;
 use ProophTest\ServiceBus\Mock\SomethingDone;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class ServiceLocatorPluginTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */

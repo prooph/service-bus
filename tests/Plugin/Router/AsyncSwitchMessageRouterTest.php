@@ -27,9 +27,12 @@ use Prooph\ServiceBus\Plugin\Router\SingleHandlerRouter;
 use ProophTest\ServiceBus\Mock\AsyncCommand;
 use ProophTest\ServiceBus\Mock\AsyncEvent;
 use ProophTest\ServiceBus\Mock\NonAsyncCommand;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class AsyncSwitchMessageRouterTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      */
