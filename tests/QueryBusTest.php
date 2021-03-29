@@ -211,9 +211,13 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception): void {
-            $exception = $ex;
-        });
+        $promise->then(
+            function () {
+            },
+            function (\Throwable $ex) use (&$exception): void {
+                $exception = $ex;
+            }
+        );
 
         $this->assertInstanceOf(MessageDispatchException::class, $exception);
     }
@@ -235,9 +239,13 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception): void {
-            $exception = $ex;
-        });
+        $promise->then(
+            function () {
+            },
+            function (\Throwable $ex) use (&$exception): void {
+                $exception = $ex;
+            }
+        );
 
         $this->assertInstanceOf(RuntimeException::class, $exception);
         $this->assertEquals('Message dispatch failed. See previous exception for details.', $exception->getMessage());
@@ -260,9 +268,13 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception): void {
-            $exception = $ex;
-        });
+        $promise->then(
+            function () {
+            },
+            function (\Throwable $ex) use (&$exception): void {
+                $exception = $ex;
+            }
+        );
 
         $this->assertInstanceOf(MessageDispatchException::class, $exception);
         $this->assertEquals('Message dispatch failed. See previous exception for details.', $exception->getMessage());

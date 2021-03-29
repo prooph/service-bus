@@ -129,7 +129,8 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         $alreadyMatched = false;
 
         foreach ($this->patternMap as $map) {
-            list($pattern, $handler) = \each($map);
+            $pattern = \key($map);
+            $handler = \current($map);
             if (\preg_match($pattern, $messageName)) {
                 if ($alreadyMatched) {
                     throw new Exception\RuntimeException(\sprintf(
@@ -155,7 +156,8 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         }
 
         foreach ($this->patternMap as $map) {
-            list($pattern, $handler) = \each($map);
+            $pattern = \key($map);
+            $handler = \current($map);
             if (\preg_match($pattern, $messageName)) {
                 $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
                 $listeners[] = $handler;

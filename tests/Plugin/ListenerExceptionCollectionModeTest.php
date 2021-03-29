@@ -28,7 +28,7 @@ class ListenerExceptionCollectionModeTest extends TestCase
         $this->eventBus = new class() extends EventBus {
             public function isCollectExceptionsModeOn(): bool
             {
-                return (bool)$this->collectExceptions;
+                return (bool) $this->collectExceptions;
             }
         };
 
