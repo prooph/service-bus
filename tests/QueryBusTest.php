@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/service-bus.
- * (c) 2014-2019 Alexander Miertsch <kontakt@codeliner.ws>
- * (c) 2015-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2021 Alexander Miertsch <kontakt@codeliner.ws>
+ * (c) 2015-2021 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -34,7 +34,7 @@ class QueryBusTest extends TestCase
      */
     private $queryBus;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryBus = new QueryBus();
     }
@@ -211,9 +211,13 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception): void {
-            $exception = $ex;
-        });
+        $promise->then(
+            function () {
+            },
+            function (\Throwable $ex) use (&$exception): void {
+                $exception = $ex;
+            }
+        );
 
         $this->assertInstanceOf(MessageDispatchException::class, $exception);
     }
@@ -235,9 +239,13 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception): void {
-            $exception = $ex;
-        });
+        $promise->then(
+            function () {
+            },
+            function (\Throwable $ex) use (&$exception): void {
+                $exception = $ex;
+            }
+        );
 
         $this->assertInstanceOf(RuntimeException::class, $exception);
         $this->assertEquals('Message dispatch failed. See previous exception for details.', $exception->getMessage());
@@ -260,9 +268,13 @@ class QueryBusTest extends TestCase
 
         $promise = $this->queryBus->dispatch('throw it');
 
-        $promise->otherwise(function ($ex) use (&$exception): void {
-            $exception = $ex;
-        });
+        $promise->then(
+            function () {
+            },
+            function (\Throwable $ex) use (&$exception): void {
+                $exception = $ex;
+            }
+        );
 
         $this->assertInstanceOf(MessageDispatchException::class, $exception);
         $this->assertEquals('Message dispatch failed. See previous exception for details.', $exception->getMessage());

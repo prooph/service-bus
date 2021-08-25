@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/service-bus.
- * (c) 2014-2019 Alexander Miertsch <kontakt@codeliner.ws>
- * (c) 2015-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2021 Alexander Miertsch <kontakt@codeliner.ws>
+ * (c) 2015-2021 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -129,7 +129,8 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         $alreadyMatched = false;
 
         foreach ($this->patternMap as $map) {
-            list($pattern, $handler) = \each($map);
+            $pattern = \key($map);
+            $handler = \current($map);
             if (\preg_match($pattern, $messageName)) {
                 if ($alreadyMatched) {
                     throw new Exception\RuntimeException(\sprintf(
@@ -155,7 +156,8 @@ class RegexRouter extends AbstractPlugin implements MessageBusRouterPlugin
         }
 
         foreach ($this->patternMap as $map) {
-            list($pattern, $handler) = \each($map);
+            $pattern = \key($map);
+            $handler = \current($map);
             if (\preg_match($pattern, $messageName)) {
                 $listeners = $actionEvent->getParam(EventBus::EVENT_PARAM_EVENT_LISTENERS, []);
                 $listeners[] = $handler;

@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/service-bus.
- * (c) 2014-2019 Alexander Miertsch <kontakt@codeliner.ws>
- * (c) 2015-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2014-2021 Alexander Miertsch <kontakt@codeliner.ws>
+ * (c) 2015-2021 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -32,10 +32,13 @@ use Prooph\ServiceBus\Plugin\Router\RegexRouter;
 use Prooph\ServiceBus\QueryBus;
 use ProophTest\ServiceBus\Mock\NoopMessageProducer;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class BusFactoriesTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @test
      * @dataProvider provideBuses
