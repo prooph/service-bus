@@ -1,6 +1,28 @@
-# Change Log
+# Changelog
 
-## [v6.2.2](https://github.com/prooph/service-bus/tree/v6.2.2)
+## [v6.3.0](https://github.com/prooph/service-bus/tree/v6.3.0)
+
+[Full Changelog](https://github.com/prooph/service-bus/compare/v6.2.2...v6.3.0)
+
+**Closed issues:**
+
+- What the sense in ReactPHP  and it is Promises if QueryBus works synchronously? [\#189](https://github.com/prooph/service-bus/issues/189)
+- exchange PromiseInterface for ExtendedPromiseInterface [\#179](https://github.com/prooph/service-bus/issues/179)
+- Proposal: Add interfaces for classes when using an InvokeStrategy [\#156](https://github.com/prooph/service-bus/issues/156)
+- \[RFC\] Return async-interop/promise from QueryBus [\#147](https://github.com/prooph/service-bus/issues/147)
+- Add react message dispatcher [\#21](https://github.com/prooph/service-bus/issues/21)
+
+**Merged pull requests:**
+
+- PHP8 Support [\#194](https://github.com/prooph/service-bus/pull/194) ([fritz-gerneth](https://github.com/fritz-gerneth))
+- Change copyright [\#193](https://github.com/prooph/service-bus/pull/193) ([codeliner](https://github.com/codeliner))
+- Update cs headers [\#192](https://github.com/prooph/service-bus/pull/192) ([basz](https://github.com/basz))
+- Remove useless trait [\#191](https://github.com/prooph/service-bus/pull/191) ([enumag](https://github.com/enumag))
+- Add exception [\#187](https://github.com/prooph/service-bus/pull/187) ([enumag](https://github.com/enumag))
+- Remove abbreviation [\#186](https://github.com/prooph/service-bus/pull/186) ([enumag](https://github.com/enumag))
+- Update outdated install instructions [\#185](https://github.com/prooph/service-bus/pull/185) ([fabiocarneiro](https://github.com/fabiocarneiro))
+
+## [v6.2.2](https://github.com/prooph/service-bus/tree/v6.2.2) (2018-02-07)
 
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.2.1...v6.2.2)
 
@@ -18,6 +40,7 @@
 - RouteGuard Exception is not re-thrown  [\#183](https://github.com/prooph/service-bus/pull/183) ([UFOMelkor](https://github.com/UFOMelkor))
 
 ## [v6.2.1](https://github.com/prooph/service-bus/tree/v6.2.1) (2017-12-26)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.2.0...v6.2.1)
 
 **Fixed bugs:**
@@ -29,16 +52,13 @@
 - QueryBus returns null with FinalizeGuard plugin included [\#177](https://github.com/prooph/service-bus/issues/177)
 
 ## [v6.2.0](https://github.com/prooph/service-bus/tree/v6.2.0) (2017-12-17)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.1...v6.2.0)
 
 **Implemented enhancements:**
 
 - add tests, small bugfix in exception handling [\#176](https://github.com/prooph/service-bus/pull/176) ([prolic](https://github.com/prolic))
 - test php 7.2 on travis [\#175](https://github.com/prooph/service-bus/pull/175) ([prolic](https://github.com/prolic))
-
-**Fixed bugs:**
-
-- add tests, small bugfix in exception handling [\#176](https://github.com/prooph/service-bus/pull/176) ([prolic](https://github.com/prolic))
 
 **Closed issues:**
 
@@ -49,6 +69,7 @@
 - Fixed typo [\#173](https://github.com/prooph/service-bus/pull/173) ([gquemener](https://github.com/gquemener))
 
 ## [v6.1.1](https://github.com/prooph/service-bus/tree/v6.1.1) (2017-10-23)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.2.1...v6.1.1)
 
 **Fixed bugs:**
@@ -56,16 +77,21 @@
 - Bug in OnEventStrategy [\#169](https://github.com/prooph/service-bus/issues/169)
 - Fix Bugs in Event Bus [\#171](https://github.com/prooph/service-bus/pull/171) ([prolic](https://github.com/prolic))
 
+**Merged pull requests:**
+
+- Merge readme into overview and add live coding video [\#170](https://github.com/prooph/service-bus/pull/170) ([codeliner](https://github.com/codeliner))
+
 ## [v5.2.1](https://github.com/prooph/service-bus/tree/v5.2.1) (2017-10-23)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.1.0...v5.2.1)
 
 **Merged pull requests:**
 
 - Catch throwable and reset isDispatching [\#172](https://github.com/prooph/service-bus/pull/172) ([codeliner](https://github.com/codeliner))
-- Merge readme into overview and add live coding video [\#170](https://github.com/prooph/service-bus/pull/170) ([codeliner](https://github.com/codeliner))
 - Make small grammar changes to docs [\#168](https://github.com/prooph/service-bus/pull/168) ([camuthig](https://github.com/camuthig))
 
 ## [v6.1.0](https://github.com/prooph/service-bus/tree/v6.1.0) (2017-09-29)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.3...v6.1.0)
 
 **Implemented enhancements:**
@@ -82,6 +108,7 @@
 - \[doc\] Add enqueue producer to the list of available solutions. [\#162](https://github.com/prooph/service-bus/pull/162) ([makasim](https://github.com/makasim))
 
 ## [v6.0.3](https://github.com/prooph/service-bus/tree/v6.0.3) (2017-07-02)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.2...v6.0.3)
 
 **Fixed bugs:**
@@ -89,6 +116,7 @@
 - avoid array\_merge due to appending [\#164](https://github.com/prooph/service-bus/pull/164) ([basz](https://github.com/basz))
 
 ## [v6.0.2](https://github.com/prooph/service-bus/tree/v6.0.2) (2017-06-27)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.1...v6.0.2)
 
 **Fixed bugs:**
@@ -100,6 +128,7 @@
 - Servicelocator deletes listeners [\#160](https://github.com/prooph/service-bus/issues/160)
 
 ## [v6.0.1](https://github.com/prooph/service-bus/tree/v6.0.1) (2017-04-24)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.0...v6.0.1)
 
 **Fixed bugs:**
@@ -107,6 +136,7 @@
 - Do not process already process messages with a custom strategy [\#159](https://github.com/prooph/service-bus/pull/159) ([lunetics](https://github.com/lunetics))
 
 ## [v6.0.0](https://github.com/prooph/service-bus/tree/v6.0.0) (2017-02-16)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.0-beta3...v6.0.0)
 
 **Implemented enhancements:**
@@ -119,10 +149,16 @@
 
 - Bugfix: exception is not resettable with finalize event [\#154](https://github.com/prooph/service-bus/pull/154) ([oqq](https://github.com/oqq))
 
+**Merged pull requests:**
+
+- fixed typo - "bridge" [\#141](https://github.com/prooph/service-bus/pull/141) ([sasezaki](https://github.com/sasezaki))
+
 ## [v6.0.0-beta3](https://github.com/prooph/service-bus/tree/v6.0.0-beta3) (2017-01-12)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.0-beta2...v6.0.0-beta3)
 
 ## [v6.0.0-beta2](https://github.com/prooph/service-bus/tree/v6.0.0-beta2) (2017-01-12)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v6.0.0-beta1...v6.0.0-beta2)
 
 **Implemented enhancements:**
@@ -144,6 +180,7 @@
 - Docs [\#146](https://github.com/prooph/service-bus/pull/146) ([prolic](https://github.com/prolic))
 
 ## [v6.0.0-beta1](https://github.com/prooph/service-bus/tree/v6.0.0-beta1) (2016-12-13)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.2.0...v6.0.0-beta1)
 
 **Implemented enhancements:**
@@ -160,11 +197,8 @@
 
 - OnEventStrategy needs to handle custom message names better [\#109](https://github.com/prooph/service-bus/issues/109)
 
-**Merged pull requests:**
-
-- fixed typo - "bridge" [\#141](https://github.com/prooph/service-bus/pull/141) ([sasezaki](https://github.com/sasezaki))
-
 ## [v5.2.0](https://github.com/prooph/service-bus/tree/v5.2.0) (2016-09-02)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.1.0...v5.2.0)
 
 **Implemented enhancements:**
@@ -180,6 +214,7 @@
 - Add MessageBusRouterPlugin interface [\#131](https://github.com/prooph/service-bus/pull/131) ([codeliner](https://github.com/codeliner))
 
 ## [v5.1.0](https://github.com/prooph/service-bus/tree/v5.1.0) (2016-05-08)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.0.3...v5.1.0)
 
 **Implemented enhancements:**
@@ -200,6 +235,7 @@
 - remove final keyword from factories to ensure BC and add check for containerId method [\#118](https://github.com/prooph/service-bus/pull/118) ([sandrokeil](https://github.com/sandrokeil))
 
 ## [v5.0.3](https://github.com/prooph/service-bus/tree/v5.0.3) (2016-02-10)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.0.2...v5.0.3)
 
 **Fixed bugs:**
@@ -219,6 +255,7 @@
 - Exceptions are all wrapped from the command bus. [\#111](https://github.com/prooph/service-bus/pull/111) ([bweston92](https://github.com/bweston92))
 
 ## [v5.0.2](https://github.com/prooph/service-bus/tree/v5.0.2) (2015-12-18)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.0.1...v5.0.2)
 
 **Closed issues:**
@@ -230,9 +267,11 @@
 - Fixes \#102 [\#103](https://github.com/prooph/service-bus/pull/103) ([DannyvdSluijs](https://github.com/DannyvdSluijs))
 
 ## [v5.0.1](https://github.com/prooph/service-bus/tree/v5.0.1) (2015-11-22)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v5.0...v5.0.1)
 
 ## [v5.0](https://github.com/prooph/service-bus/tree/v5.0) (2015-11-22)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.6...v5.0)
 
 **Implemented enhancements:**
@@ -260,6 +299,7 @@
 - Develop [\#88](https://github.com/prooph/service-bus/pull/88) ([prolic](https://github.com/prolic))
 
 ## [v4.6](https://github.com/prooph/service-bus/tree/v4.6) (2015-10-21)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.5...v4.6)
 
 **Implemented enhancements:**
@@ -281,6 +321,7 @@
 - Remove author tag with wrong email [\#76](https://github.com/prooph/service-bus/pull/76) ([codeliner](https://github.com/codeliner))
 
 ## [v4.5](https://github.com/prooph/service-bus/tree/v4.5) (2015-10-06)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.4.1...v4.5)
 
 **Merged pull requests:**
@@ -288,6 +329,7 @@
 - Add message producer plugin [\#74](https://github.com/prooph/service-bus/pull/74) ([codeliner](https://github.com/codeliner))
 
 ## [v4.4.1](https://github.com/prooph/service-bus/tree/v4.4.1) (2015-10-02)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.4...v4.4.1)
 
 **Fixed bugs:**
@@ -295,6 +337,7 @@
 - fix exception message [\#73](https://github.com/prooph/service-bus/pull/73) ([prolic](https://github.com/prolic))
 
 ## [v4.4](https://github.com/prooph/service-bus/tree/v4.4) (2015-09-29)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.3...v4.4)
 
 **Implemented enhancements:**
@@ -306,6 +349,7 @@
 - Develop [\#72](https://github.com/prooph/service-bus/pull/72) ([codeliner](https://github.com/codeliner))
 
 ## [v4.3](https://github.com/prooph/service-bus/tree/v4.3) (2015-09-13)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.2...v4.3)
 
 **Implemented enhancements:**
@@ -318,9 +362,11 @@
 - New message dispatcher versions [\#54](https://github.com/prooph/service-bus/issues/54)
 
 ## [v4.2](https://github.com/prooph/service-bus/tree/v4.2) (2015-09-08)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.2-beta.1...v4.2)
 
 ## [v4.2-beta.1](https://github.com/prooph/service-bus/tree/v4.2-beta.1) (2015-08-31)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.1.2...v4.2-beta.1)
 
 **Implemented enhancements:**
@@ -336,6 +382,7 @@
 - test php7 on travis [\#65](https://github.com/prooph/service-bus/pull/65) ([prolic](https://github.com/prolic))
 
 ## [v4.1.2](https://github.com/prooph/service-bus/tree/v4.1.2) (2015-08-21)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.1.1...v4.1.2)
 
 **Merged pull requests:**
@@ -343,9 +390,11 @@
 - Rename factory namespace to \*Container\* [\#62](https://github.com/prooph/service-bus/pull/62) ([codeliner](https://github.com/codeliner))
 
 ## [v4.1.1](https://github.com/prooph/service-bus/tree/v4.1.1) (2015-08-20)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.1...v4.1.1)
 
 ## [v4.1](https://github.com/prooph/service-bus/tree/v4.1) (2015-08-20)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v4.0...v4.1)
 
 **Implemented enhancements:**
@@ -369,6 +418,7 @@
 - Hint message interface [\#56](https://github.com/prooph/service-bus/pull/56) ([codeliner](https://github.com/codeliner))
 
 ## [v4.0](https://github.com/prooph/service-bus/tree/v4.0) (2015-08-02)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v3.2...v4.0)
 
 **Implemented enhancements:**
@@ -384,6 +434,7 @@
 - Feature/v4.0 [\#55](https://github.com/prooph/service-bus/pull/55) ([codeliner](https://github.com/codeliner))
 
 ## [v3.2](https://github.com/prooph/service-bus/tree/v3.2) (2015-05-23)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v3.1...v3.2)
 
 **Merged pull requests:**
@@ -391,12 +442,15 @@
 - Patch 47 - Introduce QueryBus [\#50](https://github.com/prooph/service-bus/pull/50) ([codeliner](https://github.com/codeliner))
 
 ## [v3.1](https://github.com/prooph/service-bus/tree/v3.1) (2015-05-09)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v3.0.1...v3.1)
 
 ## [v3.0.1](https://github.com/prooph/service-bus/tree/v3.0.1) (2015-05-09)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v3.0...v3.0.1)
 
 ## [v3.0](https://github.com/prooph/service-bus/tree/v3.0) (2015-05-01)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v2.0...v3.0)
 
 **Closed issues:**
@@ -405,6 +459,7 @@
 - Add SingleHandleMethodInvokeStrategy [\#42](https://github.com/prooph/service-bus/issues/42)
 
 ## [v2.0](https://github.com/prooph/service-bus/tree/v2.0) (2015-01-13)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.3.1...v2.0)
 
 **Merged pull requests:**
@@ -412,6 +467,7 @@
 - Message bus [\#45](https://github.com/prooph/service-bus/pull/45) ([codeliner](https://github.com/codeliner))
 
 ## [v1.3.1](https://github.com/prooph/service-bus/tree/v1.3.1) (2015-01-12)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.3.0...v1.3.1)
 
 **Closed issues:**
@@ -419,30 +475,39 @@
 - DispatchException captures wrong process phase [\#44](https://github.com/prooph/service-bus/issues/44)
 
 ## [v1.3.0](https://github.com/prooph/service-bus/tree/v1.3.0) (2014-10-30)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.2.1...v1.3.0)
 
 ## [v1.2.1](https://github.com/prooph/service-bus/tree/v1.2.1) (2014-10-30)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.2.0...v1.2.1)
 
 ## [v1.2.0](https://github.com/prooph/service-bus/tree/v1.2.0) (2014-10-30)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.1.1...v1.2.0)
 
 ## [v1.1.1](https://github.com/prooph/service-bus/tree/v1.1.1) (2014-10-30)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.1.0...v1.1.1)
 
 ## [v1.1.0](https://github.com/prooph/service-bus/tree/v1.1.0) (2014-10-05)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.0.2...v1.1.0)
 
 ## [v1.0.2](https://github.com/prooph/service-bus/tree/v1.0.2) (2014-10-03)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.0.1...v1.0.2)
 
 ## [v1.0.1](https://github.com/prooph/service-bus/tree/v1.0.1) (2014-09-28)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v1.0.0...v1.0.1)
 
 ## [v1.0.0](https://github.com/prooph/service-bus/tree/v1.0.0) (2014-09-27)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/v0.4.0...v1.0.0)
 
 ## [v0.4.0](https://github.com/prooph/service-bus/tree/v0.4.0) (2014-09-23)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.3.3...v0.4.0)
 
 **Implemented enhancements:**
@@ -462,12 +527,15 @@
 - Add optional message tracking mechanism [\#24](https://github.com/prooph/service-bus/issues/24)
 
 ## [0.3.3](https://github.com/prooph/service-bus/tree/0.3.3) (2014-09-07)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.3.2...0.3.3)
 
 ## [0.3.2](https://github.com/prooph/service-bus/tree/0.3.2) (2014-07-12)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.3.1...0.3.2)
 
 ## [0.3.1](https://github.com/prooph/service-bus/tree/0.3.1) (2014-07-12)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.3.0...0.3.1)
 
 **Fixed bugs:**
@@ -479,6 +547,7 @@
 - Simplify message dispatching [\#31](https://github.com/prooph/service-bus/issues/31)
 
 ## [0.3.0](https://github.com/prooph/service-bus/tree/0.3.0) (2014-07-06)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.2.0...0.3.0)
 
 **Implemented enhancements:**
@@ -499,6 +568,7 @@
 - Introduce direct message routing [\#25](https://github.com/prooph/service-bus/issues/25)
 
 ## [0.2.0](https://github.com/prooph/service-bus/tree/0.2.0) (2014-07-05)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.1.1...0.2.0)
 
 **Implemented enhancements:**
@@ -507,6 +577,7 @@
 - Expand config to configure all ServiceManagers [\#11](https://github.com/prooph/service-bus/issues/11)
 
 ## [0.1.1](https://github.com/prooph/service-bus/tree/0.1.1) (2014-07-05)
+
 [Full Changelog](https://github.com/prooph/service-bus/compare/0.1.0...0.1.1)
 
 **Fixed bugs:**
@@ -514,6 +585,9 @@
 - LocalSynchronousInitializer overrides command map [\#23](https://github.com/prooph/service-bus/issues/23)
 
 ## [0.1.0](https://github.com/prooph/service-bus/tree/0.1.0) (2014-06-28)
+
+[Full Changelog](https://github.com/prooph/service-bus/compare/fcdc84026c3a61b1c7c1ad9b3229153f0a50a424...0.1.0)
+
 **Implemented enhancements:**
 
 - Add type to message header [\#17](https://github.com/prooph/service-bus/issues/17)
@@ -535,4 +609,4 @@
 
 
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
